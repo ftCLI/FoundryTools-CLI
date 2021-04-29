@@ -1,5 +1,5 @@
 # ftCLI
-A command line interface to manupulate fonts using FontTools.
+A command line font editor.
  
 Requires Python 3.8 or later.
  
