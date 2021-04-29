@@ -7,5 +7,5 @@ Requires Python 3.8 or later.
     pip install -e .
  
 ## Usage
-Type ftcli --help for instuctions.
+    ftcli --help
 
