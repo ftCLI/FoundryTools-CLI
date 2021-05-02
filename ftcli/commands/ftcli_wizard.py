@@ -99,7 +99,7 @@ The above command will create the 'data.csv' file in C:\\Fonts\\
 
 Example 2:
 
-    ftcli wizard init-csv "C:\\Fonts\\pyFont.otf"
+    ftcli wizard init-csv "C:\\Fonts\\Font.otf"
 
 The above command will create the 'data.csv' in the INPUT_PATH folder
 (or parent folder, if INPUT_PATH is a file).
@@ -245,7 +245,7 @@ def recalcNames():
 @click.option('-sf', '--super-family', is_flag=True,
               help="Superfamily mode. This option affects name IDs 3, 6, 16 and 17 in case of families with widths different than 'Normal'. If this option is active, name ID 6 will be 'FamilyName-WidthWeightSlope' instead of 'FamilyNameWidth-WeightSlope'. Mac and OT family/subfamily names will be Family Name / Width Weight Slope' instead of 'Family Name Width / Weight Slope'.")
 @click.option('-aui', '--alt-uid', is_flag=True,
-              help="Use alternate unique identifier. By default, namerecord 3 (Unique identifier) is calculated according to the following scheme: 'Version;Vendor code;PostscriptName'. The alternate unique identifier is calculated according to the following scheme: 'Manufacturer: Full pyFont Name: creation year'")
+              help="Use alternate unique identifier. By default, namerecord 3 (Unique identifier) is calculated according to the following scheme: 'Version;Vendor code;PostscriptName'. The alternate unique identifier is calculated according to the following scheme: 'Manufacturer: Full Font Name: creation year'")
 @click.option('-ri', '--regular-italic', is_flag=True,
               help="Use '-RegularItalic' instead of '-Italic' in name ID 6.")
 @click.option('-kr', '--keep-regular', is_flag=True,
