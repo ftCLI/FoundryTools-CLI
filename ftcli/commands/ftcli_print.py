@@ -1,7 +1,6 @@
 import os
 import click
 from fontTools.ttLib import TTFont
-from ftcli.Lib.pyFont import pyFont
 from ftcli.Lib.GUI import GUI
 from ftcli.Lib.utils import getFontsList
 
