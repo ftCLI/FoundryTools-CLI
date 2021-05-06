@@ -8,11 +8,11 @@ from fontTools.misc.textTools import num2binary
 from fontTools.misc.timeTools import timestampToString
 from fontTools.ttLib import TTFont
 from ftcli.Lib.configHandler import (DEFAULT_WEIGHTS, DEFAULT_WIDTHS,
-                                            configHandler)
+                                     configHandler)
 from ftcli.Lib.csvHandler import csvHandler
 from ftcli.Lib.pyFont import pyFont
 from ftcli.Lib.utils import (getConfigPath, getCsvPath, getFontsList,
-                                    wrapString)
+                             wrapString)
 
 
 class GUI(object):
@@ -292,9 +292,9 @@ class GUI(object):
                       ":", str(font['OS/2'].usWeightClass))
                 print(("usWidthClass").ljust(length),
                       ":", str(font['OS/2'].usWidthClass))
-                print(("pyFont is bold").ljust(length),
+                print(("Font is bold").ljust(length),
                       ":", str(pyFont(font).is_bold))
-                print(("pyFont is italic").ljust(length),
+                print(("Font is italic").ljust(length),
                       ":", str(pyFont(font).is_italic))
 
                 embedLevel = font['OS/2'].fsType
@@ -327,7 +327,7 @@ class GUI(object):
                 print("-" * terminal_width)
                 print(("unitsPerEm").ljust(length),
                       ":", font['head'].unitsPerEm)
-                print(("pyFont BBox").ljust(length), ":", "(" + str(font['head'].xMin) + ", " + str(
+                print(("Font BBox").ljust(length), ":", "(" + str(font['head'].xMin) + ", " + str(
                     font['head'].yMin) + ")", "(" + str(font['head'].xMax) + ", " + str(font['head'].yMax) + ")")
 
                 print("\n[OS/2] table")
@@ -495,7 +495,7 @@ class GUI(object):
                 platform_specs = []
                 for name in names:
                     platform_spec = [name.platformID,
-                                        name.platEncID, name.langID]
+                                     name.platEncID, name.langID]
                     if platform_spec not in platform_specs:
                         platform_specs.append(platform_spec)
 
@@ -529,7 +529,7 @@ class GUI(object):
 
                             string = wrapString(
                                 string, indent, max_lines, terminal_width)
-                            
+
                             if minimal is False:
                                 print(string)
                             else:

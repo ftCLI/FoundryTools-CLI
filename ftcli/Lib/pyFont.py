@@ -203,7 +203,7 @@ class pyFont(object):
 
         fullFontName = "{} {}".format(familyNameMac, subFamilyNameMac)
 
-        uniqueID = "{};{};{}".format(fontRevision, achVendID, postScriptName)
+        uniqueID = "{};{};{}".format(fontRevision, achVendID.ljust(4), postScriptName)
 
         if alt_uid:
 
