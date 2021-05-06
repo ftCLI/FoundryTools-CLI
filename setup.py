@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='ftcli',
-    version='0.1.0',
+    version='0.1.1',
     description='ftCLI',
     packages=setuptools.find_packages(),
     entry_points = {
