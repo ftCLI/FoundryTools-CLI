@@ -429,9 +429,9 @@ class GUI(object):
                 print("{0:<37}".format(filename)[0:36], "{:13d}".format(usWeightClass), "{:12d}".format(
                     usWidthClass), "{:6d}".format(isBold), "{0:8d}".format(isItalic))
 
-                if not usWeightClass in usWeightClassList:
+                if usWeightClass not in usWeightClassList:
                     usWeightClassList.append(usWeightClass)
-                if not usWidthClass in usWidthClassList:
+                if usWidthClass not in usWidthClassList:
                     usWidthClassList.append(usWidthClass)
             except:
                 pass

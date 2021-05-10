@@ -16,15 +16,12 @@ class pyFont(object):
         self.isCFF = self.font.has_key('CFF ')
 
         if self.isCFF == True:
-
             self.otFont = self.font['CFF '].cff
 
         self.is_bold = is_nth_bit_set(self.font['head'].macStyle, 0) and is_nth_bit_set(
-
             self.font['OS/2'].fsSelection, 5) and not(is_nth_bit_set(self.font['OS/2'].fsSelection, 6))
 
         self.is_italic = is_nth_bit_set(self.font['head'].macStyle, 1) and is_nth_bit_set(
-
             self.font['OS/2'].fsSelection, 0) and not is_nth_bit_set(self.font['OS/2'].fsSelection, 6)
 
         self.usWeightClass = self.font['OS/2'].usWeightClass
@@ -32,56 +29,40 @@ class pyFont(object):
         self.usWidthClass = self.font['OS/2'].usWidthClass
 
         try:
-
             self.nameTable = self.font['name']
-
             self.names = self.nameTable.names
-
         except KeyError:
-
             self.nameTable = self.font['name'] = newTable('name')
-
-            self.nameTable.names = []
+            # self.nameTable.names = []
 
     def recalcNames(
         self, font_data, italics, namerecords_to_ignore=[],
         shorten_weight=[], shorten_width=[], shorten_italic=[],
         fixCFF=False, linked_styles=[], isSuperFamily=False,
-        alt_uid=False, regular_italic=False, keep_regular=False, old_full_font_name=False
+        alt_uid=False, regular_italic=False, keep_regular=False,
+        old_full_font_name=False
     ):
 
         ita, italic = italics
-
         isBold = bool(int(font_data['is_bold']))
-
         isItalic = bool(int(font_data['is_italic']))
-
         usWidthClass = int(font_data['uswidthclass'])
-
         wdt = str(font_data['wdt'])
-
         width = str(font_data['width'])
-
         usWeightClass = int(font_data['usweightclass'])
-
         wgt = str(font_data['wgt'])
-
         weight = str(font_data['weight'])
-
         familyName = str(font_data['family_name'])
 
         self.setRegular()
 
         if isBold:
-
             self.setBold()
 
         if isItalic:
-
             self.setItalic()
 
         self.setUsWeightClass(usWeightClass)
-
         self.setUsWidthClass(usWidthClass)
 
         # Macintosh
@@ -91,23 +72,15 @@ class pyFont(object):
         subFamilyNameMac = weight
 
         if width.lower() != "normal":
-
-            if isSuperFamily == False:
-
+            if isSuperFamily is False:
                 familyNameMac = "{} {}".format(familyName, width)
-
             else:
-
                 subFamilyNameMac = "{} {}".format(width, weight)
 
         if isItalic:
-
             subFamilyNameMac = "{} {}".format(
-
                 subFamilyNameMac, italic)
-
             if not keep_regular:
-
                 subFamilyNameMac = subFamilyNameMac.replace(
                     'Regular Italic', 'Italic')
 
@@ -116,28 +89,21 @@ class pyFont(object):
         familyNameWin = familyName
 
         familyNameWin = "{} {} {}".format(familyName, width.replace(
-
-            "Normal", ""), weight).replace("  ", " ").strip()
+            "Normal", "").replace("Nor", ""), weight).replace("  ", " ").strip()
 
         subFamilyNameWin = "Regular"
 
         if len(linked_styles) == 2:
-
             regularWeight = linked_styles[0]
-
             boldWeight = linked_styles[1]
 
             if usWeightClass in linked_styles:
-
                 familyNameWin = familyNameWin.replace(
-
                     weight, "").replace("  ", " ").strip()
 
             if usWeightClass == regularWeight:
-
                 self.setRegular()
-
-                if isItalic == True:
+                if isItalic is True:
 
                     self.setItalic()
 
@@ -153,7 +119,7 @@ class pyFont(object):
 
                 self.unsetBold()
 
-        if isItalic == True:
+        if isItalic is True:
 
             subFamilyNameWin = "{} Italic".format(subFamilyNameWin).replace(
 
@@ -161,7 +127,7 @@ class pyFont(object):
 
         postScriptName = str(self.nameTable.getName(6, 3, 1, 0x409))
 
-        if not 6 in namerecords_to_ignore:
+        if 6 not in namerecords_to_ignore:
 
             postScriptName = "{}-{}".format(
 
@@ -186,29 +152,26 @@ class pyFont(object):
                 italic, ita) if 6 in shorten_italic else postScriptName
 
             # Do not remove spaces and dots before, if not the -swdt, -swgt and -sita
-
             # switches won't work!
 
             postScriptName = postScriptName.replace(" ", "").replace(".", "")
 
         achVendID = str(
-
             self.font['OS/2'].achVendID).replace(" ", "").replace(r'\x00', "")
 
         fontRevision = str(
-
             round(self.font['head'].fontRevision, 3)).ljust(5, "0")
 
         versionString = "Version {}".format(fontRevision)
 
         fullFontName = "{} {}".format(familyNameMac, subFamilyNameMac)
 
-        uniqueID = "{};{};{}".format(fontRevision, achVendID.ljust(4), postScriptName)
+        uniqueID = "{};{};{}".format(
+            fontRevision, achVendID.ljust(4), postScriptName)
 
         if alt_uid:
 
             year_created = timestampToString(
-
                 self.font['head'].created).split(" ")[-1]
 
             manufacturer = self.nameTable.getName(8, 3, 1, 0x409)
@@ -224,15 +187,12 @@ class pyFont(object):
             string = familyNameMac
 
             string = string.replace(
-
                 weight, wgt) if 1 in shorten_weight else string
 
             string = string.replace(
-
                 width, wdt) if 1 in shorten_width else string
 
             string = string.replace(
-
                 italic, ita) if 1 in shorten_italic else string
 
             self.nameTable.setName(string, 1, 1, 0, 0x0)
@@ -240,22 +200,20 @@ class pyFont(object):
             string = familyNameWin
 
             string = string.replace(
-
                 weight, wgt) if 1 in shorten_weight else string
 
             string = string.replace(
-
                 width, wdt) if 1 in shorten_width else string
 
-            string = string.replace(
-
-                italic, ita) if 1 in shorten_italic else string
+            # No need to shorten the italics here.
+            # string = string.replace(
+            # italic, ita) if 1 in shorten_italic else string
 
             self.nameTable.setName(string, 1, 3, 1, 0x409)
 
         # nameID 2
 
-        if not 2 in namerecords_to_ignore:
+        if 2 not in namerecords_to_ignore:
 
             string = subFamilyNameMac
 
@@ -279,7 +237,7 @@ class pyFont(object):
 
         # nameID 3
 
-        if not 3 in namerecords_to_ignore:
+        if 3 not in namerecords_to_ignore:
 
             string = uniqueID
 
@@ -301,7 +259,7 @@ class pyFont(object):
 
         # nameID 4
 
-        if not 4 in namerecords_to_ignore:
+        if 4 not in namerecords_to_ignore:
 
             string = fullFontName
 
@@ -329,7 +287,7 @@ class pyFont(object):
 
         # nameID 5
 
-        if not 5 in namerecords_to_ignore:
+        if 5 not in namerecords_to_ignore:
 
             self.nameTable.setName(versionString, 5, 1, 0, 0x0)
 
@@ -337,7 +295,7 @@ class pyFont(object):
 
         # nameID6
 
-        if not 6 in namerecords_to_ignore:
+        if 6 not in namerecords_to_ignore:
 
             # Alreay shortened!
 
@@ -347,7 +305,7 @@ class pyFont(object):
 
         # nameID 16, 17, 18
 
-        if not 16 in namerecords_to_ignore:
+        if 16 not in namerecords_to_ignore:
 
             string = familyNameMac
 
@@ -367,7 +325,7 @@ class pyFont(object):
 
             self.nameTable.setName(string, 16, 3, 1, 0x409)
 
-        if not 17 in namerecords_to_ignore:
+        if 17 not in namerecords_to_ignore:
 
             string = subFamilyNameMac
 
@@ -387,7 +345,7 @@ class pyFont(object):
 
             self.nameTable.setName(string, 17, 3, 1, 0x409)
 
-        if not 18 in namerecords_to_ignore:
+        if 18 not in namerecords_to_ignore:
 
             string = fullFontName
 
@@ -674,184 +632,119 @@ class pyFont(object):
         self.__clearRegularBit()
 
     def setOblique(self):
-
         self.font['OS/2'].fsSelection = set_nth_bit(
-
             self.font['OS/2'].fsSelection, 9)
 
     def unsetBold(self):
-
         self.__clearBoldBits()
-
         if not self.isItalic():
-
             self.__setRegularBit()
 
     def unsetItalic(self):
-
         self.__clearItalicBits()
-
         if not self.isBold():
-
             self.__setRegularBit()
 
     def unsetOblique(self):
-
         self.font['OS/2'].fsSelection = unset_nth_bit(
-
             self.font['OS/2'].fsSelection, 9)
 
     def setRegular(self):
-
         self.__setRegularBit()
-
         self.__clearBoldBits()
-
         self.__clearItalicBits()
 
     def usesTypoMetrics(self):
-
         return is_nth_bit_set(self.font['OS/2'].fsSelection, 7)
 
     def setUseTypoMetrics(self):
-
         if self.font['OS/2'].version > 3:
-
             self.font['OS/2'].fsSelection = set_nth_bit(
-
                 self.font['OS/2'].fsSelection, 7)
 
     def unsetUseTypoMetrics(self):
-
         self.font['OS/2'].fsSelection = unset_nth_bit(
-
             self.font['OS/2'].fsSelection, 7)
 
     def setEmbedLevel(self, value):
-
         if self.font['OS/2'].fsType != value:
-
             self.font['OS/2'].fsType = value
 
     def setUsWidthClass(self, value):
-
         if self.font["OS/2"].usWidthClass != value:
-
             self.font["OS/2"].usWidthClass = value
 
     def setUsWeightClass(self, value):
-
         if self.font["OS/2"].usWeightClass != value:
-
             self.font["OS/2"].usWeightClass = value
 
     def setAchVendID(self, value):
-
         if self.font['OS/2'].achVendID != value:
-
             self.font['OS/2'].achVendID = value
 
     def addDummyDSIG(self):
-
         values = dict(
-
             ulVersion=1,
-
             usFlag=0,
-
             usNumSigs=0,
-
             signatureRecords=[],
         )
-
         dsig = self.font['DSIG'] = newTable('DSIG')
-
         for k, v in values.items():
-
             setattr(dsig, k, v)
 
     def __setBoldBits(self):
-
         self.font['OS/2'].fsSelection = set_nth_bit(
-
             self.font['OS/2'].fsSelection, 5)
-
         self.font['head'].macStyle = set_nth_bit(self.font['head'].macStyle, 0)
 
     def __setItalicBits(self):
-
         self.font['OS/2'].fsSelection = set_nth_bit(
-
             self.font['OS/2'].fsSelection, 0)
-
         self.font['head'].macStyle = set_nth_bit(self.font['head'].macStyle, 1)
 
     def __setRegularBit(self):
-
         self.font['OS/2'].fsSelection = set_nth_bit(
-
             self.font['OS/2'].fsSelection, 6)
 
     def __clearBoldBits(self):
-
         self.font['OS/2'].fsSelection = unset_nth_bit(
-
             self.font['OS/2'].fsSelection, 5)
-
         self.font['head'].macStyle = unset_nth_bit(
-
             self.font['head'].macStyle, 0)
 
     def __clearItalicBits(self):
-
         self.font['OS/2'].fsSelection = unset_nth_bit(
-
             self.font['OS/2'].fsSelection, 0)
-
         self.font['head'].macStyle = unset_nth_bit(
-
             self.font['head'].macStyle, 1)
 
     def __clearRegularBit(self):
-
         self.font['OS/2'].fsSelection = unset_nth_bit(
-
             self.font['OS/2'].fsSelection, 6)
 
 
 def is_nth_bit_set(x: int, n: int):
-
     if x & (1 << n):
-
         return True
-
     return False
 
 
 def set_nth_bit(x: int, n: int):
-
     return x | 1 << n
 
 
 def unset_nth_bit(x: int, n: int):
-
     return x & ~(1 << n)
 
 
 def wrapString(string, indent, max_lines, width):
-
     wrapped_string = TextWrapper(
-
         initial_indent="",
-
         subsequent_indent=" " * indent,
-
         max_lines=max_lines,
-
         break_on_hyphens=True,
-
         break_long_words=True,
-
         width=width
     ).fill(str(string))
 
@@ -859,72 +752,39 @@ def wrapString(string, indent, max_lines, width):
 
 
 NAMEIDS = {
-
     0: 'Copyright Notice',
-
     1: 'Family name',
-
     2: 'Subfamily name',
-
     3: 'Unique identifier',
-
     4: 'Full font name',
-
     5: 'Version string',
-
     6: 'PostScript name',
-
     7: 'Trademark',
-
     8: 'Manufacturer Name',
-
     9: 'Designer',
-
     10: 'Description',
-
     11: 'URL Vendor',
-
     12: 'URL Designer',
-
     13: 'License Description',
-
     14: 'License Info URL',
-
     15: 'Reserved',
-
     16: 'Typographic Family',
-
     17: 'Typographic Subfamily',
-
     18: 'Compatible Full (Mac)',
-
     19: 'Sample text',
-
     20: 'PS CID findfont name',
-
     21: 'WWS Family Name',
-
     22: 'WWS Subfamily Name',
-
     23: 'Light Backgr Palette',
-
     24: 'Dark Backgr Palette',
-
     25: 'Variations PSName Pref'
-
 }
 
 
 PLATFORMS = {
-
     0: 'Unicode',
-
     1: 'Macintosh',
-
     2: 'ISO (deprecated)',
-
     3: 'Windows',
-
     4: 'Custom',
-
 }
