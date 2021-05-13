@@ -1,8 +1,9 @@
 import os
 import sys
 
+from shutil import get_terminal_size
+
 import click
-from click.termui import confirm
 from fontTools.misc.fixedTools import floatToFixedToStr
 from fontTools.misc.textTools import num2binary
 from fontTools.misc.timeTools import timestampToString
@@ -11,8 +12,7 @@ from ftcli.Lib.configHandler import (DEFAULT_WEIGHTS, DEFAULT_WIDTHS,
                                      configHandler)
 from ftcli.Lib.csvHandler import csvHandler
 from ftcli.Lib.pyFont import pyFont
-from ftcli.Lib.utils import (getConfigPath, getCsvPath, getFontsList,
-                             wrapString)
+from ftcli.Lib.utils import (getFontsList, wrapString)
 
 
 class GUI(object):
@@ -20,7 +20,7 @@ class GUI(object):
     def csvEditor(self, config_file, csv_file):
 
         data = csvHandler(csv_file).getData()
-        terminal_width = click.get_terminal_size()[0] - 1
+        terminal_width = get_terminal_size()[0] - 1
 
         click.clear()
         print("\nCURRENT FILE:", csv_file)
@@ -144,7 +144,7 @@ class GUI(object):
             sys.exit()
 
     def cfgEditor(self, config_file):
-        terminal_width = click.get_terminal_size()[0] - 1
+        terminal_width = get_terminal_size()[0] - 1
         config = configHandler(config_file).getConfig()
 
         click.clear()
@@ -205,7 +205,7 @@ class GUI(object):
 
     def printCfg(self, config_file):
 
-        terminal_width = click.get_terminal_size()[0] - 1
+        terminal_width = get_terminal_size()[0] - 1
         config = configHandler(config_file).getConfig()
 
         print()
@@ -234,7 +234,7 @@ class GUI(object):
 
     def printCsv(self, csv_file):
 
-        terminal_width = click.get_terminal_size()[0] - 1
+        terminal_width = get_terminal_size()[0] - 1
         data = csvHandler(csv_file).getData()
 
         count = 0
@@ -263,7 +263,7 @@ class GUI(object):
 
     def printFtInfo(self, input_path):
 
-        terminal_width = click.get_terminal_size()[0] - 1
+        terminal_width = get_terminal_size()[0] - 1
         length = 17
 
         files = getFontsList(input_path)
@@ -406,7 +406,7 @@ class GUI(object):
 
     def printFtList(self, input_path):
 
-        terminal_width = click.get_terminal_size()[0] - 1
+        terminal_width = get_terminal_size()[0] - 1
 
         print("-" * terminal_width)
         print("{0:<38}".format("File Name"), "usWeightClass",
@@ -445,7 +445,7 @@ class GUI(object):
         print("-" * terminal_width)
 
     def printFtName(self, input_path, name_id, indent=32, max_lines=None):
-        terminal_width = click.get_terminal_size()[0] - 1
+        terminal_width = get_terminal_size()[0] - 1
 
         files = getFontsList(input_path)
 
@@ -484,7 +484,7 @@ class GUI(object):
 
     def printFtNames(self, input_path, minimal=False, indent=32, max_lines=None):
 
-        terminal_width = click.get_terminal_size()[0] - 1
+        terminal_width = get_terminal_size()[0] - 1
 
         files = getFontsList(input_path)
 
@@ -617,7 +617,7 @@ class GUI(object):
 
     def printTableHead(self, input_path):
 
-        terminal_width = click.get_terminal_size()[0] - 1
+        terminal_width = get_terminal_size()[0] - 1
 
         files = getFontsList(input_path)
 
@@ -654,7 +654,7 @@ class GUI(object):
 
     def printTableOS2(self, input_path):
 
-        terminal_width = click.get_terminal_size()[0] - 1
+        terminal_width = get_terminal_size()[0] - 1
 
         files = getFontsList(input_path)
 
@@ -692,7 +692,7 @@ class GUI(object):
 
     def listTables(self, input_path):
 
-        terminal_width = click.get_terminal_size()[0] - 1
+        terminal_width = get_terminal_size()[0] - 1
 
         files = getFontsList(input_path)
         for f in files:
@@ -708,7 +708,7 @@ class GUI(object):
 
     def __dictEditor(self, config_file, input_dict, key_name, min_key, max_key, default_dict):
 
-        terminal_width = click.get_terminal_size()[0] - 1
+        terminal_width = get_terminal_size()[0] - 1
         config = configHandler(config_file).getConfig()
 
         keys_list = []

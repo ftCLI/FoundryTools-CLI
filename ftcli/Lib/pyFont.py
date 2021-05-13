@@ -108,47 +108,34 @@ class pyFont(object):
                     self.setItalic()
 
             if usWeightClass == boldWeight:
-
                 self.setBold()
-
                 subFamilyNameWin = "Bold"
 
         else:
-
             if self.isBold():
-
                 self.unsetBold()
 
         if isItalic is True:
-
             subFamilyNameWin = "{} Italic".format(subFamilyNameWin).replace(
-
                 "Regular Italic", "Italic").replace("  ", " ").strip()
 
         postScriptName = str(self.nameTable.getName(6, 3, 1, 0x409))
 
         if 6 not in namerecords_to_ignore:
-
             postScriptName = "{}-{}".format(
-
                 familyNameMac, subFamilyNameMac)
-
             if regular_italic:
 
                 postScriptName = postScriptName.replace(
-
                     "-Italic", "-RegularItalic")
 
             postScriptName = postScriptName.replace(
-
                 weight, wgt) if 6 in shorten_weight else postScriptName
 
             postScriptName = postScriptName.replace(
-
                 width, wdt) if 6 in shorten_width else postScriptName
 
             postScriptName = postScriptName.replace(
-
                 italic, ita) if 6 in shorten_italic else postScriptName
 
             # Do not remove spaces and dots before, if not the -swdt, -swgt and -sita
@@ -218,43 +205,28 @@ class pyFont(object):
             string = subFamilyNameMac
 
             string = string.replace(
-
                 weight, wgt) if 2 in shorten_weight else string
-
             string = string.replace(
-
                 width, wdt) if 2 in shorten_width else string
 
             string = string.replace(
-
                 italic, ita) if 2 in shorten_italic else string
 
             self.nameTable.setName(string, 2, 1, 0, 0x0)
 
             # This can be only Regular, Italic, Bold or Bold Italic and can't be shortened!
-
             self.nameTable.setName(subFamilyNameWin, 2, 3, 1, 0x409)
 
         # nameID 3
-
         if 3 not in namerecords_to_ignore:
-
             string = uniqueID
-
             string = string.replace(
-
                 weight, wgt) if 3 in shorten_weight else string
-
             string = string.replace(
-
                 width, wdt) if 3 in shorten_width else string
-
             string = string.replace(
-
                 italic, ita) if 3 in shorten_italic else string
-
             self.nameTable.setName(string, 3, 1, 0, 0x0)
-
             self.nameTable.setName(string, 3, 3, 1, 0x409)
 
         # nameID 4
@@ -262,21 +234,13 @@ class pyFont(object):
         if 4 not in namerecords_to_ignore:
 
             string = fullFontName
-
             string = string.replace(
-
                 weight, wgt) if 4 in shorten_weight else string
-
             string = string.replace(
-
                 width, wdt) if 4 in shorten_width else string
-
             string = string.replace(
-
                 italic, ita) if 4 in shorten_italic else string
-
             self.nameTable.setName(string, 4, 1, 0, 0x0)
-
             self.nameTable.setName(string, 4, 3, 1, 0x409)
 
             # No need to shorten this!
