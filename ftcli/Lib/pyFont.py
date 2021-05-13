@@ -15,7 +15,7 @@ class pyFont(object):
 
         self.isCFF = self.font.has_key('CFF ')
 
-        if self.isCFF == True:
+        if self.isCFF is True:
             self.otFont = self.font['CFF '].cff
 
         self.is_bold = is_nth_bit_set(self.font['head'].macStyle, 0) and is_nth_bit_set(
@@ -363,7 +363,7 @@ class pyFont(object):
 
             self.nameTable.setName(string, 18, 1, 0, 0x0)
 
-        if self.isCFF and fixCFF == True:
+        if self.isCFF and fixCFF is True:
 
             self.otFont.fontNames = [postScriptName]
 

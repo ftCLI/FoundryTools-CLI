@@ -195,7 +195,7 @@ class GUI(object):
         if choice == 'r':
             confirmation_message = "\nWARNING: values will be replaced with default ones. All changes will be lost.\n\nDo you want continue?"
             confirm = click.confirm(confirmation_message, default=True)
-            if confirm == True:
+            if confirm is True:
                 configHandler(config_file).resetConfig()
             self.cfgEditor(config_file)
 
@@ -775,7 +775,7 @@ class GUI(object):
             if str(k) in keys_list:
                 confirmation_message = "\nDo you want continue?"
                 confirm = click.confirm(confirmation_message, default=True)
-                if confirm == True:
+                if confirm is True:
                     del config[input_dict][str(k)]
                     configHandler(config_file).saveConfig(config)
             else:
@@ -790,7 +790,7 @@ class GUI(object):
             confirmation_message = "\nWARNING: values will be replaced with default ones. All changes will be lost.\n\nDo you want continue?"
             confirm = click.confirm(confirmation_message, default=True)
 
-            if confirm == True:
+            if confirm is True:
                 config[input_dict] = default_dict
                 configHandler(config_file).saveConfig(config)
 
