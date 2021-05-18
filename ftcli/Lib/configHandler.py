@@ -33,6 +33,7 @@ class configHandler(object):
                 'weights': DEFAULT_WEIGHTS,
                 'widths': DEFAULT_WIDTHS,
                 'italics': DEFAULT_ITALICS,
+                'obliques': DEFAULT_OBLIQUES
             }, f, sort_keys=True, indent=4)
 
 
@@ -61,3 +62,5 @@ DEFAULT_WIDTHS = {
     9: ['Exp', 'Expanded']}
 
 DEFAULT_ITALICS = ['It', 'Italic']
+
+DEFAULT_OBLIQUES = ['Obl', 'Oblique']

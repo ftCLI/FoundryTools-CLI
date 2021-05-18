@@ -1,11 +1,10 @@
-import os
 import click
-from fontTools.ttLib import TTFont
+
 from ftcli.Lib.GUI import GUI
 from ftcli.Lib.utils import getFontsList
 
-# printName
 
+# printName
 
 @click.group()
 def printName():
@@ -20,9 +19,9 @@ def printName():
               help="Maximum number of lines to be printed.")
 def name(input_path, name_id, max_lines):
     """
-Prints a single namerecord.
+Prints a single namerecord of one ore more fonts.
 
-Use the -ml, --max-lines option to limit the line numbers.
+Use the -ml, --max-lines option to limit the printed line numbers to the desired value.
     """
     GUI().printFtName(input_path, name_id=name_id, max_lines=max_lines)
 
@@ -40,12 +39,12 @@ def printNames():
               help="Maximum number of lines to be printed for each namerecord")
 @click.option('-min', '--minimal', is_flag=True,
               help="Prints only nameIDs 1, 2, 3, 4, 5, 6, 16, 17, 18, 21 and 22.")
-def names(input_path, max_lines, minimal):
+def ftnames(input_path, max_lines, minimal):
     """
-Prints the 'name' table and 'CFF' names if present.
+Prints the 'name' table and 'CFF' names (if present).
 
-Use the -ml / --max-lines option to limit the pinted line numbers, and the
--min / --minimal one to print a minimal set of namerecords.
+Use the -ml / --max-lines option to limit the printed line numbers, and the -min / --minimal one to print a minimal
+set of namerecords.
     """
 
     if len(getFontsList(input_path)) > 0:
@@ -63,9 +62,9 @@ def printFontInfo():
 
 @printFontInfo.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-def info(input_path):
+def ftinfo(input_path):
     """
-Prints detailed font informations.
+Prints detailed font information.
     """
     if len(getFontsList(input_path)) > 0:
         GUI().printFtInfo(input_path)
@@ -82,9 +81,9 @@ def printFontsList():
 
 @printFontsList.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-def list(input_path):
+def ftlist(input_path):
     """
-Prints a list of fonts in INPUT_PATH with basic informations.
+Prints a list of fonts in INPUT_PATH with basic information.
     """
     if len(getFontsList(input_path)) > 0:
         GUI().printFtList(input_path)
@@ -149,6 +148,7 @@ Prints a list of tables.
         click.secho('No valid font found.', fg='red')
 
 
-cli = click.CommandCollection(sources=[printName, printNames, printFontInfo, printFontsList, printOS2Table, printHeadTable, printTblList], help="""
-Prints various font's informations.
+cli = click.CommandCollection(sources=[printName, printNames, printFontInfo, printFontsList, printOS2Table,
+                                       printHeadTable, printTblList], help="""
+Prints various font's information.
 """)

@@ -2,15 +2,17 @@ import os
 
 import click
 from fontTools.ttLib import TTFont
-from ftcli.Lib.utils import (getFontsList, getSourceString,
-                                    makeOutputFileName)
+from ftcli.Lib.utils import (getFontsList, getSourceString, makeOutputFileName)
 
 
 @click.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-@click.option('-s', '--source-string', type=click.Choice(choices=['1_1_2', '1_4', '1_6', '1_16_17', '1_18', '3_1_2', '3_4', '3_6', '3_16_17', 'cff_1', 'cff_2', 'cff_3']), default='3_6',
+@click.option('-s', '--source-string', type=click.Choice(
+    choices=['1_1_2', '1_4', '1_6', '1_16_17', '1_18', '3_1_2', '3_4', '3_6', '3_16_17', 'cff_1', 'cff_2', 'cff_3']),
+              default='3_6',
               help="""
-The source string is read from a namerecord or from a combination of two namerecords, and the font file is renamed according to it.
+The source string is read from a namerecord or from a combination of two namerecords, and the font file is renamed
+according to it.
 
 The first number in the sequence is the platformID, while the following numbers represent the nameID(s) numbers.
 
@@ -24,7 +26,7 @@ If the font is CFF flavored, the cff_1, cff_2, and cff_3 options can be used.
 """)
 def cli(input_path, source_string):
     """
-Renames font files according to the provided source string
+Renames font files according to the provided source string.
     """
 
     files = getFontsList(input_path)
@@ -34,7 +36,7 @@ Renames font files according to the provided source string
         n = os.path.basename(f)
 
         font = TTFont(f)
-        isCFF = font.has_key('CFF ')
+        isCFF = 'CFF ' in font
 
         string = getSourceString(f, source_string)
 
@@ -56,7 +58,7 @@ Renames font files according to the provided source string
             try:
                 os.rename(f, new_file)
                 click.secho("%s --> %s" % (n, new_file_name), fg='green')
-            
+
             except FileExistsError:
                 new_file = makeOutputFileName(new_file, overWrite=False)
                 os.rename(f, new_file)
@@ -67,4 +69,3 @@ Renames font files according to the provided source string
                 click.secho(message, fg='red')
         else:
             click.secho("%s --> skipped" % n, fg='yellow')
-

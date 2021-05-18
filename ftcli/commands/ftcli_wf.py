@@ -1,10 +1,9 @@
 import os
 
 import click
-from fontTools.ttLib import TTFont
-from ftcli.Lib.pyFont import pyFont
-from ftcli.Lib.utils import (getFontsList, guessFamilyName,
-                                    makeOutputFileName)
+from fontTools.ttLib import TTFont, TTCollection
+from ftcli.Lib.TTFontCLI import TTFontCLI
+from ftcli.Lib.utils import (getFontsList, guessFamilyName, makeOutputFileName)
 
 
 @click.group()
@@ -21,19 +20,19 @@ Parses all WOFF and WOFF2 files in INPUT_PATH and creates a CSS stylesheet to us
 
     files = getFontsList(input_path)
 
-    css_file = os.path.join(input_path, 'fonts.css') if os.path.isdir(
-        input_path) else os.path.join(os.path.dirname(input_path), 'fonts.css')
+    css_file = os.path.join(input_path, 'fonts.css') if os.path.isdir(input_path)\
+        else os.path.join(os.path.dirname(input_path), 'fonts.css')
     with open(css_file, 'w') as stylesheet:
         pass
 
     unique_triplets = []
     for f in files:
 
-        font = TTFont(f)
+        font = TTFontCLI(f)
         this_font_triplet = (
             guessFamilyName(font),
-            pyFont(font).usWeightClass,
-            'italic' if pyFont(font).isItalic() else 'normal'
+            font['OS/2'].usWeightClass,
+            'italic' if font.isItalic() else 'normal'
         )
         if this_font_triplet not in unique_triplets:
             unique_triplets.append(this_font_triplet)
@@ -53,11 +52,11 @@ Parses all WOFF and WOFF2 files in INPUT_PATH and creates a CSS stylesheet to us
 
         for f in files:
 
-            font = TTFont(f)
+            font = TTFontCLI(f)
             this_font_triplet = (
                 guessFamilyName(font),
-                pyFont(font).usWeightClass,
-                'italic' if pyFont(font).isItalic() else 'normal'
+                font['OS/2'].usWeightClass,
+                'italic' if font.isItalic() else 'normal'
             )
             if this_font_triplet == t:
                 if font.flavor == 'woff':
@@ -104,20 +103,25 @@ def fontToWebfont():
 @fontToWebfont.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-f', '--flavor', type=click.Choice(choices=['woff', 'woff2']),
-              help='Specify the flavor [woff|woff2] of the output files. If not specified, both WOFF and WOFF2 files will be created')
+              help='Specify the flavor [woff|woff2] of the output files. If not specified, both WOFF and WOFF2 files '
+                   'will be created')
 @click.option('-d', '--delete-source-file', is_flag=True,
               help='If this option is active, source file will be deleted.')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t exist, will be created. If not specified, files are saved to the same folder.')
+              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
+                   'exist, will be created. If not specified, files are saved to the same folder.')
 @click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By default, original timestamp is kept.')
+              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
+                   'default, original timestamp is kept.')
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file name). By default, files are overwritten.')
+              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of '
+                   'file name). By default, files are overwritten.')
 def compress(input_path, flavor, delete_source_file=False, output_dir=None, recalc_timestamp=False, overwrite=True):
     """
 Converts OpenType fonts to WOFF/WOFF2 format.
 
-Use the -f/--flavor option to specify flavor of output font files. May be 'woff' or 'woff2'. If no flavor is specified, both WOFF and WOFF2 files will be created.
+Use the -f/--flavor option to specify flavor of output font files. May be 'woff' or 'woff2'. If no flavor is
+specified, both WOFF and WOFF2 files will be created.
     """
 
     files = getFontsList(input_path)
@@ -156,11 +160,14 @@ def webfontToFont():
 @click.option('-d', '--delete-source-file', is_flag=True,
               help='If this option is active, source file will be deleted after conversion.')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t exist, will be created. If not specified, files are saved to the same folder.')
+              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
+                   'exist, will be created. If not specified, files are saved to the same folder.')
 @click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By default, original timestamp is kept.')
+              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
+                   'default, original timestamp is kept.')
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file name). By default, files are overwritten.')
+              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of '
+                   'file name). By default, files are overwritten.')
 def decompress(input_path, delete_source_file=False, output_dir=None, recalc_timestamp=False, overwrite=True):
     """
 Converts WOFF/WOFF2 files to OpenType format.
@@ -175,8 +182,7 @@ Output will be a ttf or otf file, depending on the webfont flavor (TTF or CFF).
             font = TTFont(f, recalcTimestamp=recalc_timestamp)
             if font.flavor is not None:
                 ext = '.otf' if font.sfntVersion == 'OTTO' else '.ttf'
-                output_file = makeOutputFileName(
-                    f, outputDir=output_dir, extension=ext, overWrite=overwrite)
+                output_file = makeOutputFileName(f, outputDir=output_dir, extension=ext, overWrite=overwrite)
                 font.flavor = None
                 font.save(output_file)
                 click.secho('%s saved' % os.path.basename(output_file), fg='green')

@@ -70,7 +70,7 @@ def getFontsList(input_path):
             try:
                 font = TTFont(os.path.join(input_path, f))
                 files.append(os.path.join(input_path, f))
-            except:
+            except Exception as e:
                 pass
 
     if len(files) == 0:
@@ -143,7 +143,7 @@ def getSourceString(font_file, string_source):
     font = TTFont(font_file)
     file_name = os.path.basename(font_file)
     name_table = font['name']
-    is_cff = font.has_key('CFF ')
+    is_cff = 'CFF ' in font
 
     # Get the source string
     string = None

@@ -17,15 +17,14 @@ class ftCLI(click.MultiCommand):
 
     def get_command(self, ctx, name):
         try:
-            mod = __import__(
-                f"ftcli.commands.ftcli_{name}", None, None, ["cli"])
+            mod = __import__(f"ftcli.commands.ftcli_{name}", None, None, ["cli"])
         except ImportError:
             return
+
         return mod.cli
 
 
-cli = ftCLI(
-    help='A set of command line tools to manipulate fonts with FontTools.')
+cli = ftCLI(help='A set of command line tools to manipulate fonts with FontTools.')
 
 
 def main():

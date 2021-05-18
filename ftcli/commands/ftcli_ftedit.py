@@ -1,9 +1,7 @@
 import os
 
 import click
-from fontTools.ttLib import TTFont
-from fontTools.ttLib.removeOverlaps import removeOverlaps
-from ftcli.Lib.pyFont import pyFont
+from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.utils import getFontsList, makeOutputFileName
 
 
@@ -33,29 +31,34 @@ Sets embedding level (OS/2.fsType).
               help="""
 Sets or clears the USE_TYPO_METRICS bit (OS/2.fsSelection bit 7).
 
-If set, it is strongly recommended that applications use OS/2.sTypoAscender - OS/2.sTypoDescender + OS/2.sTypoLineGap as the default line spacing for this font.
+If set, it is strongly recommended that applications use OS/2.sTypoAscender - OS/2.sTypoDescender + OS/2.sTypoLineGap as
+the default line spacing for this font.
 
 See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
 """)
 @click.option('-ach', '--ach-vend-id', type=str,
               help='Sets the the OS/2.achVendID tag (vendor\'s four-character identifier).')
 @click.option('-dsig', '--add-dummy-dsig', is_flag=True,
-              help=
-              """Adds a dummy signature.
+              help="""
+Adds a dummy signature.
 
-              If the DSIG table is already present, this option will be ignored.
+If the DSIG table is already present, this option will be ignored.
 
-              Use '-dt DSIG -dsig' to force the replacement of an existing DSIG table.
-              """)
+Use '-dt DSIG -dsig' to force the replacement of an existing DSIG table.
+""")
 @click.option('-dt', '--delete-table', 'table_to_delete', type=click.STRING,
               help='Removes the specified table, if present.')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
-              help='The output directory where the output files are to be created. If it doesn\'t exist, will be created. If not specified, files are saved to the same folder.')
+              help='The output directory where the output files are to be created. If it doesn\'t exist, will be'
+                   'created. If not specified, files are saved to the same folder.')
 @click.option('--recalc-timestamp/--no-recalc-timestamp', default=False,
-              help='Keeps the original font \'modified\' timestamp (head.modified) or set it to current time. By default, original timestamp is kept.')
+              help='Keeps the original font \'modified\' timestamp (head.modified) or set it to current time. By'
+                   'default, original timestamp is kept.')
 @click.option('--overwrite/--no-overwrite', default=True,
-              help='Overwrites existing output files or save them to a new file (numbers are appended at the end of file name). By default, files are overwritten.')
-def cli(input_path, bold, italic, oblique, width, weight, embed_level, use_typo_metrics, ach_vend_id, add_dummy_dsig, table_to_delete, recalc_timestamp, output_dir, overwrite):
+              help='Overwrites existing output files or save them to a new file (numbers are appended at the end of'
+                   'filename). By default, files are overwritten.')
+def cli(input_path, bold, italic, oblique, width, weight, embed_level, use_typo_metrics, ach_vend_id, add_dummy_dsig,
+        table_to_delete, recalc_timestamp, output_dir, overwrite):
     """
 Command line font editor.
 
@@ -71,11 +74,11 @@ Usage examples:
 
     for f in files:
         try:
-            font = TTFont(f, recalcTimestamp=recalc_timestamp)
-            is_bold = pyFont(font).isBold()
-            is_italic = pyFont(font).isItalic()
-            is_oblique = pyFont(font).isOblique()
-            uses_typo_metrics = pyFont(font).usesTypoMetrics()
+            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            is_bold = font.isBold()
+            is_italic = font.isItalic()
+            is_oblique = font.isOblique()
+            uses_typo_metrics = font.usesTypoMetrics()
             usWeightClass = font['OS/2'].usWeightClass
             usWidthClass = font['OS/2'].usWidthClass
             fsType = font['OS/2'].fsType
@@ -85,26 +88,26 @@ Usage examples:
             if bold is not None:
                 if is_bold != bold:
                     if bold is True:
-                        pyFont(font).setBold()
+                        font.setBold()
                     else:
-                        pyFont(font).unsetBold()
+                        font.unsetBold()
                     modified = True
 
             if italic is not None:
                 if is_italic != italic:
                     if italic is True:
-                        pyFont(font).setItalic()
+                        font.setItalic()
                     else:
-                        pyFont(font).unsetItalic()
+                        font.unsetItalic()
                     modified = True
 
             if oblique is not None:
                 if is_oblique != oblique:
                     if oblique is True:
-                        pyFont(font).setOblique()
+                        font.setOblique()
                     else:
-                        pyFont(font).unsetOblique()
-                        
+                        font.unsetOblique()
+
                     modified = True
 
             if weight is not None:
@@ -131,29 +134,30 @@ Usage examples:
                 if len(ach_vend_id) < 4:
                     ach_vend_id = str(ach_vend_id).ljust(4)
                 if not ach_vend_id == font['OS/2'].achVendID:
-                    pyFont(font).setAchVendID(ach_vend_id)
+                    font.setAchVendID(ach_vend_id)
                     modified = True
 
-            if use_typo_metrics is not None:        
+            if use_typo_metrics is not None:
                 if uses_typo_metrics != use_typo_metrics:
                     font['OS/2'].version = 4
                     if use_typo_metrics is True:
                         if font['OS/2'].version > 3:
-                            pyFont(font).setUseTypoMetrics()
+                            font.setUseTypoMetrics()
                             modified = True
                         else:
-                            click.secho("\nfsSelection bits 7 is only defined in OS/2 table version 4 and up. Current version: {}".format(font['OS/2'].version), fg='red')
+                            click.secho("\nfsSelection bits 7 is only defined in OS/2 table version 4 and up."
+                                        "Current version: {}".format(font['OS/2'].version), fg='red')
                     if use_typo_metrics is False:
-                        pyFont(font).unsetUseTypoMetrics()
+                        font.unsetUseTypoMetrics()
                         modified = True
 
             if add_dummy_dsig:
-                if not font.has_key('DSIG'):
-                    pyFont(font).addDummyDSIG()
+                if ['DSIG'] not in font:
+                    font.addDummyDSIG()
                     modified = True
 
             if table_to_delete:
-                if font.has_key(table_to_delete):
+                if table_to_delete in font:
                     del font[table_to_delete]
                     modified = True
 
