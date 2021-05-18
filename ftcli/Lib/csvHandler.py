@@ -149,7 +149,7 @@ class csvHandler(object):
             remove_list.extend(obliques)
             remove_list.sort(key=len, reverse=True)
 
-            width_string=width_string.replace(weight_string, '')
+            width_string = width_string.replace(weight_string, '')
 
             width_string = self.__replaceListItems(
                 input_string=width_string, remove_list=remove_list, keep_list=widthsList)

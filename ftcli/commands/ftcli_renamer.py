@@ -64,8 +64,7 @@ Renames font files according to the provided source string.
                 os.rename(f, new_file)
                 click.secho("%s --> %s" % (n, os.path.basename(new_file)), fg='green')
 
-            except:
-                message = f + ' --> not a valid font'
-                click.secho(message, fg='red')
+            except Exception as e:
+                click.secho('ERROR: {}'.format(e), fg='red')
         else:
             click.secho("%s --> skipped" % n, fg='yellow')

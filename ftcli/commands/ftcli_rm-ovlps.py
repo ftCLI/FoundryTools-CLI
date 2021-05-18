@@ -40,5 +40,5 @@ look weird if only some glyphs are left (un)hinted.
                 click.secho('%s saved' % output_file, fg='green')
             else:
                 click.secho('%s in not a TrueType file' % f, fg='red')
-        except:
-            click.secho('ERROR: %s is not a valid font' % f, fg='red')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')

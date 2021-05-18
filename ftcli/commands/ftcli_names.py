@@ -58,8 +58,9 @@ Copies namerecords from Windows table to Macintosh table.
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho('%s saved' % f, fg='green')
-        except:
-            click.secho('ERROR: %s is not a valid font' % f, fg='red')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
+
 
 
 # setname
@@ -114,8 +115,9 @@ display available languages.
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho('%s saved' % output_file, fg='green')
-        except:
-            click.secho('ERROR: %s is not a valid font' % f, fg='red')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
+
 
 
 # delname
@@ -164,8 +166,9 @@ Use '-l ALL' to delete the name ID from all languages.
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho('%s saved' % output_file, fg='green')
-        except:
-            click.secho('ERROR: %s is not a valid font' % f, fg='red')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
+
 
 
 # findreplace
@@ -225,8 +228,8 @@ ftcli names replace .\\fonts\\MyFont-Black.otf --os "RemoveMe" --ns ""
                 click.secho('%s --> saved' % output_file, fg='green')
             else:
                 click.secho('%s --> no changes made' % f, fg='yellow')
-        except:
-            click.secho('ERROR: %s is not a valid font' % f, fg='red')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
 
 
 cli = click.CommandCollection(sources=[

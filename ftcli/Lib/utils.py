@@ -202,42 +202,6 @@ def getSourceString(font_file, string_source):
     return string
 
 
-def dictToList(dict):
-    list = []
-    for values in dict.values():
-        for value in values:
-            list.append(value)
-    return list
-
-
-def strReplaceListItems(string, list, emptyString=""):
-    # Order the list by item's reverse length to remove
-    # make sure that "ExtraBold" is replaced before "Bold"
-    list.sort(key=len, reverse=True)
-    for value in list:
-        string = string.lower().replace(value.lower(), "", 1)
-        if string == "":
-            string = emptyString
-    return string
-
-
-def getKeyFromValue(dict, string):
-    for key, values in dict.items():
-        for value in values:
-            if (string.lower().replace(" ", "") == value.lower().replace(" ", "")):
-                return key
-
-
-def sectionToDict(config, section, delimiter=","):
-    dict = {}
-    for k, v in config.items(section):
-        key = k
-        values = v.split(delimiter)
-        values = [value.strip() for value in values]
-        dict[key] = values
-    return dict
-
-
 # Replaced by click.clear()
 
 def clear():
@@ -246,7 +210,6 @@ def clear():
         _ = system('cls')
     else:
         _ = system('clear')
-
 
 def is_nth_bit_set(x: int, n: int):
     if x & (1 << n):

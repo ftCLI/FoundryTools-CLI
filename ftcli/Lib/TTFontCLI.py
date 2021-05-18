@@ -1,5 +1,6 @@
 from textwrap import TextWrapper
 
+import click
 from fontTools.misc.timeTools import timestampToString
 from fontTools.ttLib import TTFont
 from fontTools.ttLib import newTable
@@ -323,12 +324,12 @@ class TTFontCLI(TTFont):
             for a in attr_list:
                 try:
                     old_value = str(getattr(input_object, a))
-                    new_value = old_value.replace(
-                        oldString, newString).replace("  ", " ").strip()
+                    new_value = old_value.replace(oldString, newString).replace("  ", " ").strip()
                     if not old_value == new_value:
                         fixCount += 1
                         setattr(input_object, a, new_value)
-                except Exception:
+                except Exception as e:
+                    click.secho('ERROR: {}'.format(e))
                     pass
 
         return fixCount

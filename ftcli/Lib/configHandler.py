@@ -1,5 +1,4 @@
 import json
-import os
 import sys
 
 import click
@@ -16,11 +15,8 @@ class configHandler(object):
             with open(self.config_file) as cf:
                 config = json.load(cf)
             return config
-        except json.decoder.JSONDecodeError:
-            click.secho('\nERROR: JSON decoder error.', fg='red')
-            sys.exit()
-        except:
-            click.secho('\nUNKNOWN ERROR.', fg='red')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
             sys.exit()
 
     def saveConfig(self, config):

@@ -176,5 +176,5 @@ Usage examples:
             else:
                 click.secho('% s --> no changes made' % f, fg='yellow')
 
-        except:
-            click.secho('%s --> not a valid font' % f, fg='red')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')

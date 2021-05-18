@@ -1,7 +1,8 @@
 import os
 
 import click
-from fontTools.ttLib import TTFont, TTCollection
+from fontTools.ttLib import TTFont
+
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.utils import (getFontsList, guessFamilyName, makeOutputFileName)
 
@@ -20,7 +21,7 @@ Parses all WOFF and WOFF2 files in INPUT_PATH and creates a CSS stylesheet to us
 
     files = getFontsList(input_path)
 
-    css_file = os.path.join(input_path, 'fonts.css') if os.path.isdir(input_path)\
+    css_file = os.path.join(input_path, 'fonts.css') if os.path.isdir(input_path) \
         else os.path.join(os.path.dirname(input_path), 'fonts.css')
     with open(css_file, 'w') as stylesheet:
         pass
@@ -91,7 +92,7 @@ Parses all WOFF and WOFF2 files in INPUT_PATH and creates a CSS stylesheet to us
 
         with open(css_file, 'a') as css:
             css.write(css_string)
-    
+
     click.secho("{} created.".format(css_file), fg='green')
 
 
@@ -138,14 +139,15 @@ specified, both WOFF and WOFF2 files will be created.
             if font.flavor is None:
                 for flv in flavors:
                     output_file = makeOutputFileName(
-                        f, outputDir=output_dir, extension='.'+flv, overWrite=overwrite)
+                        f, outputDir=output_dir, extension='.' + flv, overWrite=overwrite)
                     font.flavor = flv
                     font.save(output_file)
                     click.secho('%s saved' % output_file, fg='green')
                 if delete_source_file:
                     os.remove(f)
-        except:
-            click.secho('ERROR: %s is not a valid font' % f, fg='red')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
+
 
 # decompress
 
@@ -188,8 +190,8 @@ Output will be a ttf or otf file, depending on the webfont flavor (TTF or CFF).
                 click.secho('%s saved' % os.path.basename(output_file), fg='green')
                 if delete_source_file:
                     os.remove(f)
-        except:
-            click.secho('ERROR: %s is not a valid font' % f, fg='red')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
 
 
 cli = click.CommandCollection(sources=[fontToWebfont, webfontToFont, makeCSS], help="""

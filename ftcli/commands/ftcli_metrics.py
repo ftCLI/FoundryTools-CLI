@@ -3,7 +3,7 @@ import sys
 import click
 
 from ftcli.Lib.utils import getFontsList, makeOutputFileName
-from  ftcli.Lib.TTFontCLI import TTFontCLI
+from ftcli.Lib.TTFontCLI import TTFontCLI
 
 
 @click.group()
@@ -66,8 +66,8 @@ def align(input_path, sil_method, output_dir, recalc_timestamp, overwrite):
             realDescenders.extend(
                 [abs(yMin), abs(usWinDescent), abs(descender)])
 
-        except:
-            click.secho('ERROR: %s is not a valid font' % f, fg='red')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
             files.remove(f)
 
     maxRealAscender = max(realAscenders)
@@ -100,8 +100,8 @@ def align(input_path, sil_method, output_dir, recalc_timestamp, overwrite):
                 f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho('%s saved' % output_file, fg='green')
-        except:
-            click.secho('ERROR: %s is not a valid font' % f, fg='red')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
 
 
 @click.group()
@@ -140,8 +140,8 @@ def copy(source_file, destination, output_dir, recalc_timestamp, overwrite):
         sTypoDescender = source_font['OS/2'].sTypoDescender
         sTypoLineGap = source_font['OS/2'].sTypoLineGap
 
-    except:
-        click.secho('%s is not a valid font', fg='red')
+    except Exception as e:
+        click.secho('ERROR: {}'.format(e), fg='red')
         sys.exit()
 
     files = getFontsList(destination)
@@ -164,8 +164,8 @@ def copy(source_file, destination, output_dir, recalc_timestamp, overwrite):
                 f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho('%s saved' % output_file, fg='green')
-        except:
-            click.secho('ERROR: %s is not a valid font' % f, fg='red')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
 
 
 cli = click.CommandCollection(sources=[alignVMetrics, copyVMetrics], help="""

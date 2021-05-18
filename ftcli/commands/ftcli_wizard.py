@@ -185,7 +185,7 @@ def recalcCSV():
 @click.option('-s', '--source-string', type=click.Choice(
     choices=('fname', '1_1_2', '1_4', '1_6', '1_16_17', '1_18', '3_1_2', '3_4', '3_6', '3_16_17', 'cff_1', 'cff_2',
              'cff_3')), default='fname', show_choices=True, show_default=True,
-    help="""
+              help="""
 The source string be used to recalculate the CSV lines can be the file name, a namerecord, a combination of namerecords
 or values stored in the 'CFF' table.
 
@@ -290,23 +290,23 @@ def recalcNames():
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
 def recalc_names(
-    input_path,
-    config_file,
-    linked_styles,
-    exclude_namerecords,
-    shorten_width,
-    shorten_weight,
-    shorten_slope,
-    fix_cff,
-    super_family,
-    alt_uid,
-    regular_italic,
-    keep_regular,
-    old_full_font_name,
-    oblique_not_italic,
-    output_dir,
-    recalc_timestamp,
-    overwrite
+        input_path,
+        config_file,
+        linked_styles,
+        exclude_namerecords,
+        shorten_width,
+        shorten_weight,
+        shorten_slope,
+        fix_cff,
+        super_family,
+        alt_uid,
+        regular_italic,
+        keep_regular,
+        old_full_font_name,
+        oblique_not_italic,
+        output_dir,
+        recalc_timestamp,
+        overwrite
 ):
     """
     Recalculates namerecords according to the values stored in the data.csv file.
@@ -363,7 +363,7 @@ def recalc_names(
             font.recalcNames(
                 font_data,
                 linked_styles=linked_styles, namerecords_to_ignore=exclude_namerecords, shorten_weight=shorten_weight,
-                shorten_width=shorten_width, shorten_slope=shorten_slope,alt_uid=alt_uid, fixCFF=fix_cff,
+                shorten_width=shorten_width, shorten_slope=shorten_slope, alt_uid=alt_uid, fixCFF=fix_cff,
                 isSuperFamily=super_family, regular_italic=regular_italic, keep_regular=keep_regular,
                 old_full_font_name=old_full_font_name, oblique_not_italic=oblique_not_italic)
 
@@ -371,8 +371,8 @@ def recalc_names(
                 f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho('{} saved'.format(output_file), fg='green')
-        except:
-            click.secho('{} is not a valid font'.format(f), fg='red')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
             pass
 
 
