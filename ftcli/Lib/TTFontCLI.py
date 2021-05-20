@@ -340,6 +340,15 @@ class TTFontCLI(TTFont):
                 self['name'].removeNames(
                     name.nameID, name.platformID, name.platEncID, name.langID)
 
+    def delMacNames(self, exclude_namerecords=None):
+        if exclude_namerecords is None:
+            exclude_namerecords = []
+        exclude_namerecords = [int(i) for i in exclude_namerecords]
+        for name in self['name'].names:
+            if name.platformID != 1 or name.nameID in exclude_namerecords:
+                continue
+            self['name'].removeNames(name.nameID, name.platformID, name.platEncID, name.langID)
+
     def win2mac(self):
         self.removeEmptyNames()
         for name in self['name'].names:

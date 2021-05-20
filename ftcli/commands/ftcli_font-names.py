@@ -9,7 +9,7 @@ def printLanguageCodes():
 
 
 @printLanguageCodes.command()
-def langhelp():
+def lang_help():
     """
 Prints available languages that can be used with the 'setname' and 'delname' commands
     """
@@ -44,7 +44,7 @@ def winToMac():
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
-def win2mac(input_path, output_dir, recalc_timestamp, overwrite):
+def fill_mac_names(input_path, output_dir, recalc_timestamp, overwrite):
     """
 Copies namerecords from Windows table to Macintosh table.
     """
@@ -62,6 +62,61 @@ Copies namerecords from Windows table to Macintosh table.
             click.secho('ERROR: {}'.format(e), fg='red')
 
 
+@click.group()
+def deleteMacNames():
+    pass
+
+
+@deleteMacNames.command()
+@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
+@click.option('-ex', '--exclude-namerecords', type=click.Choice(
+    choices=['1', '2', '3', '4', '5', '6', '16', '17', '18']), multiple=True,
+              help="Name IDs to ignore. The specified name IDs won't be deleted. This option can be repeated"
+                   "(example: -ex 3 -ex 5 -ex 6...).")
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
+              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
+                   'exist, will be created. If not specified, files are saved to the same folder.')
+@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
+              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
+                   'default, original timestamp is kept.')
+@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
+              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
+                   'name). By default, files are overwritten.')
+def del_mac_names(input_path, exclude_namerecords, output_dir, recalc_timestamp, overwrite):
+    """
+    Deletes all namerecords in platformID 1.
+
+    According to Apple (https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6name.html), "names with
+    platformID 1 were required by earlier versions of macOS. Its use on modern platforms is discouraged. Use names with
+    platformID 3 instead for maximum compatibility. Some legacy software, however, may still require names with
+    platformID 1, platformSpecificID 0".
+
+    USAGE:
+
+        ftcli names del-mac-names INPUT_PATH [OPTIONS]
+
+    Use the -ex / --exclude-namerecords option to prevent certain namerecords to be deleted:
+
+        ftcli names del-mac-names INPUT_PATH -ex 1
+
+    The -ex / --exclude-namerecords option can be repeated to exclude from deletion more than one namerecord:
+
+        ftcli names del-mac-names INPUT_PATH -ex 1 -ex 3 -ex 6
+
+    Input path can be a font or a folder with fonts.
+    """
+
+    files = getFontsList(input_path)
+
+    for f in files:
+        try:
+            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font.delMacNames(exclude_namerecords=exclude_namerecords)
+            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
+            font.save(output_file)
+            click.secho('%s saved' % f, fg='green')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
 
 # setname
 
@@ -87,7 +142,7 @@ def setNameRecord():
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
-def setname(input_path, name_id, platform, language, string, output_dir, recalc_timestamp, overwrite):
+def set_name(input_path, name_id, platform, language, string, output_dir, recalc_timestamp, overwrite):
     """
 Writes the specified namerecord in the name table.
 
@@ -119,7 +174,6 @@ display available languages.
             click.secho('ERROR: {}'.format(e), fg='red')
 
 
-
 # delname
 
 
@@ -145,7 +199,7 @@ def delNameRecord():
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
-def delname(input_path, name_id, platform, language, output_dir, recalc_timestamp, overwrite):
+def del_name(input_path, name_id, platform, language, output_dir, recalc_timestamp, overwrite):
     """
 Deletes the specified nemerecord from the name table.
 
@@ -168,7 +222,6 @@ Use '-l ALL' to delete the name ID from all languages.
             click.secho('%s saved' % output_file, fg='green')
         except Exception as e:
             click.secho('ERROR: {}'.format(e), fg='red')
-
 
 
 # findreplace
@@ -201,7 +254,7 @@ def findReplace():
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
-def replace(input_path, old_string, new_string, name_id, platform, fix_cff, output_dir, recalc_timestamp, overwrite):
+def find_repl(input_path, old_string, new_string, name_id, platform, fix_cff, output_dir, recalc_timestamp, overwrite):
     """
 Replaces a string in the name table with a new string.
 
@@ -233,6 +286,6 @@ ftcli names replace .\\fonts\\MyFont-Black.otf --os "RemoveMe" --ns ""
 
 
 cli = click.CommandCollection(sources=[
-    setNameRecord, delNameRecord, findReplace, winToMac, printLanguageCodes], help="""
+    setNameRecord, delNameRecord, findReplace, winToMac, deleteMacNames, printLanguageCodes], help="""
 A command line tool to add, delete and edit namerecords.
     """)
