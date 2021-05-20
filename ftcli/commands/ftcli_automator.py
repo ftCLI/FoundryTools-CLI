@@ -393,7 +393,6 @@ family, as well as the desired italic and oblique literals:
 {
     "italics": ["It", "Italic"],
 \b
-{
     "obliques": ["Obl", "Oblique"],
 \b
     "weights": {
