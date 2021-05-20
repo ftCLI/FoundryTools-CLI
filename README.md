@@ -322,7 +322,7 @@ Sets or clears the USE_TYPO_METRICS bit (OS/2.fsSelection bit 7).
 
 If set, it is strongly recommended that applications use OS/2.sTypoAscender - OS/2.sTypoDescender + OS/2.sTypoLineGap as the default line spacing for this font.
 
-See: [https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection]
+See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
 
     -ach, --ach-vend-id TEXT
 
