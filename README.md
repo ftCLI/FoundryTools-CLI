@@ -351,10 +351,61 @@ Keeps the original font 'modified' timestamp (head.modified) or set it to curren
 Overwrites existing output files or save them to a new file (numbers are appended at the end offilename). By default, files are overwritten.
 
 ### font-metrics
+Usage:
+
+    ftcli font-metrics [OPTIONS] COMMAND [ARGS]...
+
 Aligns all the fonts to the same baseline.
 
-###font-names
+The 'ftcli font-metrics align' command calculates the maximum ascenders and descenders of a set of fonts and applies them to all fonts in that set.
+
+The 'ftcli font-metrics copy' command copies vertical metrics from a source font to one or more destination fonts.
+
+Commands:
+
+    align
+
+Aligns all fonts in INPUT_PATH to the same baseline.
+
+    copy
+    
+Copies vertical metrics from a source font to one or more destination fonts.
+
+
+### font-names
+
+Usage:
+
+    ftcli font-names [OPTIONS] COMMAND [ARGS]...
+
 A command line tool to add, delete and edit namerecords.
+
+Commands:
+
+    del-mac-names
+
+Deletes all namerecords in platformID 1.
+    
+    del-name
+
+Deletes the specified nemerecord from the name table.
+
+    fill-mac-names
+
+Copies namerecords from Windows table to Macintosh table.
+
+    find-repl
+
+Replaces a string in the name table with a new string.
+
+    lang-help
+  
+Prints available languages that can be used with the...
+    
+    set-name
+
+Writes the specified namerecord in the name table.
+
 
 ### font-renamer
 Renames font files according to the provided source.
