@@ -63,7 +63,7 @@ Command line editor for JSON configuration files.
 
 Example:
 
-    ftcli wizard edit-cfg "C:\\Fonts\\config.json"
+    ftcli automator edit-cfg "C:\\Fonts\\config.json"
 
 It is strongly recommended to use this tool to edit the JSON configuration
 files. It prevents malformed JSON errors and errors due to wrong values (for
@@ -94,14 +94,14 @@ Creates or resets the CSV database file (data.csv).
 
 Example 1:
 
-    ftcli wizard init-csv "C:\\Fonts\\"
+    ftcli automator init-csv "C:\\Fonts\\"
 
 The above command will create the 'data.csv' file in C:\\Fonts\\
 (and a configuration file with default values if it does not exist).
 
 Example 2:
 
-    ftcli wizard init-csv "C:\\Fonts\\Font.otf"
+    ftcli automator init-csv "C:\\Fonts\\Font.otf"
 
 The above command will create the 'data.csv' in the INPUT_PATH folder
 (or parent folder, if INPUT_PATH is a file).
@@ -117,7 +117,7 @@ font files found in INPUT_PATH;
 contains weight and widths literals, retrieved parsing the config.json
 file.
 
-It can be edited manually or using the 'ftcli wizard edit-csv INPUT_PATH'
+It can be edited manually or using the 'ftcli automator edit-csv INPUT_PATH'
 command.
     """
 
@@ -377,16 +377,17 @@ def recalc_names(
 
 
 cli = click.CommandCollection(sources=[editCFG, editCSV, initCFG, initCSV, recalcCSV, recalcNames], help="""
-A set of tools to correctly compile the name table and set proper values for usWeightClass, usWidthClass, bold and
-italic bits.
+A set of tools to correctly compile the name table and set proper values for usWeightClass, usWidthClass, bold, italic
+and oblique bits.
 
-The process requires a JSON configuration file and a CSV file that will be used to fix the fonts. Both files can be
-automatically created and eventually edited manually or using the integrated command line editor.
+The process creates a JSON configuration file and a CSV file that will be used to fix the fonts. Both files can be
+automatically created and eventually edited manually or using the integrated command line editor. Once everything is
+correctly set in the CSV file, the values inside it can be written to the fonts.
 
 1) The JSON configuration file.
 
 The 'config.json' file contains the desired style names to pair with each usWidthClass and usWeightClass values of the
-family, as well as the italic literals:
+family, as well as the desired italic and oblique literals:
 
 \b
 {
@@ -411,36 +412,26 @@ family, as well as the italic literals:
 Unless you have previously created a configuration file and want to reuse it, you need to create a standard
 configuration file and eventually customize it.
 
-    ftcli wizard init-cfg INPUT_PATH
+    ftcli automator init-cfg INPUT_PATH
 
 The above command will create a file named 'config.json' in the INPUT_PATH folder (or parent folder if INPUT_PATH is a
 file).
 
 Once created the configuration file, you may be in need to edit it according to your needs.
 
-    ftcli wizard edit-cfg CONFIG_FILE
+    ftcli automator edit-cfg CONFIG_FILE
 
 Values contained in the configuration file will be used to fill the data.csv file in the next steps.
 
 2) The CSV data file.
 
-The final data.csv file will contain the desired style names, family name, italic bits, usWidth class and usWeightClass
-values. Once properly filled, the values contained in this file will be written to the fonts.
+The final data.csv file will contain the desired style names, family name, italic and oblique bits, usWidthClass and
+usWeightClass values. Once properly filled, the values contained in this file will be written to the fonts.
 
-It contains 11 columns:
+It contains 13 columns:
 
-\b
-file_name
-is_bold 
-is_italic
-is_oblique
-uswidthclass
-wdt
-width
-usweightclass
-wgt
-weight
-family_name
+file_name, family_name, is_bold, is_italic, is_oblique, uswidthclass, wdt, width, usweightclass, wgt, weight, slp,
+slope.
 
 The 'is_bold' column is present only for completeness, but it's values will be ignored. A font will be set as bold only
 and only if, during the names recalculation, the user will choose to use linked styles (-ls / --linked styles option).
@@ -450,19 +441,21 @@ Condensed).
 
 The 'wgt' and 'weight' columns contain the short and long literals for the weight style names (for example: Lt, Light).
 
+The 'slp' and 'slope' columns contain the short and long literals for the slope style names (for example: It, Italic).
+
 The user will choose the namerecords where to write long or short literals.
 
 The 'data.csv' file can be created using the following command:
 
-    ftcli wizard init-csv INPUT_PATH
+    ftcli automator init-csv INPUT_PATH
 
 At this point, the CSV file will contain a representation of the actual state of the fonts (the family_name column will
-contain values of nameID 16, or nameID 1 if 16 is not present). It can be edited manually, using the 'ftcli wizard
-edit-csv' command and also automatically recalculated using the 'ftcli wizard-recalc-csv' command.
+contain values of nameID 16, or nameID 1 if 16 is not present). It can be edited manually, using the 'ftcli automator
+edit-csv' command and also automatically recalculated using the 'ftcli automator recalc-csv' command.
 
-The 'ftcli wizard-recalc-csv' command will recalculate style names, italic bits, width and weight style names according
-to the values contained in the JSON configuration file.
+The 'ftcli automator recalc-csv' command will recalculate style names, italic bits, width and weight style names
+according to the values contained in the JSON configuration file.
 
-When the 'data.csv' file contains the desired values, these values can be applied to fonts running the 'ftcli wizard
-recalc-names' command (see 'ftcli wizard recalc-names --help' for more information).
+When the 'data.csv' file contains the desired values, these values can be applied to fonts running the 'ftcli automator
+recalc-names' command (see 'ftcli automator recalc-names --help' for more information).
     """)
