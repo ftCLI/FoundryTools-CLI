@@ -1,16 +1,16 @@
 import os
 import sys
+from shutil import get_terminal_size
 
 import click
 from fontTools.misc.fixedTools import floatToFixedToStr
 from fontTools.misc.textTools import num2binary
 from fontTools.misc.timeTools import timestampToString
 from fontTools.ttLib import TTFont
-from shutil import get_terminal_size
 
+from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.configHandler import (DEFAULT_WEIGHTS, DEFAULT_WIDTHS, configHandler)
 from ftcli.Lib.csvHandler import csvHandler
-from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.utils import (getFontsList, wrapString)
 
 
@@ -166,18 +166,15 @@ class GUI(object):
             print('{} : {}'.format(key, value))
             choices.append(key)
 
-        choice = click.prompt(
-            message, type=click.Choice(choices), show_choices=True)
+        choice = click.prompt(message, type=click.Choice(choices), show_choices=True)
 
         # Weights editor
         if choice == '1':
-            self.__dictEditor(config_file, 'weights', 'usWeightClass',
-                              1, 1000, DEFAULT_WEIGHTS)
+            self.__dictEditor(config_file, 'weights', 'usWeightClass', 1, 1000, DEFAULT_WEIGHTS)
 
         # Widths editor
         if choice == '2':
-            self.__dictEditor(config_file, 'widths',
-                              'usWidthClass', 1, 9, DEFAULT_WIDTHS)
+            self.__dictEditor(config_file, 'widths', 'usWidthClass', 1, 9, DEFAULT_WIDTHS)
 
         # Italics editor
         if choice == '3':
