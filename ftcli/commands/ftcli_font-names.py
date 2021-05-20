@@ -93,15 +93,15 @@ def del_mac_names(input_path, exclude_namerecords, output_dir, recalc_timestamp,
 
     USAGE:
 
-        ftcli names del-mac-names INPUT_PATH [OPTIONS]
+        ftcli font-names del-mac-names INPUT_PATH [OPTIONS]
 
     Use the -ex / --exclude-namerecords option to prevent certain namerecords to be deleted:
 
-        ftcli names del-mac-names INPUT_PATH -ex 1
+        ftcli font-names del-mac-names INPUT_PATH -ex 1
 
     The -ex / --exclude-namerecords option can be repeated to exclude from deletion more than one namerecord:
 
-        ftcli names del-mac-names INPUT_PATH -ex 1 -ex 3 -ex 6
+        ftcli font-names del-mac-names INPUT_PATH -ex 1 -ex 3 -ex 6
 
     Input path can be a font or a folder with fonts.
     """
@@ -153,7 +153,7 @@ If name_id parameter is not specified, the first available nameID will be used.
 By default, the namerecord will be written both in platformID 1 (Macintosh) and platformID 3 (Windows) tables. Use
 -p/--platform-id [win|mac] option to write the namerecord only in the specified platform.
 
-Use the -l/--language option to write the namerecord in a language different than 'en'. Use 'ftcli names langhelp' to
+Use the -l/--language option to write the namerecord in a language different than 'en'. Use 'ftcli font-names langhelp' to
 display available languages.
     """
 
@@ -203,7 +203,7 @@ def del_name(input_path, name_id, platform, language, output_dir, recalc_timesta
     """
 Deletes the specified nemerecord from the name table.
 
-Use the -l/--language option to delete a namerecord in a language different than 'en'. Use 'ftcli names langhelp' to
+Use the -l/--language option to delete a namerecord in a language different than 'en'. Use 'ftcli font-names langhelp' to
 display available languages.
 
 Use '-l ALL' to delete the name ID from all languages.
@@ -260,11 +260,11 @@ Replaces a string in the name table with a new string.
 
 If the '-cff' option is passed, the string will be replaced in the 'CFF' table too.
 
-ftcli names replace .\\fonts\\MyFont-Black.otf --os "Black" --ns "Heavy" --cff
+ftcli font-names replace .\\fonts\\MyFont-Black.otf --os "Black" --ns "Heavy" --cff
 
 To simply remove a string, use an empty string as new string:
 
-ftcli names replace .\\fonts\\MyFont-Black.otf --os "RemoveMe" --ns ""
+ftcli font-names replace .\\fonts\\MyFont-Black.otf --os "RemoveMe" --ns ""
     """
 
     files = getFontsList(input_path)
