@@ -551,50 +551,50 @@ class GUI(object):
                         string = "{0:<29}".format(' CFFFont name') + ' : ' + str(font['CFF '].cff.fontNames[0])
                         string = wrapString(string, indent, max_lines, terminal_width)
                         print(string)
-                    except Exception as e:
-                        click.secho('ERROR: {}'.format(e), fg='red')
+                    except:
+                       pass
 
                     try:
                         string = "{0:<29}".format(' version') + ' : ' + str(otFont.topDictIndex[0].version)
                         string = wrapString(string, indent, max_lines, terminal_width)
                         print(string)
-                    except Exception as e:
-                        click.secho('ERROR: {}'.format(e), fg='red')
+                    except:
+                        pass
 
                     try:
                         string = "{0:<29}".format(' Notice') + ' : ' + str(otFont.topDictIndex[0].Notice)
                         string = wrapString(string, indent, max_lines, terminal_width)
                         print(string)
-                    except Exception as e:
-                        click.secho('ERROR: {}'.format(e), fg='red')
+                    except:
+                        pass
 
                     try:
                         string = "{0:<29}".format(' Copyright') + ' : ' + str(otFont.topDictIndex[0].Copyright)
                         string = wrapString(string, indent, max_lines, terminal_width)
                         print(string)
-                    except Exception as e:
-                        click.secho('ERROR: {}'.format(e), fg='red')
+                    except:
+                        pass
 
                     try:
                         string = "{0:<29}".format(' FullName') + ' : ' + str(otFont.topDictIndex[0].FullName)
                         string = wrapString(string, indent, max_lines, terminal_width)
                         print(string)
-                    except Exception as e:
-                        click.secho('ERROR: {}'.format(e), fg='red')
+                    except:
+                        pass
 
                     try:
                         string = "{0:<29}".format(' FamilyName') + ' : ' + str(otFont.topDictIndex[0].FamilyName)
                         string = wrapString(string, indent, max_lines, terminal_width)
                         print(string)
-                    except Exception as e:
-                        click.secho('ERROR: {}'.format(e), fg='red')
+                    except:
+                        pass
 
                     try:
                         string = "{0:<29}".format(' Weight') + ' : ' + str(otFont.topDictIndex[0].Weight)
                         string = wrapString(string, indent, max_lines, terminal_width)
                         print(string)
-                    except Exception as e:
-                        click.secho('ERROR: {}'.format(e), fg='red')
+                    except:
+                        pass
 
                     print("-" * terminal_width)
             except Exception as e:
