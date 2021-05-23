@@ -152,7 +152,7 @@ Usage examples:
                         modified = True
 
             if add_dummy_dsig:
-                if ['DSIG'] not in font:
+                if 'DSIG' not in font:
                     font.addDummyDSIG()
                     modified = True
 
