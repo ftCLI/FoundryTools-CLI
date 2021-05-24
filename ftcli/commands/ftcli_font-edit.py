@@ -64,9 +64,9 @@ Command line font editor.
 
 Usage examples:
 
-    ftcli cli-tool "C:\\Fonts\\" -el 4 -utm -dsig -o "C:\\Fonts\\Fixed fonts\\"
+    ftcli font-edit "C:\\Fonts\\" -el 4 -utm -dsig -o "C:\\Fonts\\Fixed fonts\\"
 
-    ftcli cli-tool "C:\\Fonts\\MyFont-BoldItalic.otf" -b -i --wgt 700 --no-overwrite
+    ftcli font-edit "C:\\Fonts\\MyFont-BoldItalic.otf" -b -i --wgt 700 --no-overwrite
 
     """
 
