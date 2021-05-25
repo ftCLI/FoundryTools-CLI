@@ -1,6 +1,7 @@
 import click
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.removeOverlaps import removeOverlaps
+
 from ftcli.Lib.utils import getFontsList, makeOutputFileName
 
 

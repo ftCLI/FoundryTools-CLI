@@ -13,10 +13,10 @@ from ftcli.Lib.utils import getFontsList, makeOutputFileName
               help='Sets or clears the italic bits (OS/2.fsSelection bit 0 and head.macStyle bit 1).')
 @click.option('-ob/-nob', '--oblique/--no-oblique', default=None,
               help='Sets or clears the oblique bit (OS/2.fsSelection bit 9).')
-@click.option('-wgt', '--weight', type=click.IntRange(1, 1000),
-              help='Sets the OS/2.usWeightClass value. This parameter must be an integer between 1 and 1000.')
-@click.option('-wdt', '--width', type=click.IntRange(1, 9),
-              help='Sets the OS/2.usWidthClass value. This parameter must be an integer between 1 and 9.')
+@click.option('-wd', '--width', type=click.IntRange(1, 9),
+              help='Sets the OS/2.usWidthClass value (1-9)')
+@click.option('-wg', '--weight', type=click.IntRange(1, 1000),
+              help='Sets the OS/2.usWeightClass value (1-1000).')
 @click.option('-el', '--embed-level', type=click.Choice(['0', '2', '4', '8']), default=None,
               help="""
 Sets embedding level (OS/2.fsType).
@@ -46,8 +46,6 @@ If the DSIG table is already present, this option will be ignored.
 
 Use '-dt DSIG -dsig' to force the replacement of an existing DSIG table.
 """)
-@click.option('-dt', '--delete-table', 'table_to_delete', type=click.STRING,
-              help='Removes the specified table, if present.')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help='The output directory where the output files are to be created. If it doesn\'t exist, will be'
                    'created. If not specified, files are saved to the same folder.')
@@ -58,16 +56,9 @@ Use '-dt DSIG -dsig' to force the replacement of an existing DSIG table.
               help='Overwrites existing output files or save them to a new file (numbers are appended at the end of'
                    'filename). By default, files are overwritten.')
 def cli(input_path, bold, italic, oblique, width, weight, embed_level, use_typo_metrics, ach_vend_id, add_dummy_dsig,
-        table_to_delete, recalc_timestamp, output_dir, overwrite):
+        recalc_timestamp, output_dir, overwrite):
     """
-Command line font editor.
-
-Usage examples:
-
-    ftcli font-edit "C:\\Fonts\\" -el 4 -utm -dsig -o "C:\\Fonts\\Fixed fonts\\"
-
-    ftcli font-edit "C:\\Fonts\\MyFont-BoldItalic.otf" -b -i --wgt 700 --no-overwrite
-
+    A command line tool to edit some OS/2 table attributes.
     """
 
     files = getFontsList(input_path)
@@ -154,11 +145,6 @@ Usage examples:
             if add_dummy_dsig:
                 if 'DSIG' not in font:
                     font.addDummyDSIG()
-                    modified = True
-
-            if table_to_delete:
-                if table_to_delete in font:
-                    del font[table_to_delete]
                     modified = True
 
             if output_dir is None:

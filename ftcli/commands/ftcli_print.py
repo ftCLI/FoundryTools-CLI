@@ -17,9 +17,9 @@ def printName():
               help="nameID (Integer between 1 and 32767)")
 @click.option('-ml', '--max-lines', type=click.INT, default=None,
               help="Maximum number of lines to be printed.")
-def namerecord(input_path, name_id, max_lines):
+def ft_name(input_path, name_id, max_lines):
     """
-Prints a single namerecord of one ore more fonts.
+Prints a single namerecord.
 
 Use the -ml, --max-lines option to limit the printed line numbers to the desired value.
     """
@@ -39,7 +39,7 @@ def printNames():
               help="Maximum number of lines to be printed for each namerecord")
 @click.option('-min', '--minimal', is_flag=True,
               help="Prints only nameIDs 1, 2, 3, 4, 5, 6, 16, 17, 18, 21 and 22.")
-def font_names(input_path, max_lines, minimal):
+def ft_names(input_path, max_lines, minimal):
     """
 Prints the 'name' table and 'CFF' names (if present).
 
@@ -62,7 +62,7 @@ def printFontInfo():
 
 @printFontInfo.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-def font_info(input_path):
+def ft_info(input_path):
     """
     Prints detailed font information.
     """
@@ -82,9 +82,9 @@ def printFontsList():
 
 @printFontsList.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-def fonts_list(input_path):
+def ft_list(input_path):
     """
-Prints a list of fonts in INPUT_PATH with basic information.
+Prints a list of fonts with basic information.
     """
     if len(getFontsList(input_path)) > 0:
         GUI().printFtList(input_path)
@@ -101,7 +101,7 @@ def printHeadTable():
 
 @printHeadTable.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True, dir_okay=False))
-def table_head(input_path):
+def tbl_head(input_path):
     """
 Prints the 'head' table.
     """
@@ -120,7 +120,7 @@ def printOS2Table():
 
 @printOS2Table.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True, dir_okay=False))
-def table_os2(input_path):
+def tbl_os2(input_path):
     """
 Prints the 'OS/2' table.
     """
@@ -129,27 +129,8 @@ Prints the 'OS/2' table.
     else:
         click.secho('No valid font found.', fg='red')
 
-# list tables
-
-
-@click.group()
-def printTblList():
-    pass
-
-
-@printTblList.command()
-@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-def font_tables(input_path):
-    """
-Prints a list of tables.
-    """
-    if len(getFontsList(input_path)) > 0:
-        GUI().listTables(input_path)
-    else:
-        click.secho('No valid font found.', fg='red')
-
 
 cli = click.CommandCollection(sources=[printName, printNames, printFontInfo, printFontsList, printOS2Table,
-                                       printHeadTable, printTblList], help="""
+                                       printHeadTable], help="""
 Prints various font's information.
 """)

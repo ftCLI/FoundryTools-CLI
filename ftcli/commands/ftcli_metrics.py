@@ -33,7 +33,7 @@ def align(input_path, sil_method, output_dir, recalc_timestamp, overwrite):
 
     This can produce undesired effects (an exaggerated line height) when one or more fonts contain swashes, for example.
     In such cases, it's better to copy the vertical metrics from a template font to one or more destination fonts using
-    the 'ftcli font-metrics copy' command.
+    the 'ftcli metrics copy' command.
 
     See https://www.kltf.de/downloads/FontMetrics-kltf.pdf for more information.
     """
@@ -171,9 +171,9 @@ def copy(source_file, destination, output_dir, recalc_timestamp, overwrite):
 cli = click.CommandCollection(sources=[alignVMetrics, copyVMetrics], help="""
 Aligns all the fonts to the same baseline.
 
-The 'ftcli font-metrics align' command calculates the maximum ascenders and descenders of a set of fonts and applies them to
+The 'ftcli metrics align' command calculates the maximum ascenders and descenders of a set of fonts and applies them to
 all fonts in that set.
 
-The 'ftcli font-metrics copy' command copies vertical metrics from a source font to one or more destination fonts.
+The 'ftcli metrics copy' command copies vertical metrics from a source font to one or more destination fonts.
     """
                               )

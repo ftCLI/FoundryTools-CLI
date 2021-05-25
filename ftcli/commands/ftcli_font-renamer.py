@@ -57,7 +57,7 @@ Renames font files according to the provided source string.
         if new_file != f:
             try:
                 os.rename(f, new_file)
-                click.secho("%s --> %s" % (n, new_file_name), fg='green')
+                click.secho("{} --> {}".format(n, new_file_name), fg='green')
 
             except FileExistsError:
                 new_file = makeOutputFileName(new_file, overWrite=False)
