@@ -3,6 +3,7 @@ import re
 import sys
 from textwrap import TextWrapper
 
+import click
 from fontTools.ttLib import TTFont
 
 # Fork of fontTools.misc.cliTools.makeOutputFileName.
@@ -10,7 +11,7 @@ from fontTools.ttLib import TTFont
 numberAddedRE = re.compile(r"#\d+$")
 
 
-def makeOutputFileName(input, outputDir=None, extension=None, overWrite=False):
+def makeOutputFileName(inputFile, outputDir=None, extension=None, overWrite=False):
     """Generates a suitable file name for writing output.
 
     Often tools will want to take a file, do some kind of transformation to it,
@@ -23,7 +24,7 @@ def makeOutputFileName(input, outputDir=None, extension=None, overWrite=False):
       overwriting an existing file.
 
     Args:
-        input: Name of input file.
+        inputFile: Name of input file.
         outputDir: Optionally, a new directory to write the file into.
         extension: Optionally, a replacement for the current file extension.
         overWrite: Overwriting an existing file is permitted if true; if false
@@ -33,7 +34,7 @@ def makeOutputFileName(input, outputDir=None, extension=None, overWrite=False):
     Returns:
         str: Suitable output filename
     """
-    dirName, fileName = os.path.split(input)
+    dirName, fileName = os.path.split(inputFile)
     fileName, ext = os.path.splitext(fileName)
     if outputDir:
         # BEGIN EDIT
@@ -43,7 +44,7 @@ def makeOutputFileName(input, outputDir=None, extension=None, overWrite=False):
         dirName = outputDir
     fileName = numberAddedRE.split(fileName)[0]
     if extension is None:
-        extension = os.path.splitext(input)[1]
+        extension = os.path.splitext(inputFile)[1]
     output = os.path.join(dirName, fileName + extension)
     n = 1
     if not overWrite:
@@ -55,7 +56,6 @@ def makeOutputFileName(input, outputDir=None, extension=None, overWrite=False):
 
 
 def getFontsList(input_path):
-
     files = []
 
     if os.path.isfile(input_path):
@@ -70,7 +70,7 @@ def getFontsList(input_path):
             try:
                 font = TTFont(os.path.join(input_path, f))
                 files.append(os.path.join(input_path, f))
-            except Exception as e:
+            except:
                 pass
 
     if len(files) == 0:
@@ -91,18 +91,6 @@ def getCsvPath(input_path):
     return data_file
 
 
-def getoutputfile(output_dir, output_file, overwrite):
-    if output_dir is None:
-        output_dir = os.path.split(output_file)[0]
-    else:
-        if not os.path.exists(output_dir):
-            os.mkdir(output_dir)
-    outfile_name = os.path.basename(output_file)
-    outfile = os.path.join(output_dir, outfile_name)
-    outfile = makeOutputFileName(outfile, overWrite=overwrite)
-    return outfile
-
-
 def wrapString(string, indent, max_lines, width):
     wrapped_string = TextWrapper(
         initial_indent="",
@@ -116,7 +104,6 @@ def wrapString(string, indent, max_lines, width):
 
 
 def guessFamilyName(font):
-
     family_name = ""
 
     try:
@@ -132,14 +119,13 @@ def guessFamilyName(font):
                     family_name = font['name'].getName(1, 1, 0, 0x0).toUnicode()
                 except AttributeError:
                     pass
-    except:
-        pass
+    except Exception as e:
+        click.secho('ERROR: {}'.format(e))
 
     return family_name
 
 
 def getSourceString(font_file, string_source):
-
     font = TTFont(font_file)
     file_name = os.path.basename(font_file)
     name_table = font['name']
@@ -210,6 +196,7 @@ def clear():
         _ = system('cls')
     else:
         _ = system('clear')
+
 
 def is_nth_bit_set(x: int, n: int):
     if x & (1 << n):
