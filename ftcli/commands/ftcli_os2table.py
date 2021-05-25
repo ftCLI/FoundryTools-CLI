@@ -38,14 +38,6 @@ See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
 """)
 @click.option('-ach', '--ach-vend-id', type=str,
               help='Sets the the OS/2.achVendID tag (vendor\'s four-character identifier).')
-@click.option('-dsig', '--add-dummy-dsig', is_flag=True,
-              help="""
-Adds a dummy signature.
-
-If the DSIG table is already present, this option will be ignored.
-
-Use '-dt DSIG -dsig' to force the replacement of an existing DSIG table.
-""")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help='The output directory where the output files are to be created. If it doesn\'t exist, will be'
                    'created. If not specified, files are saved to the same folder.')
@@ -141,11 +133,6 @@ def cli(input_path, bold, italic, oblique, width, weight, embed_level, use_typo_
                     if use_typo_metrics is False:
                         font.unsetUseTypoMetrics()
                         modified = True
-
-            if add_dummy_dsig:
-                if 'DSIG' not in font:
-                    font.addDummyDSIG()
-                    modified = True
 
             if output_dir is None:
                 output_dir = os.path.dirname(f)
