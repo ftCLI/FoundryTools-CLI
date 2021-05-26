@@ -106,7 +106,7 @@ Example:
 
     ftcli assistant edit-cfg "C:\Fonts\config.json"
 
-It is strongly recommended to use this tool to edit the JSON configuration files. It prevents malformed JSON errors and errors due to wrong values (for example, an out of range usWeightClass, or a string where's an integer is expected).
+It is strongly recommended using this tool to edit the JSON configuration files. It prevents malformed JSON errors and errors due to wrong values (for example, an out of range usWeightClass, or a string where's an integer is expected).
 
 #### edit-csv
 Usage:
@@ -115,13 +115,13 @@ Usage:
 
 Command line editor for 'data.csv' files.
 
-This tool is not intended to replace a code editor for CSV files, but can help to make small edits without leaving the command line. For complex projects, it's strongly recommended to use a code editor like Visual Studio Code or even Excel.
+This tool is not intended to replace a code editor for CSV files, but can help to make small edits without leaving the command line. For complex projects, it's strongly recommended using a code editor like Visual Studio Code or even Excel.
 
 Options:
 
     -c, --config-file PATH
 
-Use a custom configuration file instead of the default config.json file located in the same folderof INPUT_PATH.
+Use a custom configuration file instead of the default config.json file located in the same folder of INPUT_PATH.
 
 #### init-cfg
 Usage:
@@ -134,7 +134,7 @@ Options:
 
     -q, --quiet
 
-Suppress the overwrite confirmation message if the config.json file already exists.
+Suppress overwrite confirmation message if the config.json file already exists.
 
 #### init-csv
 Usage:
@@ -167,11 +167,11 @@ Options:
 
     -c, --config-file PATH
 
-Use a custom configuration file instead of the default config.json file located in the same folderof INPUT_PATH.
+Use a custom configuration file instead of the default config.json file located in the same folder of INPUT_PATH.
 
     -q, --quiet
 
-Suppress the overwrite confirmation message if the data.csv and/or config.json files alreadyexist.
+Suppress overwrite confirmation message if the data.csv and/or config.json files already exist.
 
 #### recalc-csv
 Usage:
@@ -184,7 +184,7 @@ Options:
 
     -c, --config-file PATH
 
-Use a custom configuration file instead of the default config.json file located in the same folderof INPUT_PATH.
+Use a custom configuration file instead of the default config.json file located in the same folder of INPUT_PATH.
 
     -f, --family-name TEXT
 
@@ -211,11 +211,11 @@ Options:
 
     -c, --config-file PATH
 
-Use a custom configuration file instead of the default config.json file located in the same folderof INPUT_PATH.
+Use a custom configuration file instead of the default config.json file located in the same folder of INPUT_PATH.
 
     -ls, --linked-styles <INTEGER RANGE INTEGER RANGE>
 
-Use this option to activate linked styles. If this option is active, linked styles must bespecified. For example: -ls 400 700, or -ls 300 600.
+Use this option to activate linked styles. If this option is active, linked styles must be specified. For example: -ls 400 700, or -ls 300 600.
   
     -ex, --exclude-namerecords [1|2|3|4|5|6|16|17|18]
 
@@ -235,11 +235,11 @@ Name IDs where to use the short word for slope style name (example: 'It' instead
 
     -sf, --super-family
 
-Superfamily mode. This option affects name IDs 3, 6, 16 and 17 in case of families with widthsdifferent than 'Normal'. If this option is active, name ID 6 will be 'FamilyName-WidthWeightSlope'instead of 'FamilyNameWidth-WeightSlope'. Mac and OT family/subfamily names will be FamilyName / Width Weight Slope' instead of 'Family Name Width / Weight Slope'.
+Superfamily mode. This option affects name IDs 3, 6, 16 and 17 in case of families with widths different from 'Normal'. If this option is active, name ID 6 will be 'FamilyName-WidthWeightSlope' instead of 'FamilyNameWidth-WeightSlope'. Mac and OT family/subfamily names will be FamilyName / Width Weight Slope' instead of 'Family Name Width / Weight Slope'.
 
     -aui, --alt-uid
 
-Use alternate unique identifier. By default, nameID 3 (Unique identifier) is calculated according to the following scheme: 'Version;Vendor code;PostscriptName'. The alternate uniqueidentifier is calculated according to the following scheme: 'Manufacturer: Full Font Name:Creation Year'
+Use alternate unique identifier. By default, nameID 3 (Unique identifier) is calculated according to the following scheme: 'Version;Vendor code;PostscriptName'. The alternate unique identifier is calculated according to the following scheme: 'Manufacturer: Full Font Name:Creation Year'
 
     -ri, --regular-italic
     
@@ -259,11 +259,11 @@ fontNames, FullName, FamilyName and Weight values in the 'CFF' table will be rec
 
     -obni, --oblique-not-italic
 
-By default, if a font has the oblique bit set, the italic bits will be set too. Use this option tooverride the default behaviour (for example, when the family has both italic and oblique styles andyou don't want to set only the oblique bit). The italic bits will be cleared when the oblique bitis set.
+By default, if a font has the oblique bit set, the italic bits will be set too. Use this option to override the default behaviour (for example, when the family has both italic and oblique styles and you don't want to set only the oblique bit). The italic bits will be cleared when the oblique bit is set.
 
     -o, --output-dir DIRECTORY
 
-Specify the output directory where the output files are to be saved. If output_directory doesn'texist, will be created. If not specified, files are saved to the same folder.
+Specify the output directory where the output files are to be saved. If output_directory doesn't exist, will be created. If not specified, files are saved to the same folder.
 
     --recalc-timestamp / --no-recalc-timestamp
 
@@ -326,7 +326,7 @@ See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
 
     -ach, --ach-vend-id TEXT
 
-Sets the the OS/2.achVendID tag (vendor's four-character identifier).
+Sets the OS/2.achVendID tag (vendor's four-character identifier).
 
     -dsig, --add-dummy-dsig
 
@@ -340,7 +340,7 @@ Removes the specified table, if present.
   
     -o, --output-dir DIRECTORY
   
-The output directory where the output files are to be created. If it doesn't exist, will becreated. If not specified, files are saved to the same folder.
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified, files are saved to the same folder.
 
     --recalc-timestamp / --no-recalc-timestamp
 
@@ -348,7 +348,7 @@ Keeps the original font 'modified' timestamp (head.modified) or set it to curren
 
     --overwrite / --no-overwrite
 
-Overwrites existing output files or save them to a new file (numbers are appended at the end offilename). By default, files are overwritten.
+Overwrites existing output files or save them to a new file (numbers are appended at the end of filename). By default, files are overwritten.
 
 ### font-metrics
 Usage:
