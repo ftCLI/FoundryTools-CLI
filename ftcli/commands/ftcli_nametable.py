@@ -118,7 +118,7 @@ def del_mac_names(input_path, exclude_namerecords, output_dir, recalc_timestamp,
         except Exception as e:
             click.secho('ERROR: {}'.format(e), fg='red')
 
-# setname
+# set-name
 
 
 @click.group()
@@ -170,6 +170,76 @@ display available languages.
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho('%s saved' % output_file, fg='green')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
+
+# copy-name
+
+
+@click.group()
+def copyNameRecord():
+    pass
+
+
+@copyNameRecord.command()
+@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
+@click.option('-s', '--source-name', type=(click.Choice(choices=["win", "mac"]), click.IntRange(0, 32767)),
+              required=True, help="source platformID [win|mac] and nameID (1-32767).")
+@click.option("-d", "--dest-name", type=(click.Choice(choices=["win", "mac"]), click.IntRange(0, 32767)),
+              required=True, help="destination platformID [win|mac] and nameID (1-32767)")
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
+              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t'
+                   'exist, will be created. If not specified, files are saved to the same folder.')
+@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
+              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By'
+                   'default, original timestamp is kept.')
+@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
+              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
+                   'name). By default, files are overwritten.')
+def copy_name(input_path, source_name, dest_name, output_dir, recalc_timestamp, overwrite):
+    """
+Copies a namerecord string to another namerecord.
+
+Usage example:
+
+ftcli nametable copy-name INPUT_PATH --source-name win 6 --dest-name mac 6
+    """
+
+    source_platform = source_name[0]
+    source_nameID = source_name[1]
+    dest_platform = dest_name[0]
+    dest_nameID = dest_name[1]
+
+    if source_platform == 'win':
+        source_platID = 3
+        source_platEncID = 1
+        source_langID = 0x409
+
+    if source_platform == 'mac':
+        source_platID = 1
+        source_platEncID = 0
+        source_langID = 0x0
+
+    mac = True if dest_platform == 'mac' else False
+    win = True if dest_platform == 'win' else False
+
+    files = getFontsList(input_path)
+
+    for f in files:
+        try:
+            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            name_string = font['name'].getName(source_nameID, source_platID, source_platEncID,
+                                               source_langID).toUnicode()
+
+            font.setMultilingualName(nameID=dest_nameID, string=name_string, windows=win, mac=mac)
+
+            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
+            font.save(output_file)
+            click.secho('%s saved' % output_file, fg='green')
+
+        except AttributeError:
+            click.secho('ERROR: nameID {} not found in {} table'.format(source_nameID, source_platform), fg='red')
+
         except Exception as e:
             click.secho('ERROR: {}'.format(e), fg='red')
 
@@ -286,6 +356,6 @@ ftcli nametable replace .\\fonts\\MyFont-Black.otf --os "RemoveMe" --ns ""
 
 
 cli = click.CommandCollection(sources=[
-    setNameRecord, delNameRecord, findReplace, winToMac, deleteMacNames, printLanguageCodes], help="""
+    setNameRecord, delNameRecord, copyNameRecord, findReplace, winToMac, deleteMacNames, printLanguageCodes], help="""
 A command line tool to add, delete and edit namerecords.
     """)
