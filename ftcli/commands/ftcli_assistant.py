@@ -65,10 +65,8 @@ Example:
 
     ftcli assistant edit-cfg "C:\\Fonts\\config.json"
 
-It is strongly recommended to use this tool to edit the JSON configuration
-files. It prevents malformed JSON errors and errors due to wrong values (for
-example, an out of range usWeightClass, or a string where's an integer is
-expected).
+It is strongly recommended to use this tool to edit the JSON configuration files. It prevents malformed JSON errors and
+errors due to wrong values (for example, an out of range usWeightClass, or a string where's an integer is expected).
     """
 
     GUI().cfgEditor(config_file)
@@ -183,8 +181,8 @@ def recalcCSV():
 @click.option('-f', '--family-name', default=None,
               help="The desired family name. This string will be used to recalculate the CSV lines.")
 @click.option('-s', '--source-string', type=click.Choice(
-    choices=('fname', '1_1_2', '1_4', '1_6', '1_16_17', '1_18', '3_1_2', '3_4', '3_6', '3_16_17', 'cff_1', 'cff_2',
-             'cff_3')), default='fname', show_choices=True, show_default=True,
+    choices=('fname', '1_1_2', '1_4', '1_6', '1_16_17', '1_18', '3_1_2', '3_4', '3_6', '3_16_17', 'cff_1', 'cff_2')),
+              default='fname', show_choices=True, show_default=True,
               help="""
 The source string be used to recalculate the CSV lines can be the file name, a namerecord, a combination of namerecords
 or values stored in the 'CFF' table.

@@ -141,7 +141,7 @@ def fontRenamer():
 @fontRenamer.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-s', '--source-string', type=click.Choice(
-    choices=['1_1_2', '1_4', '1_6', '1_16_17', '1_18', '3_1_2', '3_4', '3_6', '3_16_17', 'cff_1', 'cff_2', 'cff_3']),
+    choices=['1_1_2', '1_4', '1_6', '1_16_17', '1_18', '3_1_2', '3_4', '3_6', '3_16_17', 'cff_1', 'cff_2']),
               default='3_6',
               help="""
 The source string is read from a namerecord or from a combination of two namerecords, and the font file is renamed
@@ -155,7 +155,7 @@ For example:
 
 -s 3_6: reads the platformID 3 (Windows) nameID 6 (PostScript name).
 
-If the font is CFF flavored, the cff_1, cff_2, and cff_3 options can be used.
+If the font is CFF flavored, the cff_1 or cff_2 options can be used.
 """)
 def font_renamer(input_path, source_string):
     """

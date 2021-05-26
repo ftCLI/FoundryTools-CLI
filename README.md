@@ -190,7 +190,7 @@ Use a custom configuration file instead of the default config.json file located 
 
 The desired family name. This string will be used to recalculate the CSV lines.
 
-    -s, --source-string [fname|1_1_2|1_4|1_6|1_16_17|1_18|3_1_2|3_4|3_6|3_16_17|cff_1|cff_2|cff_3]
+    -s, --source-string [fname|1_1_2|1_4|1_6|1_16_17|1_18|3_1_2|3_4|3_6|3_16_17|cff_1|cff_2]
 
 The source string be used to recalculate the CSV lines can be the file name, a namerecord, a combination of namerecords or values stored in the 'CFF' table.
 

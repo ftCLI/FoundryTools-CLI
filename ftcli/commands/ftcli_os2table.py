@@ -47,8 +47,8 @@ See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
 @click.option('--overwrite/--no-overwrite', default=True,
               help='Overwrites existing output files or save them to a new file (numbers are appended at the end of'
                    'filename). By default, files are overwritten.')
-def cli(input_path, bold, italic, oblique, width, weight, embed_level, use_typo_metrics, ach_vend_id, add_dummy_dsig,
-        recalc_timestamp, output_dir, overwrite):
+def cli(input_path, bold, italic, oblique, width, weight, embed_level, use_typo_metrics, ach_vend_id, recalc_timestamp,
+        output_dir, overwrite):
     """
     A command line tool to edit some OS/2 table attributes.
     """

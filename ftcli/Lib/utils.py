@@ -140,7 +140,7 @@ def getSourceString(font_file, string_source):
     if string_source == '1_1_2':
         str1 = str(name_table.getName(1, 1, 0, 0x0))
         str2 = str(name_table.getName(2, 1, 0, 0x0))
-        string = str1 + str2
+        string = str1 + ' ' + str2
 
     if string_source == '1_4':
         string = str(name_table.getName(4, 1, 0, 0x0))
@@ -151,7 +151,7 @@ def getSourceString(font_file, string_source):
     if string_source == '1_16_17':
         str1 = str(name_table.getName(16, 1, 0, 0x0))
         str2 = str(name_table.getName(17, 1, 0, 0x0))
-        string = str1 + str2
+        string = str1 + ' ' + str2
 
     if string_source == '1_18':
         string = str(name_table.getName(18, 1, 0, 0x0))
@@ -159,7 +159,7 @@ def getSourceString(font_file, string_source):
     if string_source == '3_1_2':
         str1 = str(name_table.getName(1, 3, 1, 0x409))
         str2 = str(name_table.getName(2, 3, 1, 0x409))
-        string = str1 + str2
+        string = str1 + ' ' + str2
 
     if string_source == '3_4':
         string = str(name_table.getName(4, 3, 1, 0x409))
@@ -170,7 +170,7 @@ def getSourceString(font_file, string_source):
     if string_source == '3_16_17':
         str1 = str(name_table.getName(16, 3, 1, 0x409))
         str2 = str(name_table.getName(17, 3, 1, 0x409))
-        string = str1 + str2
+        string = str1 + ' ' + str2
 
     if is_cff:
         cff_table = font['CFF '].cff
@@ -179,11 +179,6 @@ def getSourceString(font_file, string_source):
 
         if string_source == 'cff_2':
             string = str(cff_table.topDictIndex[0].FullName)
-
-        if string_source == 'cff_3':
-            str1 = str(cff_table.topDictIndex[0].FamilyName)
-            str2 = str(cff_table.topDictIndex[0].Weight)
-            string = str1 + str2
 
     return string
 
