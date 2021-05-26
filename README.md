@@ -106,7 +106,8 @@ Example:
 
     ftcli assistant edit-cfg "C:\Fonts\config.json"
 
-It is strongly recommended using this tool to edit the JSON configuration files. It prevents malformed JSON errors and errors due to wrong values (for example, an out of range usWeightClass, or a string where's an integer is expected).
+It is strongly recommended using this tool to edit the JSON configuration files. It prevents malformed JSON errors and
+errors due to wrong values (for example, an out of range usWeightClass, or a string where's an integer is expected).
 
 #### edit-csv
 Usage:
