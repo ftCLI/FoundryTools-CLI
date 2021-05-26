@@ -198,7 +198,7 @@ For example, -s '1_1_2' will read a combination of namerecords 1 and 2 in the Ma
 
     -q, --quiet
 
-Suppress the overwrite confirmation message if the data.csv file already exists.
+Suppress overwrite confirmation message if the data.csv file already exists.
 
 #### recalc-names
 Usage:
