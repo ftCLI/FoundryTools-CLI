@@ -49,7 +49,7 @@ def remove_overlaps(input_path, output_dir=None, recalc_timestamp=False, overwri
                 font.save(output_file)
                 click.secho('%s saved' % output_file, fg='green')
             else:
-                click.secho('%s in not a TrueType file' % f, fg='red')
+                click.secho('%s is not a TrueType file' % f, fg='red')
         except Exception as e:
             click.secho('ERROR: {}'.format(e), fg='red')
 
