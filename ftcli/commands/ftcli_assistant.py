@@ -174,7 +174,7 @@ def recalcCSV():
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-c', '--config-file', type=click.Path(exists=True, resolve_path=True),
               help='Use a custom configuration file instead of the default config.json file located in the same folder'
-                   'of INPUT_PATH.')
+                   ' of INPUT_PATH.')
 @click.option('-f', '--family-name', default=None,
               help="The desired family name. This string will be used to recalculate the CSV lines.")
 @click.option('-s', '--source-string', type=click.Choice(
@@ -234,43 +234,43 @@ def recalcNames():
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-c', '--config-file', type=click.Path(exists=True, resolve_path=True),
               help='Use a custom configuration file instead of the default config.json file located in the same folder'
-                   'of INPUT_PATH.')
+                   ' of INPUT_PATH.')
 @click.option('-ls', '--linked-styles', type=(click.IntRange(1, 1000), click.IntRange(1, 1000)), default=(None, None),
               help="Use this option to activate linked styles. If this option is active, linked styles must be"
-                   "specified. For example: -ls 400 700, or -ls 300 600.")
+                   " specified. For example: -ls 400 700, or -ls 300 600.")
 @click.option('-ex', '--exclude-namerecords', type=click.Choice(
     choices=['1', '2', '3', '4', '5', '6', '16', '17', '18']), multiple=True,
               help="Name IDs to skip. The specified name IDs won't be recalculated. This option can be repeated"
-                   "(example: -ex 3 -ex 5 -ex 6...).")
+                   " (example: -ex 3 -ex 5 -ex 6...).")
 @click.option('-swdt', '--shorten-width', type=click.Choice(choices=['1', '2', '3', '4', '5', '6', '16', '17', '18']),
               multiple=True,
               help="Name IDs where to use the short word for width style name (example: 'Cond' instead of 'Condensed')."
-                   "This option can be repeated (example: -swdt 3 -swdt 5 -swdt 6...).")
+                   " This option can be repeated (example: -swdt 3 -swdt 5 -swdt 6...).")
 @click.option('-swgt', '--shorten-weight', type=click.Choice(choices=['1', '2', '3', '4', '5', '6', '16', '17', '18']),
               multiple=True,
               help="Name IDs where to use the short word for weight style name (example: 'Md' instead of 'Medium')."
-                   "This option can be repeated (example: -swgt 3 -swgt 5 -swgt 6...).")
+                   " This option can be repeated (example: -swgt 3 -swgt 5 -swgt 6...).")
 @click.option('-sslp', '--shorten-slope', type=click.Choice(choices=['1', '2', '3', '4', '5', '6', '16', '17', '18']),
               multiple=True,
               help="Name IDs where to use the short word for slope style name (example: 'It' instead of 'Italic')."
-                   "This option can be repeated (example: -sita 3 -sita 5 -sita 6...).")
+                   " This option can be repeated (example: -sita 3 -sita 5 -sita 6...).")
 @click.option('-sf', '--super-family', is_flag=True,
               help="Superfamily mode. This option affects name IDs 3, 6, 16 and 17 in case of families with widths"
-                   "different than 'Normal'. If this option is active, name ID 6 will be 'FamilyName-WidthWeightSlope'"
-                   "instead of 'FamilyNameWidth-WeightSlope'. Mac and OT family/subfamily names will be FamilyName / "
-                   "Width Weight Slope' instead of 'Family Name Width / Weight Slope'.")
+                   " different than 'Normal'. If this option is active, name ID 6 will be 'FamilyName-WidthWeightSlope'"
+                   " instead of 'FamilyNameWidth-WeightSlope'. Mac and OT family/subfamily names will be FamilyName / "
+                   " Width Weight Slope' instead of 'Family Name Width / Weight Slope'.")
 @click.option('-aui', '--alt-uid', is_flag=True,
               help="Use alternate unique identifier. By default, nameID 3 (Unique identifier) is calculated"
-                   "according to the following scheme: 'Version;Vendor code;PostscriptName'. The alternate unique"
-                   "identifier is calculated according to the following scheme: 'Manufacturer: Full Font Name:"
-                   "Creation Year'")
+                   " according to the following scheme: 'Version;Vendor code;PostscriptName'. The alternate unique"
+                   " identifier is calculated according to the following scheme: 'Manufacturer: Full Font Name:"
+                   " Creation Year'")
 @click.option('-ri', '--regular-italic', is_flag=True,
               help="Keep '-Regular' in nameID 6.")
 @click.option('-kr', '--keep-regular', is_flag=True,
               help="Keep the 'Regular' word in all nameIDs")
 @click.option('-offn', '--old-full-font-name', is_flag=True,
               help="Full font name in Microsoft name table is generally a combination of name IDs 1 and 2 or 16 and 17."
-                   "With this option active, it will be equal to nameID 6 (PostScriptName).")
+                   " With this option active, it will be equal to nameID 6 (PostScriptName).")
 @click.option('-cff', '--fix-cff', is_flag=True,
               help="fontNames, FullName, FamilyName and Weight values in the 'CFF' table will be recalculated.")
 @click.option('-obni', '--oblique-not-italic', is_flag=True, default=False,
@@ -280,13 +280,13 @@ def recalcNames():
                    " oblique bit is set.")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
               help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t'
-                   'exist, will be created. If not specified, files are saved to the same folder.')
+                   ' exist, will be created. If not specified, files are saved to the same folder.')
 @click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
               help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By'
-                   'default, original timestamp is kept.')
+                   ' default, original timestamp is kept.')
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   'name). By default, files are overwritten.')
+                   ' name). By default, files are overwritten.')
 def recalc_names(
         input_path,
         config_file,
