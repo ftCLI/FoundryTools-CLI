@@ -18,10 +18,9 @@ def printName():
 @click.option('-ml', '--max-lines', type=click.INT, default=None,
               help="Maximum number of lines to be printed.")
 def ft_name(input_path, name_id, max_lines):
-    """
-Prints a single namerecord.
+    """Prints a single namerecord.
 
-Use the -ml, --max-lines option to limit the printed line numbers to the desired value.
+    Use the -ml, --max-lines option to limit the printed line numbers to the desired value.
     """
     GUI().printFtName(input_path, name_id=name_id, max_lines=max_lines)
 
@@ -40,11 +39,10 @@ def printNames():
 @click.option('-min', '--minimal', is_flag=True,
               help="Prints only nameIDs 1, 2, 3, 4, 5, 6, 16, 17, 18, 21 and 22.")
 def ft_names(input_path, max_lines, minimal):
-    """
-Prints the 'name' table and 'CFF' names (if present).
+    """Prints the 'name' table and 'CFF' names (if present).
 
-Use the -ml / --max-lines option to limit the printed line numbers, and the -min / --minimal one to print a minimal
-set of namerecords.
+    Use the -ml / --max-lines option to limit the printed line numbers, and the -min / --minimal one to print a minimal
+    set of namerecords.
     """
 
     if len(getFontsList(input_path)) > 0:
@@ -63,8 +61,7 @@ def printFontInfo():
 @printFontInfo.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 def ft_info(input_path):
-    """
-    Prints detailed font information.
+    """Prints detailed font information.
     """
 
     if len(getFontsList(input_path)) > 0:
@@ -83,8 +80,7 @@ def printFontsList():
 @printFontsList.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 def ft_list(input_path):
-    """
-Prints a list of fonts with basic information.
+    """Prints a list of fonts with basic information.
     """
     if len(getFontsList(input_path)) > 0:
         GUI().printFtList(input_path)
@@ -102,8 +98,7 @@ def printHeadTable():
 @printHeadTable.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True, dir_okay=False))
 def tbl_head(input_path):
-    """
-Prints the 'head' table.
+    """Prints the 'head' table.
     """
     if len(getFontsList(input_path)) > 0:
         GUI().printTableHead(input_path)
@@ -121,8 +116,7 @@ def printOS2Table():
 @printOS2Table.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True, dir_okay=False))
 def tbl_os2(input_path):
-    """
-Prints the 'OS/2' table.
+    """Prints the 'OS/2' table.
     """
     if len(getFontsList(input_path)) > 0:
         GUI().printTableOS2(input_path)
