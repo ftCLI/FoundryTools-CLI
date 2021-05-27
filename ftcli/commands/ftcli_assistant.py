@@ -58,15 +58,14 @@ def editCFG():
 @editCFG.command()
 @click.argument('config_file', type=click.Path(exists=True, dir_okay=False, resolve_path=True))
 def edit_cfg(config_file):
-    """
-Command line editor for JSON configuration files.
+    """Command line editor for JSON configuration files.
 
-Example:
+    Example:
 
-    ftcli assistant edit-cfg "C:\\Fonts\\config.json"
+        ftcli assistant edit-cfg "C:\\Fonts\\config.json"
 
-It is strongly recommended to use this tool to edit the JSON configuration files. It prevents malformed JSON errors and
-errors due to wrong values (for example, an out of range usWeightClass, or a string where's an integer is expected).
+    It is strongly recommended to use this tool to edit the JSON configuration files. It prevents malformed JSON errors and
+    errors due to wrong values (for example, an out of range usWeightClass, or a string where's an integer is expected).
     """
 
     GUI().cfgEditor(config_file)
@@ -87,36 +86,35 @@ def initCSV():
               help='Suppress the overwrite confirmation message if the data.csv and/or config.json files already'
                    'exist.')
 def init_csv(input_path, config_file, quiet):
-    """
-Creates or resets the CSV database file (data.csv).
+    """Creates or resets the CSV database file (data.csv).
 
-Example 1:
+    Example 1:
 
-    ftcli assistant init-csv "C:\\Fonts\\"
+        ftcli assistant init-csv "C:\\Fonts\\"
 
-The above command will create the 'data.csv' file in C:\\Fonts\\
-(and a configuration file with default values if it does not exist).
+    The above command will create the 'data.csv' file in C:\\Fonts\\
+    (and a configuration file with default values if it does not exist).
 
-Example 2:
+    Example 2:
 
-    ftcli assistant init-csv "C:\\Fonts\\Font.otf"
+        ftcli assistant init-csv "C:\\Fonts\\Font.otf"
 
-The above command will create the 'data.csv' in the INPUT_PATH folder
-(or parent folder, if INPUT_PATH is a file).
+    The above command will create the 'data.csv' in the INPUT_PATH folder
+    (or parent folder, if INPUT_PATH is a file).
 
-data.csv file contains:
+    data.csv file contains:
 
-- the file names;
+    - the file names;
 
-- the usWidthClass, usWeightClass, bold and italic bits values of all
-font files found in INPUT_PATH;
+    - the usWidthClass, usWeightClass, bold and italic bits values of all
+    font files found in INPUT_PATH;
 
-- tries to guess the family name reading the name table. It also
-contains weight and widths literals, retrieved parsing the config.json
-file.
+    - tries to guess the family name reading the name table. It also
+    contains weight and widths literals, retrieved parsing the config.json
+    file.
 
-It can be edited manually or using the 'ftcli assistant edit-csv INPUT_PATH'
-command.
+    It can be edited manually or using the 'ftcli assistant edit-csv INPUT_PATH'
+    command.
     """
 
     if not config_file:
@@ -192,8 +190,11 @@ For example, -s '1_1_2' will read a combination of namerecords 1 and 2 in the Ma
 @click.option('-q', '--quiet', is_flag=True,
               help='Suppress the overwrite confirmation message if the data.csv file already exists.')
 def recalc_csv(input_path, config_file, family_name, source_string, quiet):
-    """
-Recalculates the CSV database file (data.csv).
+    """Recalculates font attributes and style names in the CSV database file (data.csv).
+
+    The script will try to recalculate font attributes (usWidthClass, usWeightClass, italic and oblique bits) and style
+    names parsing a string provided by the user with the '-s/--source string option'. The source string can be a
+    namerecord, a combination of two namerecords, a name in CFF table or the file name.
     """
     csv_file = getCsvPath(input_path)
 
@@ -275,9 +276,9 @@ def recalcNames():
               help="fontNames, FullName, FamilyName and Weight values in the 'CFF' table will be recalculated.")
 @click.option('-obni', '--oblique-not-italic', is_flag=True, default=False,
               help="By default, if a font has the oblique bit set, the italic bits will be set too. Use this option to"
-                   "override the default behaviour (for example, when the family has both italic and oblique styles and"
-                   "you don't want to set only the oblique bit). The italic bits will be cleared when the oblique bit"
-                   "is set.")
+                   " override the default behaviour (for example, when the family has both italic and oblique styles"
+                   " and you need to keep oblique and italic styles separate). The italic bits will be cleared when the"
+                   " oblique bit is set.")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
               help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t'
                    'exist, will be created. If not specified, files are saved to the same folder.')
@@ -306,8 +307,7 @@ def recalc_names(
         recalc_timestamp,
         overwrite
 ):
-    """
-    Recalculates namerecords according to the values stored in the data.csv file.
+    """Recalculates namerecords according to the values stored in the data.csv file.
     """
 
     files = getFontsList(input_path)

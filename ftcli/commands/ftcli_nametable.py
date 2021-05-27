@@ -10,8 +10,7 @@ def printLanguageCodes():
 
 @printLanguageCodes.command()
 def lang_help():
-    """
-Prints available languages that can be used with the 'setname' and 'delname' commands
+    """Prints available languages that can be used with the 'setname' and 'delname' commands
     """
     from fontTools.ttLib.tables._n_a_m_e import (_MAC_LANGUAGES, _WINDOWS_LANGUAGES)
     print('\n[WINDOWS LANGUAGES]')
@@ -45,8 +44,7 @@ def winToMac():
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
 def fill_mac_names(input_path, output_dir, recalc_timestamp, overwrite):
-    """
-Copies namerecords from Windows table to Macintosh table.
+    """Copies namerecords from Windows table to Macintosh table.
     """
 
     files = getFontsList(input_path)
@@ -83,8 +81,7 @@ def deleteMacNames():
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
 def del_mac_names(input_path, exclude_namerecords, output_dir, recalc_timestamp, overwrite):
-    """
-    Deletes all namerecords in platformID 1.
+    """Deletes all namerecords in platformID 1.
 
     According to Apple (https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6name.html), "names with
     platformID 1 were required by earlier versions of macOS. Its use on modern platforms is discouraged. Use names with
@@ -143,18 +140,17 @@ def setNameRecord():
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
 def set_name(input_path, name_id, platform, language, string, output_dir, recalc_timestamp, overwrite):
-    """
-Writes the specified namerecord in the name table.
+    """Writes the specified namerecord in the name table.
 
-If the namerecord is not present, it will be created. If it already exists, will be overwritten.
+    If the namerecord is not present, it will be created. If it already exists, will be overwritten.
 
-If name_id parameter is not specified, the first available nameID will be used.
+    If name_id parameter is not specified, the first available nameID will be used.
 
-By default, the namerecord will be written both in platformID 1 (Macintosh) and platformID 3 (Windows) tables. Use
--p/--platform-id [win|mac] option to write the namerecord only in the specified platform.
+    By default, the namerecord will be written both in platformID 1 (Macintosh) and platformID 3 (Windows) tables. Use
+    -p/--platform-id [win|mac] option to write the namerecord only in the specified platform.
 
-Use the -l/--language option to write the namerecord in a language different than 'en'. Use 'ftcli nametable langhelp' to
-display available languages.
+    Use the -l/--language option to write the namerecord in a language different than 'en'. Use 'ftcli nametable langhelp' to
+    display available languages.
     """
 
     windows = False if platform == "mac" else True
@@ -197,28 +193,24 @@ def copyNameRecord():
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
 def copy_name(input_path, source_name, dest_name, output_dir, recalc_timestamp, overwrite):
-    """
-Copies a namerecord string to another namerecord.
+    """Copies a namerecord string to another namerecord.
 
-Usage example:
+    Usage example:
 
-ftcli nametable copy-name INPUT_PATH --source-name win 6 --dest-name mac 6
+    ftcli nametable copy-name INPUT_PATH --source-name win 6 --dest-name mac 6
     """
+
+    # The program exits if we try to copy a namerecord on itself.
+    if dest_name == source_name:
+        click.secho('ERROR: source name and destination name are the same', fg='red')
+        exit()
 
     source_platform = source_name[0]
     source_nameID = source_name[1]
     dest_platform = dest_name[0]
     dest_nameID = dest_name[1]
 
-    if source_platform == 'win':
-        source_platID = 3
-        source_platEncID = 1
-        source_langID = 0x409
-
-    if source_platform == 'mac':
-        source_platID = 1
-        source_platEncID = 0
-        source_langID = 0x0
+    source_platID, source_platEncID, source_langID = (1, 0, 0x0) if source_platform == 'mac' else (3, 1, 0x409)
 
     mac = True if dest_platform == 'mac' else False
     win = True if dest_platform == 'win' else False
@@ -270,13 +262,12 @@ def delNameRecord():
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
 def del_name(input_path, name_id, platform, language, output_dir, recalc_timestamp, overwrite):
-    """
-Deletes the specified nemerecord from the name table.
+    """Deletes the specified nemerecord from the name table.
 
-Use the -l/--language option to delete a namerecord in a language different than 'en'. Use 'ftcli nametable langhelp' to
-display available languages.
+    Use the -l/--language option to delete a namerecord in a language different than 'en'. Use 'ftcli nametable langhelp' to
+    display available languages.
 
-Use '-l ALL' to delete the name ID from all languages.
+    Use '-l ALL' to delete the name ID from all languages.
     """
     windows = False if platform == "mac" else True
     mac = False if platform == "win" else True
@@ -325,16 +316,15 @@ def findReplace():
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
 def find_repl(input_path, old_string, new_string, name_id, platform, fix_cff, output_dir, recalc_timestamp, overwrite):
-    """
-Replaces a string in the name table with a new string.
+    """Replaces a string in the name table with a new string.
 
-If the '-cff' option is passed, the string will be replaced in the 'CFF' table too.
+    If the '-cff' option is passed, the string will be replaced in the 'CFF' table too.
 
-ftcli nametable replace .\\fonts\\MyFont-Black.otf --os "Black" --ns "Heavy" --cff
+    ftcli nametable replace .\\fonts\\MyFont-Black.otf --os "Black" --ns "Heavy" --cff
 
-To simply remove a string, use an empty string as new string:
+    To simply remove a string, use an empty string as new string:
 
-ftcli nametable replace .\\fonts\\MyFont-Black.otf --os "RemoveMe" --ns ""
+    ftcli nametable replace .\\fonts\\MyFont-Black.otf --os "RemoveMe" --ns ""
     """
 
     files = getFontsList(input_path)
