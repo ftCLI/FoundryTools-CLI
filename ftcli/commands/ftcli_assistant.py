@@ -22,13 +22,11 @@ def editCSV():
               help='Use a custom configuration file instead of the default config.json file located in the same folder'
                    'of INPUT_PATH.')
 def edit_csv(input_path, config_file):
-    """
-    Command line editor for 'data.csv' files.
+    """Command line editor for 'data.csv' files.
 
-    This tool is not intended to replace a code editor for CSV files,
-    but can help to make small edits without leaving the command line.
-    For complex projects, it's strongly recommended to use a code
-    editor like Visual Studio Code or even Excel.
+    This tool is not intended to replace a code editor for CSV files, but can help to make small edits without leaving
+    the command line. For complex projects, it's strongly recommended to use a code editor like Visual Studio Code or
+    even Excel.
     """
 
     if not config_file:
@@ -64,8 +62,9 @@ def edit_cfg(config_file):
 
         ftcli assistant edit-cfg "C:\\Fonts\\config.json"
 
-    It is strongly recommended to use this tool to edit the JSON configuration files. It prevents malformed JSON errors and
-    errors due to wrong values (for example, an out of range usWeightClass, or a string where's an integer is expected).
+    It is strongly recommended to use this tool to edit the JSON configuration files. It prevents malformed JSON errors
+    and errors due to wrong values (for example, an out of range usWeightClass, or a string where's an integer is
+    expected).
     """
 
     GUI().cfgEditor(config_file)
@@ -81,10 +80,10 @@ def initCSV():
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-c', '--config-file', type=click.Path(exists=True, resolve_path=True),
               help='Use a custom configuration file instead of the default config.json file located in the same folder'
-                   'of INPUT_PATH.')
+                   ' of INPUT_PATH.')
 @click.option('-q', '--quiet', is_flag=True,
               help='Suppress the overwrite confirmation message if the data.csv and/or config.json files already'
-                   'exist.')
+                   ' exist.')
 def init_csv(input_path, config_file, quiet):
     """Creates or resets the CSV database file (data.csv).
 
