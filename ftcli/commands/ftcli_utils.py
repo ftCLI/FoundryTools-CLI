@@ -41,7 +41,7 @@ def remove_hinting(input_path, output_dir=None, recalc_timestamp=False, overwrit
                 font.save(output_file)
                 click.secho('%s saved' % output_file, fg='green')
             else:
-                click.secho('%s is not a TrueType file' % f, fg='red')
+                click.secho(f'{f} is not a TrueType file', fg='red')
         except Exception as e:
             click.secho('ERROR: {}'.format(e), fg='red')
 
