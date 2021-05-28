@@ -8,6 +8,7 @@ The following packages will be installed during setup:
 * fonttools
 * click
 * colorama
+* dehinter
 * brotli
 * skia-pathops
 * zopfli
