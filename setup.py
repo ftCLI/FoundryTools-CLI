@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='ftcli',
-    version='0.2.5',
+    version='0.2.6',
     description='ftCLI',
     packages=setuptools.find_packages(),
     include_package_data=True,
@@ -11,6 +11,7 @@ setuptools.setup(
         'fonttools>=4.21.1',
         'brotli',
         'click',
+        'dehinter',
         'colorama',
         'skia-pathops',
         'zopfli',
