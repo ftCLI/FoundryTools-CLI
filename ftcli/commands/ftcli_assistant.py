@@ -377,14 +377,33 @@ cli = click.CommandCollection(sources=[editCFG, editCSV, initCFG, initCSV, recal
 A set of tools to correctly compile the name table and set proper values for usWeightClass, usWidthClass, bold, italic
 and oblique bits.
 
-The process creates a JSON configuration file and a CSV file that will be used to fix the fonts. Both files can be
-automatically created and eventually edited manually or using the integrated command line editor. Once everything is
-correctly set in the CSV file, the values inside it can be written to the fonts.
+With the aide of a JSON configuration file, that can be edited according to user's needs, this tool will help create a
+CSV file containing, for each file in a set of fonts, the following values:
+
+\b
+- is_bold
+- is_italic
+- is_oblique
+- usWidthClass
+- usWeightClass
+- width (short and long literals, e.g.: 'Cn', 'Condensed')
+- weight (short and long literals, e.g.: 'Lt', 'Light')
+- slope (short and long literals, e.g.: 'It', 'Italic')
+- family name
+
+The values can be recalculated with the help of the automation provided by the tool (using the 'init-csv' and
+'recalc-csv' commands) or manually edited using a suitable editor.
+
+When the CSV file is correctly compiled, values contained in it can be written into the fonts using the 'recalc-names'
+command. This command will not only correctly compile the name table, but will also change usWidthClass and
+usWeightClass values, as well as the italic and oblique bits. The bold bits are another matter: they will be set only in
+the bold styles of a family with linked styles and only if the user opts for using linked styles. In all other cases,
+the bold bits will be cleared.
 
 1) The JSON configuration file.
 
-The 'config.json' file contains the desired style names to pair with each usWidthClass and usWeightClass values of the
-family, as well as the desired italic and oblique literals:
+The configurationn file, normally named 'config.json' and stored in the work folder, contains the desired style names to
+pair with each usWidthClass and usWeightClass values of the family, as well as the desired italic and oblique literals:
 
 \b
 {
@@ -416,6 +435,16 @@ file).
 Once created the configuration file, you may be in need to edit it according to your needs.
 
     ftcli assistant edit-cfg CONFIG_FILE
+    
+This command will open a command line editor that allows to add, delete and edit weights, widths, italic and oblique
+style names and values.
+    
+Both steps can be skipped directly running the following command:
+
+    ftcli assistant edit-csv INPUT_PATH
+    
+This command will create inside the INPUT_PATH folder, a file named 'config.json', a file named 'data.csv' and will open
+a command line editor that allows to edit both them.
 
 Values contained in the configuration file will be used to fill the data.csv file in the next steps.
 
