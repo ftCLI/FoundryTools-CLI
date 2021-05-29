@@ -148,8 +148,8 @@ def set_name(input_path, name_id, platform, language, string, output_dir, recalc
     By default, the namerecord will be written both in platformID 1 (Macintosh) and platformID 3 (Windows) tables. Use
     -p/--platform-id [win|mac] option to write the namerecord only in the specified platform.
 
-    Use the -l/--language option to write the namerecord in a language different than 'en'. Use 'ftcli nametable langhelp' to
-    display available languages.
+    Use the -l/--language option to write the namerecord in a language different than 'en'. Use 'ftcli nametable
+    langhelp' to display available languages.
     """
 
     windows = False if platform == "mac" else True
@@ -263,8 +263,8 @@ def delNameRecord():
 def del_name(input_path, name_id, platform, language, output_dir, recalc_timestamp, overwrite):
     """Deletes the specified nemerecord from the name table.
 
-    Use the -l/--language option to delete a namerecord in a language different than 'en'. Use 'ftcli nametable langhelp' to
-    display available languages.
+    Use the -l/--language option to delete a namerecord in a language different than 'en'. Use 'ftcli nametable
+    langhelp' to display available languages.
 
     Use '-l ALL' to delete the name ID from all languages.
     """
