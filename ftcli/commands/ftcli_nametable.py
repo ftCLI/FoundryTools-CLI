@@ -67,8 +67,7 @@ def deleteMacNames():
 
 @deleteMacNames.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-@click.option('-ex', '--exclude-namerecords', type=click.Choice(
-    choices=['1', '2', '3', '4', '5', '6', '16', '17', '18']), multiple=True,
+@click.option('-ex', '--exclude-namerecords', type=click.IntRange(0, 32767), multiple=True,
               help="Name IDs to ignore. The specified name IDs won't be deleted. This option can be repeated"
                    "(example: -ex 3 -ex 5 -ex 6...).")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
