@@ -74,8 +74,8 @@ def align(input_path, sil_method, output_dir, recalc_timestamp, overwrite):
     maxRealDescender = max(realDescenders)
     maxIdealAscender = max(idealAscenders)
     maxIdealDescender = max(idealDescenders)
-    sTypoLineGap = (maxRealAscender + maxRealDescender) - \
-                   (maxIdealAscender + maxIdealDescender)
+    sTypoLineGap = (maxRealAscender + maxRealDescender) - (maxIdealAscender + maxIdealDescender)
+    sTypoLineGap = 0
 
     for f in files:
         try:
