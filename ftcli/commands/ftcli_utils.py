@@ -45,7 +45,7 @@ def remove_hinting(input_path, keep_cvar, keep_cvt, keep_fpgm, keep_hdmx, keep_l
 
     Currently this only works with TrueType fonts with 'glyf' table.
 
-    This is a CLI for dehinter by Source Foundry: https://github.com/source-foundry/dehinter/tree/master/lib/dehinter
+    This is a CLI for dehinter by Source Foundry: https://github.com/source-foundry/dehinter
     """
 
     from dehinter.font import dehint

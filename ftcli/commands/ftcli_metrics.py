@@ -1,9 +1,54 @@
 import sys
+import os
 
 import click
 
 from ftcli.Lib.utils import getFontsList, makeOutputFileName
 from ftcli.Lib.TTFontCLI import TTFontCLI
+
+
+@click.group()
+def setLineGap():
+    pass
+
+
+@setLineGap.command()
+@click.argument('input_path', type=click.Path(exists=True, file_okay=False, resolve_path=True))
+@click.option('-p', '--percent', type=click.IntRange(1, 100), required=True,
+              help="adjust font line spacing to % of UPM value")
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help='The output directory where the output files are to be created. If it doesn\'t exist, will be '
+                   'created. If not specified, files are saved to the same folder.')
+@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False,
+              help='Keeps the original font \'modified\' timestamp (head.modified) or set it to current time. '
+                   'By default, original timestamp is kept.')
+@click.option('--overwrite/--no-overwrite', default=True,
+              help='Overwrites existing output files or save them to a new file (numbers are appended at the end of '
+                   'file name). By default, files are overwritten.')
+def set_linegap(input_path, percent, output_dir, recalc_timestamp, overwrite):
+    """Modifies the line spacing metrics in one or more fonts.
+
+    TThis is a CLI for font-line by Source Foundry: https://github.com/source-foundry/font-line
+    """
+
+
+    files = getFontsList(input_path)
+
+    for f in files:
+
+        file_name, ext = os.path.splitext(os.path.basename(f))
+        file_dir = os.path.dirname(f)
+
+        try:
+            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font.modifyLinegapPercent(percent)
+            new_file_path = os.path.join(file_dir, file_name + '-linegap' + str(percent) +ext)
+            output_file = makeOutputFileName(new_file_path, outputDir=output_dir, overWrite=overwrite)
+            font.save(output_file)
+            click.secho('%s saved' % output_file, fg='green')
+
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
 
 
 @click.group()
@@ -168,7 +213,7 @@ def copy(source_file, destination, output_dir, recalc_timestamp, overwrite):
             click.secho('ERROR: {}'.format(e), fg='red')
 
 
-cli = click.CommandCollection(sources=[alignVMetrics, copyVMetrics], help="""
+cli = click.CommandCollection(sources=[alignVMetrics, copyVMetrics, setLineGap], help="""
 Aligns all the fonts to the same baseline.
 
 The 'ftcli metrics align' command calculates the maximum ascenders and descenders of a set of fonts and applies them to

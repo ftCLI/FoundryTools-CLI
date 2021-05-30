@@ -1,3 +1,4 @@
+import sys
 from textwrap import TextWrapper
 
 import click
@@ -5,12 +6,81 @@ from fontTools.misc.timeTools import timestampToString
 from fontTools.ttLib import TTFont
 from fontTools.ttLib import newTable
 from fontTools.ttLib.tables._n_a_m_e import (_MAC_LANGUAGE_CODES, _MAC_LANGUAGE_TO_SCRIPT, _WINDOWS_LANGUAGE_CODES)
+from fontline.metrics import MetricsObject
 
 
 class TTFontCLI(TTFont):
 
     def __init__(self, file, recalcTimestamp=False):
         super().__init__(file=file, recalcTimestamp=recalcTimestamp)
+
+    def modifyLinegapPercent(self, percent):
+        try:
+
+            # get observed start values from the font
+            os2_typo_ascender = self["OS/2"].sTypoAscender
+            os2_typo_descender = self["OS/2"].sTypoDescender
+            os2_typo_linegap = self["OS/2"].sTypoLineGap
+            hhea_ascent = self["hhea"].ascent
+            hhea_descent = self["hhea"].descent
+            units_per_em = self["head"].unitsPerEm
+
+            # calculate necessary delta values
+            os2_typo_ascdesc_delta = os2_typo_ascender + -(os2_typo_descender)
+            hhea_ascdesc_delta = hhea_ascent + -(hhea_descent)
+
+            # define percent UPM from command line request
+            factor = 1.0 * int(percent) / 100
+
+            # define line spacing units
+            line_spacing_units = int(factor * units_per_em)
+
+            # define total height as UPM + line spacing units
+            total_height = line_spacing_units + units_per_em
+
+            # height calculations for adjustments
+            delta_height = total_height - hhea_ascdesc_delta
+            upper_lower_add_units = int(0.5 * delta_height)
+
+            # redefine hhea linegap to 0 in all cases
+            hhea_linegap = 0
+
+            # Define metrics based upon original design approach in the font
+            # Google metrics approach
+            if os2_typo_linegap == 0 and (os2_typo_ascdesc_delta > units_per_em):
+                # define values
+                os2_typo_ascender += upper_lower_add_units
+                os2_typo_descender -= upper_lower_add_units
+                hhea_ascent += upper_lower_add_units
+                hhea_descent -= upper_lower_add_units
+                os2_win_ascent = hhea_ascent
+                os2_win_descent = -hhea_descent
+            # Adobe metrics approach
+            elif os2_typo_linegap == 0 and (os2_typo_ascdesc_delta == units_per_em):
+                hhea_ascent += upper_lower_add_units
+                hhea_descent -= upper_lower_add_units
+                os2_win_ascent = hhea_ascent
+                os2_win_descent = -hhea_descent
+            else:
+                os2_typo_linegap = line_spacing_units
+                hhea_ascent = int(os2_typo_ascender + 0.5 * os2_typo_linegap)
+                hhea_descent = -(total_height - hhea_ascent)
+                os2_win_ascent = hhea_ascent
+                os2_win_descent = -hhea_descent
+
+            # define updated values from above calculations
+            self["hhea"].lineGap = hhea_linegap
+            self["OS/2"].sTypoAscender = os2_typo_ascender
+            self["OS/2"].sTypoDescender = os2_typo_descender
+            self["OS/2"].sTypoLineGap = os2_typo_linegap
+            self["OS/2"].usWinAscent = os2_win_ascent
+            self["OS/2"].usWinDescent = os2_win_descent
+            self["hhea"].ascent = hhea_ascent
+            self["hhea"].descent = hhea_descent
+
+        except Exception as e:  # pragma: no cover
+            click.secho("ERROR: {}".format(e), fg='red')
+            sys.exit(1)
 
     def recalcNames(
             self, font_data, namerecords_to_ignore=None, shorten_weight=None, shorten_width=None, shorten_slope=None,
@@ -484,8 +554,7 @@ class TTFontCLI(TTFont):
             self['head'].macStyle, 1)
 
     def __clearRegularBit(self):
-        self['OS/2'].fsSelection = unset_nth_bit(
-            self['OS/2'].fsSelection, 6)
+        self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 6)
 
 
 def is_nth_bit_set(x: int, n: int):
