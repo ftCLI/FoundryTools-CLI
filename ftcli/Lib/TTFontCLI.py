@@ -403,8 +403,7 @@ class TTFontCLI(TTFont):
                     if not old_value == new_value:
                         fixCount += 1
                         setattr(input_object, a, new_value)
-                except Exception as e:
-                    click.secho('ERROR: {}'.format(e))
+                except:
                     pass
 
         return fixCount

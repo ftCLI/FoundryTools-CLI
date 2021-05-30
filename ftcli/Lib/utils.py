@@ -104,7 +104,7 @@ def wrapString(string, indent, max_lines, width):
 
 
 def guessFamilyName(font):
-    family_name = ""
+    family_name = None
 
     try:
         family_name = font['name'].getName(16, 3, 1, 0x409).toUnicode()

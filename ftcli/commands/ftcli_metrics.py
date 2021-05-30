@@ -3,7 +3,7 @@ import os
 
 import click
 
-from ftcli.Lib.utils import getFontsList, makeOutputFileName
+from ftcli.Lib.utils import getFontsList, makeOutputFileName, guessFamilyName
 from ftcli.Lib.TTFontCLI import TTFontCLI
 
 
@@ -13,9 +13,11 @@ def setLineGap():
 
 
 @setLineGap.command()
-@click.argument('input_path', type=click.Path(exists=True, file_okay=False, resolve_path=True))
+@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-p', '--percent', type=click.IntRange(1, 100), required=True,
               help="adjust font line spacing to % of UPM value")
+@click.option('-mfn', '--modify-family-name', is_flag=True,
+              help="adds 'LG% to the font family to reflect the modified line gap'")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help='The output directory where the output files are to be created. If it doesn\'t exist, will be '
                    'created. If not specified, files are saved to the same folder.')
@@ -25,12 +27,11 @@ def setLineGap():
 @click.option('--overwrite/--no-overwrite', default=True,
               help='Overwrites existing output files or save them to a new file (numbers are appended at the end of '
                    'file name). By default, files are overwritten.')
-def set_linegap(input_path, percent, output_dir, recalc_timestamp, overwrite):
+def set_linegap(input_path, percent, modify_family_name, output_dir, recalc_timestamp, overwrite):
     """Modifies the line spacing metrics in one or more fonts.
 
     TThis is a CLI for font-line by Source Foundry: https://github.com/source-foundry/font-line
     """
-
 
     files = getFontsList(input_path)
 
@@ -42,7 +43,24 @@ def set_linegap(input_path, percent, output_dir, recalc_timestamp, overwrite):
         try:
             font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
             font.modifyLinegapPercent(percent)
-            new_file_path = os.path.join(file_dir, file_name + '-linegap' + str(percent) +ext)
+
+            # Modify the family name according to the linegap percent
+            if modify_family_name:
+                old_family_name = guessFamilyName(font)
+                if old_family_name:
+                    old_family_name_without_spaces = old_family_name.replace(" ", "")
+                    new_family_name = old_family_name + ' LG{}'.format(str(percent))
+                    new_family_name_without_spaces = new_family_name.replace(" ", "")
+                    font.findReplace(oldString=old_family_name, newString=new_family_name, fixCFF=True)
+                    font.findReplace(oldString=old_family_name_without_spaces, newString=new_family_name_without_spaces,
+                                     fixCFF=True)
+                else:
+                    click.secho('Warning: could not retrieve Family Name, it has not been modified.', fg='yellow')
+
+            # Before we add the "-linegap%" string to the new file name, let's remove it to avoid strange names like
+            # Font-Bold-linegap20-linegap20.otf
+            new_file_path = os.path.join(file_dir, file_name.replace('-linegap' + str(percent), '') + '-linegap'
+                                         + str(percent) + ext)
             output_file = makeOutputFileName(new_file_path, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho('%s saved' % output_file, fg='green')
