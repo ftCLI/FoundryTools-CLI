@@ -9,6 +9,7 @@ The following packages will be installed during setup:
 * click
 * colorama
 * dehinter
+* font-line
 * brotli
 * skia-pathops
 * zopfli
