@@ -6,7 +6,6 @@ from fontTools.misc.timeTools import timestampToString
 from fontTools.ttLib import TTFont
 from fontTools.ttLib import newTable
 from fontTools.ttLib.tables._n_a_m_e import (_MAC_LANGUAGE_CODES, _MAC_LANGUAGE_TO_SCRIPT, _WINDOWS_LANGUAGE_CODES)
-from fontline.metrics import MetricsObject
 
 
 class TTFontCLI(TTFont):
@@ -78,7 +77,7 @@ class TTFontCLI(TTFont):
             self["hhea"].ascent = hhea_ascent
             self["hhea"].descent = hhea_descent
 
-        except Exception as e:  # pragma: no cover
+        except Exception as e:
             click.secho("ERROR: {}".format(e), fg='red')
             sys.exit(1)
 

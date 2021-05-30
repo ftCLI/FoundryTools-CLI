@@ -342,6 +342,7 @@ class GUI(object):
                 print((" " * 4 + "TypoLineGap").ljust(length), ":", font['OS/2'].sTypoLineGap)
                 print((" " * 4 + "WinAscent").ljust(length), ":", font['OS/2'].usWinAscent)
                 print((" " * 4 + "WinDescent").ljust(length), ":", font['OS/2'].usWinDescent)
+                print()
 
                 try:
                     print((" " * 4 + "x height").ljust(length), ":", font['OS/2'].sxHeight)
