@@ -331,8 +331,7 @@ class GUI(object):
                 print("-" * terminal_width)
                 print("METRICS AND DIMENSIONS")
                 print("-" * terminal_width)
-                print("unitsPerEm".ljust(length),
-                      ":", font['head'].unitsPerEm)
+                print("unitsPerEm".ljust(length), ":", font['head'].unitsPerEm)
                 print("Font BBox".ljust(length), ":", "(" + str(font['head'].xMin) + ", " + str(
                     font['head'].yMin) + ")", "(" + str(font['head'].xMax) + ", " + str(font['head'].yMax) + ")")
 
