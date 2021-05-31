@@ -179,9 +179,9 @@ def copyNameRecord():
 @copyNameRecord.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-s', '--source-name', type=(click.Choice(choices=["win", "mac"]), click.IntRange(0, 32767)),
-              required=True, help="source platformID [win|mac] and nameID (1-32767).")
+              required=True, help="source platformID [win|mac] and nameID (0-32767).")
 @click.option("-d", "--dest-name", type=(click.Choice(choices=["win", "mac"]), click.IntRange(0, 32767)),
-              required=True, help="destination platformID [win|mac] and nameID (1-32767)")
+              required=True, help="destination platformID [win|mac] and nameID (0-32767)")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
               help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t'
                    'exist, will be created. If not specified, files are saved to the same folder.')
@@ -246,7 +246,7 @@ def delNameRecord():
 @delNameRecord.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-n', '--name-id', type=click.IntRange(0, 32767), required=True,
-              help="nameID (Integer between 1 and 32767)")
+              help="nameID (Integer between 0 and 32767)")
 @click.option("-p", "--platform", type=click.Choice(choices=["win", "mac"]),
               help="platform [win, mac]. If no platform is specified, the namerecord will be deleted from both tables.")
 @click.option('-l', '--language', default="en", show_default=True,
@@ -299,7 +299,7 @@ def findReplace():
 @click.option('-ns', '--new-string', required=True,
               help="new string", show_default=True)
 @click.option('-n', '--name-id', type=click.IntRange(0, 32767),
-              help="nameID (Integer between 1 and 32767). If not specified, the string will be replaced in all"
+              help="nameID (Integer between 0 and 32767). If not specified, the string will be replaced in all"
                    "namerecords.")
 @click.option("-p", "--platform", type=click.Choice(choices=["win", "mac"]),
               help="platform [win, mac]. If no platform is specified, the string will be replaced in both tables.")

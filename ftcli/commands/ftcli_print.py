@@ -14,7 +14,7 @@ def printName():
 @printName.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-n', '--name-id', type=click.IntRange(0, 32767), required=True,
-              help="nameID (Integer between 1 and 32767)")
+              help="nameID (Integer between 0 and 32767)")
 @click.option('-ml', '--max-lines', type=click.INT, default=None,
               help="Maximum number of lines to be printed.")
 def ft_name(input_path, name_id, max_lines):
