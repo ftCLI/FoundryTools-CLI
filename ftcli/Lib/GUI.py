@@ -526,9 +526,9 @@ class GUI(object):
         usWeightClassList.sort()
         print(sep_line)
 
-        print("\n  Weights :", usWeightClassList)
-        print("  Widths  :", usWidthClassList)
-        # print('-' * len(sep_line))
+        print()
+        print(" Widths  :", str(usWidthClassList)[1:-1])
+        print(" Weights :", str(usWeightClassList)[1:-1])
 
     def printFtName(self, input_path, name_id, indent=32, max_lines=None):
         terminal_width = get_terminal_size()[0] - 1
