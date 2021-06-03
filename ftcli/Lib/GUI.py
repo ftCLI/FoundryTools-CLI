@@ -351,7 +351,7 @@ class GUI(object):
 
     def printFtInfo(self, input_path):
 
-        terminal_width = get_terminal_size()[0] - 1
+        terminal_width = min(90, get_terminal_size()[0] - 1)
         files = getFontsList(input_path)
         length = 17
 
@@ -476,8 +476,6 @@ class GUI(object):
 
     def printFtList(self, input_path):
 
-        terminal_width = get_terminal_size()[0] - 1
-
         files = getFontsList(input_path)
 
         max_filename_len = 9  # length of the string "File Name"
@@ -572,7 +570,7 @@ class GUI(object):
 
     def printFtNames(self, input_path, minimal=False, indent=32, max_lines=None):
 
-        terminal_width = get_terminal_size()[0] - 1
+        terminal_width = min(90, get_terminal_size()[0] - 1)
 
         files = getFontsList(input_path)
 
