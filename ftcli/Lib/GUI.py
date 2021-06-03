@@ -19,19 +19,18 @@ class GUI(object):
     def csvEditor(self, config_file, csv_file):
 
         data = csvHandler(csv_file).getData()
-        terminal_width = get_terminal_size()[0] - 1
 
         click.clear()
-        print("\nCURRENT FILE:", csv_file)
-        print("-" * terminal_width)
+
+        print("\nCURRENT FILE:", csv_file, '\n')
 
         commands = {
             'c': 'Edit configuration file',
+            'i': 'Init CSV data',
+            'r': 'Recalc CSV data',
             'f': 'Set family name',
             'l': 'Edit single line',
-            'r': 'Recalc CSV data',
             'p': 'Print names',
-            'i': 'Init CSV data',
             'x': 'Exit'
         }
 
@@ -43,9 +42,7 @@ class GUI(object):
         else:
             self.printCsv(csv_file)
 
-        print('-' * terminal_width)
-        print('AVAILABLE COMMANDS:')
-        print('-' * terminal_width)
+        print('\nAVAILABLE COMMANDS:\n')
 
         choices = []
         for key, value in commands.items():
@@ -249,32 +246,84 @@ class GUI(object):
 
     def printCsv(self, csv_file):
 
-        terminal_width = get_terminal_size()[0] - 1
         data = csvHandler(csv_file).getData()
+
+        # Get the maximum field len
+        max_filename_len = 9  # length of the string "File Name"
+        max_family_len = 11  # length of the string "Family Name"
+        max_width_len = 5  # length of the "Width" string
+        max_weight_len = 6
+        max_slope_len = 5
+
+        for row in data:
+
+            current_filename_len = len(row['file_name'])
+            if current_filename_len > max_filename_len:
+                max_filename_len = current_filename_len
+
+            current_family_len = len(f'{row["family_name"]}')
+            if current_family_len > max_family_len:
+                max_family_len = current_family_len
+
+            current_width_len = len(f'{row["uswidthclass"]}: {row["wdt"]}, {row["wdt"]}')
+            if current_width_len > max_width_len:
+                max_width_len = current_width_len
+
+            current_weight_len = len(f'{row["usweightclass"]}: {row["wgt"]}, {row["weight"]}')
+            if current_weight_len > max_weight_len:
+                max_weight_len = current_weight_len
+
+            current_slope_len = len(f'{row["slp"]}, {row["slope"]}')
+            if current_slope_len > max_slope_len:
+                max_slope_len = current_slope_len
+
+        max_filename_len = min(max_filename_len, 40)
+        max_family_len = min(max_family_len, 30)
+        max_width_len = min(max_width_len, 25)
+        max_weight_len = min(max_weight_len, 25)
+        max_slope_len = min(max_slope_len, 20)
+
+        # Set the sep line
+        sep_line = ('-'.rjust(max_filename_len + 7, '-') + '+' +
+                    '-'.rjust(max_family_len + 2, '-') + '+' +
+                    '-' * (max_width_len + 2) + '+' +
+                    '-' * (max_weight_len + 2) + '+' +
+                    '-' * (max_slope_len + 2) + '+' +
+                    3 * ('-' * 3 + '+'))
+
+        print(sep_line)
 
         count = 0
 
+        # Print the header
         print(
-            "{:>3}".format('#'), " ",
-            "{0:<37}".format('File name'), 'B ', 'I ', 'O ',
-            "{0:<25}".format('usWidthClass '),
-            "{0:<25}".format('usWeightClass '),
-            "{0:<18}".format('Slope '),
-            'Family name')
-        print("-" * terminal_width)
+            "#".rjust(3, ' '), ':',
+            "File Name".ljust(max_filename_len, ' '), '|',
+            "Family Name".ljust(max_family_len, ' '), '|',
+            "Width".ljust(max_width_len, ' '), '|',
+            "Weight".ljust(max_weight_len, ' '), '|',
+            "Slope".ljust(max_slope_len, ' '), '|',
+            'B', '|', 'I', '|', 'O', '|'
+        )
 
+        print(sep_line)
+
+        # Print formatted data
         for row in data:
             count += 1
             print(
-                "{:3d}".format(count), ":", "{0:<37}".format(row['file_name'][0:36]),
-                row['is_bold'] + ' ',
-                row['is_italic'] + ' ',
-                row['is_oblique'] + ' ',
-                "{0:<25}".format(row['uswidthclass'] + ": " + row['wdt'] + ", " + row['width'])[0:25],
-                "{0:<25}".format(row['usweightclass'] + ": " + row['wgt'] + ", " + row['weight'])[0:25],
-                ("{0:<18}".format(row['slp'] + ", " + row['slope'])[0:18]) if len(row['slope']) > 0 else f"{'':<18}",
-                row['family_name']
+                str(count).rjust(3, ' '), ':',
+                row['file_name'].ljust(max_filename_len, ' ')[0:max_filename_len], "|",
+                row['family_name'].ljust(max_family_len, ' ')[0:max_family_len], '|',
+                f'{row["uswidthclass"]}: {row["wdt"]}, {row["wdt"]}'.ljust(max_width_len, ' ')[0:max_width_len], '|',
+                f'{row["usweightclass"]}: {row["wgt"]}, {row["weight"]}'.ljust(max_weight_len, ' ')[0:max_weight_len],
+                '|',
+                f'{row["slp"]}, {row["slope"]}'.ljust(
+                    max_slope_len, ' ') if len(row['slope']) > 0 else ' '.ljust(max_slope_len), '|',
+                row['is_bold'], '|', row['is_italic'], '|', row['is_oblique'], "|",
             )
+
+        print(sep_line)
 
     def printFtInfo(self, input_path):
 
@@ -552,7 +601,7 @@ class GUI(object):
                         string = wrapString(string, indent, max_lines, terminal_width)
                         print(string)
                     except:
-                       pass
+                        pass
 
                     try:
                         string = "{0:<29}".format(' version') + ' : ' + str(otFont.topDictIndex[0].version)
