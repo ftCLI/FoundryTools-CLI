@@ -478,14 +478,27 @@ class GUI(object):
 
         terminal_width = get_terminal_size()[0] - 1
 
-        print("-" * terminal_width)
-        print("{0:<49}".format("File Name"), "usWidthClass", "usWeightClass", "isBold", "isItalic", "isOblique")
-        print("-" * terminal_width)
+        files = getFontsList(input_path)
+
+        max_filename_len = 9  # length of the string "File Name"
+
+        for f in files:
+            current_filename_len = len(os.path.basename(f))
+            if current_filename_len > max_filename_len:
+                max_filename_len = current_filename_len
+
+        max_filename_len = min(max_filename_len, 60)  # Limit the printed file name string to 60 characters
+
+        sep_line = '+' + '-' * (max_filename_len + 2) + '+' + '-' * 14 + '+' + '-' * 15 + '+' + '-' * 8 + '+' +\
+                   '-' * 10 + '+' + '-' * 11 + '+'
+
+        print(sep_line)
+        print('|', 'File Name'.ljust(max_filename_len, ' '),
+              '|', 'usWidthClass', '|', 'usWeightClass', '|', 'isBold', '|', 'isItalic', '|', 'isOblique', '|')
+        print(sep_line)
 
         usWidthClassList = []
         usWeightClassList = []
-
-        files = getFontsList(input_path)
 
         for f in files:
             try:
@@ -496,9 +509,13 @@ class GUI(object):
                 isBold = font.isBold()
                 isItalic = font.isItalic()
                 isOblique = font.isOblique()
-                print("{0:<49}".format(filename)[0:49], "{:12d}".format(
-                    usWidthClass), "{:13d}".format(usWeightClass), "{:6d}".format(isBold), "{0:8d}".format(isItalic),
-                      "{0:9d}".format(isOblique))
+                print('|', filename.ljust(max_filename_len, ' ')[0:max_filename_len], '|',
+                      str(usWidthClass).rjust(12), '|',
+                      str(usWeightClass).rjust(13), '|',
+                      str(int(isBold)).rjust(6), '|',
+                      str(int(isItalic)).rjust(8), '|',
+                      str(int(isOblique)).rjust(9), '|',
+                      )
 
                 if usWeightClass not in usWeightClassList:
                     usWeightClassList.append(usWeightClass)
@@ -509,11 +526,11 @@ class GUI(object):
 
         usWidthClassList.sort()
         usWeightClassList.sort()
+        print(sep_line)
 
-        print("-" * terminal_width)
-        print("Weights:", usWeightClassList)
-        print("\nWidths:", usWidthClassList)
-        print("-" * terminal_width)
+        print("\nWeights :", usWeightClassList)
+        print("Widths  :", usWidthClassList)
+        # print('-' * len(sep_line))
 
     def printFtName(self, input_path, name_id, indent=32, max_lines=None):
         terminal_width = get_terminal_size()[0] - 1
@@ -759,7 +776,6 @@ class GUI(object):
 
     def __dictEditor(self, config_file, input_dict, key_name, min_key, max_key, default_dict):
 
-        terminal_width = get_terminal_size()[0] - 1
         config = configHandler(config_file).getConfig()
 
         max_line_len = 40
@@ -770,7 +786,7 @@ class GUI(object):
 
         max_line_len += 2
 
-        sep_line = ('+' + '-' * (max_line_len) + '+')
+        sep_line = ('+' + '-' * max_line_len + '+')
 
         keys_list = []
         keys_list = [k for k in config[input_dict] if k not in keys_list]
@@ -790,7 +806,8 @@ class GUI(object):
             'a': 'Add/Edit item',
             'd': 'Delete item',
             'r': 'Reset default values',
-            'x': 'Main menu'}
+            'x': 'Main menu'
+        }
         message = "\nYour selection"
         choices = []
         for key, value in commands.items():
