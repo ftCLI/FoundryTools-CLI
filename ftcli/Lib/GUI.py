@@ -139,12 +139,10 @@ class GUI(object):
             sys.exit()
 
     def cfgEditor(self, config_file):
-        terminal_width = get_terminal_size()[0] - 1
         config = configHandler(config_file).getConfig()
 
         click.clear()
-        print("\nCURRENT FILE:", config_file)
-        print('-' * terminal_width)
+        print("\nCURRENT FILE:", config_file, '\n')
         self.printCfg(config_file)
 
         commands = {
@@ -155,8 +153,7 @@ class GUI(object):
             'r': 'Reset default values',
             'x': 'Exit'}
 
-        print('AVAILABLE COMMANDS:')
-        print('-' * terminal_width)
+        print('\nAVAILABLE COMMANDS:\n')
         choices = []
         message = "\nYour selection"
         for key, value in commands.items():
@@ -209,51 +206,73 @@ class GUI(object):
 
     def printCfg(self, config_file):
 
-        terminal_width = get_terminal_size()[0] - 1
         config = configHandler(config_file).getConfig()
 
-        print()
-        print("[WEIGHTS]")
-        print()
-        for k, v in config['weights'].items():
-            print(k, ':', v[0] + ',', v[1])
-        print()
-        print('-' * terminal_width)
+        max_line_len = 40  # minimum len
 
-        print()
-        print("[WIDTHS]")
-        print()
         for k, v in config['widths'].items():
-            print(k, ':', v[0] + ',', v[1])
-        print()
-        print('-' * terminal_width)
+            current_line_len = len(f'{k} : {v[0]}, {v[1]}')
+            if current_line_len > max_line_len:
+                max_line_len = current_line_len
 
-        print()
-        print('[ITALICS]')
-        print()
-        print("Short word :", config['italics'][0])
-        print("Long word  :", config['italics'][1])
-        print()
-        print('-' * terminal_width)
+        for k, v in config['weights'].items():
+            current_line_len = len(f'{k} : {v[0]}, {v[1]}')
+            if current_line_len > max_line_len:
+                max_line_len = current_line_len
 
-        print()
-        print('[OBLIQUES]')
-        print()
-        print("Short word :", config['obliques'][0])
-        print("Long word  :", config['obliques'][1])
-        print()
-        print('-' * terminal_width)
+        for v in config['italics']:
+            current_line_len = max(
+                len(f'Short word : {v}'), len(f'Long word : {v}')
+            )
+            if current_line_len > max_line_len:
+                max_line_len = current_line_len
+
+        for v in config['obliques']:
+            current_line_len = max(
+                len(f'Short word : {v}'), len(f'Long word : {v}')
+            )
+            if current_line_len > max_line_len:
+                max_line_len = current_line_len
+
+        # Add the 2 spaces needed to place "|" at the beginning of the strings
+        max_line_len += 2
+        sep_line = '+' + '-' * max_line_len + '+'
+
+        print(sep_line)
+        print("| WEIGHTS".ljust(max_line_len, ' '), '|')
+        print(sep_line)
+        for k, v in config['weights'].items():
+            print(f'| {k} : {v[0]}, {v[1]}'.ljust(max_line_len, ' '), '|')
+        print(sep_line)
+
+        print("| WIDTHS".ljust(max_line_len, ' '), '|')
+        print(sep_line)
+        for k, v in config['widths'].items():
+            print(f'| {k} : {v[0]}, {v[1]}'.ljust(max_line_len, ' '), '|')
+        print(sep_line)
+
+        print('| ITALICS'.ljust(max_line_len, ' '), '|')
+        print(sep_line)
+        print(f'| Short word : {config["italics"][0]}'.ljust(max_line_len, ' '), '|')
+        print(f'| Long word  : {config["italics"][1]}'.ljust(max_line_len, ' '), '|')
+        print(sep_line)
+
+        print('| OBLIQUES'.ljust(max_line_len, ' '), '|')
+        print(sep_line)
+        print(f'| Short word : {config["obliques"][0]}'.ljust(max_line_len, ' '), '|')
+        print(f'| Long word  : {config["obliques"][1]}'.ljust(max_line_len, ' '), '|')
+        print(sep_line)
 
     def printCsv(self, csv_file):
 
         data = csvHandler(csv_file).getData()
 
         # Get the maximum field len
-        max_filename_len = 9  # length of the string "File Name"
-        max_family_len = 11  # length of the string "Family Name"
+        max_filename_len = 9  # length of the "File Name" string
+        max_family_len = 11  # length of the "Family Name" string
         max_width_len = 5  # length of the "Width" string
-        max_weight_len = 6
-        max_slope_len = 5
+        max_weight_len = 6  # length of the "Weight" string
+        max_slope_len = 5  # length of the "Slope" string
 
         for row in data:
 
@@ -265,7 +284,7 @@ class GUI(object):
             if current_family_len > max_family_len:
                 max_family_len = current_family_len
 
-            current_width_len = len(f'{row["uswidthclass"]}: {row["wdt"]}, {row["wdt"]}')
+            current_width_len = len(f'{row["uswidthclass"]}: {row["wdt"]}, {row["width"]}')
             if current_width_len > max_width_len:
                 max_width_len = current_width_len
 
@@ -284,12 +303,14 @@ class GUI(object):
         max_slope_len = min(max_slope_len, 20)
 
         # Set the sep line
-        sep_line = ('-'.rjust(max_filename_len + 7, '-') + '+' +
+        sep_line = ('+' + '-' * 5 +
+                    '+' + '-'.rjust(max_filename_len + 2, '-') + '+' +
+                    3 * ('-' * 3 + '+') +
                     '-'.rjust(max_family_len + 2, '-') + '+' +
                     '-' * (max_width_len + 2) + '+' +
                     '-' * (max_weight_len + 2) + '+' +
-                    '-' * (max_slope_len + 2) + '+' +
-                    3 * ('-' * 3 + '+'))
+                    '-' * (max_slope_len + 2) + '+'
+                    )
 
         print(sep_line)
 
@@ -297,13 +318,13 @@ class GUI(object):
 
         # Print the header
         print(
-            "#".rjust(3, ' '), ':',
+            '|', "#".rjust(3, ' '), '|',
             "File Name".ljust(max_filename_len, ' '), '|',
+            'B', '|', 'I', '|', 'O', '|',
             "Family Name".ljust(max_family_len, ' '), '|',
             "Width".ljust(max_width_len, ' '), '|',
             "Weight".ljust(max_weight_len, ' '), '|',
             "Slope".ljust(max_slope_len, ' '), '|',
-            'B', '|', 'I', '|', 'O', '|'
         )
 
         print(sep_line)
@@ -312,15 +333,15 @@ class GUI(object):
         for row in data:
             count += 1
             print(
-                str(count).rjust(3, ' '), ':',
-                row['file_name'].ljust(max_filename_len, ' ')[0:max_filename_len], "|",
+                '|', str(count).rjust(3, ' '), '|',
+                row['file_name'].ljust(max_filename_len, ' ')[0:max_filename_len], '|',
+                row['is_bold'], '|', row['is_italic'], '|', row['is_oblique'], '|',
                 row['family_name'].ljust(max_family_len, ' ')[0:max_family_len], '|',
-                f'{row["uswidthclass"]}: {row["wdt"]}, {row["wdt"]}'.ljust(max_width_len, ' ')[0:max_width_len], '|',
-                f'{row["usweightclass"]}: {row["wgt"]}, {row["weight"]}'.ljust(max_weight_len, ' ')[0:max_weight_len],
-                '|',
+                f'{row["uswidthclass"]}: {row["wdt"]}, {row["width"]}'.ljust(max_width_len, ' ')[0:max_width_len], '|',
+                f'{row["usweightclass"]}: {row["wgt"]}, {row["weight"]}'.ljust(
+                    max_weight_len, ' ')[0:max_weight_len], '|',
                 f'{row["slp"]}, {row["slope"]}'.ljust(
                     max_slope_len, ' ') if len(row['slope']) > 0 else ' '.ljust(max_slope_len), '|',
-                row['is_bold'], '|', row['is_italic'], '|', row['is_oblique'], "|",
             )
 
         print(sep_line)
@@ -738,20 +759,29 @@ class GUI(object):
         terminal_width = get_terminal_size()[0] - 1
         config = configHandler(config_file).getConfig()
 
+        max_line_len = 40
+        for k, v in config[input_dict].items():
+            current_line_len = len(f'{k} : {v[0]}, {v[1]}')
+            if current_line_len > max_line_len:
+                max_line_len = current_line_len
+
+        max_line_len += 2
+
+        sep_line = ('+' + '-' * (max_line_len) + '+')
+
         keys_list = []
         keys_list = [k for k in config[input_dict] if k not in keys_list]
 
         click.clear()
-        print("CURRENT FILE:", config_file)
-        print('-' * terminal_width)
-
-        print()
-        print("[{}]".format(input_dict.upper()))
+        print("\nCURRENT FILE:", config_file, "\n")
+        print(sep_line)
+        print(f'| {input_dict.upper()}'.ljust(max_line_len, ' '), '|')
+        print(sep_line)
         for k, v in config[input_dict].items():
-            print('{} : {}, {}'.format(k, v[0], v[1]))
-        print()
+            print(f'| {k} : {v[0]}, {v[1]}'.ljust(max_line_len, ' '), '|')
+        print(sep_line)
 
-        print('-' * terminal_width, '\nAVAILABLE COMMANDS:\n' + '-' * terminal_width)
+        print('\nAVAILABLE COMMANDS:\n')
 
         commands = {
             'a': 'Add/Edit item',
