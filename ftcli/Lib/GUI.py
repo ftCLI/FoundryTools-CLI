@@ -87,6 +87,8 @@ class GUI(object):
                 "\nIs bold", type=click.BOOL, default=line_data['is_bold']))
             is_italic = int(click.prompt(
                 "\nIs italic", type=click.BOOL, default=line_data['is_italic']))
+            is_oblique = int(click.prompt(
+                "\nIs oblique", type=click.BOOL, default=line_data['is_oblique']))
             uswidthclass = click.prompt("\nusWidthClass", type=click.IntRange(
                 1, 9), default=line_data['uswidthclass'])
             wdt = click.prompt("\nWidth (short word)",
@@ -104,6 +106,7 @@ class GUI(object):
 
             data[line_to_edit]['is_bold'] = is_bold
             data[line_to_edit]['is_italic'] = is_italic
+            data[line_to_edit]['is_oblique'] = is_oblique
             data[line_to_edit]['uswidthclass'] = uswidthclass
             data[line_to_edit]['wdt'] = wdt
             data[line_to_edit]['width'] = width
