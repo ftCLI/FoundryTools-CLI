@@ -528,8 +528,8 @@ class GUI(object):
         usWeightClassList.sort()
         print(sep_line)
 
-        print("\nWeights :", usWeightClassList)
-        print("Widths  :", usWidthClassList)
+        print("\n  Weights :", usWeightClassList)
+        print("  Widths  :", usWidthClassList)
         # print('-' * len(sep_line))
 
     def printFtName(self, input_path, name_id, indent=32, max_lines=None):
