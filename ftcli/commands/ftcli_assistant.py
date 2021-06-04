@@ -25,8 +25,8 @@ def edit_csv(input_path, config_file):
     """Command line editor for 'data.csv' files.
 
     This tool is not intended to replace a code editor for CSV files, but can help to make small edits without leaving
-    the command line. For complex projects, it's strongly recommended to use a code editor like Visual Studio Code or
-    even Excel.
+    the command line. For complex projects, it's strongly recommended to use an editor like Notepad++, Visual Studio
+    Code or even Excel.
     """
 
     if not config_file:

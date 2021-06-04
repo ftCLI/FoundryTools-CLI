@@ -271,6 +271,7 @@ class GUI(object):
         data = csvHandler(csv_file).getData()
 
         # Get the maximum field len
+        count = 0
         max_filename_len = 9  # length of the "File Name" string
         max_family_len = 11  # length of the "Family Name" string
         max_width_len = 5  # length of the "Width" string
@@ -278,6 +279,8 @@ class GUI(object):
         max_slope_len = 5  # length of the "Slope" string
 
         for row in data:
+
+            count += 1
 
             current_filename_len = len(row['file_name'])
             if current_filename_len > max_filename_len:
@@ -299,6 +302,7 @@ class GUI(object):
             if current_slope_len > max_slope_len:
                 max_slope_len = current_slope_len
 
+        count_len = len(str(count))
         max_filename_len = min(max_filename_len, 40)
         max_family_len = min(max_family_len, 30)
         max_width_len = min(max_width_len, 25)
@@ -306,7 +310,7 @@ class GUI(object):
         max_slope_len = min(max_slope_len, 20)
 
         # Set the sep line
-        sep_line = ('+' + '-' * 5 +
+        sep_line = ('+' + '-' * (count_len + 2) +
                     '+' + '-'.rjust(max_filename_len + 2, '-') + '+' +
                     3 * ('-' * 3 + '+') +
                     '-'.rjust(max_family_len + 2, '-') + '+' +
@@ -321,7 +325,7 @@ class GUI(object):
 
         # Print the header
         print(
-            '|', "#".rjust(3, ' '), '|',
+            '|', "#".rjust(count_len, ' '), '|',
             "File Name".ljust(max_filename_len, ' '), '|',
             'B', '|', 'I', '|', 'O', '|',
             "Family Name".ljust(max_family_len, ' '), '|',
@@ -336,7 +340,7 @@ class GUI(object):
         for row in data:
             count += 1
             print(
-                '|', str(count).rjust(3, ' '), '|',
+                '|', str(count).rjust(count_len, ' '), '|',
                 row['file_name'].ljust(max_filename_len, ' ')[0:max_filename_len], '|',
                 row['is_bold'], '|', row['is_italic'], '|', row['is_oblique'], '|',
                 row['family_name'].ljust(max_family_len, ' ')[0:max_family_len], '|',
@@ -531,7 +535,8 @@ class GUI(object):
         print(" Weights :", str(usWeightClassList)[1:-1])
 
     def printFtName(self, input_path, name_id, indent=32, max_lines=None):
-        terminal_width = get_terminal_size()[0] - 1
+
+        terminal_width = min(90, get_terminal_size()[0] - 1)
 
         files = getFontsList(input_path)
 
@@ -561,8 +566,7 @@ class GUI(object):
                             string = "platform: ({}, {}, {}),  nameID{} : {}".format(
                                 platformID, platEncID, langID, name.nameID, name.toUnicode())
 
-                            string = wrapString(
-                                string, indent, max_lines, terminal_width)
+                            string = wrapString(string, indent, max_lines, terminal_width)
                             print(string)
                 print()
             except Exception as e:
@@ -585,7 +589,7 @@ class GUI(object):
                     if platform_spec not in platform_specs:
                         platform_specs.append(platform_spec)
 
-                print('\nCURRENT FILE: {}'.format(f))
+                print('\nCURRENT FILE: {}\n'.format(f))
                 print('-' * terminal_width)
 
                 # NAME TABLE
