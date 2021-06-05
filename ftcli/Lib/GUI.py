@@ -305,15 +305,15 @@ class GUI(object):
         count_len = len(str(count))
         max_filename_len = min(max_filename_len, 40)
         max_family_len = min(max_family_len, 30)
-        max_width_len = min(max_width_len, 25)
-        max_weight_len = min(max_weight_len, 25)
+        max_width_len = min(max_width_len, 30)
+        max_weight_len = min(max_weight_len, 30)
         max_slope_len = min(max_slope_len, 20)
 
         # Set the sep line
-        sep_line = ('+' + '-' * (count_len + 2) +
-                    '+' + '-'.rjust(max_filename_len + 2, '-') + '+' +
+        sep_line = ('+' + '-' * (count_len + 2) + '+' +
+                    '-' * (max_filename_len + 2) + '+' +
                     3 * ('-' * 3 + '+') +
-                    '-'.rjust(max_family_len + 2, '-') + '+' +
+                    '-' * (max_family_len + 2) + '+' +
                     '-' * (max_width_len + 2) + '+' +
                     '-' * (max_weight_len + 2) + '+' +
                     '-' * (max_slope_len + 2) + '+'
@@ -327,7 +327,7 @@ class GUI(object):
         print(
             '|', "#".rjust(count_len, ' '), '|',
             "File Name".ljust(max_filename_len, ' '), '|',
-            'B', '|', 'I', '|', 'O', '|',
+            'B | I | O | ',
             "Family Name".ljust(max_family_len, ' '), '|',
             "Width".ljust(max_width_len, ' '), '|',
             "Weight".ljust(max_weight_len, ' '), '|',
@@ -646,26 +646,27 @@ class GUI(object):
                     except:
                         pass
 
-                    try:
-                        string = "{0:<29}".format(' version') + ' : ' + str(otFont.topDictIndex[0].version)
-                        string = wrapString(string, indent, max_lines, terminal_width)
-                        print(string)
-                    except:
-                        pass
+                    if minimal is False:
+                        try:
+                            string = "{0:<29}".format(' version') + ' : ' + str(otFont.topDictIndex[0].version)
+                            string = wrapString(string, indent, max_lines, terminal_width)
+                            print(string)
+                        except:
+                            pass
 
-                    try:
-                        string = "{0:<29}".format(' Notice') + ' : ' + str(otFont.topDictIndex[0].Notice)
-                        string = wrapString(string, indent, max_lines, terminal_width)
-                        print(string)
-                    except:
-                        pass
+                        try:
+                            string = "{0:<29}".format(' Notice') + ' : ' + str(otFont.topDictIndex[0].Notice)
+                            string = wrapString(string, indent, max_lines, terminal_width)
+                            print(string)
+                        except:
+                            pass
 
-                    try:
-                        string = "{0:<29}".format(' Copyright') + ' : ' + str(otFont.topDictIndex[0].Copyright)
-                        string = wrapString(string, indent, max_lines, terminal_width)
-                        print(string)
-                    except:
-                        pass
+                        try:
+                            string = "{0:<29}".format(' Copyright') + ' : ' + str(otFont.topDictIndex[0].Copyright)
+                            string = wrapString(string, indent, max_lines, terminal_width)
+                            print(string)
+                        except:
+                            pass
 
                     try:
                         string = "{0:<29}".format(' FullName') + ' : ' + str(otFont.topDictIndex[0].FullName)
