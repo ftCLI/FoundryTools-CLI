@@ -360,7 +360,6 @@ def find_replace(input_path, old_string, new_string, name_id, platform, fix_cff,
 
 
 cli = click.CommandCollection(sources=[
-    setNameRecord, delNameRecord, setCffName, findReplace, winToMac, deleteMacNames,
-    printLanguageCodes], help=
+    setNameRecord, delNameRecord, setCffName, findReplace, winToMac, deleteMacNames, printLanguageCodes], help=
     """A command line tool to edit namerecords and CFF names.
     """)
