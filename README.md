@@ -220,7 +220,7 @@ Use a custom configuration file instead of the default config.json file located 
 
 Use this option to activate linked styles. If this option is active, linked styles must be specified. For example: -ls 400 700, or -ls 300 600.
   
-    -ex, --exclude-namerecords [1|2|3|4|5|6|16|17|18]
+    -ex, --exclude-namerecord [1|2|3|4|5|6|16|17|18]
 
 Name IDs to skip. The specified name IDs won't be recalculated. This option can be repeated(example: -ex 3 -ex 5 -ex 6...).
     

@@ -238,7 +238,7 @@ def recalcNames():
 @click.option('-ls', '--linked-styles', type=(click.IntRange(1, 1000), click.IntRange(1, 1000)), default=(None, None),
               help="Use this option to activate linked styles. If this option is active, linked styles must be"
                    " specified. For example: -ls 400 700, or -ls 300 600.")
-@click.option('-ex', '--exclude-namerecords', type=click.Choice(
+@click.option('-ex', '--exclude-namerecord', type=click.Choice(
     choices=['1', '2', '3', '4', '5', '6', '16', '17', '18']), multiple=True,
               help="Name IDs to skip. The specified name IDs won't be recalculated. This option can be repeated"
                    " (example: -ex 3 -ex 5 -ex 6...).")
@@ -291,7 +291,7 @@ def recalc_names(
         input_path,
         config_file,
         linked_styles,
-        exclude_namerecords,
+        exclude_namerecord,
         shorten_width,
         shorten_weight,
         shorten_slope,
@@ -342,7 +342,7 @@ def recalc_names(
     shorten_width = [int(i) for i in shorten_width]
     shorten_weight = [int(i) for i in shorten_weight]
     shorten_slope = [int(i) for i in shorten_slope]
-    exclude_namerecords = [int(i) for i in exclude_namerecords]
+    exclude_namerecord = [int(i) for i in exclude_namerecord]
 
     # We convert the linked_styles tuple to a list and then sort it.
     linked_styles = tuple(set(linked_styles))
@@ -359,7 +359,7 @@ def recalc_names(
 
             font.recalcNames(
                 font_data,
-                linked_styles=linked_styles, namerecords_to_ignore=exclude_namerecords, shorten_weight=shorten_weight,
+                linked_styles=linked_styles, namerecords_to_ignore=exclude_namerecord, shorten_weight=shorten_weight,
                 shorten_width=shorten_width, shorten_slope=shorten_slope, alt_uid=alt_uid, fixCFF=fix_cff,
                 isSuperFamily=super_family, regular_italic=regular_italic, keep_regular=keep_regular,
                 old_full_font_name=old_full_font_name, oblique_not_italic=oblique_not_italic)

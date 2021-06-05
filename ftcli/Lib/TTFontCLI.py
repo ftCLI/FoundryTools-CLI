@@ -13,74 +13,6 @@ class TTFontCLI(TTFont):
     def __init__(self, file, recalcTimestamp=False):
         super().__init__(file=file, recalcTimestamp=recalcTimestamp)
 
-    def modifyLinegapPercent(self, percent):
-        try:
-
-            # get observed start values from the font
-            os2_typo_ascender = self["OS/2"].sTypoAscender
-            os2_typo_descender = self["OS/2"].sTypoDescender
-            os2_typo_linegap = self["OS/2"].sTypoLineGap
-            hhea_ascent = self["hhea"].ascent
-            hhea_descent = self["hhea"].descent
-            units_per_em = self["head"].unitsPerEm
-
-            # calculate necessary delta values
-            os2_typo_ascdesc_delta = os2_typo_ascender + -(os2_typo_descender)
-            hhea_ascdesc_delta = hhea_ascent + -(hhea_descent)
-
-            # define percent UPM from command line request
-            factor = 1.0 * int(percent) / 100
-
-            # define line spacing units
-            line_spacing_units = int(factor * units_per_em)
-
-            # define total height as UPM + line spacing units
-            total_height = line_spacing_units + units_per_em
-
-            # height calculations for adjustments
-            delta_height = total_height - hhea_ascdesc_delta
-            upper_lower_add_units = int(0.5 * delta_height)
-
-            # redefine hhea linegap to 0 in all cases
-            hhea_linegap = 0
-
-            # Define metrics based upon original design approach in the font
-            # Google metrics approach
-            if os2_typo_linegap == 0 and (os2_typo_ascdesc_delta > units_per_em):
-                # define values
-                os2_typo_ascender += upper_lower_add_units
-                os2_typo_descender -= upper_lower_add_units
-                hhea_ascent += upper_lower_add_units
-                hhea_descent -= upper_lower_add_units
-                os2_win_ascent = hhea_ascent
-                os2_win_descent = -hhea_descent
-            # Adobe metrics approach
-            elif os2_typo_linegap == 0 and (os2_typo_ascdesc_delta == units_per_em):
-                hhea_ascent += upper_lower_add_units
-                hhea_descent -= upper_lower_add_units
-                os2_win_ascent = hhea_ascent
-                os2_win_descent = -hhea_descent
-            else:
-                os2_typo_linegap = line_spacing_units
-                hhea_ascent = int(os2_typo_ascender + 0.5 * os2_typo_linegap)
-                hhea_descent = -(total_height - hhea_ascent)
-                os2_win_ascent = hhea_ascent
-                os2_win_descent = -hhea_descent
-
-            # define updated values from above calculations
-            self["hhea"].lineGap = hhea_linegap
-            self["OS/2"].sTypoAscender = os2_typo_ascender
-            self["OS/2"].sTypoDescender = os2_typo_descender
-            self["OS/2"].sTypoLineGap = os2_typo_linegap
-            self["OS/2"].usWinAscent = os2_win_ascent
-            self["OS/2"].usWinDescent = os2_win_descent
-            self["hhea"].ascent = hhea_ascent
-            self["hhea"].descent = hhea_descent
-
-        except Exception as e:
-            click.secho("ERROR: {}".format(e), fg='red')
-            sys.exit(1)
-
     def recalcNames(
             self, font_data, namerecords_to_ignore=None, shorten_weight=None, shorten_width=None, shorten_slope=None,
             fixCFF=False, linked_styles=None, isSuperFamily=False, alt_uid=False, regular_italic=False,
@@ -379,7 +311,7 @@ class TTFontCLI(TTFont):
                 macScript = _MAC_LANGUAGE_TO_SCRIPT.get(macLang)
                 self['name'].removeNames(nameID, 1, macScript, macLang)
 
-    def findReplace(self, oldString, newString, fixCFF=False, nameID=None, platform=None):
+    def findReplace(self, oldString, newString, fixCFF=False, nameID=None, platform=None, namerecords_to_ignore=None):
 
         platforms_list = []
 
@@ -404,6 +336,12 @@ class TTFontCLI(TTFont):
             for name in self['name'].names:
                 if name.platformID in platforms_list:
                     names_list.append([name.platformID, name.nameID])
+
+        # If a nameID is excluded, it won't be changed even if it's explicitly included.
+        if namerecords_to_ignore:
+            for name in self['name'].names:
+                if name.nameID in namerecords_to_ignore and [name.platformID, name.nameID] in names_list:
+                    names_list.remove([name.platformID, name.nameID])
 
         fixCount = 0
 
@@ -449,14 +387,82 @@ class TTFontCLI(TTFont):
                 self['name'].removeNames(
                     name.nameID, name.platformID, name.platEncID, name.langID)
 
-    def delMacNames(self, exclude_namerecords=None):
-        if exclude_namerecords is None:
-            exclude_namerecords = []
-        exclude_namerecords = [int(i) for i in exclude_namerecords]
+    def delMacNames(self, exclude_namerecord=None):
+        if exclude_namerecord is None:
+            exclude_namerecord = []
+        exclude_namerecord = [int(i) for i in exclude_namerecord]
         for name in self['name'].names:
-            if name.platformID != 1 or name.nameID in exclude_namerecords:
+            if name.platformID != 1 or name.nameID in exclude_namerecord:
                 continue
             self['name'].removeNames(name.nameID, name.platformID, name.platEncID, name.langID)
+
+    def modifyLinegapPercent(self, percent):
+        try:
+
+            # get observed start values from the font
+            os2_typo_ascender = self["OS/2"].sTypoAscender
+            os2_typo_descender = self["OS/2"].sTypoDescender
+            os2_typo_linegap = self["OS/2"].sTypoLineGap
+            hhea_ascent = self["hhea"].ascent
+            hhea_descent = self["hhea"].descent
+            units_per_em = self["head"].unitsPerEm
+
+            # calculate necessary delta values
+            os2_typo_ascdesc_delta = os2_typo_ascender + -(os2_typo_descender)
+            hhea_ascdesc_delta = hhea_ascent + -(hhea_descent)
+
+            # define percent UPM from command line request
+            factor = 1.0 * int(percent) / 100
+
+            # define line spacing units
+            line_spacing_units = int(factor * units_per_em)
+
+            # define total height as UPM + line spacing units
+            total_height = line_spacing_units + units_per_em
+
+            # height calculations for adjustments
+            delta_height = total_height - hhea_ascdesc_delta
+            upper_lower_add_units = int(0.5 * delta_height)
+
+            # redefine hhea linegap to 0 in all cases
+            hhea_linegap = 0
+
+            # Define metrics based upon original design approach in the font
+            # Google metrics approach
+            if os2_typo_linegap == 0 and (os2_typo_ascdesc_delta > units_per_em):
+                # define values
+                os2_typo_ascender += upper_lower_add_units
+                os2_typo_descender -= upper_lower_add_units
+                hhea_ascent += upper_lower_add_units
+                hhea_descent -= upper_lower_add_units
+                os2_win_ascent = hhea_ascent
+                os2_win_descent = -hhea_descent
+            # Adobe metrics approach
+            elif os2_typo_linegap == 0 and (os2_typo_ascdesc_delta == units_per_em):
+                hhea_ascent += upper_lower_add_units
+                hhea_descent -= upper_lower_add_units
+                os2_win_ascent = hhea_ascent
+                os2_win_descent = -hhea_descent
+            else:
+                os2_typo_linegap = line_spacing_units
+                hhea_ascent = int(os2_typo_ascender + 0.5 * os2_typo_linegap)
+                hhea_descent = -(total_height - hhea_ascent)
+                os2_win_ascent = hhea_ascent
+                os2_win_descent = -hhea_descent
+
+            # define updated values from above calculations
+            self["hhea"].lineGap = hhea_linegap
+            self["OS/2"].sTypoAscender = os2_typo_ascender
+            self["OS/2"].sTypoDescender = os2_typo_descender
+            self["OS/2"].sTypoLineGap = os2_typo_linegap
+            self["OS/2"].usWinAscent = os2_win_ascent
+            self["OS/2"].usWinDescent = os2_win_descent
+            self["hhea"].ascent = hhea_ascent
+            self["hhea"].descent = hhea_descent
+
+        except Exception as e:
+            click.secho("ERROR: {}".format(e), fg='red')
+            sys.exit(1)
 
     def win2mac(self):
         self.removeEmptyNames()
