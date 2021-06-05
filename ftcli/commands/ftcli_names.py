@@ -43,7 +43,7 @@ def winToMac():
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
-def fill_mac_names(input_path, output_dir, recalc_timestamp, overwrite):
+def win_2_mac(input_path, output_dir, recalc_timestamp, overwrite):
     """Copies namerecords from Windows table to Macintosh table.
     """
 
