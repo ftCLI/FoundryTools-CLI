@@ -279,10 +279,10 @@ def recalcNames():
                    " and you need to keep oblique and italic styles separate). The italic bits will be cleared when the"
                    " oblique bit is set.")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t'
-                   ' exist, will be created. If not specified, files are saved to the same folder.')
+              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
+                   'exist, will be created. If not specified, files are saved to the same folder.')
 @click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By'
+              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
                    ' default, original timestamp is kept.')
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'

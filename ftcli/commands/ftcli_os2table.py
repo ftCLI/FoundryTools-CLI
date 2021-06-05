@@ -42,7 +42,7 @@ See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
               help='The output directory where the output files are to be created. If it doesn\'t exist, will be'
                    'created. If not specified, files are saved to the same folder.')
 @click.option('--recalc-timestamp/--no-recalc-timestamp', default=False,
-              help='Keeps the original font \'modified\' timestamp (head.modified) or set it to current time. By'
+              help='Keeps the original font \'modified\' timestamp (head.modified) or set it to current time. By '
                    'default, original timestamp is kept.')
 @click.option('--overwrite/--no-overwrite', default=True,
               help='Overwrites existing output files or save them to a new file (numbers are appended at the end of'

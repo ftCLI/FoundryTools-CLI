@@ -78,7 +78,7 @@ def rmOverlaps():
               help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
                    'exist, will be created. If not specified, files are saved to the same folder.')
 @click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By'
+              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
                    'default, original timestamp is kept.')
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
@@ -121,7 +121,7 @@ def extractTTC():
               help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
                    'exist, will be created. If not specified, files are saved to the same folder.')
 @click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By'
+              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
                    'default, original timestamp is kept.')
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
@@ -157,7 +157,7 @@ def addDSIG():
               help='The output directory where the output files are to be created. If it doesn\'t exist, will be'
                    'created. If not specified, files are saved to the same folder.')
 @click.option('--recalc-timestamp/--no-recalc-timestamp', default=False,
-              help='Keeps the original font \'modified\' timestamp (head.modified) or set it to current time. By'
+              help='Keeps the original font \'modified\' timestamp (head.modified) or set it to current time. By '
                    'default, original timestamp is kept.')
 @click.option('--overwrite/--no-overwrite', default=True,
               help='Overwrites existing output files or save them to a new file (numbers are appended at the end of'

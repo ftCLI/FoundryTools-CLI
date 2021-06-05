@@ -135,11 +135,11 @@ def setCffName():
               help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
                    'default, original timestamp is kept.')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t'
+              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
                    'exist, will be created. If not specified, files are saved to the same folder.')
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   'name). By default, files are overwritten.')
+                   ' name). By default, files are overwritten.')
 def set_cff_name(input_path, font_names, full_name, family_name, weight, copyright, notice, output_dir,
                  recalc_timestamp, overwrite):
     """Sets names in the CFF table."""
@@ -183,14 +183,14 @@ def setNameRecord():
 @click.option('-l', '--language', default="en", show_default=True, help="language")
 @click.option('-s', '--string', required=True, help='string')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t'
+              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
                    'exist, will be created. If not specified, files are saved to the same folder.')
 @click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
               help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
                    'default, original timestamp is kept.')
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   'name). By default, files are overwritten.')
+                   ' name). By default, files are overwritten.')
 def set_name(input_path, name_id, platform, language, string, output_dir, recalc_timestamp, overwrite):
     """Writes the specified namerecord in the name table.
 
@@ -239,14 +239,14 @@ def delNameRecord():
 @click.option('-l', '--language', default="en", show_default=True,
               help="Specify the name ID language (eg: 'de'), or use 'ALL' to delete the name ID from all languages.")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t'
+              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
                    'exist, will be created. If not specified, files are saved to the same folder.')
 @click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
               help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
                    'default, timestamp is not recalculated.')
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   'name). By default, files are overwritten.')
+                   ' name). By default, files are overwritten.')
 def del_name(input_path, name_id, platform, language, output_dir, recalc_timestamp, overwrite):
     """Deletes the specified nemerecord from the name table.
 
@@ -293,14 +293,14 @@ def findReplace():
 @click.option('-cff', '--fix-cff', is_flag=True,
               help="Replaces the string in the CFF table.")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t'
+              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
                    'exist, will be created. If not specified, files are saved to the same folder.')
 @click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
               help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
                    'default, timestamp is not recalculated.')
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   'name). By default, files are overwritten.')
+                   ' name). By default, files are overwritten.')
 def find_replace(input_path, old_string, new_string, name_id, platform, fix_cff, output_dir, recalc_timestamp,
                  overwrite):
     """Replaces a string in the name table with a new string.
