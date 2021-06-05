@@ -123,6 +123,7 @@ def setCffName():
     pass
 
 
+# noinspection PyShadowingBuiltins
 @setCffName.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('--font-name', type=str, default=None, help="Sets the CFF font name.")
@@ -360,6 +361,6 @@ def find_replace(input_path, old_string, new_string, name_id, platform, fix_cff,
 
 cli = click.CommandCollection(sources=[
     setNameRecord, delNameRecord, setCffName, findReplace, winToMac, deleteMacNames,
-    printLanguageCodes], help="""
-A command line tool to add, delete and edit namerecords and CFF names.
+    printLanguageCodes], help=
+    """A command line tool to edit namerecords and CFF names.
     """)
