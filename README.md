@@ -17,12 +17,62 @@ The following packages will be installed during setup:
 ## Installation
     pip install -e .
  
-## Usage
+## Commands list
+* assistant
+  * edit-cfg
+  * edit-csv
+  * init-cfg
+  * init-csv
+  * recalc-csv
+  * recalc-names
+    
+
+* metrics
+    * align
+    * copy
+    * set-linegap
+    
+
+* names
+    * del-mac-names
+    * del-name
+    * fill-mac-names
+    * find-replace
+    * lang-help
+    * set-name
+    * set-cff-name
+    
+
+* os2table
+  
+
+* print
+    * ft-info
+    * ft-list
+    * ft-name
+    * ft-names
+    * tbl-head
+    * tbl-os2
+
+* webfonts
+    * compress
+    * decompress
+    * makecss
+    
+
+* add-dsig
+* font-renamer
+* remove-hinting
+* remove-overlaps
+* ttc-extractor
 
 ### assistant
-A set of tools to correctly compile the name table and set proper values for usWeightClass, usWidthClass, bold, italic and oblique bits.
+A set of tools to correctly compile the name table and set proper values for usWeightClass, usWidthClass, bold, italic
+and oblique bits.
 
-The process creates a JSON configuration file and a CSV file that will be used to fix the fonts. Both files can be automatically created and eventually edited manually or using the integrated command line editor. Once everything is correctly set in the CSV file, the values inside it can be written to the fonts.
+The process creates a JSON configuration file and a CSV file that will be used to fix the fonts. Both files can be
+automatically created and eventually edited manually or using the integrated command line editor. Once everything is
+correctly set in the CSV file, the values inside it can be written to fonts.
 
 1) The JSON configuration file.
 
@@ -118,7 +168,8 @@ Usage:
 
 Command line editor for 'data.csv' files.
 
-This tool is not intended to replace a code editor for CSV files, but can help to make small edits without leaving the command line. For complex projects, it's strongly recommended using a code editor like Visual Studio Code or even Excel.
+This tool is not intended to replace a code editor for CSV files, but can help to make small edits without leaving the
+command line. For complex projects, it's strongly recommended using a code editor like Visual Studio Code or even Excel.
 
 Options:
 
@@ -150,7 +201,8 @@ Example 1:
 
     ftcli assistant init-csv "C:\Fonts\"
 
-The above command will create the 'data.csv' file in C:\Fonts\ (and a configuration file with default values if it does not exist).
+The above command will create the 'data.csv' file in C:\Fonts\ (and a configuration file with default values if it does
+not exist).
 
 Example 2:
 
@@ -162,7 +214,8 @@ data.csv file contains:
 
 * the file names;
 * the usWidthClass, usWeightClass, bold italic and oblique bits values of all font files found in INPUT_PATH;
-* tries to guess the family name reading the name table. It also contains weight and widths literals, retrieved parsing the config.json file.
+* tries to guess the family name reading the name table. It also contains weight and widths literals, retrieved parsing
+  the config.json file.
 
 It can be edited manually or using the 'ftcli assistant edit-csv INPUT_PATH' command.
 
@@ -195,7 +248,8 @@ The desired family name. This string will be used to recalculate the CSV lines.
 
     -s, --source-string [fname|1_1_2|1_4|1_6|1_16_17|1_18|3_1_2|3_4|3_6|3_16_17|cff_1|cff_2]
 
-The source string be used to recalculate the CSV lines can be the file name, a namerecord, a combination of namerecords or values stored in the 'CFF' table.
+The source string be used to recalculate the CSV lines can be the file name, a namerecord, a combination of namerecords
+or values stored in the 'CFF' table.
 
 For example, -s '1_1_2' will read a combination of namerecords 1 and 2 in the Mac table.  [default: fname]
 
@@ -218,31 +272,39 @@ Use a custom configuration file instead of the default config.json file located 
 
     -ls, --linked-styles <INTEGER RANGE INTEGER RANGE>
 
-Use this option to activate linked styles. If this option is active, linked styles must be specified. For example: -ls 400 700, or -ls 300 600.
+Use this option to activate linked styles. If this option is active, linked styles must be specified. For example:
+-ls 400 700, or -ls 300 600.
   
     -ex, --exclude-namerecord [1|2|3|4|5|6|16|17|18]
 
-Name IDs to skip. The specified name IDs won't be recalculated. This option can be repeated(example: -ex 3 -ex 5 -ex 6...).
+Name IDs to skip. The specified name IDs won't be recalculated. This option can be repeated(example: -ex 3 -ex 5 ...).
     
     -swdt, --shorten-width [1|2|3|4|5|6|16|17|18]
 
-Name IDs where to use the short word for width style name (example: 'Cond' instead of 'Condensed').This option can be repeated (example: -swdt 3 -swdt 5 -swdt 6...).
+Name IDs where to use the short word for width style name (example: 'Cond' instead of 'Condensed').This option can be
+repeated (example: -swdt 3 -swdt 5 -swdt 6...).
     
     -swgt, --shorten-weight [1|2|3|4|5|6|16|17|18]
                                   
-Name IDs where to use the short word for weight style name (example: 'Md' instead of 'Medium').This option can be repeated (example: -swgt 3 -swgt 5 -swgt 6...).
+Name IDs where to use the short word for weight style name (example: 'Md' instead of 'Medium').This option can be
+repeated (example: -swgt 3 -swgt 5 -swgt 6...).
   
     -sslp, --shorten-slope [1|2|3|4|5|6|16|17|18]
 
-Name IDs where to use the short word for slope style name (example: 'It' instead of 'Italic').This option can be repeated (example: -sita 3 -sita 5 -sita 6...).
+Name IDs where to use the short word for slope style name (example: 'It' instead of 'Italic').This option can be
+repeated (example: -sslp 3 -sslp 5 -sslp 6...).
 
     -sf, --super-family
 
-Superfamily mode. This option affects name IDs 3, 6, 16 and 17 in case of families with widths different from 'Normal'. If this option is active, name ID 6 will be 'FamilyName-WidthWeightSlope' instead of 'FamilyNameWidth-WeightSlope'. Mac and OT family/subfamily names will be FamilyName / Width Weight Slope' instead of 'Family Name Width / Weight Slope'.
+Superfamily mode. This option affects name IDs 3, 6, 16 and 17 in case of families with widths different from 'Normal'.
+If this option is active, name ID 6 will be 'FamilyName-WidthWeightSlope' instead of 'FamilyNameWidth-WeightSlope'.
+Mac and OT family/subfamily names will be FamilyName / Width Weight Slope' instead of 'Family Name Width / Weight Slope'.
 
     -aui, --alt-uid
 
-Use alternate unique identifier. By default, nameID 3 (Unique identifier) is calculated according to the following scheme: 'Version;Vendor code;PostscriptName'. The alternate unique identifier is calculated according to the following scheme: 'Manufacturer: Full Font Name:Creation Year'
+Use alternate unique identifier. By default, nameID 3 (Unique identifier) is calculated according to the following
+scheme: 'Version;Vendor code;PostscriptName'. The alternate unique identifier is calculated according to the following
+scheme: 'Manufacturer:Full Font Name:Creation Year'
 
     -ri, --regular-italic
     
@@ -254,7 +316,8 @@ Keep the 'Regular' word in all nameIDs
 
     -offn, --old-full-font-name
 
-Full font name in Microsoft name table is generally a combination of name IDs 1 and 2 or 16 and 17.With this option active, it will be equal to nameID 6 (PostScriptName).
+Full font name in Microsoft name table is generally a combination of name IDs 1 and 2 or 16 and 17.With this option
+active, it will be equal to nameID 6 (PostScriptName).
 
     -cff, --fix-cff
 
@@ -262,21 +325,26 @@ fontNames, FullName, FamilyName and Weight values in the 'CFF' table will be rec
 
     -obni, --oblique-not-italic
 
-By default, if a font has the oblique bit set, the italic bits will be set too. Use this option to override the default behaviour (for example, when the family has both italic and oblique styles and you don't want to set only the oblique bit). The italic bits will be cleared when the oblique bit is set.
+By default, if a font has the oblique bit set, the italic bits will be set too. Use this option to override the default
+behaviour (for example, when the family has both italic and oblique styles and you don't want to set only the oblique
+bit). The italic bits will be cleared when the oblique bit is set.
 
     -o, --output-dir DIRECTORY
 
-Specify the output directory where the output files are to be saved. If output_directory doesn't exist, will be created. If not specified, files are saved to the same folder.
+Specify the output directory where the output files are to be saved. If output_directory doesn't exist, will be created.
+If not specified, files are saved to the same folder.
 
     --recalc-timestamp / --no-recalc-timestamp
 
-Keep the original font 'modified' timestamp (head.modified) or set it to current time. By default, original timestamp is kept.
+Keep the original font 'modified' timestamp (head.modified) or set it to current time. By default, original timestamp
+is kept.
 
     --overwrite / --no-overwrite
 
-Overwrite existing output files or save them to a new file (numbers are appended at the end of filename). By default, files are overwritten.
+Overwrite existing output files or save them to a new file (numbers are appended at the end of filename). By default,
+files are overwritten.
 
-### cli-tool
+### os2table
 Usage: ftcli cli-tool [OPTIONS] INPUT_PATH
 
 Command line font editor.
@@ -323,7 +391,8 @@ Sets embedding level (OS/2.fsType).
 
 Sets or clears the USE_TYPO_METRICS bit (OS/2.fsSelection bit 7).
 
-If set, it is strongly recommended that applications use OS/2.sTypoAscender - OS/2.sTypoDescender + OS/2.sTypoLineGap as the default line spacing for this font.
+If set, it is strongly recommended that applications use OS/2.sTypoAscender - OS/2.sTypoDescender + OS/2.sTypoLineGap as
+the default line spacing for this font.
 
 See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
 
@@ -335,11 +404,10 @@ Sets the OS/2.achVendID tag (vendor's four-character identifier).
 
 Adds a dummy signature.
 
-If the DSIG table is already present, this option will be ignored. Use '-dt DSIG -dsig' to force the replacement of an existing DSIG table.
+If the DSIG table is already present, this option will be ignored. Use '-dt DSIG -dsig' to force the replacement of an
+existing DSIG table.
 
-    -dt, --delete-table TEXT
 
-Removes the specified table, if present.
   
     -o, --output-dir DIRECTORY
   
@@ -353,7 +421,7 @@ Keeps the original font 'modified' timestamp (head.modified) or set it to curren
 
 Overwrites existing output files or save them to a new file (numbers are appended at the end of filename). By default, files are overwritten.
 
-### font-metrics
+### metrics
 Usage:
 
     ftcli font-metrics [OPTIONS] COMMAND [ARGS]...
@@ -375,7 +443,7 @@ Aligns all fonts in INPUT_PATH to the same baseline.
 Copies vertical metrics from a source font to one or more destination fonts.
 
 
-### font-names
+### names
 
 Usage:
 
@@ -419,10 +487,10 @@ Simplify glyphs in TTFont by merging overlapping...
 ### ttc-extractor
 Extracts .ttc fonts.
 
-### viewer
+### print
 Prints various font's information.
 
-### wf-tools
+### webfonts
 Web fonts related tools.
 
 
