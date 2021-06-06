@@ -45,8 +45,8 @@ See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
               help='Keeps the original font \'modified\' timestamp (head.modified) or set it to current time. By '
                    'default, original timestamp is kept.')
 @click.option('--overwrite/--no-overwrite', default=True,
-              help='Overwrites existing output files or save them to a new file (numbers are appended at the end of'
-                   'filename). By default, files are overwritten.')
+              help='Overwrites existing output files or save them to a new file (numbers are appended at the end of '
+                   'file name). By default, files are overwritten.')
 def cli(input_path, bold, italic, oblique, width, weight, embed_level, use_typo_metrics, ach_vend_id, recalc_timestamp,
         output_dir, overwrite):
     """

@@ -327,7 +327,7 @@ class GUI(object):
         print(
             '|', "#".rjust(count_len, ' '), '|',
             "File Name".ljust(max_filename_len, ' '), '|',
-            'B | I | O | ',
+            'B | I | O |',
             "Family Name".ljust(max_family_len, ' '), '|',
             "Width".ljust(max_width_len, ' '), '|',
             "Weight".ljust(max_weight_len, ' '), '|',
