@@ -37,8 +37,7 @@ class GUI(object):
         if len(data) == 0:
             del commands['l']
             del commands['p']
-            click.secho("{} contains no data".format(
-                csv_file), fg='yellow')
+            click.secho(f"{csv_file} contains no data.", fg='yellow')
         else:
             self.printCsv(csv_file)
 
@@ -83,26 +82,19 @@ class GUI(object):
 
             print('\nSelected file:', data[line_to_edit]['file_name'])
 
-            is_bold = int(click.prompt(
-                "\nIs bold", type=click.BOOL, default=line_data['is_bold']))
-            is_italic = int(click.prompt(
-                "\nIs italic", type=click.BOOL, default=line_data['is_italic']))
-            is_oblique = int(click.prompt(
-                "\nIs oblique", type=click.BOOL, default=line_data['is_oblique']))
-            uswidthclass = click.prompt("\nusWidthClass", type=click.IntRange(
-                1, 9), default=line_data['uswidthclass'])
-            wdt = click.prompt("\nWidth (short word)",
-                               default=line_data['wdt'])
-            width = click.prompt("\nWidth (long word)",
-                                 default=line_data['width'])
-            usweightclass = click.prompt("\nusWeightClass", type=click.IntRange(
-                1, 1000), default=line_data['usweightclass'])
-            wgt = click.prompt("\nWeight (short word)",
-                               default=line_data['wgt'])
-            weight = click.prompt("\nWeight (long word)",
-                                  default=line_data['weight'])
-            family_name = click.prompt(
-                "\nFamily name", default=line_data['family_name'])
+            is_bold = int(click.prompt("\nIs bold", type=click.BOOL, default=line_data['is_bold']))
+            is_italic = int(click.prompt("\nIs italic", type=click.BOOL, default=line_data['is_italic']))
+            is_oblique = int(click.prompt("\nIs oblique", type=click.BOOL, default=line_data['is_oblique']))
+            uswidthclass = click.prompt("\nusWidthClass", type=click.IntRange(1, 9), default=line_data['uswidthclass'])
+            wdt = click.prompt("\nWidth (short word)", default=line_data['wdt'])
+            width = click.prompt("\nWidth (long word)", default=line_data['width'])
+            usweightclass = click.prompt("\nusWeightClass", type=click.IntRange(1, 1000),
+                                         default=line_data['usweightclass'])
+            wgt = click.prompt("\nWeight (short word)", default=line_data['wgt'])
+            weight = click.prompt("\nWeight (long word)", default=line_data['weight'])
+            family_name = click.prompt("\nFamily name", default=line_data['family_name'])
+            slp = click.prompt("\nSlope (short word)", default=line_data['slp'])
+            slope = click.prompt("\nSlope (long word)", default=line_data['slp'])
 
             data[line_to_edit]['is_bold'] = is_bold
             data[line_to_edit]['is_italic'] = is_italic
@@ -114,6 +106,8 @@ class GUI(object):
             data[line_to_edit]['wgt'] = wgt
             data[line_to_edit]['weight'] = weight
             data[line_to_edit]['family_name'] = family_name
+            data[line_to_edit]['slp'] = slp
+            data[line_to_edit]['slope'] = slope
 
             csvHandler(csv_file).writeCSV(data)
             self.csvEditor(config_file=config_file, csv_file=csv_file)

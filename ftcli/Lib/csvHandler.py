@@ -1,5 +1,6 @@
 import csv
 import os
+import sys
 
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.configHandler import configHandler
@@ -25,6 +26,30 @@ class csvHandler(object):
         current_csv_data = csvHandler(self.csv_file).getData()
         new_csv_data = []
 
+        # Read the configuration file
+        weights = config['weights']
+        widths = config['widths']
+        italics = config['italics']
+        obliques = config['obliques']
+
+        # Build a list of the literals of all widths in the configuration file.
+        widthsList = []
+        for values in widths.values():
+            for value in values:
+                widthsList.append(value)
+
+        # Build a list of the literals of all weights in the configuration file.
+        weightsList = []
+        for values in weights.values():
+            for value in values:
+                weightsList.append(value)
+
+        # Sort by reverse length the lists to ensure that long literals are processed before the short ones.
+        widthsList.sort(key=len, reverse=True)
+        weightsList.sort(key=len, reverse=True)
+        italics.sort(key=len, reverse=True)
+        obliques.sort(key=len, reverse=True)
+
         for f in files:
             font = TTFontCLI(f, recalcTimestamp=False)
             file_name = os.path.basename(f)
@@ -34,11 +59,6 @@ class csvHandler(object):
 
             # Remove dashes, underscores and spaces from the string
             string = string.lower().replace("-", "").replace("_", "").replace(" ", "")
-
-            weights = config['weights']
-            widths = config['widths']
-            italics = config['italics']
-            obliques = config['obliques']
 
             try:
                 wgt, weight = weights[str(font['OS/2'].usWeightClass)]
@@ -84,25 +104,6 @@ class csvHandler(object):
                 'slp': str(slp),
                 'slope': str(slope)
             }
-
-            # Build a list of the literals of all widths in the configuration file.
-            widthsList = []
-            for values in widths.values():
-                for value in values:
-                    widthsList.append(value)
-
-            # Build a list of the literals of all weights in the configuration file.
-            weightsList = []
-            for values in weights.values():
-                for value in values:
-                    weightsList.append(value)
-
-            # Sort by reverse length the lists to ensure that long literals are processed
-            # before the short ones.
-            widthsList.sort(key=len, reverse=True)
-            weightsList.sort(key=len, reverse=True)
-            italics.sort(key=len, reverse=True)
-            obliques.sort(key=len, reverse=True)
 
             # Remove the family name from the string
             style_name = string.replace(new_family_name.lower().replace(
@@ -183,7 +184,7 @@ class csvHandler(object):
             italic_string = self.__replaceListItems(
                 input_string=italic_string, remove_list=remove_list, keep_list=italics)
 
-            if italic_string == italics[0].lower() or italic_string == italics[1].lower():
+            if italic_string.lower() == italics[0].lower() or italic_string == italics[1].lower():
                 new_isItalic = 1
             else:
                 new_isItalic = 0
@@ -201,7 +202,7 @@ class csvHandler(object):
 
             # By default, if a font is oblique, we also set it as italic. To change this behaviour, use the
             # -ob / --oblique-not-italic switch in recalc-names
-            if oblique_string == obliques[0].lower() or oblique_string == obliques[1].lower():
+            if oblique_string.lower() == obliques[0].lower() or oblique_string == obliques[1].lower():
                 new_isOblique = 1
                 new_isItalic = 1
             else:
@@ -226,6 +227,7 @@ class csvHandler(object):
 
             new_csv_data.append(new_font_data)
 
+        input('\ndone')
         self.writeCSV(new_csv_data)
 
     def resetCSV(self, config_file):
@@ -297,6 +299,10 @@ class csvHandler(object):
         for word in remove_list:
             if word not in keep_list:
                 input_string = input_string.lower().replace(word.lower().replace(' ', ''), '')
+                for k in keep_list:
+                    if word.lower() in k.lower():
+                        if len(input_string) > 0:
+                            input_string = input_string.lower().replace(k.lower().replace(word.lower(), ''), k)
         return input_string
 
     def __getKeyFromValue(self, d, s):
