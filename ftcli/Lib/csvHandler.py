@@ -1,6 +1,5 @@
 import csv
 import os
-import sys
 
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.configHandler import configHandler
@@ -227,7 +226,6 @@ class csvHandler(object):
 
             new_csv_data.append(new_font_data)
 
-        input('\ndone')
         self.writeCSV(new_csv_data)
 
     def resetCSV(self, config_file):
