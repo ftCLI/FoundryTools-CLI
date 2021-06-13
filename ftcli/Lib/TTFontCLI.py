@@ -115,7 +115,7 @@ class TTFontCLI(TTFont):
 
         if 6 not in namerecords_to_ignore:
             postScriptName = "{}-{}".format(
-                familyNameMac, subFamilyNameMac)
+                familyNameMac, subFamilyNameMac.replace('.', '').replace('-', ''))
 
             # Remove illegal characters
             postScriptName = postScriptName.replace('[', '').replace(']', '').replace('{', '').replace('}', '').replace(
