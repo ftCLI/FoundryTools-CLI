@@ -115,7 +115,8 @@ class TTFontCLI(TTFont):
 
         if 6 not in namerecords_to_ignore:
             postScriptName = "{}-{}".format(
-                familyNameMac, subFamilyNameMac.replace('.', '').replace('-', ''))
+                # Remove dots and dashes from both family name and subfamily name
+                familyNameMac.replace('.', '').replace('-', ''), subFamilyNameMac.replace('.', '').replace('-', ''))
 
             # Remove illegal characters
             postScriptName = postScriptName.replace('[', '').replace(']', '').replace('{', '').replace('}', '').replace(
