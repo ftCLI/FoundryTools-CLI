@@ -1,5 +1,6 @@
 import csv
 import os
+import sys
 
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.configHandler import configHandler
@@ -106,7 +107,11 @@ class csvHandler(object):
 
             # Remove the family name from the string
             style_name = string.replace(new_family_name.lower().replace(
-                ' ', ''), '').replace('-', '').replace('_', '').replace(' ', '')
+                ' ', '').replace('-', '').replace('_', '').replace(' ', ''), '')
+
+            print(style_name)
+
+            sys.exit()
 
             # Once removed the family name, the remaining string should be == style name (width/weight/slope)
             weight_string = width_string = italic_string = oblique_string = style_name
