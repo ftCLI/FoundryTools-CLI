@@ -37,8 +37,13 @@ Renames font files according to the provided source string.
 
         font = TTFont(f)
         isCFF = 'CFF ' in font
+        if not isCFF and source_string in ('cff_1', 'cff_2'):
+            click.secho(f'Invalid option: {source_string}. {n} does not seem to be a CFF font', fg='yellow')
+            continue
 
         string = getSourceString(f, source_string)
+        if not string:
+            string = os.path.splitext(n)[0]
 
         new_ext = None
         if font.flavor == 'woff':
