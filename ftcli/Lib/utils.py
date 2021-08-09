@@ -85,6 +85,12 @@ def getConfigPath(input_path):
     return config_file
 
 
+def getJsonPath(input_path):
+    json_file = os.path.join(os.path.dirname(input_path), 'fonts.json') if os.path.isfile(
+        input_path) else os.path.join(input_path, 'fonts.json')
+    return json_file
+
+
 def getCsvPath(input_path):
     data_file = os.path.join(os.path.dirname(input_path), 'data.csv') if os.path.isfile(
         input_path) else os.path.join(input_path, 'data.csv')

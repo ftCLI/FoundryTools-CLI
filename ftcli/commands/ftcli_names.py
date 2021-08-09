@@ -141,7 +141,7 @@ def setCffName():
 @click.option('--overwrite/--no-overwrite', default=True, show_default=True,
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    ' name). By default, files are overwritten.')
-def set_cff_name(input_path, font_names, full_name, family_name, weight, copyright, notice, output_dir,
+def set_cff_name(input_path, font_name, full_name, family_name, weight, copyright, notice, output_dir,
                  recalc_timestamp, overwrite):
     """Sets names in the CFF table."""
 
@@ -154,7 +154,7 @@ def set_cff_name(input_path, font_names, full_name, family_name, weight, copyrig
                 click.secho(f'{f} is not a CFF font', fg='red')
                 return
 
-            count = font.setCFFName(fontNames=font_names, FullName=full_name, FamilyName=family_name, Weight=weight,
+            count = font.setCFFName(fontNames=font_name, FullName=full_name, FamilyName=family_name, Weight=weight,
                                     Copyright=copyright, Notice=notice)
 
             if count > 0:
@@ -360,6 +360,5 @@ def find_replace(input_path, old_string, new_string, name_id, platform, fix_cff,
 
 
 cli = click.CommandCollection(sources=[
-    setNameRecord, delNameRecord, setCffName, findReplace, winToMac, deleteMacNames, printLanguageCodes], help=
-    """A command line tool to edit namerecords and CFF names.
-    """)
+    setNameRecord, delNameRecord, setCffName, findReplace, winToMac, deleteMacNames, printLanguageCodes],
+    help="A command line tool to edit namerecords and CFF names.")
