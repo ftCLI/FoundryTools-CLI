@@ -146,7 +146,7 @@ class TTFontCLI(TTFont):
             year_created = timestampToString(
                 self['head'].created).split(" ")[-1]
             manufacturer = self['name'].getName(8, 3, 1, 0x409)
-            uniqueID = "{}:{} {}:{}".format(manufacturer, familyNameMac, subFamilyNameMac, year_created)
+            uniqueID = "{}: {}-{}: {}".format(manufacturer, familyNameMac, subFamilyNameMac, year_created)
 
         # Build the Full Font Name
         fullFontName = "{} {}".format(familyNameMac, subFamilyNameMac)

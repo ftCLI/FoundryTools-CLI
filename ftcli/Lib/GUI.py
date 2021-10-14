@@ -28,14 +28,17 @@ class GUI(object):
             'c': 'Edit configuration file',
             'i': 'Init CSV data',
             'r': 'Recalc CSV data',
-            'f': 'Set family name',
-            'l': 'Edit single line',
+            # 'f': 'Set family name',
+            # 'l': 'Edit single line',
+            'e': 'Edit CSV lines',
             'p': 'Print names',
             'x': 'Exit'
         }
 
         if len(data) == 0:
-            del commands['l']
+            # del commands['l']
+            # del commands['f']
+            del commands['m']
             del commands['p']
             click.secho(f"{csv_file} contains no data.", fg='yellow')
         else:
@@ -56,12 +59,12 @@ class GUI(object):
             self.cfgEditor(config_file)
             self.csvEditor(config_file=config_file, csv_file=csv_file)
 
-        if choice == 'f':
-            family_name = click.prompt("\nFamily name")
-            for row in data:
-                row['family_name'] = family_name
-            csvHandler(csv_file).writeCSV(data)
-            self.csvEditor(config_file=config_file, csv_file=csv_file)
+        # if choice == 'f':
+        #     family_name = click.prompt("\nFamily name")
+        #     for row in data:
+        #         row['family_name'] = family_name
+        #     csvHandler(csv_file).writeCSV(data)
+        #     self.csvEditor(config_file=config_file, csv_file=csv_file)
 
         if choice == 'r':
             source_string = click.prompt("\nSource string", type=click.Choice(
@@ -75,42 +78,46 @@ class GUI(object):
                     config_file=config_file, family_name=None, source_string=source_string)
             self.csvEditor(config_file=config_file, csv_file=csv_file)
 
-        if choice == 'l':
-            line_to_edit = click.prompt(
-                "\nEnter line number", type=click.IntRange(1, len(data))) - 1
-            line_data = data[line_to_edit]
-
-            print('\nSelected file:', data[line_to_edit]['file_name'])
-
-            is_bold = int(click.prompt("\nIs bold", type=click.BOOL, default=line_data['is_bold']))
-            is_italic = int(click.prompt("\nIs italic", type=click.BOOL, default=line_data['is_italic']))
-            is_oblique = int(click.prompt("\nIs oblique", type=click.BOOL, default=line_data['is_oblique']))
-            uswidthclass = click.prompt("\nusWidthClass", type=click.IntRange(1, 9), default=line_data['uswidthclass'])
-            wdt = click.prompt("\nWidth (short word)", default=line_data['wdt'])
-            width = click.prompt("\nWidth (long word)", default=line_data['width'])
-            usweightclass = click.prompt("\nusWeightClass", type=click.IntRange(1, 1000),
-                                         default=line_data['usweightclass'])
-            wgt = click.prompt("\nWeight (short word)", default=line_data['wgt'])
-            weight = click.prompt("\nWeight (long word)", default=line_data['weight'])
-            family_name = click.prompt("\nFamily name", default=line_data['family_name'])
-            slp = click.prompt("\nSlope (short word)", default=line_data['slp'])
-            slope = click.prompt("\nSlope (long word)", default=line_data['slp'])
-
-            data[line_to_edit]['is_bold'] = is_bold
-            data[line_to_edit]['is_italic'] = is_italic
-            data[line_to_edit]['is_oblique'] = is_oblique
-            data[line_to_edit]['uswidthclass'] = uswidthclass
-            data[line_to_edit]['wdt'] = wdt
-            data[line_to_edit]['width'] = width
-            data[line_to_edit]['usweightclass'] = usweightclass
-            data[line_to_edit]['wgt'] = wgt
-            data[line_to_edit]['weight'] = weight
-            data[line_to_edit]['family_name'] = family_name
-            data[line_to_edit]['slp'] = slp
-            data[line_to_edit]['slope'] = slope
-
-            csvHandler(csv_file).writeCSV(data)
+        if choice == 'e':
+            self.multilineEditor(csv_file=csv_file)
             self.csvEditor(config_file=config_file, csv_file=csv_file)
+
+        # if choice == 'l':
+        #     line_to_edit = click.prompt(
+        #         "\nEnter line number", type=click.IntRange(1, len(data))) - 1
+        #     line_data = data[line_to_edit]
+        #
+        #     print('\nSelected file:', data[line_to_edit]['file_name'])
+        #
+        #     is_bold = int(click.prompt("\nIs bold", type=click.BOOL, default=line_data['is_bold']))
+        #     is_italic = int(click.prompt("\nIs italic", type=click.BOOL, default=line_data['is_italic']))
+        #     is_oblique = int(click.prompt("\nIs oblique", type=click.BOOL, default=line_data['is_oblique']))
+        #     uswidthclass = click.prompt("\nusWidthClass", type=click.IntRange(1, 9), default=line_data['uswidthclass'])
+        #     wdt = click.prompt("\nWidth (short word)", default=line_data['wdt'])
+        #     width = click.prompt("\nWidth (long word)", default=line_data['width'])
+        #     usweightclass = click.prompt("\nusWeightClass", type=click.IntRange(1, 1000),
+        #                                  default=line_data['usweightclass'])
+        #     wgt = click.prompt("\nWeight (short word)", default=line_data['wgt'])
+        #     weight = click.prompt("\nWeight (long word)", default=line_data['weight'])
+        #     family_name = click.prompt("\nFamily name", default=line_data['family_name'])
+        #     slp = click.prompt("\nSlope (short word)", default=line_data['slp'])
+        #     slope = click.prompt("\nSlope (long word)", default=line_data['slp'])
+        #
+        #     data[line_to_edit]['is_bold'] = is_bold
+        #     data[line_to_edit]['is_italic'] = is_italic
+        #     data[line_to_edit]['is_oblique'] = is_oblique
+        #     data[line_to_edit]['uswidthclass'] = uswidthclass
+        #     data[line_to_edit]['wdt'] = wdt
+        #     data[line_to_edit]['width'] = width
+        #     data[line_to_edit]['usweightclass'] = usweightclass
+        #     data[line_to_edit]['wgt'] = wgt
+        #     data[line_to_edit]['weight'] = weight
+        #     data[line_to_edit]['family_name'] = family_name
+        #     data[line_to_edit]['slp'] = slp
+        #     data[line_to_edit]['slope'] = slope
+        #
+        #     csvHandler(csv_file).writeCSV(data)
+        #     self.csvEditor(config_file=config_file, csv_file=csv_file)
 
         if choice == 'p':
             selected_line = click.prompt(
@@ -200,6 +207,101 @@ class GUI(object):
         # Exit GUI
         if choice == 'x':
             return
+
+    def multilineEditor(self, csv_file):
+
+        data = csvHandler(csv_file).getData()
+
+        click.clear()
+        print("\nCURRENT FILE:", csv_file, '\n')
+        self.printCsv(csv_file)
+        print('\nAVAILABLE COMMANDS:\n')
+
+        multiline_commands = {
+            '1': 'Set Italic bits',
+            '2': 'Clear Italic bits',
+            '3': 'Set Oblique bits',
+            '4': 'Clear Oblique bits',
+            '5': 'Set usWidthClass value',
+            '6': 'Set usWeightClass value',
+            '7': 'Set family name',
+            '8': 'Set width style names',
+            '9': 'Set weight style names',
+            '10': 'Set slope style names',
+            'x': 'Exit'
+        }
+
+        multiline_choices = []
+        for k, v in multiline_commands.items():
+            print(f'{k.rjust(2)} : {v}')
+            multiline_choices.append(k)
+
+        multiline_choice = click.prompt('\nYour selection', type=click.Choice(choices=multiline_choices))
+
+        if not multiline_choice == 'x':
+            print(f'\n{multiline_commands[multiline_choice]}')
+        else:
+            return
+
+        start_line = click.prompt("\nFrom line", type=click.IntRange(1, len(data)), default=1)
+        end_line = click.prompt("To line  ", type=click.IntRange(start_line, len(data)), default=start_line)
+
+        if multiline_choice == '1':
+            for line in range(start_line, end_line + 1):
+                data[line - 1]['is_italic'] = 1
+
+        if multiline_choice == '2':
+            for line in range(start_line, end_line + 1):
+                data[line - 1]['is_italic'] = 0
+
+        if multiline_choice == '3':
+            for line in range(start_line, end_line + 1):
+                data[line - 1]['is_oblique'] = 1
+
+        if multiline_choice == '4':
+            for line in range(start_line, end_line + 1):
+                data[line - 1]['is_oblique'] = 0
+
+        if multiline_choice == '5':
+            uswidthclass = click.prompt("\nusWidthClass", type=click.IntRange(1, 9))
+            for line in range(start_line, end_line + 1):
+                data[line - 1]['uswidthclass'] = uswidthclass
+
+        if multiline_choice == '6':
+            usweightclass = click.prompt("\nusWidthClass", type=click.IntRange(1, 1000))
+            for line in range(start_line, end_line + 1):
+                data[line - 1]['usweightclass'] = usweightclass
+
+        if multiline_choice == '7':
+            family_name = click.prompt("\nFamily name")
+            for line in range(start_line, end_line + 1):
+                data[line - 1]['family_name'] = family_name
+
+        if multiline_choice == '8':
+            wdt = click.prompt("\nWidth (short word)")
+            width = click.prompt("Width (long word)")
+            for line in range(start_line, end_line + 1):
+                data[line - 1]['wdt'] = wdt
+                data[line - 1]['width'] = width
+
+        if multiline_choice == '9':
+            wgt = click.prompt("\nWeight (short word)")
+            weight = click.prompt("Weight (long word)")
+            for line in range(start_line, end_line + 1):
+                data[line - 1]['wgt'] = wgt
+                data[line - 1]['weight'] = weight
+
+        if multiline_choice == '10':
+            slp = click.prompt("\nSlope (short word)")
+            slope = click.prompt("\nSlope (long word)")
+            for line in range(start_line, end_line + 1):
+                data[line - 1]['slp'] = slp
+                data[line - 1]['slope'] = slope
+
+        confirm = click.confirm('\nSave changes', default=True)
+        if confirm:
+            csvHandler(csv_file).writeCSV(data)
+        self.multilineEditor(csv_file=csv_file)
 
     def printCfg(self, config_file):
 
