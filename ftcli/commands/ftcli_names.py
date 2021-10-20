@@ -223,6 +223,61 @@ def set_name(input_path, name_id, platform, language, string, output_dir, recalc
             click.secho('ERROR: {}'.format(e), fg='red')
 
 
+@click.group()
+def setNameRecordFromTxt():
+    pass
+
+
+@setNameRecordFromTxt.command()
+@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
+@click.option('-n', '--name-id', type=click.IntRange(0, 32767), help="nameID (Integer between 1 and 32767)")
+@click.option("-p", "--platform", type=click.Choice(choices=["win", "mac"]),
+              help="platform [win, mac]. If it's not specified, name will be written in both tables.")
+@click.option('-l', '--language', default="en", show_default=True, help="language")
+@click.option('-i', '--input-file', type=click.Path(exists=True, resolve_path=True), required=True)
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
+              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
+                   'exist, will be created. If not specified, files are saved to the same folder.')
+@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
+              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
+                   'default, original timestamp is kept.')
+@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
+              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
+                   ' name). By default, files are overwritten.')
+def name_from_txt(input_path, name_id, platform, language, input_file, output_dir, recalc_timestamp, overwrite):
+    """Reads a text file and writes its content into the specified namerecord in the name table.
+
+    If the namerecord is not present, it will be created. If it already exists, will be overwritten.
+
+    If name_id parameter is not specified, the first available nameID will be used.
+
+    By default, the namerecord will be written both in platformID 1 (Macintosh) and platformID 3 (Windows) tables. Use
+    -p/--platform-id [win|mac] option to write the namerecord only in the specified platform.
+
+    Use the -l/--language option to write the namerecord in a language different than 'en'. Use 'ftcli nametable
+    langhelp' to display available languages.
+    """
+
+    windows = False if platform == "mac" else True
+    mac = False if platform == "win" else True
+
+    with open(input_file, 'r', encoding='utf-8-sig') as f:
+        string = f.read()
+
+    files = getFontsList(input_path)
+
+    for f in files:
+        try:
+            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font.setMultilingualName(nameID=name_id, language=language, string=string, windows=windows, mac=mac)
+
+            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
+            font.save(output_file)
+            click.secho('%s saved' % output_file, fg='green')
+        except Exception as e:
+            click.secho('ERROR: {}'.format(e), fg='red')
+
+
 # delname
 
 
@@ -360,5 +415,5 @@ def find_replace(input_path, old_string, new_string, name_id, platform, fix_cff,
 
 
 cli = click.CommandCollection(sources=[
-    setNameRecord, delNameRecord, setCffName, findReplace, winToMac, deleteMacNames, printLanguageCodes],
+    setNameRecord, setNameRecordFromTxt, delNameRecord, setCffName, findReplace, winToMac, deleteMacNames, printLanguageCodes],
     help="A command line tool to edit namerecords and CFF names.")
