@@ -29,13 +29,13 @@ class GUI(object):
             'i': 'Init CSV data',
             'r': 'Recalc CSV data',
             'c': 'Edit Config file',
-            'v': 'View font names',
+            'p': 'Print font names',
             'x': 'Exit'
         }
 
         if len(data) == 0:
             del commands['e']
-            del commands['v']
+            del commands['p']
             click.secho(f"{csv_file} contains no data.", fg='yellow')
         else:
             self.printCsv(csv_file)
@@ -71,7 +71,7 @@ class GUI(object):
             self.multilineEditor(csv_file=csv_file)
             self.csvEditor(config_file=config_file, csv_file=csv_file)
 
-        if choice == 'v':
+        if choice == 'p':
             selected_line = click.prompt(
                 "\nEnter line number", type=click.IntRange(1, len(data))) - 1
             selected_filename = data[selected_line]['file_name']

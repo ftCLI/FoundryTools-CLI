@@ -5,20 +5,20 @@ import sys
 
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.configHandler import configHandler
-from ftcli.Lib.utils import (getFontsList, getSourceString, guessFamilyName)
+from ftcli.Lib.utils import (getFontsList, getCsvPath, getSourceString, guessFamilyName)
 
 
 class DataHandler(object):
 
-    def __init__(self, json_file):
-        self.json_file = json_file
-        if not os.path.exists(self.json_file):
-            with open(self.json_file, 'w') as f:
+    def __init__(self, fonts_json):
+        self.fonts_json = fonts_json
+        if not os.path.exists(self.fonts_json):
+            with open(self.fonts_json, 'w') as f:
                 json.dump({}, f)
 
     def parseJSON(self):
         try:
-            with open(self.json_file) as f:
+            with open(self.fonts_json) as f:
                 json_data = json.load(f)
             return json_data
         except Exception as e:
@@ -27,7 +27,7 @@ class DataHandler(object):
 
     def resetFontsDatabase(self, config_file):
 
-        files = getFontsList(os.path.dirname(self.json_file))
+        files = getFontsList(os.path.dirname(self.fonts_json))
         config = configHandler(config_file).getConfig()
         json_data = {}
 
@@ -64,12 +64,12 @@ class DataHandler(object):
 
             json_data[file_name] = {'attributes': current_attributes, 'names': current_names}
 
-        with open(self.json_file, 'w') as f:
+        with open(self.fonts_json, 'w') as f:
             json.dump(json_data, f, indent=4)
 
     def recalcFontsDatabase(self, config_file, family_name=None, source_string='fname'):
 
-        files = getFontsList(os.path.dirname(self.json_file))
+        files = getFontsList(os.path.dirname(self.fonts_json))
         config = configHandler(config_file).getConfig()
         json_data = self.parseJSON()
         if json_data == {}:
@@ -254,17 +254,8 @@ class DataHandler(object):
 
             json_data[file_name] = recalculated_data
 
-        with open(self.json_file, 'w') as f:
+        with open(self.fonts_json, 'w') as f:
             json.dump(json_data, f, indent=4)
-
-    def exportToCSV(self, data):
-
-        header = ('file_name', 'family_name', 'is_bold', 'is_italic', 'is_oblique', 'uswidthclass', 'wdt', 'width',
-                  'usweightclass', 'wgt', 'weight', 'slp', 'slope')
-        with open(self.json_file, 'w', newline="") as csv_file:
-            writer = csv.DictWriter(csv_file, delimiter=";", fieldnames=header)
-            writer.writeheader()
-            writer.writerows(data)
 
     @staticmethod
     def __replaceListItems(input_string, remove_list, keep_list):

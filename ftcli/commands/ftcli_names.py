@@ -44,7 +44,7 @@ def winToMac():
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
 def win_2_mac(input_path, output_dir, recalc_timestamp, overwrite):
-    """Copies namerecords from Windows table to Macintosh table.
+    """Copies all namerecords from Windows table to Macintosh table.
     """
 
     files = getFontsList(input_path)
@@ -89,17 +89,17 @@ def del_mac_names(input_path, exclude_namerecord, output_dir, recalc_timestamp, 
 
     USAGE:
 
-        ftcli nametable del-mac-names INPUT_PATH [OPTIONS]
+        ftcli names del-mac-names INPUT_PATH [OPTIONS]
 
     Use the -ex / --exclude-namerecord option to prevent certain namerecords to be deleted:
 
-        ftcli nametable del-mac-names INPUT_PATH -ex 1
+        ftcli names del-mac-names INPUT_PATH -ex 1
 
     The -ex / --exclude-namerecord option can be repeated to exclude from deletion more than one namerecord:
 
-        ftcli nametable del-mac-names INPUT_PATH -ex 1 -ex 3 -ex 6
+        ftcli names del-mac-names INPUT_PATH -ex 1 -ex 3 -ex 6
 
-    Input path can be a font or a folder with fonts.
+    Input path can be a font or a folder.
     """
 
     files = getFontsList(input_path)
@@ -222,6 +222,8 @@ def set_name(input_path, name_id, platform, language, string, output_dir, recalc
         except Exception as e:
             click.secho('ERROR: {}'.format(e), fg='red')
 
+
+# name-from-txt
 
 @click.group()
 def setNameRecordFromTxt():

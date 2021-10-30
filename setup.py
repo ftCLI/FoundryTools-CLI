@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='ftcli',
-    version='0.3.4',
+    version='0.3.5.1',
     description='ftCLI',
     packages=setuptools.find_packages(),
     include_package_data=True,
@@ -15,7 +15,7 @@ setuptools.setup(
         'dehinter==3.1.0',
         'font-line==3.1.4',
         'skia-pathops==0.7.1',
-        'zopfli==0.1.8',
+        'zopfli==0.1.9',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
