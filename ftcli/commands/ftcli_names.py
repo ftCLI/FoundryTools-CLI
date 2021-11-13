@@ -123,7 +123,6 @@ def setCffName():
     pass
 
 
-# noinspection PyShadowingBuiltins
 @setCffName.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('--font-name', type=str, default=None, help="Sets the CFF font name.")
