@@ -320,8 +320,7 @@ def recalc_names(
     # If config.json doesn't exist, it has to be created before.
     if not os.path.exists(config_file):
         configHandler(config_file).resetConfig()
-        click.secho("\n{} didn't exist and has been created".format(
-            config_file), fg='yellow')
+        click.secho(f"\n{config_file} didn't exist and has been created", fg='yellow')
 
     config = configHandler(config_file).getConfig()
 

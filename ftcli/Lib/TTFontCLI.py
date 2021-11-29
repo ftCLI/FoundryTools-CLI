@@ -30,157 +30,157 @@ class TTFontCLI(TTFont):
         if namerecords_to_ignore is None:
             namerecords_to_ignore = []
 
-        isItalic = bool(int(font_data['is_italic']))
-        isOblique = bool(int(font_data['is_oblique']))
-        usWidthClass = int(font_data['uswidthclass'])
+        is_italic = bool(int(font_data['is_italic']))
+        is_oblique = bool(int(font_data['is_oblique']))
+        us_width_class = int(font_data['uswidthclass'])
         wdt = str(font_data['wdt'])
         width = str(font_data['width'])
-        usWeightClass = int(font_data['usweightclass'])
+        us_weight_class = int(font_data['usweightclass'])
         wgt = str(font_data['wgt'])
         weight = str(font_data['weight'])
         slp = str(font_data['slp'])
         slope = str(font_data['slope'])
-        familyName = str(font_data['family_name'])
+        family_name = str(font_data['family_name'])
 
         # We clear the bold and italic bits. Only the italic bit value is read from the CSV file. The bold bits will be
         # set only if the -ls / --linked-styles option is active.
         self.setRegular()
 
-        if isItalic:
+        if is_italic:
             self.setItalic()
 
-        # If isOblique is True, the oblique bit is set, as well as the italic bits. In case we don't want want to set
+        # If is_oblique is True, the oblique bit is set, as well as the italic bits. In case we don't want want to set
         # also the italic bits, this can be achieved setting oblique_not_italic to True.
-        if isOblique:
+        if is_oblique:
             self.setOblique()
             self.setItalic()
             if oblique_not_italic:
-                isItalic = False
+                is_italic = False
                 self.unsetItalic()
         else:
             self.unsetOblique()
 
         # Set usWeightClass and usWidthClass values reading them from the CSV.
-        self.setUsWeightClass(usWeightClass)
-        self.setUsWidthClass(usWidthClass)
+        self.setUsWeightClass(us_weight_class)
+        self.setUsWidthClass(us_width_class)
 
         # Macintosh family and subfamily names
 
-        familyNameMac = familyName
-
-        subFamilyNameMac = weight
+        family_name_ot = family_name
+        subfamily_name_ot = weight
 
         if width.lower() != "normal":
             if isSuperFamily is False:
-                familyNameMac = "{} {}".format(familyName, width)
+                family_name_ot = "{} {}".format(family_name, width)
             else:
-                subFamilyNameMac = "{} {}".format(width, weight)
+                subfamily_name_ot = "{} {}".format(width, weight)
 
         if len(slope) > 0:
-            subFamilyNameMac = "{} {}".format(subFamilyNameMac, slope)
+            subfamily_name_ot = "{} {}".format(subfamily_name_ot, slope)
             if not keep_regular:
-                subFamilyNameMac = subFamilyNameMac.replace('Regular', '').replace('  ', ' ').strip()
+                subfamily_name_ot = subfamily_name_ot.replace('Regular', '').replace('  ', ' ').strip()
 
         # Microsoft family and subfamily names
 
-        familyNameWin = "{} {} {}".format(
-            familyName, width.replace("Normal", "").replace("Nor", ""), weight).replace("  ", " ").strip()
+        family_name_win = "{} {} {}".format(
+            family_name, width.replace("Normal", "").replace("Nor", ""), weight).replace("  ", " ").strip()
 
         # When there are both italic and oblique slopes in the family, the italic bits are cleared and the oblique bit
         # is set. Consequently, in case the font is oblique, the slope is added to family name.
-        if len(slope) > 0 and isItalic is False:
-            familyNameWin = '{} {}'.format(familyNameWin, slope)
+        if len(slope) > 0 and is_italic is False:
+            family_name_win = '{} {}'.format(family_name_win, slope)
 
         # In platformID 3, Subfamily name can be only Regular, Italic, Bold, Bold Italic.
-        subFamilyNameWin = "Regular"
-        if isItalic is True or (isOblique is True and oblique_not_italic is False):
-            subFamilyNameWin = "Italic"
+        subfamily_name_win = "Regular"
+        if is_italic is True or (is_oblique is True and oblique_not_italic is False):
+            subfamily_name_win = "Italic"
 
         if len(linked_styles) == 2:
 
             # Remove Weight from Family Name
-            if usWeightClass in linked_styles:
-                familyNameWin = familyNameWin.replace(weight, "").replace("  ", " ").strip()
+            if us_weight_class in linked_styles:
+                family_name_win = family_name_win.replace(weight, "").replace("  ", " ").strip()
 
             linked_styles.sort()
-            if usWeightClass == linked_styles[1]:
+            if us_weight_class == linked_styles[1]:
                 # The bold bits are set here and only here.
                 self.setBold()
-                subFamilyNameWin = "Bold"
-                if isItalic is True:
-                    subFamilyNameWin = "Bold Italic"
+                subfamily_name_win = "Bold"
+                if is_italic is True:
+                    subfamily_name_win = "Bold Italic"
 
         # Build the PostScript name.
-        postScriptName = str(self['name'].getName(6, 3, 1, 0x409))
+        postscript_name = str(self['name'].getName(6, 3, 1, 0x409))
 
         if 6 not in namerecords_to_ignore:
-            postScriptName = "{}-{}".format(
+            postscript_name = "{}-{}".format(
                 # Remove dots and dashes from both family name and subfamily name
-                familyNameMac.replace('.', '').replace('-', ''), subFamilyNameMac.replace('.', '').replace('-', ''))
+                family_name_ot.replace('.', '').replace('-', ''), subfamily_name_ot.replace('.', '').replace('-', ''))
 
             # Remove illegal characters
-            postScriptName = postScriptName.replace('[', '').replace(']', '').replace('{', '').replace('}', '').replace(
-                '<', '').replace('>', '').replace('/', '').replace('%', '')
+            for illegal_char in ('[', ']', '{', '}', '<', '>', '/', '%'):
+                postscript_name = postscript_name.replace(illegal_char, '')
 
             if regular_italic:
-                postScriptName = postScriptName.replace(
-                    "-Italic", "-RegularItalic")
+                postscript_name = postscript_name.replace("-Italic", "-RegularItalic")
 
             # Let's replace long words (e.g. 'Italic') with short words (e.g. 'It') when --shorten-width,
             # --shorten-weight or --shorten-slope are active.
-            postScriptName = postScriptName.replace(weight, wgt) if 6 in shorten_weight else postScriptName
-            postScriptName = postScriptName.replace(width, wdt) if 6 in shorten_width else postScriptName
-            postScriptName = postScriptName.replace(slope, slp) if 6 in shorten_slope else postScriptName
+            postscript_name = postscript_name.replace(weight, wgt) if 6 in shorten_weight else postscript_name
+            postscript_name = postscript_name.replace(width, wdt) if 6 in shorten_width else postscript_name
+            postscript_name = postscript_name.replace(slope, slp) if 6 in shorten_slope else postscript_name
 
             # Do not remove spaces and dots before, if not the -swdt, -swgt and -sita switches won't work!
-            postScriptName = postScriptName.replace(" ", "").replace(".", "")
+            postscript_name = postscript_name.replace(" ", "").replace(".", "")
 
         # Build the Unique Identifier
-        achVendID = str(self['OS/2'].achVendID).replace(" ", "").replace(r'\x00', "")
-        fontRevision = str(round(self['head'].fontRevision, 3)).ljust(5, "0")
-        versionString = "Version {}".format(fontRevision)
+        ach_vend_id = str(self['OS/2'].achVendID).replace(" ", "").replace(r'\x00', "")
+        font_revision = str(round(self['head'].fontRevision, 3)).ljust(5, "0")
+        sersion_string = "Version {}".format(font_revision)
 
-        uniqueID = "{};{};{}".format(fontRevision, achVendID.ljust(4), postScriptName)
+        unique_id = "{};{};{}".format(font_revision, ach_vend_id.ljust(4), postscript_name)
 
         if alt_uid:
             year_created = timestampToString(
                 self['head'].created).split(" ")[-1]
             manufacturer = self['name'].getName(8, 3, 1, 0x409)
-            uniqueID = "{}: {}-{}: {}".format(manufacturer, familyNameMac, subFamilyNameMac, year_created)
+            unique_id = "{}: {}-{}: {}".format(manufacturer, family_name_ot, subfamily_name_ot, year_created)
 
         # Build the Full Font Name
-        fullFontName = "{} {}".format(familyNameMac, subFamilyNameMac)
+        full_font_name = "{} {}".format(family_name_ot, subfamily_name_ot)
 
         # Finally, write the namerecords.
 
         # nameID 1
         if 1 not in namerecords_to_ignore:
-            string = familyNameMac
+            string = family_name_ot
             string = string.replace(weight, wgt) if 1 in shorten_weight else string
             string = string.replace(width, wdt) if 1 in shorten_width else string
             string = string.replace(slope, slp) if 1 in shorten_slope else string
             self['name'].setName(string, 1, 1, 0, 0x0)
 
-            string = familyNameWin
+            string = family_name_win
             string = string.replace(weight, wgt) if 1 in shorten_weight else string
             string = string.replace(width, wdt) if 1 in shorten_width else string
             string = string.replace(slope, slp) if 1 in shorten_slope else string
+            if len(string) > 27:
+                click.secho('WARNING: family name length is more than 27 characters', fg='yellow')
             self['name'].setName(string, 1, 3, 1, 0x409)
 
         # nameID 2
         if 2 not in namerecords_to_ignore:
-            string = subFamilyNameMac
+            string = subfamily_name_ot
             string = string.replace(weight, wgt) if 2 in shorten_weight else string
             string = string.replace(width, wdt) if 2 in shorten_width else string
             string = string.replace(slope, slp) if 2 in shorten_slope else string
             self['name'].setName(string, 2, 1, 0, 0x0)
 
             # Windows Subfamily Name can be only Regular, Italic, Bold or Bold Italic and can't be shortened!
-            self['name'].setName(subFamilyNameWin, 2, 3, 1, 0x409)
+            self['name'].setName(subfamily_name_win, 2, 3, 1, 0x409)
 
         # nameID 3
         if 3 not in namerecords_to_ignore:
-            string = uniqueID
+            string = unique_id
             string = string.replace(weight, wgt) if 3 in shorten_weight else string
             string = string.replace(width, wdt) if 3 in shorten_width else string
             string = string.replace(slope, slp) if 3 in shorten_slope else string
@@ -189,7 +189,7 @@ class TTFontCLI(TTFont):
 
         # nameID 4
         if 4 not in namerecords_to_ignore:
-            string = fullFontName
+            string = full_font_name
             string = string.replace(weight, wgt) if 4 in shorten_weight else string
             string = string.replace(width, wdt) if 4 in shorten_width else string
             string = string.replace(slope, slp) if 4 in shorten_slope else string
@@ -198,50 +198,61 @@ class TTFontCLI(TTFont):
 
             # No need to shorten this!
             if old_full_font_name:
-                self['name'].setName(postScriptName, 4, 3, 1, 0x409)
+                self['name'].setName(postscript_name, 4, 3, 1, 0x409)
 
         # nameID 5
         if 5 not in namerecords_to_ignore:
-            self['name'].setName(versionString, 5, 1, 0, 0x0)
-            self['name'].setName(versionString, 5, 3, 1, 0x409)
+            self['name'].setName(sersion_string, 5, 1, 0, 0x0)
+            self['name'].setName(sersion_string, 5, 3, 1, 0x409)
 
         # nameID6
         if 6 not in namerecords_to_ignore:
             # Already shortened!
-            self['name'].setName(postScriptName, 6, 1, 0, 0x0)
-            self['name'].setName(postScriptName, 6, 3, 1, 0x409)
+            if len(postscript_name) > 31:
+                click.secho('WARNING: PostScript name length is more than 31 characters', fg='yellow')
+            self['name'].setName(postscript_name, 6, 1, 0, 0x0)
+            self['name'].setName(postscript_name, 6, 3, 1, 0x409)
 
         # nameID 16
         if 16 not in namerecords_to_ignore:
-            string = familyNameMac
+            string = family_name_ot
             string = string.replace(weight, wgt) if 16 in shorten_weight else string
             string = string.replace(width, wdt) if 16 in shorten_width else string
             string = string.replace(slope, slp) if 16 in shorten_slope else string
-            self['name'].setName(string, 16, 1, 0, 0x0)
-            self['name'].setName(string, 16, 3, 1, 0x409)
+            if not string == str(self['name'].getName(1, 3, 1, 0x409)):
+                self['name'].setName(string, 16, 1, 0, 0x0)
+                self['name'].setName(string, 16, 3, 1, 0x409)
+            else:
+                self.delMultilingualName(16)
 
         # nameID 17
         if 17 not in namerecords_to_ignore:
-            string = subFamilyNameMac
+            string = subfamily_name_ot
             string = string.replace(weight, wgt) if 17 in shorten_weight else string
             string = string.replace(width, wdt) if 17 in shorten_width else string
             string = string.replace(slope, slp) if 17 in shorten_slope else string
-            self['name'].setName(string, 17, 1, 0, 0x0)
-            self['name'].setName(string, 17, 3, 1, 0x409)
+            if not string == str(self['name'].getName(2, 3, 1, 0x409)):
+                self['name'].setName(string, 17, 1, 0, 0x0)
+                self['name'].setName(string, 17, 3, 1, 0x409)
+            else:
+                self.delMultilingualName(17)
 
         # nameID 18
         if 18 not in namerecords_to_ignore:
-            string = fullFontName
+            string = full_font_name
             string = string.replace(weight, wgt) if 18 in shorten_weight else string
             string = string.replace(width, wdt) if 18 in shorten_width else string
             string = string.replace(slope, slp) if 18 in shorten_slope else string
-            self['name'].setName(string, 18, 1, 0, 0x0)
+            if not string == str(self['name'].getName(4, 1, 0, 0x0)):
+                self['name'].setName(string, 18, 1, 0, 0x0)
+            else:
+                self.delMultilingualName(18)
 
         # CFF Names
         if 'CFF ' in self and fixCFF is True:
-            self['CFF '].cff.fontNames = [postScriptName]
-            self['CFF '].cff.topDictIndex[0].FullName = fullFontName
-            self['CFF '].cff.topDictIndex[0].FamilyName = familyNameMac
+            self['CFF '].cff.fontNames = [postscript_name]
+            self['CFF '].cff.topDictIndex[0].FullName = full_font_name
+            self['CFF '].cff.topDictIndex[0].FamilyName = family_name_ot
             self['CFF '].cff.topDictIndex[0].Weight = weight
 
     def setCFFName(self, fontNames=None, FullName=None, FamilyName=None, Weight=None, Copyright=None, Notice=None):

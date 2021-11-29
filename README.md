@@ -36,8 +36,8 @@ The following packages will be installed during setup:
 * names
     * del-mac-names
     * del-name
-    * fill-mac-names
-    * find-replace
+    * win-2-mac
+    * find-replaceace
     * lang-help
     * set-name
     * set-cff-name
@@ -461,11 +461,7 @@ Deletes all namerecords in platformID 1.
 
 Deletes the specified nemerecord from the name table.
 
-    fill-mac-names
-
-Copies namerecords from Windows table to Macintosh table.
-
-    find-repl
+    find-replace
 
 Replaces a string in the name table with a new string.
 
@@ -476,6 +472,10 @@ Prints available languages that can be used with the...
     set-name
 
 Writes the specified namerecord in the name table.
+
+    win-2-mac
+
+Copies namerecords from Windows table to Macintosh table.
 
 
 ### font-renamer
