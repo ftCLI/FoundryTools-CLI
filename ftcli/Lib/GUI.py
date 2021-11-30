@@ -34,6 +34,7 @@ class GUI(object):
         }
 
         if len(data) == 0:
+            # No data, nothing to edit or print. So we remove the commands.
             del commands['e']
             del commands['p']
             click.secho(f"{csv_file} contains no data.", fg='yellow')
