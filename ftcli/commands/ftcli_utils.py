@@ -106,9 +106,9 @@ def dehinter(input_path, keep_cvar, keep_cvt, keep_fpgm, keep_hdmx, keep_ltsh, k
                 font.save(output_file)
                 click.secho('%s saved' % output_file, fg='green')
             else:
-                click.secho(f'{f} is not a TrueType file', fg='red')
+                click.secho(f'ERROR: {os.path.basename(f)} is not a TrueType file', fg='red')
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')
 
 
 @click.group()
