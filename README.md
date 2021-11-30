@@ -54,17 +54,19 @@ The following packages will be installed during setup:
     * tbl-head
     * tbl-os2
 
+  
+* utils
+  * add-dsig
+  * font-renamer
+  * remove-hinting
+  * remove-overlaps
+  * ttc-extractor
+
+
 * webfonts
     * compress
     * decompress
     * makecss
-    
-
-* add-dsig
-* font-renamer
-* remove-hinting
-* remove-overlaps
-* ttc-extractor
 
 ### assistant
 A set of tools to correctly compile the name table and set proper values for usWeightClass, usWidthClass, bold, italic
@@ -74,7 +76,7 @@ The process creates a JSON configuration file and a CSV file that will be used t
 automatically created and eventually edited manually or using the integrated command line editor. Once everything is
 correctly set in the CSV file, the values inside it can be written to fonts.
 
-1) The JSON configuration file.
+#### 1) The JSON configuration file.
 
 The 'config.json' file contains the desired style names to pair with each usWidthClass and usWeightClass values of the
 family, as well as the desired italic and oblique literals:
@@ -111,7 +113,7 @@ Once created the configuration file, you may be in need to edit it according to 
 
 Values contained in the configuration file will be used to fill the data.csv file in the next steps.
 
-2) The CSV data file.
+#### 2) The CSV data file.
 
 The final data.csv file will contain the desired style names, family name, italic and oblique bits, usWidthClass and
 usWeightClass values. Once properly filled, the values contained in this file will be written to the fonts.
