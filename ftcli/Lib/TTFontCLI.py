@@ -103,7 +103,7 @@ class TTFontCLI(TTFont):
 
             linked_styles.sort()
             if us_weight_class == linked_styles[1]:
-                # The bold bits are set here and only here.
+                # The bold bits are set HERE AND ONLY HERE.
                 self.setBold()
                 subfamily_name_win = "Bold"
                 if is_italic is True:
@@ -136,7 +136,7 @@ class TTFontCLI(TTFont):
         # Build the Unique Identifier
         ach_vend_id = str(self['OS/2'].achVendID).replace(" ", "").replace(r'\x00', "")
         font_revision = str(round(self['head'].fontRevision, 3)).ljust(5, "0")
-        sersion_string = "Version {}".format(font_revision)
+        version_string = "Version {}".format(font_revision)
 
         unique_id = "{};{};{}".format(font_revision, ach_vend_id.ljust(4), postscript_name)
 
@@ -153,100 +153,102 @@ class TTFontCLI(TTFont):
 
         # nameID 1
         if 1 not in namerecords_to_ignore:
-            string = family_name_ot
-            string = string.replace(weight, wgt) if 1 in shorten_weight else string
-            string = string.replace(width, wdt) if 1 in shorten_width else string
-            string = string.replace(slope, slp) if 1 in shorten_slope else string
-            self['name'].setName(string, 1, 1, 0, 0x0)
 
-            string = family_name_win
-            string = string.replace(weight, wgt) if 1 in shorten_weight else string
-            string = string.replace(width, wdt) if 1 in shorten_width else string
-            string = string.replace(slope, slp) if 1 in shorten_slope else string
-            if len(string) > 27:
+            name_id_1 = family_name_win
+            name_id_1 = name_id_1.replace(weight, wgt) if 1 in shorten_weight else name_id_1
+            name_id_1 = name_id_1.replace(width, wdt) if 1 in shorten_width else name_id_1
+            name_id_1 = name_id_1.replace(slope, slp) if 1 in shorten_slope else name_id_1
+            if len(name_id_1) > 27:
                 click.secho('WARNING: family name length is more than 27 characters', fg='yellow')
-            self['name'].setName(string, 1, 3, 1, 0x409)
+            self.setMultilingualName(nameID=1, string=name_id_1)
 
         # nameID 2
         if 2 not in namerecords_to_ignore:
-            string = subfamily_name_ot
-            string = string.replace(weight, wgt) if 2 in shorten_weight else string
-            string = string.replace(width, wdt) if 2 in shorten_width else string
-            string = string.replace(slope, slp) if 2 in shorten_slope else string
-            self['name'].setName(string, 2, 1, 0, 0x0)
 
-            # Windows Subfamily Name can be only Regular, Italic, Bold or Bold Italic and can't be shortened!
-            self['name'].setName(subfamily_name_win, 2, 3, 1, 0x409)
+            # Windows Subfamily Name can be only Regular, Italic, Bold or Bold Italic and can't be shortened.
+            name_id_2 = subfamily_name_win
+            self.setMultilingualName(nameID=2, string=name_id_2)
 
         # nameID 3
         if 3 not in namerecords_to_ignore:
-            string = unique_id
-            string = string.replace(weight, wgt) if 3 in shorten_weight else string
-            string = string.replace(width, wdt) if 3 in shorten_width else string
-            string = string.replace(slope, slp) if 3 in shorten_slope else string
-            self['name'].setName(string, 3, 1, 0, 0x0)
-            self['name'].setName(string, 3, 3, 1, 0x409)
+            name_id_3 = unique_id
+            name_id_3 = name_id_3.replace(weight, wgt) if 3 in shorten_weight else name_id_3
+            name_id_3 = name_id_3.replace(width, wdt) if 3 in shorten_width else name_id_3
+            name_id_3 = name_id_3.replace(slope, slp) if 3 in shorten_slope else name_id_3
+
+            self.setMultilingualName(nameID=3, string=name_id_3, mac=False)
+            # nameID 3 is written only in Windows table.
+            self.delMultilingualName(nameID=3, windows=False)
 
         # nameID 4
         if 4 not in namerecords_to_ignore:
-            string = full_font_name
-            string = string.replace(weight, wgt) if 4 in shorten_weight else string
-            string = string.replace(width, wdt) if 4 in shorten_width else string
-            string = string.replace(slope, slp) if 4 in shorten_slope else string
-            self['name'].setName(string, 4, 1, 0, 0x0)
-            self['name'].setName(string, 4, 3, 1, 0x409)
-
-            # No need to shorten this!
             if old_full_font_name:
-                self['name'].setName(postscript_name, 4, 3, 1, 0x409)
+                name_id_4 = postscript_name
+            else:
+                name_id_4 = full_font_name
+                name_id_4 = name_id_4.replace(weight, wgt) if 4 in shorten_weight else name_id_4
+                name_id_4 = name_id_4.replace(width, wdt) if 4 in shorten_width else name_id_4
+                name_id_4 = name_id_4.replace(slope, slp) if 4 in shorten_slope else name_id_4
+
+            self.setMultilingualName(nameID=4, string=name_id_4)
 
         # nameID 5
         if 5 not in namerecords_to_ignore:
-            self['name'].setName(sersion_string, 5, 1, 0, 0x0)
-            self['name'].setName(sersion_string, 5, 3, 1, 0x409)
+            name_id_5 = version_string
+
+            self.setMultilingualName(nameID=5, string=name_id_5)
 
         # nameID6
         if 6 not in namerecords_to_ignore:
             # Already shortened!
-            if len(postscript_name) > 31:
+            name_id_6 = postscript_name
+            if len(name_id_6) > 31:
                 click.secho('WARNING: PostScript name length is more than 31 characters', fg='yellow')
-            self['name'].setName(postscript_name, 6, 1, 0, 0x0)
-            self['name'].setName(postscript_name, 6, 3, 1, 0x409)
+
+            self.setMultilingualName(nameID=6, string=name_id_6)
 
         # nameID 16
         if 16 not in namerecords_to_ignore:
-            string = family_name_ot
-            string = string.replace(weight, wgt) if 16 in shorten_weight else string
-            string = string.replace(width, wdt) if 16 in shorten_width else string
-            string = string.replace(slope, slp) if 16 in shorten_slope else string
-            if not string == str(self['name'].getName(1, 3, 1, 0x409)):
-                self['name'].setName(string, 16, 1, 0, 0x0)
-                self['name'].setName(string, 16, 3, 1, 0x409)
+            name_id_16 = family_name_ot
+            name_id_16 = name_id_16.replace(weight, wgt) if 16 in shorten_weight else name_id_16
+            name_id_16 = name_id_16.replace(width, wdt) if 16 in shorten_width else name_id_16
+            name_id_16 = name_id_16.replace(slope, slp) if 16 in shorten_slope else name_id_16
+
+            if not name_id_16 == str(self['name'].getName(1, 3, 1, 0x409)):
+                # We write nameID 16 only in Windows table...
+                self.setMultilingualName(nameID=16, string=name_id_16, mac=False)
+                # ... and delete it from Mac table if present
+                self.delMultilingualName(nameID=16, windows=False)
             else:
-                self.delMultilingualName(16)
+                # If not needed, nameID 16 is deleted from both tables
+                self.delMultilingualName(nameID=16)
 
         # nameID 17
         if 17 not in namerecords_to_ignore:
-            string = subfamily_name_ot
-            string = string.replace(weight, wgt) if 17 in shorten_weight else string
-            string = string.replace(width, wdt) if 17 in shorten_width else string
-            string = string.replace(slope, slp) if 17 in shorten_slope else string
-            if not string == str(self['name'].getName(2, 3, 1, 0x409)):
-                self['name'].setName(string, 17, 1, 0, 0x0)
-                self['name'].setName(string, 17, 3, 1, 0x409)
+            name_id_17 = subfamily_name_ot
+            name_id_17 = name_id_17.replace(weight, wgt) if 17 in shorten_weight else name_id_17
+            name_id_17 = name_id_17.replace(width, wdt) if 17 in shorten_width else name_id_17
+            name_id_17 = name_id_17.replace(slope, slp) if 17 in shorten_slope else name_id_17
+
+            if not name_id_17 == str(self['name'].getName(2, 3, 1, 0x409)):
+                # We write nameID 17 only in Windows table...
+                self.setMultilingualName(nameID=17, string=name_id_17, mac=False)
+                # ... and delete it from Mac table if present
+                self.delMultilingualName(nameID=17, windows=False)
             else:
-                self.delMultilingualName(17)
+                # If not needed, nameID 16 is deleted from both tables
+                self.delMultilingualName(nameID=17)
 
         # nameID 18
         if 18 not in namerecords_to_ignore:
-            string = full_font_name
-            string = string.replace(weight, wgt) if 18 in shorten_weight else string
-            string = string.replace(width, wdt) if 18 in shorten_width else string
-            string = string.replace(slope, slp) if 18 in shorten_slope else string
-            if not string == str(self['name'].getName(4, 1, 0, 0x0)):
-                self['name'].setName(string, 18, 1, 0, 0x0)
+            name_id_18 = full_font_name
+            name_id_18 = name_id_18.replace(weight, wgt) if 18 in shorten_weight else name_id_18
+            name_id_18 = name_id_18.replace(width, wdt) if 18 in shorten_width else name_id_18
+            name_id_18 = name_id_18.replace(slope, slp) if 18 in shorten_slope else name_id_18
+            if not name_id_18 == str(self['name'].getName(4, 1, 0, 0x0)):
+                self.setMultilingualName(nameID=18, string=name_id_18, windows=False)
             else:
-                self.delMultilingualName(18)
+                self.delMultilingualName(nameID=18)
 
         # CFF Names
         if 'CFF ' in self and fixCFF is True:
@@ -262,32 +264,32 @@ class TTFontCLI(TTFont):
         if fontNames:
             if not self['CFF '].cff.fontNames == [fontNames]:
                 self['CFF '].cff.fontNames = [fontNames]
-                count +=1
+                count += 1
 
         if FullName:
             if not self['CFF '].cff.topDictIndex[0].FullName == FullName:
                 self['CFF '].cff.topDictIndex[0].FullName = FullName
-                count +=1
+                count += 1
 
         if FamilyName:
             if not self['CFF '].cff.topDictIndex[0].FamilyName == FamilyName:
                 self['CFF '].cff.topDictIndex[0].FamilyName = FamilyName
-                count +=1
+                count += 1
 
         if Weight:
             if not self['CFF '].cff.topDictIndex[0].Weight == Weight:
                 self['CFF '].cff.topDictIndex[0].Weight = Weight
-                count +=1
+                count += 1
 
         if Copyright:
             if not self['CFF '].cff.topDictIndex[0].Copyright == Copyright:
                 self['CFF '].cff.topDictIndex[0].Copyright = Copyright
-                count +=1
+                count += 1
 
         if Notice:
             if not self['CFF '].cff.topDictIndex[0].Notice == Notice:
                 self['CFF '].cff.topDictIndex[0].Notice = Notice
-                count +=1
+                count += 1
 
         return count
 

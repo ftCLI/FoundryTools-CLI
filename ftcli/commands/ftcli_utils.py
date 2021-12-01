@@ -7,6 +7,7 @@ from fontTools.ttLib.removeOverlaps import removeOverlaps
 
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.utils import getFontsList, makeOutputFileName, getSourceString
+from dehinter.font import dehint
 
 
 # add-dsig
@@ -91,8 +92,6 @@ def dehinter(input_path, keep_cvar, keep_cvt, keep_fpgm, keep_hdmx, keep_ltsh, k
 
     This is a CLI for dehinter by Source Foundry: https://github.com/source-foundry/dehinter
     """
-
-    from dehinter.font import dehint
 
     files = getFontsList(input_path)
     for f in files:
