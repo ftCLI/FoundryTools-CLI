@@ -179,7 +179,7 @@ class TTFontCLI(TTFont):
 
             self.setMultilingualName(nameID=3, string=name_id_3, mac=False)
             # nameID 3 is written only in Windows table.
-            self.delMultilingualName(nameID=3, windows=False)
+            self.delNameRecord(nameID=3, windows=False)
 
         # nameID 4
         if 4 not in namerecords_to_ignore:
@@ -223,10 +223,10 @@ class TTFontCLI(TTFont):
                 # We write nameID 16 only in Windows table...
                 self.setMultilingualName(nameID=16, string=name_id_16, mac=False)
                 # ... and delete it from Mac table if present
-                self.delMultilingualName(nameID=16, windows=False)
+                self.delNameRecord(nameID=16, windows=False)
             else:
                 # If not needed, nameID 16 is deleted from both tables
-                self.delMultilingualName(nameID=16)
+                self.delNameRecord(nameID=16)
 
         # nameID 17
         if 17 not in namerecords_to_ignore:
@@ -239,10 +239,10 @@ class TTFontCLI(TTFont):
                 # We write nameID 17 only in Windows table...
                 self.setMultilingualName(nameID=17, string=name_id_17, mac=False)
                 # ... and delete it from Mac table if present
-                self.delMultilingualName(nameID=17, windows=False)
+                self.delNameRecord(nameID=17, windows=False)
             else:
                 # If not needed, nameID 16 is deleted from both tables
-                self.delMultilingualName(nameID=17)
+                self.delNameRecord(nameID=17)
 
         # nameID 18
         if 18 not in namerecords_to_ignore:
@@ -256,7 +256,7 @@ class TTFontCLI(TTFont):
             if not name_id_18 == str(self['name'].getName(4, 1, 0, 0x0)):
                 self.setMultilingualName(nameID=18, string=name_id_18, windows=False)
             else:
-                self.delMultilingualName(nameID=18)
+                self.delNameRecord(nameID=18)
 
         # CFF Names
         if 'CFF ' in self and fixCFF is True:
@@ -304,16 +304,16 @@ class TTFontCLI(TTFont):
     def setMultilingualName(self, nameID=None, language='en', string="", windows=True, mac=True):
 
         if windows is True:
-            self.delMultilingualName(nameID, language=language, windows=True, mac=False)
+            self.delNameRecord(nameID, language=language, windows=True, mac=False)
 
         if mac is True:
-            self.delMultilingualName(
+            self.delNameRecord(
                 nameID, language=language, windows=False, mac=True)
 
         names = {language: string}
         self['name'].addMultilingualName(names, ttFont=self, windows=windows, mac=mac, nameID=nameID)
 
-    def delMultilingualName(self, nameID, language='en', windows=True, mac=True):
+    def delNameRecord(self, nameID, language='en', windows=True, mac=True):
 
         if nameID is not None:
             if language == 'ALL':

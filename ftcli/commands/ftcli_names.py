@@ -320,7 +320,7 @@ def del_name(input_path, name_id, platform, language, output_dir, recalc_timesta
     for f in files:
         try:
             font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
-            font.delMultilingualName(name_id, language=language, windows=windows, mac=mac)
+            font.delNameRecord(name_id, language=language, windows=windows, mac=mac)
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho('%s saved' % output_file, fg='green')
