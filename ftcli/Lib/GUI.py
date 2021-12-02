@@ -629,7 +629,7 @@ class GUI(object):
 
     def printFtNames(self, input_path, minimal=False, indent=32, max_lines=None):
 
-        terminal_width = min(90, get_terminal_size()[0] - 1)
+        terminal_width = min(100, get_terminal_size()[0] - 1)
 
         files = getFontsList(input_path)
 
@@ -647,7 +647,7 @@ class GUI(object):
                 print('-' * terminal_width)
 
                 # NAME TABLE
-                print('NAME TABLE')
+                print(' NAME TABLE')
                 print('-' * terminal_width)
 
                 for platform_spec in platform_specs:
@@ -664,9 +664,8 @@ class GUI(object):
                         langName = _MAC_LANGUAGES.get(langID)
                         platformEncoding = MAC_ENCODING_IDS.get(platEncID)
 
-
                     print(
-                        f'platformID: {platformID} ({PLATFORMS.get(platformID)}) |'
+                        f' platformID: {platformID} ({PLATFORMS.get(platformID)}) |'
                         f' platEncID: {platEncID} ({platformEncoding}) | '
                         f'langID: {langID} ({langName})')
                     print('-' * terminal_width)
@@ -697,7 +696,7 @@ class GUI(object):
 
                 # CFF NAMES
                 if 'CFF ' in font:
-                    print('CFF NAMES')
+                    print(' CFF NAMES')
                     print('-' * terminal_width)
 
                     otFont = font['CFF '].cff
