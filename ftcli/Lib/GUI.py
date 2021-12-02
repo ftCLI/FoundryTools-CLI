@@ -665,8 +665,8 @@ class GUI(object):
                         platformEncoding = MAC_ENCODING_IDS.get(platEncID)
 
                     print(
-                        f' platformID: {platformID} ({PLATFORMS.get(platformID)}) |'
-                        f' platEncID: {platEncID} ({platformEncoding}) | '
+                        f' platformID: {platformID} ({PLATFORMS.get(platformID)}) | '
+                        f'platEncID: {platEncID} ({platformEncoding}) | '
                         f'langID: {langID} ({langName})')
                     print('-' * terminal_width)
 
