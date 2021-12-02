@@ -7,6 +7,7 @@ from fontTools.misc.fixedTools import floatToFixedToStr
 from fontTools.misc.textTools import num2binary
 from fontTools.misc.timeTools import timestampToString
 from fontTools.ttLib import TTFont
+from fontTools.ttLib.tables._n_a_m_e import (_MAC_LANGUAGES, _WINDOWS_LANGUAGES)
 
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.configHandler import (DEFAULT_WEIGHTS, DEFAULT_WIDTHS, configHandler)
@@ -638,8 +639,7 @@ class GUI(object):
                 names = font['name'].names
                 platform_specs = []
                 for name in names:
-                    platform_spec = [name.platformID,
-                                     name.platEncID, name.langID]
+                    platform_spec = [name.platformID, name.platEncID, name.langID]
                     if platform_spec not in platform_specs:
                         platform_specs.append(platform_spec)
 
@@ -655,11 +655,20 @@ class GUI(object):
                     platformID = platform_spec[0]
                     platEncID = platform_spec[1]
                     langID = platform_spec[2]
+                    langName = ""
+                    platformEncoding = ""
+                    if platformID == 3:
+                        langName = _WINDOWS_LANGUAGES.get(langID)
+                        platformEncoding = WINDOWS_ENCODING_IDS.get(platEncID)
+                    if platformID == 1:
+                        langName = _MAC_LANGUAGES.get(langID)
+                        platformEncoding = MAC_ENCODING_IDS.get(platEncID)
+
 
                     print(
-                        'platformID: {} ({}) | platEncID: {} | langID: {}'.format(platformID, PLATFORMS.get(platformID),
-                                                                                  platEncID, langID)
-                    )
+                        f'platformID: {platformID} ({PLATFORMS.get(platformID)}) |'
+                        f' platEncID: {platEncID} ({platformEncoding}) | '
+                        f'langID: {langID} ({langName})')
                     print('-' * terminal_width)
 
                     for name in names:
@@ -969,3 +978,53 @@ PLATFORMS = {
     2: 'ISO (deprecated)',
     3: 'Windows',
     4: 'Custom'}
+
+MAC_ENCODING_IDS = {
+    0: 'Roman',
+    1: 'Japanese',
+    2: 'Chinese (Traditional)',
+    3: 'Korean',
+    4: 'Arabic',
+    5: 'Hebrew',
+    6: 'Greek',
+    7: 'Russian',
+    8: 'RSymbol',
+    9: 'Devanagari',
+    10: 'Gurmukhi',
+    11: 'Gujarati',
+    12: 'Oriya',
+    13: 'Bengali',
+    14: 'Tamil',
+    15: 'Telugu',
+    16: 'Kannada',
+    17: 'Malayalam',
+    18: 'Sinhalese',
+    19: 'Burmese',
+    20: 'Khmer',
+    21: 'Thai',
+    22: 'Laotian',
+    23: 'Georgian',
+    24: 'Armenian',
+    25: 'Chinese (Simplified)',
+    26: 'Tibetan',
+    27: 'Mongolian',
+    28: 'Geez',
+    29: 'Slavic',
+    30: 'Vietnamese',
+    31: 'Sindhi',
+    32: 'Uninterpreted',
+}
+
+WINDOWS_ENCODING_IDS = {
+    0: 'Symbol',
+    1: 'Unicode',
+    2: 'ShiftJIS',
+    3: 'PRC',
+    4: 'Big5',
+    5: 'Wansung',
+    6: 'Johab',
+    7: 'Reserved',
+    8: 'Reserved',
+    9: 'Reserved',
+    10: 'UCS4',
+}
