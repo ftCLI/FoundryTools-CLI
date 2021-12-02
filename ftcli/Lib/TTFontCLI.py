@@ -64,8 +64,7 @@ class TTFontCLI(TTFont):
         self.setUsWeightClass(us_weight_class)
         self.setUsWidthClass(us_width_class)
 
-        # Macintosh family and subfamily names
-
+        # OT family and subfamily name
         family_name_ot = family_name
         subfamily_name_ot = weight
 
@@ -80,8 +79,7 @@ class TTFontCLI(TTFont):
             if not keep_regular:
                 subfamily_name_ot = subfamily_name_ot.replace('Regular', '').replace('  ', ' ').strip()
 
-        # Microsoft family and subfamily names
-
+        # Windows family and subfamily name
         family_name_win = "{} {} {}".format(
             family_name, width.replace("Normal", "").replace("Nor", ""), weight).replace("  ", " ").strip()
 
@@ -167,6 +165,9 @@ class TTFontCLI(TTFont):
 
             # Windows Subfamily Name can be only Regular, Italic, Bold or Bold Italic and can't be shortened.
             name_id_2 = subfamily_name_win
+
+            # Maximum length is 31 characters, but since we only us Regular, Italic, Bold and Bold Italic, there's no
+            # need the check if the limit has been exceeded.
             self.setMultilingualName(nameID=2, string=name_id_2)
 
         # nameID 3
@@ -190,6 +191,9 @@ class TTFontCLI(TTFont):
                 name_id_4 = name_id_4.replace(width, wdt) if 4 in shorten_width else name_id_4
                 name_id_4 = name_id_4.replace(slope, slp) if 4 in shorten_slope else name_id_4
 
+            if len(name_id_4) > 31:
+                click.secho('WARNING: full name length is more than 31 characters', fg='yellow')
+
             self.setMultilingualName(nameID=4, string=name_id_4)
 
         # nameID 5
@@ -202,6 +206,7 @@ class TTFontCLI(TTFont):
         if 6 not in namerecords_to_ignore:
             # Already shortened!
             name_id_6 = postscript_name
+
             if len(name_id_6) > 31:
                 click.secho('WARNING: PostScript name length is more than 31 characters', fg='yellow')
 
@@ -245,6 +250,9 @@ class TTFontCLI(TTFont):
             name_id_18 = name_id_18.replace(weight, wgt) if 18 in shorten_weight else name_id_18
             name_id_18 = name_id_18.replace(width, wdt) if 18 in shorten_width else name_id_18
             name_id_18 = name_id_18.replace(slope, slp) if 18 in shorten_slope else name_id_18
+
+            # We write nameID 18 only if different from nameID 4. Could be useful when nameID 4 string is longer than
+            # 31 characters. See: https://typedrawers.com/discussion/617/family-name
             if not name_id_18 == str(self['name'].getName(4, 1, 0, 0x0)):
                 self.setMultilingualName(nameID=18, string=name_id_18, windows=False)
             else:
