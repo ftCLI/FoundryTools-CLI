@@ -8,7 +8,6 @@ from fontTools.misc.textTools import num2binary
 from fontTools.misc.timeTools import timestampToString
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._n_a_m_e import (_MAC_LANGUAGES, _WINDOWS_LANGUAGES)
-
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.configHandler import (DEFAULT_WEIGHTS, DEFAULT_WIDTHS, configHandler)
 from ftcli.Lib.csvHandler import csvHandler

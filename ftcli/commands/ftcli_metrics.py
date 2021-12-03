@@ -1,10 +1,9 @@
-import sys
 import os
+import sys
 
 import click
-
-from ftcli.Lib.utils import getFontsList, makeOutputFileName, guessFamilyName
 from ftcli.Lib.TTFontCLI import TTFontCLI
+from ftcli.Lib.utils import getFontsList, makeOutputFileName, guessFamilyName
 
 
 @click.group()

@@ -2,7 +2,6 @@ import os
 import sys
 
 import click
-
 from ftcli.Lib.GUI import GUI
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.configHandler import configHandler

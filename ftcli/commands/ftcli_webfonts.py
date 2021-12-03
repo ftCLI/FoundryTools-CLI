@@ -2,7 +2,6 @@ import os
 
 import click
 from fontTools.ttLib import TTFont
-
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.utils import (getFontsList, guessFamilyName, makeOutputFileName)
 

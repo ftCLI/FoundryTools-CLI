@@ -1,6 +1,5 @@
 import csv
 import os
-import sys
 
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.configHandler import configHandler

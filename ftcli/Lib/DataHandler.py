@@ -1,11 +1,11 @@
-import csv
+import json
 import json
 import os
 import sys
 
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.configHandler import configHandler
-from ftcli.Lib.utils import (getFontsList, getCsvPath, getSourceString, guessFamilyName)
+from ftcli.Lib.utils import (getFontsList, getSourceString, guessFamilyName)
 
 
 class DataHandler(object):

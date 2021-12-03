@@ -1,13 +1,12 @@
 import os
 
 import click
+from dehinter.font import dehint
 from fontTools.ttLib import TTCollection
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.removeOverlaps import removeOverlaps
-
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.utils import getFontsList, makeOutputFileName, getSourceString
-from dehinter.font import dehint
 
 
 # add-dsig

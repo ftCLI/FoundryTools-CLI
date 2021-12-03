@@ -55,9 +55,9 @@ def win_2_mac(input_path, output_dir, recalc_timestamp, overwrite):
             font.win2mac()
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
-            click.secho('%s saved' % f, fg='green')
+            click.secho(f'{f} saved', fg='green')
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')
 
 
 @click.group()
