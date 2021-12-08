@@ -181,18 +181,19 @@ class TTFontCLI(TTFont):
 
         # nameID 4
         if 4 not in namerecords_to_ignore:
-            if old_full_font_name:
-                name_id_4 = postscript_name
-            else:
-                name_id_4 = full_font_name
-                name_id_4 = name_id_4.replace(weight, wgt) if 4 in shorten_weight else name_id_4
-                name_id_4 = name_id_4.replace(width, wdt) if 4 in shorten_width else name_id_4
-                name_id_4 = name_id_4.replace(slope, slp) if 4 in shorten_slope else name_id_4
+
+            name_id_4 = full_font_name
+            name_id_4 = name_id_4.replace(weight, wgt) if 4 in shorten_weight else name_id_4
+            name_id_4 = name_id_4.replace(width, wdt) if 4 in shorten_width else name_id_4
+            name_id_4 = name_id_4.replace(slope, slp) if 4 in shorten_slope else name_id_4
 
             if len(name_id_4) > 31:
                 click.secho('WARNING: full name length is more than 31 characters', fg='yellow')
 
             self.setMultilingualName(nameID=4, string=name_id_4)
+
+            if old_full_font_name:
+                self.setMultilingualName(nameID=4, string=postscript_name, mac=False)
 
         # nameID 5
         if 5 not in namerecords_to_ignore:
@@ -216,8 +217,10 @@ class TTFontCLI(TTFont):
             name_id_16 = name_id_16.replace(weight, wgt) if 16 in shorten_weight else name_id_16
             name_id_16 = name_id_16.replace(width, wdt) if 16 in shorten_width else name_id_16
             name_id_16 = name_id_16.replace(slope, slp) if 16 in shorten_slope else name_id_16
-
-            self.setMultilingualName(nameID=16, string=name_id_16)
+            if not name_id_16 == name_id_1:
+                self.setMultilingualName(nameID=16, string=name_id_16)
+            else:
+                self.delNameRecord(nameID=16)
 
         # nameID 17
         if 17 not in namerecords_to_ignore:
@@ -225,8 +228,10 @@ class TTFontCLI(TTFont):
             name_id_17 = name_id_17.replace(weight, wgt) if 17 in shorten_weight else name_id_17
             name_id_17 = name_id_17.replace(width, wdt) if 17 in shorten_width else name_id_17
             name_id_17 = name_id_17.replace(slope, slp) if 17 in shorten_slope else name_id_17
-
-            self.setMultilingualName(nameID=17, string=name_id_17)
+            if not name_id_17 == name_id_2:
+                self.setMultilingualName(nameID=17, string=name_id_17)
+            else:
+                self.delNameRecord(nameID=17)
 
         # nameID 18
         if 18 not in namerecords_to_ignore:
@@ -501,6 +506,9 @@ class TTFontCLI(TTFont):
     def isRegular(self):
         return is_nth_bit_set(self['OS/2'].fsSelection, 6)
 
+    def isWWS(self):
+        return is_nth_bit_set(self['OS/2'].fsSelection, 8)
+
     def setBold(self):
         self.__setBoldBits()
         self.__clearRegularBit()
@@ -515,6 +523,9 @@ class TTFontCLI(TTFont):
             self['OS/2'].version = 4
         self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 9)
 
+    def setWWS(self):
+        self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 8)
+
     def unsetBold(self):
         self.__clearBoldBits()
         if not self.isItalic():
@@ -526,8 +537,10 @@ class TTFontCLI(TTFont):
             self.__setRegularBit()
 
     def unsetOblique(self):
-        self['OS/2'].fsSelection = unset_nth_bit(
-            self['OS/2'].fsSelection, 9)
+        self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 9)
+
+    def unsetWWS(self):
+        self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 8)
 
     def setRegular(self):
         self.__setRegularBit()
