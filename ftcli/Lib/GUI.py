@@ -8,6 +8,7 @@ from fontTools.misc.textTools import num2binary
 from fontTools.misc.timeTools import timestampToString
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._n_a_m_e import (_MAC_LANGUAGES, _WINDOWS_LANGUAGES)
+
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.configHandler import (DEFAULT_WEIGHTS, DEFAULT_WIDTHS, configHandler)
 from ftcli.Lib.csvHandler import csvHandler
@@ -25,7 +26,7 @@ class GUI(object):
         print("\nCURRENT FILE:", csv_file, '\n')
 
         commands = {
-            'e': 'Edit CSV file',
+            'e': 'Edit CSV lines',
             'i': 'Init CSV data',
             'r': 'Recalc CSV data',
             'c': 'Edit Config file',
@@ -48,9 +49,7 @@ class GUI(object):
             print('{} : {}'.format(key, value))
             choices.append(key)
 
-        message = "\nYour selection"
-        choice = click.prompt(
-            message, type=click.Choice(choices), show_choices=True)
+        choice = click.prompt("\nYour selection", type=click.Choice(choices), show_choices=True)
 
         if choice == 'c':
             self.cfgEditor(config_file)
@@ -111,13 +110,13 @@ class GUI(object):
             'x': 'Exit'}
 
         print('\nAVAILABLE COMMANDS:\n')
+
         choices = []
-        message = "\nYour selection"
         for key, value in commands.items():
             print('{} : {}'.format(key, value))
             choices.append(key)
 
-        choice = click.prompt(message, type=click.Choice(choices), show_choices=True)
+        choice = click.prompt("\nYour selection", type=click.Choice(choices), show_choices=True)
 
         # Weights editor
         if choice == '1':
@@ -872,14 +871,13 @@ class GUI(object):
             'r': 'Reset default values',
             'x': 'Main menu'
         }
-        message = "\nYour selection"
+
         choices = []
         for key, value in commands.items():
             print('[{}] : {}'.format(key, value))
             choices.append(key)
 
-        choice = click.prompt(
-            message, type=click.Choice(choices), show_choices=True)
+        choice = click.prompt("\nYour selection", type=click.Choice(choices), show_choices=True)
 
         if choice == 'a':
 
