@@ -177,9 +177,7 @@ class TTFontCLI(TTFont):
             name_id_3 = name_id_3.replace(width, wdt) if 3 in shorten_width else name_id_3
             name_id_3 = name_id_3.replace(slope, slp) if 3 in shorten_slope else name_id_3
 
-            self.setMultilingualName(nameID=3, string=name_id_3, mac=False)
-            # nameID 3 is written only in Windows table.
-            self.delNameRecord(nameID=3, windows=False)
+            self.setMultilingualName(nameID=3, string=name_id_3)
 
         # nameID 4
         if 4 not in namerecords_to_ignore:
@@ -219,14 +217,7 @@ class TTFontCLI(TTFont):
             name_id_16 = name_id_16.replace(width, wdt) if 16 in shorten_width else name_id_16
             name_id_16 = name_id_16.replace(slope, slp) if 16 in shorten_slope else name_id_16
 
-            if not name_id_16 == str(self['name'].getName(1, 3, 1, 0x409)):
-                # We write nameID 16 only in Windows table...
-                self.setMultilingualName(nameID=16, string=name_id_16, mac=False)
-                # ... and delete it from Mac table if present
-                self.delNameRecord(nameID=16, windows=False)
-            else:
-                # If not needed, nameID 16 is deleted from both tables
-                self.delNameRecord(nameID=16)
+            self.setMultilingualName(nameID=16, string=name_id_16)
 
         # nameID 17
         if 17 not in namerecords_to_ignore:
@@ -235,14 +226,7 @@ class TTFontCLI(TTFont):
             name_id_17 = name_id_17.replace(width, wdt) if 17 in shorten_width else name_id_17
             name_id_17 = name_id_17.replace(slope, slp) if 17 in shorten_slope else name_id_17
 
-            if not name_id_17 == str(self['name'].getName(2, 3, 1, 0x409)):
-                # We write nameID 17 only in Windows table...
-                self.setMultilingualName(nameID=17, string=name_id_17, mac=False)
-                # ... and delete it from Mac table if present
-                self.delNameRecord(nameID=17, windows=False)
-            else:
-                # If not needed, nameID 16 is deleted from both tables
-                self.delNameRecord(nameID=17)
+            self.setMultilingualName(nameID=17, string=name_id_17)
 
         # nameID 18
         if 18 not in namerecords_to_ignore:
