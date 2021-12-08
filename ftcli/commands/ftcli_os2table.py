@@ -7,17 +7,29 @@ from ftcli.Lib.utils import getFontsList, makeOutputFileName
 
 @click.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-@click.option('-b/-nb', '--bold/--no-bold', default=None,
+@click.option('-b/-nb', '--set-bold/--unset-bold', default=None,
               help='Sets or clears the bold bits (OS/2.fsSelection bit 5 and head.macStyle bit 0).')
-@click.option('-i/-ni', '--italic/--no-italic', default=None,
+@click.option('-i/-ni', '--set-italic/--unset-italic', default=None,
               help='Sets or clears the italic bits (OS/2.fsSelection bit 0 and head.macStyle bit 1).')
-@click.option('-ob/-nob', '--oblique/--no-oblique', default=None,
+@click.option('-ob/-no-ob', '--set-oblique/--unset-oblique', default=None,
               help='Sets or clears the oblique bit (OS/2.fsSelection bit 9).')
-@click.option('-wd', '--width', type=click.IntRange(1, 9),
+@click.option('-wws/-no-wws,-set-wws/-unset-wws', default=None,
+              help="""
+Sets or clears the WWS bit (OS/2.fsSelection bit 8).
+
+If the OS/2.fsSelection bit is set, the font has 'name' table strings consistent with a weight/width/slope family
+without requiring use of name IDs 21 and 22.
+
+See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
+
+Also: https://typedrawers.com/discussion/3857/fontlab-7-windows-reads-exported-font-name-differently
+
+""")
+@click.option('-wd', '--set-width', type=click.IntRange(1, 9),
               help='Sets the OS/2.usWidthClass value (1-9)')
-@click.option('-wg', '--weight', type=click.IntRange(1, 1000),
+@click.option('-wg', '--set-weight', type=click.IntRange(1, 1000),
               help='Sets the OS/2.usWeightClass value (1-1000).')
-@click.option('-el', '--embed-level', type=click.Choice(['0', '2', '4', '8']), default=None,
+@click.option('-el', '--set-embed-level', type=click.Choice(['0', '2', '4', '8']), default=None,
               help="""
 Sets embedding level (OS/2.fsType).
 
@@ -27,7 +39,7 @@ Sets embedding level (OS/2.fsType).
 4: Preview & Print embedding
 8: Editable embedding
 """)
-@click.option('-utm/-noutm', '--use-typo-metrics/--no-typo-metrics', default=None,
+@click.option('-utm/-noutm', '--set-use-typo-metrics/--unset-use-typo-metrics', default=None,
               help="""
 Sets or clears the USE_TYPO_METRICS bit (OS/2.fsSelection bit 7).
 
@@ -36,7 +48,7 @@ the default line spacing for this font.
 
 See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
 """)
-@click.option('-ach', '--ach-vend-id', type=str,
+@click.option('-ach', '--set-ach-vend-id', type=str,
               help='Sets the the OS/2.achVendID tag (vendor\'s four-character identifier).')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help='The output directory where the output files are to be created. If it doesn\'t exist, will be'
@@ -47,7 +59,7 @@ See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
 @click.option('--overwrite/--no-overwrite', default=True,
               help='Overwrites existing output files or save them to a new file (numbers are appended at the end of '
                    'file name). By default, files are overwritten.')
-def cli(input_path, bold, italic, oblique, width, weight, embed_level, use_typo_metrics, ach_vend_id, recalc_timestamp,
+def cli(input_path, bold, italic, oblique, set_wws, width, weight, embed_level, use_typo_metrics, ach_vend_id, recalc_timestamp,
         output_dir, overwrite):
     """
     A command line tool to edit some OS/2 table attributes.
@@ -61,6 +73,7 @@ def cli(input_path, bold, italic, oblique, width, weight, embed_level, use_typo_
             is_bold = font.isBold()
             is_italic = font.isItalic()
             is_oblique = font.isOblique()
+            is_wws = font.isWWS()
             uses_typo_metrics = font.usesTypoMetrics()
             usWeightClass = font['OS/2'].usWeightClass
             usWidthClass = font['OS/2'].usWidthClass
@@ -92,6 +105,15 @@ def cli(input_path, bold, italic, oblique, width, weight, embed_level, use_typo_
                         font.unsetOblique()
 
                     modified = True
+
+            if set_wws is not None:
+                if is_wws != set_wws:
+                    if set_wws is True:
+                        font.setWWS()
+                    else:
+                        font.unsetWWS()
+
+                    modified =True
 
             if weight is not None:
                 if usWeightClass != weight:
@@ -145,9 +167,9 @@ def cli(input_path, bold, italic, oblique, width, weight, embed_level, use_typo_
 
             if modified is True:
                 font.save(output_file)
-                click.secho('%s --> saved' % f, fg='green')
+                click.secho('%s --> saved' % os.path.basename(f), fg='green')
             else:
-                click.secho('% s --> no changes made' % f, fg='yellow')
+                click.secho('% s --> no changes made' % os.path.basename(f), fg='yellow')
 
         except Exception as e:
             click.secho('ERROR: {}'.format(e), fg='red')
