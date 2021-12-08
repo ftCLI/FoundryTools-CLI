@@ -1,4 +1,7 @@
+import os
+
 import click
+
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.utils import getFontsList, makeOutputFileName
 
@@ -30,10 +33,11 @@ def clean_nametable(input_path, output_dir, recalc_timestamp, overwrite):
             font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
             for name in font['name'].names:
                 font.delNameRecord(nameID=name.nameID)
-            font.save(f)
+            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
+            font.save(output_file)
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
         except Exception as e:
             click.secho(f'ERROR: {e}', fg='red')
-
 
 
 @click.group()
@@ -88,7 +92,7 @@ def win_2_mac(input_path, output_dir, recalc_timestamp, overwrite):
             font.win2mac()
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
-            click.secho(f'{f} saved', fg='green')
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
         except Exception as e:
             click.secho(f'ERROR: {e}', fg='red')
 
@@ -143,9 +147,9 @@ def del_mac_names(input_path, exclude_namerecord, output_dir, recalc_timestamp, 
             font.delMacNames(exclude_namerecord=exclude_namerecord)
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
-            click.secho('%s saved' % f, fg='green')
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')
 
 
 # set-cff-name
@@ -192,10 +196,9 @@ def set_cff_name(input_path, font_name, full_name, family_name, weight, copyrigh
             if count > 0:
                 output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
                 font.save(output_file)
-                click.secho('%s saved' % output_file, fg='green')
+                click.secho(f'{output_file} --> saved', fg='green')
             else:
-                click.secho('No changes made.', fg='yellow')
-
+                click.secho(f'{os.path.basename(f)} --> no changes made.', fg='yellow')
         except Exception as e:
             click.secho(f'ERROR: {e}', fg='red')
 
@@ -250,9 +253,9 @@ def set_name(input_path, name_id, platform, language, string, output_dir, recalc
 
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
-            click.secho('%s saved' % output_file, fg='green')
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')
 
 
 # name-from-txt
@@ -307,12 +310,12 @@ def name_from_txt(input_path, name_id, platform, language, input_file, output_di
 
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
-            click.secho('%s saved' % output_file, fg='green')
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')
 
 
-# delname
+# del-name
 
 @click.group()
 def delNameRecord():
@@ -355,14 +358,12 @@ def del_name(input_path, name_id, platform, language, output_dir, recalc_timesta
             font.delNameRecord(name_id, language=language, windows=windows, mac=mac)
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
-            click.secho('%s saved' % output_file, fg='green')
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')
 
 
-# findreplace
-
-
+# find-replace
 @click.group()
 def findReplace():
     pass
@@ -440,11 +441,11 @@ def find_replace(input_path, old_string, new_string, name_id, platform, fix_cff,
             if fix_count > 0:
                 output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
                 font.save(output_file)
-                click.secho('%s --> saved' % output_file, fg='green')
+                click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
             else:
-                click.secho('%s --> no changes made' % f, fg='yellow')
+                click.secho(f'{os.path.basename(f)} --> no changes made' % f, fg='yellow')
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')
 
 
 cli = click.CommandCollection(sources=[

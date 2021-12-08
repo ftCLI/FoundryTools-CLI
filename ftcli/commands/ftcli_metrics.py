@@ -62,10 +62,10 @@ def set_linegap(input_path, percent, modify_family_name, output_dir, recalc_time
                                          + str(percent) + ext)
             output_file = makeOutputFileName(new_file_path, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
-            click.secho('%s saved' % output_file, fg='green')
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
 
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')
 
 
 @click.group()
@@ -161,9 +161,9 @@ def align(input_path, sil_method, output_dir, recalc_timestamp, overwrite):
             output_file = makeOutputFileName(
                 f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
-            click.secho('%s saved' % output_file, fg='green')
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')
 
 
 @click.group()
@@ -225,9 +225,9 @@ def copy(source_file, destination, output_dir, recalc_timestamp, overwrite):
             output_file = makeOutputFileName(
                 f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
-            click.secho('%s saved' % output_file, fg='green')
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')
 
 
 cli = click.CommandCollection(sources=[alignVMetrics, copyVMetrics, setLineGap], help="""

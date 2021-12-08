@@ -45,9 +45,9 @@ def add_dsig(input_path, recalc_timestamp, output_dir, overwrite):
 
                 output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
                 font.save(output_file)
-                click.secho('%s --> saved' % f, fg='green')
+                click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
             else:
-                click.secho('DSIG table is already present in {}'.format(f), fg='yellow')
+                click.secho(f'No changes made, DSIG table is already present in {os.path.basename(f)}', fg='yellow')
         except Exception as e:
             click.secho('ERROR: {}'.format(e), fg='red')
 
@@ -102,7 +102,7 @@ def dehinter(input_path, keep_cvar, keep_cvt, keep_fpgm, keep_hdmx, keep_ltsh, k
                        keep_prep=keep_prep, keep_ttfa=keep_ttfa, keep_vdmx=keep_vdmx, verbose=verbose)
                 output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
                 font.save(output_file)
-                click.secho('%s saved' % output_file, fg='green')
+                click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
             else:
                 click.secho(f'ERROR: {os.path.basename(f)} is not a TrueType file', fg='red')
         except Exception as e:
@@ -145,11 +145,11 @@ def remove_overlaps(input_path, output_dir=None, recalc_timestamp=False, overwri
                 removeOverlaps(font)
                 output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
                 font.save(output_file)
-                click.secho('%s saved' % output_file, fg='green')
+                click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
             else:
-                click.secho('%s is not a TrueType file' % f, fg='red')
+                click.secho(f'{os.path.basename(f)} is not a TrueType file', fg='red')
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')
 
 
 @click.group()
@@ -218,12 +218,12 @@ def font_renamer(input_path, source_string):
             except FileExistsError:
                 new_file = makeOutputFileName(new_file, overWrite=False)
                 os.rename(f, new_file)
-                click.secho("%s --> %s" % (n, os.path.basename(new_file)), fg='green')
+                click.secho(f'{n} --> {os.path.basename(new_file)}', fg='green')
 
             except Exception as e:
-                click.secho('ERROR: {}'.format(e), fg='red')
+                click.secho(f'ERROR: {e}', fg='red')
         else:
-            click.secho("%s --> skipped" % n, fg='yellow')
+            click.secho(f'{f} --> skipped', fg='yellow')
 
 
 @click.group()
@@ -256,7 +256,7 @@ def ttc_extractor(input_path, output_dir=None, recalc_timestamp=False, overwrite
                 output_dir = os.path.dirname(input_path)
             output_file = makeOutputFileName(filename + ext, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
-            click.secho('%s saved' % output_file, fg='green')
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
     except Exception as e:
         click.secho('ERROR: {}'.format(e), fg='red')
 

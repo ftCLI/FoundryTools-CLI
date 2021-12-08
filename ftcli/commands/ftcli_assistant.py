@@ -348,27 +348,27 @@ def recalc_names(
     linked_styles.sort()
 
     for f in files:
-        # try:
-        font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
-        font_data = {}
-        for row in data:
-            if str(row['file_name']) == os.path.basename(f):
-                font_data = row
+        try:
+            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font_data = {}
+            for row in data:
+                if str(row['file_name']) == os.path.basename(f):
+                    font_data = row
 
-        font.recalcNames(
-            font_data,
-            linked_styles=linked_styles, namerecords_to_ignore=exclude_namerecord, shorten_weight=shorten_weight,
-            shorten_width=shorten_width, shorten_slope=shorten_slope, alt_uid=alt_uid, fixCFF=fix_cff,
-            isSuperFamily=super_family, regular_italic=regular_italic, keep_regular=keep_regular,
-            old_full_font_name=old_full_font_name, oblique_not_italic=oblique_not_italic)
+            font.recalcNames(
+                font_data,
+                linked_styles=linked_styles, namerecords_to_ignore=exclude_namerecord, shorten_weight=shorten_weight,
+                shorten_width=shorten_width, shorten_slope=shorten_slope, alt_uid=alt_uid, fixCFF=fix_cff,
+                isSuperFamily=super_family, regular_italic=regular_italic, keep_regular=keep_regular,
+                old_full_font_name=old_full_font_name, oblique_not_italic=oblique_not_italic)
 
-        output_file = makeOutputFileName(
-            f, outputDir=output_dir, overWrite=overwrite)
-        font.save(output_file)
-        click.secho('{} saved'.format(output_file), fg='green')
-        # except Exception as e:
-        #     click.secho('ERROR: {}'.format(e), fg='red')
-        #     pass
+            output_file = makeOutputFileName(
+                f, outputDir=output_dir, overWrite=overwrite)
+            font.save(output_file)
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
+        except Exception as e:
+            click.secho(f'ERROR: {e}', fg='red')
+            pass
 
 
 cli = click.CommandCollection(sources=[editCFG, editCSV, initCFG, initCSV, recalcCSV, recalcNames], help="""

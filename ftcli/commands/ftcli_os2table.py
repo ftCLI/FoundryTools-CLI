@@ -162,14 +162,12 @@ def cli(input_path, bold, italic, oblique, set_wws, width, weight, embed_level, 
                 if not os.path.exists(output_dir):
                     os.mkdir(output_dir)
 
-            output_file = makeOutputFileName(
-                f, outputDir=output_dir, overWrite=overwrite)
-
+            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             if modified is True:
                 font.save(output_file)
-                click.secho('%s --> saved' % os.path.basename(f), fg='green')
+                click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
             else:
-                click.secho('% s --> no changes made' % os.path.basename(f), fg='yellow')
+                click.secho(f'{os.path.basename(f)} --> no changes made', fg='yellow')
 
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')

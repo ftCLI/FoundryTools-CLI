@@ -92,7 +92,7 @@ Parses all WOFF and WOFF2 files in INPUT_PATH and creates a CSS stylesheet to us
         with open(css_file, 'a') as css:
             css.write(css_string)
 
-    click.secho("{} created.".format(css_file), fg='green')
+    click.secho(f'{css_file} created.', fg='green')
 
 
 @click.group()
@@ -141,11 +141,11 @@ specified, both WOFF and WOFF2 files will be created.
                         f, outputDir=output_dir, extension='.' + flv, overWrite=overwrite)
                     font.flavor = flv
                     font.save(output_file)
-                    click.secho('%s saved' % output_file, fg='green')
+                    click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
                 if delete_source_file:
                     os.remove(f)
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')
 
 
 # decompress
@@ -186,11 +186,11 @@ Output will be a ttf or otf file, depending on the webfont flavor (TTF or CFF).
                 output_file = makeOutputFileName(f, outputDir=output_dir, extension=ext, overWrite=overwrite)
                 font.flavor = None
                 font.save(output_file)
-                click.secho('%s saved' % os.path.basename(output_file), fg='green')
+                click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
                 if delete_source_file:
                     os.remove(f)
         except Exception as e:
-            click.secho('ERROR: {}'.format(e), fg='red')
+            click.secho(f'ERROR: {e}', fg='red')
 
 
 cli = click.CommandCollection(sources=[fontToWebfont, webfontToFont, makeCSS], help="""
