@@ -1,5 +1,4 @@
 import sys
-from textwrap import TextWrapper
 
 import click
 from fontTools.misc.timeTools import timestampToString
@@ -628,19 +627,6 @@ def set_nth_bit(x: int, n: int):
 
 def unset_nth_bit(x: int, n: int):
     return x & ~(1 << n)
-
-
-def wrapString(string, indent, max_lines, width):
-    wrapped_string = TextWrapper(
-        initial_indent="",
-        subsequent_indent=" " * indent,
-        max_lines=max_lines,
-        break_on_hyphens=True,
-        break_long_words=True,
-        width=width
-    ).fill(str(string))
-
-    return wrapped_string
 
 
 NAMEIDS = {

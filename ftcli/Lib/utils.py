@@ -55,7 +55,7 @@ def makeOutputFileName(inputFile, outputDir=None, extension=None, overWrite=Fals
     return output
 
 
-def getFontsList(input_path):
+def getFontsList(input_path: str) -> list:
     files = []
 
     if os.path.isfile(input_path):
@@ -76,28 +76,33 @@ def getFontsList(input_path):
     if len(files) == 0:
         print('\nNo valid font files found.')
         sys.exit()
+
     return files
 
 
-def getConfigPath(input_path):
+def getConfigPath(input_path: str) -> str:
+
     config_file = os.path.join(os.path.dirname(input_path), 'config.json') if os.path.isfile(
         input_path) else os.path.join(input_path, 'config.json')
+
     return config_file
 
 
-def getJsonPath(input_path):
+def getJsonPath(input_path: str) -> str:
+
     json_file = os.path.join(os.path.dirname(input_path), 'fonts.json') if os.path.isfile(
         input_path) else os.path.join(input_path, 'fonts.json')
+
     return json_file
 
 
-def getCsvPath(input_path):
+def getCsvPath(input_path: str) -> str:
     data_file = os.path.join(os.path.dirname(input_path), 'data.csv') if os.path.isfile(
         input_path) else os.path.join(input_path, 'data.csv')
     return data_file
 
 
-def wrapString(string, indent, max_lines, width):
+def wrapString(string: str, indent: int, max_lines: int, width: int) -> str:
     wrapped_string = TextWrapper(
         initial_indent="",
         subsequent_indent=" " * indent,
@@ -105,11 +110,11 @@ def wrapString(string, indent, max_lines, width):
         break_on_hyphens=True,
         break_long_words=True,
         width=width
-    ).fill(str(string))
+    ).fill(string)
     return wrapped_string
 
 
-def guessFamilyName(font):
+def guessFamilyName(font: TTFont) -> str:
     family_name = None
 
     try:
@@ -131,7 +136,7 @@ def guessFamilyName(font):
     return family_name
 
 
-def getSourceString(font_file, string_source):
+def getSourceString(font_file : str, string_source: str) -> str:
     font = TTFont(font_file)
     file_name = os.path.basename(font_file)
     name_table = font['name']
@@ -199,15 +204,15 @@ def clear():
         _ = system('clear')
 
 
-def is_nth_bit_set(x: int, n: int):
+def is_nth_bit_set(x: int, n: int) -> bool:
     if x & (1 << n):
         return True
     return False
 
 
-def set_nth_bit(x: int, n: int):
+def set_nth_bit(x: int, n: int) -> int:
     return x | 1 << n
 
 
-def unset_nth_bit(x: int, n: int):
+def unset_nth_bit(x: int, n: int) -> int:
     return x & ~(1 << n)
