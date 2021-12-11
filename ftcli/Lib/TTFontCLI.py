@@ -216,7 +216,7 @@ class TTFontCLI(TTFont):
             name_id_16 = name_id_16.replace(weight, wgt) if 16 in shorten_weight else name_id_16
             name_id_16 = name_id_16.replace(width, wdt) if 16 in shorten_width else name_id_16
             name_id_16 = name_id_16.replace(slope, slp) if 16 in shorten_slope else name_id_16
-            if not name_id_16 == name_id_1:
+            if not name_id_16 == str(self['name'].getName(1, 3, 1, 0x409)):
                 self.setMultilingualName(nameID=16, string=name_id_16)
             else:
                 self.delNameRecord(nameID=16)
@@ -227,7 +227,7 @@ class TTFontCLI(TTFont):
             name_id_17 = name_id_17.replace(weight, wgt) if 17 in shorten_weight else name_id_17
             name_id_17 = name_id_17.replace(width, wdt) if 17 in shorten_width else name_id_17
             name_id_17 = name_id_17.replace(slope, slp) if 17 in shorten_slope else name_id_17
-            if not name_id_17 == name_id_2:
+            if not name_id_17 == str(self['name'].getName(2, 3, 1, 0x409)):
                 self.setMultilingualName(nameID=17, string=name_id_17)
             else:
                 self.delNameRecord(nameID=17)
@@ -295,8 +295,7 @@ class TTFontCLI(TTFont):
             self.delNameRecord(nameID, language=language, windows=True, mac=False)
 
         if mac is True:
-            self.delNameRecord(
-                nameID, language=language, windows=False, mac=True)
+            self.delNameRecord(nameID, language=language, windows=False, mac=True)
 
         names = {language: string}
         self['name'].addMultilingualName(names, ttFont=self, windows=windows, mac=mac, nameID=nameID)
@@ -484,20 +483,14 @@ class TTFontCLI(TTFont):
                 except:
                     # IMPORTANT: FOR NON STANDARD LANGUAGES ENCODINGS
                     # MAYBE THERE'S A BETTER WAY?
-                    self.setMultilingualName(
-                        nameID=name.nameID, language='en', string=string.encode(), windows=False, mac=True)
+                    self.setMultilingualName(nameID=name.nameID, language='en', string=string.encode(), windows=False,
+                                             mac=True)
 
     def isBold(self):
-        return (
-                is_nth_bit_set(self['head'].macStyle, 0)
-                and is_nth_bit_set(self['OS/2'].fsSelection, 5)
-        )
+        return (is_nth_bit_set(self['head'].macStyle, 0) and is_nth_bit_set(self['OS/2'].fsSelection, 5))
 
     def isItalic(self):
-        return (
-                is_nth_bit_set(self['head'].macStyle, 1)
-                and is_nth_bit_set(self['OS/2'].fsSelection, 0)
-        )
+        return (is_nth_bit_set(self['head'].macStyle, 1) and is_nth_bit_set(self['OS/2'].fsSelection, 0))
 
     def isOblique(self):
         return is_nth_bit_set(self['OS/2'].fsSelection, 9)
@@ -586,30 +579,23 @@ class TTFontCLI(TTFont):
             setattr(dsig, k, v)
 
     def __setBoldBits(self):
-        self['OS/2'].fsSelection = set_nth_bit(
-            self['OS/2'].fsSelection, 5)
+        self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 5)
         self['head'].macStyle = set_nth_bit(self['head'].macStyle, 0)
 
     def __setItalicBits(self):
-        self['OS/2'].fsSelection = set_nth_bit(
-            self['OS/2'].fsSelection, 0)
+        self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 0)
         self['head'].macStyle = set_nth_bit(self['head'].macStyle, 1)
 
     def __setRegularBit(self):
-        self['OS/2'].fsSelection = set_nth_bit(
-            self['OS/2'].fsSelection, 6)
+        self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 6)
 
     def __clearBoldBits(self):
-        self['OS/2'].fsSelection = unset_nth_bit(
-            self['OS/2'].fsSelection, 5)
-        self['head'].macStyle = unset_nth_bit(
-            self['head'].macStyle, 0)
+        self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 5)
+        self['head'].macStyle = unset_nth_bit(self['head'].macStyle, 0)
 
     def __clearItalicBits(self):
-        self['OS/2'].fsSelection = unset_nth_bit(
-            self['OS/2'].fsSelection, 0)
-        self['head'].macStyle = unset_nth_bit(
-            self['head'].macStyle, 1)
+        self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 0)
+        self['head'].macStyle = unset_nth_bit(self['head'].macStyle, 1)
 
     def __clearRegularBit(self):
         self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 6)
