@@ -13,7 +13,7 @@ from ftcli.Lib.utils import getFontsList, makeOutputFileName
               help='Sets or clears the italic bits (OS/2.fsSelection bit 0 and head.macStyle bit 1).')
 @click.option('-ob/-no-ob', '--set-oblique/--unset-oblique', default=None,
               help='Sets or clears the oblique bit (OS/2.fsSelection bit 9).')
-@click.option('-wws/-no-wws,-set-wws/-unset-wws', default=None,
+@click.option('-wws/-no-wws', '--set-wws/--unset-wws', default=None,
               help="""
 Sets or clears the WWS bit (OS/2.fsSelection bit 8).
 
@@ -59,8 +59,8 @@ See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
 @click.option('--overwrite/--no-overwrite', default=True,
               help='Overwrites existing output files or save them to a new file (numbers are appended at the end of '
                    'file name). By default, files are overwritten.')
-def cli(input_path, bold, italic, oblique, set_wws, width, weight, embed_level, use_typo_metrics, ach_vend_id, recalc_timestamp,
-        output_dir, overwrite):
+def cli(input_path, set_bold, set_italic, set_oblique, set_wws, set_width, set_weight, set_embed_level,
+        set_use_typo_metrics, set_ach_vend_id, recalc_timestamp, output_dir, overwrite):
     """
     A command line tool to edit some OS/2 table attributes.
     """
@@ -81,25 +81,25 @@ def cli(input_path, bold, italic, oblique, set_wws, width, weight, embed_level, 
 
             modified = False
 
-            if bold is not None:
-                if is_bold != bold:
-                    if bold is True:
+            if set_bold is not None:
+                if is_bold != set_bold:
+                    if set_bold is True:
                         font.setBold()
                     else:
                         font.unsetBold()
                     modified = True
 
-            if italic is not None:
-                if is_italic != italic:
-                    if italic is True:
+            if set_italic is not None:
+                if is_italic != set_italic:
+                    if set_italic is True:
                         font.setItalic()
                     else:
                         font.unsetItalic()
                     modified = True
 
-            if oblique is not None:
-                if is_oblique != oblique:
-                    if oblique is True:
+            if set_oblique is not None:
+                if is_oblique != set_oblique:
+                    if set_oblique is True:
                         font.setOblique()
                     else:
                         font.unsetOblique()
@@ -113,46 +113,45 @@ def cli(input_path, bold, italic, oblique, set_wws, width, weight, embed_level, 
                     else:
                         font.unsetWWS()
 
-                    modified =True
-
-            if weight is not None:
-                if usWeightClass != weight:
-                    font['OS/2'].usWeightClass = weight
                     modified = True
 
-            if width is not None:
-                if usWidthClass != width:
-                    font['OS/2'].usWidthClass = width
+            if set_weight is not None:
+                if usWeightClass != set_weight:
+                    font['OS/2'].usWeightClass = set_weight
                     modified = True
 
-            if embed_level is not None:
-                embed_level = click.INT(embed_level)
+            if set_width is not None:
+                if usWidthClass != set_width:
+                    font['OS/2'].usWidthClass = set_width
+                    modified = True
+
+            if set_embed_level is not None:
+                embed_level = int(set_embed_level)
                 if fsType != embed_level:
-                    font['OS/2'].fsType = embed_level
+                    font['OS/2'].fsType = set_embed_level
                     modified = True
 
-            if ach_vend_id:
-                if len(ach_vend_id) > 4:
-                    ach_vend_id = ach_vend_id[0:4]
-                    click.secho(
-                        '\nach_vend_id was longer than 4 characters, it has been truncated.', fg='yellow')
-                if len(ach_vend_id) < 4:
-                    ach_vend_id = str(ach_vend_id).ljust(4)
-                if not ach_vend_id == font['OS/2'].achVendID:
-                    font.setAchVendID(ach_vend_id)
+            if set_ach_vend_id:
+                if len(set_ach_vend_id) > 4:
+                    set_ach_vend_id = set_ach_vend_id[0:4]
+                    click.secho('\nach_vend_id was longer than 4 characters, it has been truncated.', fg='yellow')
+                if len(set_ach_vend_id) < 4:
+                    set_ach_vend_id = str(set_ach_vend_id).ljust(4)
+                if not set_ach_vend_id == font['OS/2'].achVendID:
+                    font.setAchVendID(set_ach_vend_id)
                     modified = True
 
-            if use_typo_metrics is not None:
-                if uses_typo_metrics != use_typo_metrics:
+            if set_use_typo_metrics is not None:
+                if uses_typo_metrics != set_use_typo_metrics:
                     font['OS/2'].version = 4
-                    if use_typo_metrics is True:
+                    if set_use_typo_metrics is True:
                         if font['OS/2'].version > 3:
                             font.setUseTypoMetrics()
                             modified = True
                         else:
                             click.secho("\nfsSelection bits 7 is only defined in OS/2 table version 4 and up."
                                         "Current version: {}".format(font['OS/2'].version), fg='red')
-                    if use_typo_metrics is False:
+                    if set_use_typo_metrics is False:
                         font.unsetUseTypoMetrics()
                         modified = True
 
