@@ -416,6 +416,8 @@ class GUI(object):
 
             try:
                 font = TTFontCLI(f)
+                feature_tags = font.getFontFeatures()
+
                 print("-" * terminal_width)
                 print("BASIC INFORMATION:")
                 print("-" * terminal_width)
@@ -429,11 +431,15 @@ class GUI(object):
                 print("Glyphs number".ljust(length), ":", font['maxp'].numGlyphs)
                 print("Date created".ljust(length), ":", timestampToString(font['head'].created))
                 print("Date modified".ljust(length), ":", timestampToString(font['head'].modified))
+                print("Version".ljust(length), ":", floatToFixedToStr(font['head'].fontRevision, precisionBits=12))
+                print("Unique identifier".ljust(length), ":", font['name'].getName(3, 3, 1, 0x409))
+                print("Vendor code".ljust(length), ":", font['OS/2'].achVendID)
                 print("usWeightClass".ljust(length), ":", str(font['OS/2'].usWeightClass))
                 print("usWidthClass".ljust(length), ":", str(font['OS/2'].usWidthClass))
                 print("Font is bold".ljust(length), ":", str(font.isBold()))
                 print("Font is italic".ljust(length), ":", str(font.isItalic()))
                 print("Font is oblique".ljust(length), ":", str(font.isOblique()))
+                print("WWS consistent".ljust(length), ":", str(font.isWWS()))
                 print("Italic angle".ljust(length), ":", str(font['post'].italicAngle))
 
                 embedLevel = font['OS/2'].fsType
@@ -451,15 +457,9 @@ class GUI(object):
                 print("Embedding".ljust(length), ":", str(
                     font['OS/2'].fsType), "(" + string + ")")
 
+                print()
                 print("-" * terminal_width)
-                print("VERSION AND IDENTIFICATION")
-                print("-" * terminal_width)
-                print("Version".ljust(length), ":", floatToFixedToStr(font['head'].fontRevision, precisionBits=12))
-                print("Unique identifier".ljust(length), ":", font['name'].getName(3, 3, 1, 0x409))
-                print("Vendor code".ljust(length), ":", font['OS/2'].achVendID)
-
-                print("-" * terminal_width)
-                print("METRICS AND DIMENSIONS")
+                print("FONT METRICS")
                 print("-" * terminal_width)
                 print("unitsPerEm".ljust(length), ":", font['head'].unitsPerEm)
                 print("Font BBox".ljust(length), ":", "(" + str(font['head'].xMin) + ", " + str(
@@ -471,44 +471,43 @@ class GUI(object):
                 print((" " * 4 + "TypoLineGap").ljust(length), ":", font['OS/2'].sTypoLineGap)
                 print((" " * 4 + "WinAscent").ljust(length), ":", font['OS/2'].usWinAscent)
                 print((" " * 4 + "WinDescent").ljust(length), ":", font['OS/2'].usWinDescent)
-                print()
 
-                try:
-                    print((" " * 4 + "x height").ljust(length), ":", font['OS/2'].sxHeight)
-                except Exception as e:
-                    click.secho('ERROR: {}'.format(e), fg='red')
-
-                try:
-                    print((" " * 4 + "Caps height").ljust(length),
-                          ":", font['OS/2'].sCapHeight)
-                except Exception as e:
-                    click.secho('ERROR: {}'.format(e), fg='red')
-
-                try:
-                    print((" " * 4 + "Subscript").ljust(length), ":",
-                          "X pos = " +
-                          str(font['OS/2'].ySubscriptXOffset) + ",",
-                          "Y pos = " +
-                          str(font['OS/2'].ySubscriptYOffset) + ",",
-                          "X size = " +
-                          str(font['OS/2'].ySubscriptXSize) + ",",
-                          "Y size = " + str(font['OS/2'].ySubscriptYSize)
-                          )
-                except Exception as e:
-                    click.secho('ERROR: {}'.format(e), fg='red')
-
-                try:
-                    print((" " * 4 + "Superscript").ljust(length), ":",
-                          "X pos = " +
-                          str(font['OS/2'].ySuperscriptXOffset) + ",",
-                          "Y pos = " +
-                          str(font['OS/2'].ySuperscriptYOffset) + ",",
-                          "X size = " +
-                          str(font['OS/2'].ySuperscriptXSize) + ",",
-                          "Y size = " + str(font['OS/2'].ySuperscriptYSize)
-                          )
-                except Exception as e:
-                    click.secho('ERROR: {}'.format(e), fg='red')
+                # try:
+                #     print((" " * 4 + "x height").ljust(length), ":", font['OS/2'].sxHeight)
+                # except Exception as e:
+                #     click.secho('ERROR: {}'.format(e), fg='red')
+                #
+                # try:
+                #     print((" " * 4 + "Caps height").ljust(length),
+                #           ":", font['OS/2'].sCapHeight)
+                # except Exception as e:
+                #     click.secho('ERROR: {}'.format(e), fg='red')
+                #
+                # try:
+                #     print((" " * 4 + "Subscript").ljust(length), ":",
+                #           "X pos = " +
+                #           str(font['OS/2'].ySubscriptXOffset) + ",",
+                #           "Y pos = " +
+                #           str(font['OS/2'].ySubscriptYOffset) + ",",
+                #           "X size = " +
+                #           str(font['OS/2'].ySubscriptXSize) + ",",
+                #           "Y size = " + str(font['OS/2'].ySubscriptYSize)
+                #           )
+                # except Exception as e:
+                #     click.secho('ERROR: {}'.format(e), fg='red')
+                #
+                # try:
+                #     print((" " * 4 + "Superscript").ljust(length), ":",
+                #           "X pos = " +
+                #           str(font['OS/2'].ySuperscriptXOffset) + ",",
+                #           "Y pos = " +
+                #           str(font['OS/2'].ySuperscriptYOffset) + ",",
+                #           "X size = " +
+                #           str(font['OS/2'].ySuperscriptXSize) + ",",
+                #           "Y size = " + str(font['OS/2'].ySuperscriptYSize)
+                #           )
+                # except Exception as e:
+                #     click.secho('ERROR: {}'.format(e), fg='red')
 
                 print("\n[hhea] table")
                 print((" " * 4 + "Ascent").ljust(length), ":", font['hhea'].ascent)
@@ -522,10 +521,22 @@ class GUI(object):
                 print((" " * 4 + "xMax").ljust(length), ":", font['head'].xMax)
                 print((" " * 4 + "yMax").ljust(length), ":", font['head'].yMax)
 
+                print()
                 print("-" * terminal_width)
-                print('FONT TABLES')
+                print(f'FONT TABLES: {len(font.keys())}')
                 print("-" * terminal_width)
-                print(", ".join([k.strip() for k in font.keys()]))
+                # print(", ".join([k.strip() for k in font.keys()]))
+
+                print(wrapString(", ".join([k.strip() for k in font.keys()]),
+                                 indent=0, max_lines=9999, width=terminal_width))
+
+                if len(feature_tags) > 0 :
+                    print()
+                    print("-" * terminal_width)
+                    print(f'FONT FEATURES: {len(feature_tags)}')
+                    print("-" * terminal_width)
+                    print(wrapString(', '.join(feature_tags), indent=0, max_lines=9999, width=terminal_width))
+
                 print("-" * terminal_width)
 
             except Exception as e:
@@ -627,7 +638,7 @@ class GUI(object):
 
     def printFtNames(self, input_path, minimal=False, indent=32, max_lines=None):
 
-        terminal_width = min(100, get_terminal_size()[0] - 1)
+        terminal_width = min(200, get_terminal_size()[0] - 1)
 
         files = getFontsList(input_path)
 

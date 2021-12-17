@@ -578,6 +578,27 @@ class TTFontCLI(TTFont):
         for k, v in values.items():
             setattr(dsig, k, v)
 
+    def getFontFeatures(self):
+
+        feature_list = []
+
+        if 'GSUB' in self.keys():
+            gsub_table = self['GSUB']
+            feature_list += gsub_table.table.FeatureList.FeatureRecord
+        if 'GPOS' in self.keys():
+            gpos_table = self['GPOS']
+            feature_list += gpos_table.table.FeatureList.FeatureRecord
+
+        feature_tags = []
+        if len(feature_list) > 0:
+            for feature_record in feature_list:
+                if feature_record.FeatureTag not in feature_tags:
+                    feature_tags.append(feature_record.FeatureTag)
+
+        # feature_tags = list(set(feature_tags))
+        return feature_tags
+
+
     def __setBoldBits(self):
         self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 5)
         self['head'].macStyle = set_nth_bit(self['head'].macStyle, 0)
@@ -599,7 +620,6 @@ class TTFontCLI(TTFont):
 
     def __clearRegularBit(self):
         self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 6)
-
 
 def is_nth_bit_set(x: int, n: int):
     if x & (1 << n):
