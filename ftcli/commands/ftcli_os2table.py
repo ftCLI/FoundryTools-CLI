@@ -29,7 +29,7 @@ Also: https://typedrawers.com/discussion/3857/fontlab-7-windows-reads-exported-f
               help='Sets the OS/2.usWidthClass value (1-9)')
 @click.option('-wg', '--set-weight', type=click.IntRange(1, 1000),
               help='Sets the OS/2.usWeightClass value (1-1000).')
-@click.option('-el', '--set-embed-level', type=click.Choice(['0', '2', '4', '8']), default=None,
+@click.option('-el', '--embed-level', type=click.Choice(['0', '2', '4', '8']), default=None,
               help="""
 Sets embedding level (OS/2.fsType).
 
@@ -59,7 +59,7 @@ See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
 @click.option('--overwrite/--no-overwrite', default=True,
               help='Overwrites existing output files or save them to a new file (numbers are appended at the end of '
                    'file name). By default, files are overwritten.')
-def cli(input_path, set_bold, set_italic, set_oblique, set_wws, set_width, set_weight, set_embed_level,
+def cli(input_path, set_bold, set_italic, set_oblique, set_wws, set_width, set_weight, embed_level,
         set_use_typo_metrics, set_ach_vend_id, recalc_timestamp, output_dir, overwrite):
     """
     A command line tool to edit some OS/2 table attributes.
@@ -125,10 +125,10 @@ def cli(input_path, set_bold, set_italic, set_oblique, set_wws, set_width, set_w
                     font['OS/2'].usWidthClass = set_width
                     modified = True
 
-            if set_embed_level is not None:
-                embed_level = int(set_embed_level)
+            if embed_level is not None:
+                embed_level = int(embed_level)
                 if fsType != embed_level:
-                    font['OS/2'].fsType = set_embed_level
+                    font['OS/2'].fsType = embed_level
                     modified = True
 
             if set_ach_vend_id:

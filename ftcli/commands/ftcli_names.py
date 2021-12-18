@@ -443,7 +443,7 @@ def find_replace(input_path, old_string, new_string, name_id, platform, fix_cff,
                 font.save(output_file)
                 click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
             else:
-                click.secho(f'{os.path.basename(f)} --> no changes made' % f, fg='yellow')
+                click.secho(f'{os.path.basename(f)} --> no changes made', fg='yellow')
         except Exception as e:
             click.secho(f'ERROR: {e}', fg='red')
 

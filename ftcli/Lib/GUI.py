@@ -406,9 +406,9 @@ class GUI(object):
 
         print(sep_line)
 
-    def printFtInfo(self, input_path):
+    def printFtInfo(self, input_path, indent=0, max_lines=9999):
 
-        terminal_width = min(90, get_terminal_size()[0] - 1)
+        terminal_width = min(120, get_terminal_size()[0] - 1)
         files = getFontsList(input_path)
         length = 17
 
@@ -416,54 +416,38 @@ class GUI(object):
 
             try:
                 font = TTFontCLI(f)
+
+                print('\nCURRENT FILE: {}\n'.format(f))
+
+                font_info = font.getFontInfo()
+                v_metrics = font.getVerticalMetrics()
                 feature_tags = font.getFontFeatures()
+
+                embed_level = font_info['embed_level']['value']
+                if embed_level == 0:
+                    embed_string = "Everything is allowed"
+                elif embed_level == 2:
+                    embed_string = "Embedding of this font is not allowed"
+                elif embed_level == 4:
+                    embed_string = "Only printing and previewing of the document is allowed"
+                elif embed_level == 8:
+                    embed_string = "Editing of the document is allowed"
+                else:
+                    embed_string = "Unknown"
 
                 print("-" * terminal_width)
                 print("BASIC INFORMATION:")
                 print("-" * terminal_width)
 
-                print("Flavor".ljust(length), end=" : ")
-                if 'CFF ' in font:
-                    print("PostScript")
-                else:
-                    print("TrueType")
-
-                print("Glyphs number".ljust(length), ":", font['maxp'].numGlyphs)
-                print("Date created".ljust(length), ":", timestampToString(font['head'].created))
-                print("Date modified".ljust(length), ":", timestampToString(font['head'].modified))
-                print("Version".ljust(length), ":", floatToFixedToStr(font['head'].fontRevision, precisionBits=12))
-                print("Unique identifier".ljust(length), ":", font['name'].getName(3, 3, 1, 0x409))
-                print("Vendor code".ljust(length), ":", font['OS/2'].achVendID)
-                print("usWeightClass".ljust(length), ":", str(font['OS/2'].usWeightClass))
-                print("usWidthClass".ljust(length), ":", str(font['OS/2'].usWidthClass))
-                print("Font is bold".ljust(length), ":", str(font.isBold()))
-                print("Font is italic".ljust(length), ":", str(font.isItalic()))
-                print("Font is oblique".ljust(length), ":", str(font.isOblique()))
-                print("WWS consistent".ljust(length), ":", str(font.isWWS()))
-                print("Italic angle".ljust(length), ":", str(font['post'].italicAngle))
-
-                embedLevel = font['OS/2'].fsType
-                if embedLevel == 0:
-                    string = "Everything is allowed"
-                elif embedLevel == 2:
-                    string = "Embedding of this font is not allowed"
-                elif embedLevel == 4:
-                    string = "Only printing and previewing of the document is allowed"
-                elif embedLevel == 8:
-                    string = "Editing of the document is allowed"
-                else:
-                    string = "Unknown"
-
-                print("Embedding".ljust(length), ":", str(
-                    font['OS/2'].fsType), "(" + string + ")")
+                for v in font_info.values():
+                    print(f'  {v["label"].ljust(length)} : {v["value"]}',
+                          f'({embed_string})' if v["label"] == 'Embedding' else "")
 
                 print()
                 print("-" * terminal_width)
                 print("FONT METRICS")
                 print("-" * terminal_width)
                 print("unitsPerEm".ljust(length), ":", font['head'].unitsPerEm)
-                print("Font BBox".ljust(length), ":", "(" + str(font['head'].xMin) + ", " + str(
-                    font['head'].yMin) + ")", "(" + str(font['head'].xMax) + ", " + str(font['head'].yMax) + ")")
 
                 print("\n[OS/2] table")
                 print((" " * 4 + "TypoAscender").ljust(length), ":", font['OS/2'].sTypoAscender)
@@ -471,43 +455,6 @@ class GUI(object):
                 print((" " * 4 + "TypoLineGap").ljust(length), ":", font['OS/2'].sTypoLineGap)
                 print((" " * 4 + "WinAscent").ljust(length), ":", font['OS/2'].usWinAscent)
                 print((" " * 4 + "WinDescent").ljust(length), ":", font['OS/2'].usWinDescent)
-
-                # try:
-                #     print((" " * 4 + "x height").ljust(length), ":", font['OS/2'].sxHeight)
-                # except Exception as e:
-                #     click.secho('ERROR: {}'.format(e), fg='red')
-                #
-                # try:
-                #     print((" " * 4 + "Caps height").ljust(length),
-                #           ":", font['OS/2'].sCapHeight)
-                # except Exception as e:
-                #     click.secho('ERROR: {}'.format(e), fg='red')
-                #
-                # try:
-                #     print((" " * 4 + "Subscript").ljust(length), ":",
-                #           "X pos = " +
-                #           str(font['OS/2'].ySubscriptXOffset) + ",",
-                #           "Y pos = " +
-                #           str(font['OS/2'].ySubscriptYOffset) + ",",
-                #           "X size = " +
-                #           str(font['OS/2'].ySubscriptXSize) + ",",
-                #           "Y size = " + str(font['OS/2'].ySubscriptYSize)
-                #           )
-                # except Exception as e:
-                #     click.secho('ERROR: {}'.format(e), fg='red')
-                #
-                # try:
-                #     print((" " * 4 + "Superscript").ljust(length), ":",
-                #           "X pos = " +
-                #           str(font['OS/2'].ySuperscriptXOffset) + ",",
-                #           "Y pos = " +
-                #           str(font['OS/2'].ySuperscriptYOffset) + ",",
-                #           "X size = " +
-                #           str(font['OS/2'].ySuperscriptXSize) + ",",
-                #           "Y size = " + str(font['OS/2'].ySuperscriptYSize)
-                #           )
-                # except Exception as e:
-                #     click.secho('ERROR: {}'.format(e), fg='red')
 
                 print("\n[hhea] table")
                 print((" " * 4 + "Ascent").ljust(length), ":", font['hhea'].ascent)
@@ -521,21 +468,23 @@ class GUI(object):
                 print((" " * 4 + "xMax").ljust(length), ":", font['head'].xMax)
                 print((" " * 4 + "yMax").ljust(length), ":", font['head'].yMax)
 
+                print("\nFont BBox".ljust(length), ":", "(" + str(font['head'].xMin) + ", " + str(
+                    font['head'].yMin) + ")", "(" + str(font['head'].xMax) + ", " + str(font['head'].yMax) + ")")
+
                 print()
                 print("-" * terminal_width)
                 print(f'FONT TABLES: {len(font.keys())}')
                 print("-" * terminal_width)
-                # print(", ".join([k.strip() for k in font.keys()]))
 
                 print(wrapString(", ".join([k.strip() for k in font.keys()]),
-                                 indent=0, max_lines=9999, width=terminal_width))
+                                 indent=indent, max_lines=max_lines, width=terminal_width))
 
                 if len(feature_tags) > 0 :
                     print()
                     print("-" * terminal_width)
                     print(f'FONT FEATURES: {len(feature_tags)}')
                     print("-" * terminal_width)
-                    print(wrapString(', '.join(feature_tags), indent=0, max_lines=9999, width=terminal_width))
+                    print(wrapString(', '.join(feature_tags), indent=indent, max_lines=max_lines, width=terminal_width))
 
                 print("-" * terminal_width)
 
@@ -638,7 +587,7 @@ class GUI(object):
 
     def printFtNames(self, input_path, minimal=False, indent=32, max_lines=None):
 
-        terminal_width = min(200, get_terminal_size()[0] - 1)
+        terminal_width = min(120, get_terminal_size()[0] - 1)
 
         files = getFontsList(input_path)
 
@@ -652,7 +601,7 @@ class GUI(object):
                     if platform_spec not in platform_specs:
                         platform_specs.append(platform_spec)
 
-                print('\nCURRENT FILE: {}\n'.format(f))
+                print(f'\nCURRENT FILE: {f}\n')
                 print('-' * terminal_width)
 
                 # NAME TABLE

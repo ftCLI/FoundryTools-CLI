@@ -578,6 +578,44 @@ class TTFontCLI(TTFont):
         for k, v in values.items():
             setattr(dsig, k, v)
 
+    def getFontInfo(self) -> dict:
+
+        font_info = {
+            'outlines': {'label': 'Flavor',
+                         'value': 'PostScript' if self.sfntVersion == 'OTTO' else 'TrueType'},
+            'glyphs_number': {'label': 'Glyphs number', 'value': self['maxp'].numGlyphs},
+            'date_created': {'label': 'Date created', 'value': timestampToString(self['head'].created)},
+            'date_modified': {'label': 'Date modified', 'value': timestampToString(self['head'].modified)},
+            'version': {'label': 'Version', 'value': self['head'].fontRevision},
+            'vend_id': {'label': 'Vendor code', 'value': self['OS/2'].achVendID},
+            'unique_identifier': {'label': 'Unique identifier', 'value': self['name'].getName(3, 3, 1, 0x409)},
+            'us_width_class': {'label': 'usWidthClass', 'value': self['OS/2'].usWidthClass},
+            'us_weight_class': {'label': 'usWeightClass', 'value': self['OS/2'].usWeightClass},
+            'is_bold': {'label': 'Font is bold', 'value': self.isBold()},
+            'is_italic': {'label': 'Font is italic', 'value': self.isItalic()},
+            'is_oblique': {'label': 'Font is oblique', 'value': self.isOblique()},
+            'is_wws_consistent': {'label': 'WWS consistent', 'value': self.isWWS()},
+            'italic_angle': {'label': 'Italic angle', 'value': self['post'].italicAngle},
+            'embed_level': {'label': 'Embedding', 'value': self['OS/2'].fsType},
+        }
+
+        return font_info
+
+    def getVerticalMetrics(self) -> dict:
+        vertical_metrics = {
+            'units_per_em': self['head'].unitsPerEm,
+            'os2_typo_ascender': self['OS/2'].sTypoAscender,
+            'os2_typo_descender': self['OS/2'].sTypoDescender,
+            'os2_typo_linegap': self['OS/2'].sTypoLineGap,
+            'os2_win_ascent': self['OS/2'].usWinAscent,
+            'os2_win_descent': self['OS/2'].usWinDescent,
+            'hhea_ascent': self['hhea'].ascent,
+            'hhea_descent': self['hhea'].descent,
+            'hhea_linegap': self['hhea'].lineGap,
+        }
+
+        return vertical_metrics
+
     def getFontFeatures(self):
 
         feature_list = []
@@ -597,7 +635,6 @@ class TTFontCLI(TTFont):
 
         # feature_tags = list(set(feature_tags))
         return feature_tags
-
 
     def __setBoldBits(self):
         self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 5)
