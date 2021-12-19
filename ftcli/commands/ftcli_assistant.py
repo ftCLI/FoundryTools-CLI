@@ -328,9 +328,8 @@ def recalc_names(
         csvHandler(csv_file).resetCSV(config_file=config_file)
     data = csvHandler(csv_file).getData()
 
-    # Checks if the file name is present in the CSV data. If the file name
-    # is not present, the file is removed from the list of files and will
-    # not be processed.
+    # Checks if the file name is present in the CSV data. If the file name s not present, the file is removed from the
+    # list of files and will not be processed.
     csv_filenames = [row['file_name'] for row in data]
     files = [f for f in files if os.path.basename(f) in csv_filenames]
 
