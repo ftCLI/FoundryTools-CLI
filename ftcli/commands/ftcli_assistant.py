@@ -309,9 +309,6 @@ def recalc_names(
     """
 
     files = getFontsList(input_path)
-    if len(files) == 0:
-        click.secho('\nNo fonts found.', fg='red')
-        sys.exit()
 
     if not config_file:
         config_file = getConfigPath(input_path)
