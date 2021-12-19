@@ -284,9 +284,7 @@ class GUI(object):
                 max_line_len = current_line_len
 
         for v in config['obliques']:
-            current_line_len = max(
-                len(f'Short word : {v}'), len(f'Long word : {v}')
-            )
+            current_line_len = max(len(f'Short word : {v}'), len(f'Long word : {v}'))
             if current_line_len > max_line_len:
                 max_line_len = current_line_len
 
