@@ -2,7 +2,7 @@ import os
 import sys
 
 import click
-from ftcli.Lib.GUI import GUI
+from ftcli.Lib.CUI import CUI
 from ftcli.Lib.TTFontCLI import TTFontCLI
 from ftcli.Lib.configHandler import configHandler
 from ftcli.Lib.csvHandler import csvHandler
@@ -43,7 +43,7 @@ def edit_csv(input_path, config_file):
         else:
             return
 
-    GUI().csvEditor(config_file=config_file, csv_file=csv_file)
+    CUI().csvEditor(config_file=config_file, csv_file=csv_file)
 
 
 # edit-cfg
@@ -66,7 +66,7 @@ def edit_cfg(config_file):
     expected).
     """
 
-    GUI().cfgEditor(config_file)
+    CUI().cfgEditor(config_file)
 
 
 # init-csv

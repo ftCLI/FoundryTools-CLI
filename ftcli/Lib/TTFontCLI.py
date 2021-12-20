@@ -165,7 +165,7 @@ class TTFontCLI(TTFont):
             # Windows Subfamily Name can be only Regular, Italic, Bold or Bold Italic and can't be shortened.
             name_id_2 = subfamily_name_win
 
-            # Maximum length is 31 characters, but since we only us Regular, Italic, Bold and Bold Italic, there's no
+            # Maximum length is 31 characters, but since we only use Regular, Italic, Bold and Bold Italic, there's no
             # need the check if the limit has been exceeded.
             self.setMultilingualName(nameID=2, string=name_id_2)
 
@@ -202,7 +202,7 @@ class TTFontCLI(TTFont):
 
         # nameID6
         if 6 not in namerecords_to_ignore:
-            # Already shortened!
+            # PostScript Name has already been shortened
             name_id_6 = postscript_name
 
             if len(name_id_6) > 31:

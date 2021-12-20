@@ -1,6 +1,6 @@
 import click
 
-from ftcli.Lib.GUI import GUI
+from ftcli.Lib.CUI import CUI
 from ftcli.Lib.utils import getFontsList
 
 
@@ -22,7 +22,7 @@ def ft_name(input_path, name_id, max_lines):
 
     Use the -ml, --max-lines option to limit the printed line numbers to the desired value.
     """
-    GUI().printFtName(input_path, name_id=name_id, max_lines=max_lines)
+    CUI().printFtName(input_path, name_id=name_id, max_lines=max_lines)
 
 # printNames
 
@@ -46,7 +46,7 @@ def ft_names(input_path, max_lines, minimal):
     """
 
     if len(getFontsList(input_path)) > 0:
-        GUI().printFtNames(input_path, max_lines=max_lines, minimal=minimal)
+        CUI().printFtNames(input_path, max_lines=max_lines, minimal=minimal)
     else:
         click.secho('\n{} is not a valid font'.format(input_path), fg='red')
 
@@ -65,7 +65,7 @@ def ft_info(input_path):
     """
 
     if len(getFontsList(input_path)) > 0:
-        GUI().printFtInfo(input_path)
+        CUI().printFtInfo(input_path)
     else:
         click.secho('\n{} is not a valid font'.format(input_path), fg='red')
 
@@ -83,7 +83,7 @@ def ft_list(input_path):
     """Prints a list of fonts with basic information.
     """
     if len(getFontsList(input_path)) > 0:
-        GUI().printFtList(input_path)
+        CUI().printFtList(input_path)
     else:
         click.secho('\nNo valid fonts found in {}'.format(
             input_path), fg='red')
@@ -101,7 +101,7 @@ def tbl_head(input_path):
     """Prints the 'head' table.
     """
     if len(getFontsList(input_path)) > 0:
-        GUI().printTableHead(input_path)
+        CUI().printTableHead(input_path)
     else:
         click.secho('No valid font found.', fg='red')
 
@@ -119,7 +119,7 @@ def tbl_os2(input_path):
     """Prints the 'OS/2' table.
     """
     if len(getFontsList(input_path)) > 0:
-        GUI().printTableOS2(input_path)
+        CUI().printTableOS2(input_path)
     else:
         click.secho('No valid font found.', fg='red')
 

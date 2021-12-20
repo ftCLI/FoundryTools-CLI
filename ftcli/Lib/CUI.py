@@ -15,7 +15,8 @@ from ftcli.Lib.csvHandler import csvHandler
 from ftcli.Lib.utils import (getFontsList, wrapString)
 
 
-class GUI(object):
+# Character User Interface
+class CUI(object):
 
     def csvEditor(self, config_file, csv_file):
 
@@ -477,7 +478,7 @@ class GUI(object):
                 print(wrapString(", ".join([k.strip() for k in font.keys()]),
                                  indent=indent, max_lines=max_lines, width=terminal_width))
 
-                if len(feature_tags) > 0 :
+                if len(feature_tags) > 0:
                     print()
                     print("-" * terminal_width)
                     print(f'FONT FEATURES: {len(feature_tags)}')
@@ -502,7 +503,7 @@ class GUI(object):
 
         max_filename_len = min(max_filename_len, 60)  # Limit the printed file name string to 60 characters
 
-        sep_line = '+' + '-' * (max_filename_len + 2) + '+' + '-' * 14 + '+' + '-' * 15 + '+' + '-' * 8 + '+' +\
+        sep_line = '+' + '-' * (max_filename_len + 2) + '+' + '-' * 14 + '+' + '-' * 15 + '+' + '-' * 8 + '+' + \
                    '-' * 10 + '+' + '-' * 11 + '+'
 
         print(sep_line)
