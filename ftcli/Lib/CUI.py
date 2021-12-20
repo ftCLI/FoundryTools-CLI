@@ -439,6 +439,8 @@ class CUI(object):
                 print("-" * terminal_width)
 
                 for v in font_info.values():
+                    if v['label'] == 'Version':
+                        v['value'] = floatToFixedToStr(font['head'].fontRevision, precisionBits=12)
                     print(f'  {v["label"].ljust(length)} : {v["value"]}',
                           f'({embed_string})' if v["label"] == 'Embedding' else "")
 
