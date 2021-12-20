@@ -396,7 +396,7 @@ the bold bits will be cleared.
 
 1) The JSON configuration file.
 
-The configurationn file, normally named 'config.json' and stored in the work folder, contains the desired style names to
+The configuration file, normally named 'config.json' and stored in the work folder, contains the desired style names to
 pair with each usWidthClass and usWeightClass values of the family, as well as the desired italic and oblique literals:
 
 \b
