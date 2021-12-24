@@ -8,7 +8,7 @@ setuptools.setup(
     include_package_data=True,
     entry_points={'console_scripts': ['ftcli=ftcli.ftcli:main']},
     install_requires=[
-        'fonttools==4.28.4',
+        'fonttools==4.28.5',
         'brotli==1.0.9',
         'click==8.0.3',
         'colorama==0.4.4',

@@ -161,7 +161,6 @@ class TTFontCLI(TTFont):
 
         # nameID 2
         if 2 not in namerecords_to_ignore:
-
             # Windows Subfamily Name can be only Regular, Italic, Bold or Bold Italic and can't be shortened.
             name_id_2 = subfamily_name_win
 
@@ -581,8 +580,7 @@ class TTFontCLI(TTFont):
     def getFontInfo(self) -> dict:
 
         font_info = {
-            'outlines': {'label': 'Flavor',
-                         'value': 'PostScript' if self.sfntVersion == 'OTTO' else 'TrueType'},
+            'sfnt_version': {'label': 'Flavor', 'value': 'PostScript' if self.sfntVersion == 'OTTO' else 'TrueType'},
             'glyphs_number': {'label': 'Glyphs number', 'value': self['maxp'].numGlyphs},
             'date_created': {'label': 'Date created', 'value': timestampToString(self['head'].created)},
             'date_modified': {'label': 'Date modified', 'value': timestampToString(self['head'].modified)},
@@ -603,7 +601,7 @@ class TTFontCLI(TTFont):
 
     def getVerticalMetrics(self) -> dict:
         vertical_metrics = {
-            'units_per_em': self['head'].unitsPerEm,
+            'head_units_per_em': self['head'].unitsPerEm,
             'os2_typo_ascender': self['OS/2'].sTypoAscender,
             'os2_typo_descender': self['OS/2'].sTypoDescender,
             'os2_typo_linegap': self['OS/2'].sTypoLineGap,
@@ -612,6 +610,10 @@ class TTFontCLI(TTFont):
             'hhea_ascent': self['hhea'].ascent,
             'hhea_descent': self['hhea'].descent,
             'hhea_linegap': self['hhea'].lineGap,
+            'head_x_min': self['head'].xMin,
+            'head_y_min': self['head'].yMin,
+            'head_x_max': self['head'].xMax,
+            'head_y_max': self['head'].yMax,
         }
 
         return vertical_metrics
@@ -623,6 +625,7 @@ class TTFontCLI(TTFont):
         if 'GSUB' in self.keys():
             gsub_table = self['GSUB']
             feature_list += gsub_table.table.FeatureList.FeatureRecord
+
         if 'GPOS' in self.keys():
             gpos_table = self['GPOS']
             feature_list += gpos_table.table.FeatureList.FeatureRecord
@@ -633,7 +636,6 @@ class TTFontCLI(TTFont):
                 if feature_record.FeatureTag not in feature_tags:
                     feature_tags.append(feature_record.FeatureTag)
 
-        # feature_tags = list(set(feature_tags))
         return feature_tags
 
     def __setBoldBits(self):
@@ -658,6 +660,7 @@ class TTFontCLI(TTFont):
     def __clearRegularBit(self):
         self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 6)
 
+
 def is_nth_bit_set(x: int, n: int):
     if x & (1 << n):
         return True
@@ -671,35 +674,6 @@ def set_nth_bit(x: int, n: int):
 def unset_nth_bit(x: int, n: int):
     return x & ~(1 << n)
 
-
-NAMEIDS = {
-    0: 'Copyright Notice',
-    1: 'Family name',
-    2: 'Subfamily name',
-    3: 'Unique identifier',
-    4: 'Full font name',
-    5: 'Version string',
-    6: 'PostScript name',
-    7: 'Trademark',
-    8: 'Manufacturer Name',
-    9: 'Designer',
-    10: 'Description',
-    11: 'URL Vendor',
-    12: 'URL Designer',
-    13: 'License Description',
-    14: 'License Info URL',
-    15: 'Reserved',
-    16: 'Typographic Family',
-    17: 'Typographic Subfamily',
-    18: 'Compatible Full (Mac)',
-    19: 'Sample text',
-    20: 'PS CID findfont name',
-    21: 'WWS Family Name',
-    22: 'WWS Subfamily Name',
-    23: 'Light Backgr Palette',
-    24: 'Dark Backgr Palette',
-    25: 'Variations PSName Pref'
-}
 
 PLATFORMS = {
     0: 'Unicode',

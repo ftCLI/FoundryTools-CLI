@@ -416,61 +416,61 @@ class CUI(object):
             try:
                 font = TTFontCLI(f)
 
-                print('\nCURRENT FILE: {}\n'.format(f))
-
                 font_info = font.getFontInfo()
                 v_metrics = font.getVerticalMetrics()
                 feature_tags = font.getFontFeatures()
-
                 embed_level = font_info['embed_level']['value']
-                if embed_level == 0:
-                    embed_string = "Everything is allowed"
-                elif embed_level == 2:
-                    embed_string = "Embedding of this font is not allowed"
-                elif embed_level == 4:
-                    embed_string = "Only printing and previewing of the document is allowed"
-                elif embed_level == 8:
-                    embed_string = "Editing of the document is allowed"
-                else:
+                try:
+                    embed_string = EMBED_LEVELS.get(embed_level)
+                except KeyError():
                     embed_string = "Unknown"
 
+                print()
+                print(f'CURRENT FILE: {f}')
+
+                print()
                 print("-" * terminal_width)
-                print("BASIC INFORMATION:")
+                print("BASIC INFORMATION")
                 print("-" * terminal_width)
 
                 for v in font_info.values():
                     if v['label'] == 'Version':
-                        v['value'] = floatToFixedToStr(font['head'].fontRevision, precisionBits=12)
-                    print(f'  {v["label"].ljust(length)} : {v["value"]}',
-                          f'({embed_string})' if v["label"] == 'Embedding' else "")
+                        print(f"  {v['label'].ljust(length)} : {floatToFixedToStr(v['value'], precisionBits=12)}")
+                    elif v['label'] == 'Embedding':
+                        print(f'  {v["label"].ljust(length)} : {v["value"]} ({embed_string})')
+                    else:
+                        print(f'  {v["label"].ljust(length)} : {v["value"]}')
 
                 print()
                 print("-" * terminal_width)
                 print("FONT METRICS")
                 print("-" * terminal_width)
-                print("unitsPerEm".ljust(length), ":", font['head'].unitsPerEm)
 
-                print("\n[OS/2] table")
-                print((" " * 4 + "TypoAscender").ljust(length), ":", font['OS/2'].sTypoAscender)
-                print((" " * 4 + "TypoDescender").ljust(length), ":", font['OS/2'].sTypoDescender)
-                print((" " * 4 + "TypoLineGap").ljust(length), ":", font['OS/2'].sTypoLineGap)
-                print((" " * 4 + "WinAscent").ljust(length), ":", font['OS/2'].usWinAscent)
-                print((" " * 4 + "WinDescent").ljust(length), ":", font['OS/2'].usWinDescent)
+                print()
+                print("  [OS/2]")
+                print(f"  {'  sTypoAscender'.ljust(length)} : {v_metrics['os2_typo_ascender']}")
+                print(f"  {'  sTypoDescender'.ljust(length)} : {v_metrics['os2_typo_descender']}")
+                print(f"  {'  sTypoLineGap'.ljust(length)} : {v_metrics['os2_typo_linegap']}")
+                print(f"  {'  usWinAscent'.ljust(length)} : {v_metrics['os2_win_ascent']}")
+                print(f"  {'  usWinDescent'.ljust(length)} : {v_metrics['os2_win_descent']}")
 
-                print("\n[hhea] table")
-                print((" " * 4 + "Ascent").ljust(length), ":", font['hhea'].ascent)
-                print((" " * 4 + "Descent").ljust(length), ":", font['hhea'].descent)
-                print((" " * 4 + "LineGap").ljust(length), ":", font['hhea'].lineGap)
+                print()
+                print("  [hhea]")
+                print(f"  {'  ascent'.ljust(length)} : {v_metrics['hhea_ascent']}")
+                print(f"  {'  descent'.ljust(length)} : {v_metrics['hhea_descent']}")
+                print(f"  {'  lineGap'.ljust(length)} : {v_metrics['hhea_linegap']}")
 
-                print("\n[head] table")
-
-                print((" " * 4 + "xMin").ljust(length), ":", font['head'].xMin)
-                print((" " * 4 + "yMin").ljust(length), ":", font['head'].yMin)
-                print((" " * 4 + "xMax").ljust(length), ":", font['head'].xMax)
-                print((" " * 4 + "yMax").ljust(length), ":", font['head'].yMax)
-
-                print("\nFont BBox".ljust(length), ":", "(" + str(font['head'].xMin) + ", " + str(
-                    font['head'].yMin) + ")", "(" + str(font['head'].xMax) + ", " + str(font['head'].yMax) + ")")
+                print()
+                print("  [head]")
+                print(f"  {'  unitsPerEm'.ljust(length)} : {v_metrics['head_units_per_em']}")
+                print(f"  {'  xMin'.ljust(length)} : {v_metrics['head_x_min']}")
+                print(f"  {'  yMin'.ljust(length)} : {v_metrics['head_y_min']}")
+                print(f"  {'  xMax'.ljust(length)} : {v_metrics['head_x_max']}")
+                print(f"  {'  yMax'.ljust(length)} : {v_metrics['head_y_max']}")
+                print(f"  {'  Font BBox'.ljust(length)} : "
+                      f"({v_metrics['head_x_min']}, {v_metrics['head_y_min']}) "
+                      f"({v_metrics['head_x_max']}, {v_metrics['head_y_max']})"
+                      )
 
                 print()
                 print("-" * terminal_width)
@@ -984,4 +984,11 @@ WINDOWS_ENCODING_IDS = {
     8: 'Reserved',
     9: 'Reserved',
     10: 'UCS4',
+}
+
+EMBED_LEVELS = {
+    0: 'Installable embedding',
+    2: 'Restricted License embedding',
+    4: 'Preview & Print embedding',
+    8: 'Editable embedding'
 }
