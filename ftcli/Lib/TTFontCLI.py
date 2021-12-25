@@ -602,11 +602,6 @@ class TTFontCLI(TTFont):
     def getVerticalMetrics(self) -> dict:
         vertical_metrics = {
             'head_units_per_em': self['head'].unitsPerEm,
-            'os2_typo_ascender': self['OS/2'].sTypoAscender,
-            'os2_typo_descender': self['OS/2'].sTypoDescender,
-            'os2_typo_linegap': self['OS/2'].sTypoLineGap,
-            'os2_win_ascent': self['OS/2'].usWinAscent,
-            'os2_win_descent': self['OS/2'].usWinDescent,
             'hhea_ascent': self['hhea'].ascent,
             'hhea_descent': self['hhea'].descent,
             'hhea_linegap': self['hhea'].lineGap,
@@ -614,6 +609,11 @@ class TTFontCLI(TTFont):
             'head_y_min': self['head'].yMin,
             'head_x_max': self['head'].xMax,
             'head_y_max': self['head'].yMax,
+            'os2_typo_ascender': self['OS/2'].sTypoAscender,
+            'os2_typo_descender': self['OS/2'].sTypoDescender,
+            'os2_typo_linegap': self['OS/2'].sTypoLineGap,
+            'os2_win_ascent': self['OS/2'].usWinAscent,
+            'os2_win_descent': self['OS/2'].usWinDescent,
         }
 
         return vertical_metrics

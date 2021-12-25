@@ -405,7 +405,7 @@ class CUI(object):
 
         print(sep_line)
 
-    def printFtInfo(self, input_path, indent=0, max_lines=9999):
+    def printFtInfo(self, input_path, max_lines=999):
 
         terminal_width = min(120, get_terminal_size()[0] - 1)
         files = getFontsList(input_path)
@@ -430,7 +430,7 @@ class CUI(object):
 
                 print()
                 print("-" * terminal_width)
-                print("BASIC INFORMATION")
+                print("  BASIC INFORMATION")
                 print("-" * terminal_width)
 
                 for v in font_info.values():
@@ -443,7 +443,7 @@ class CUI(object):
 
                 print()
                 print("-" * terminal_width)
-                print("FONT METRICS")
+                print("  FONT METRICS")
                 print("-" * terminal_width)
 
                 print()
@@ -474,18 +474,18 @@ class CUI(object):
 
                 print()
                 print("-" * terminal_width)
-                print(f'FONT TABLES: {len(font.keys())}')
+                print(f'  FONT TABLES: {len(font.keys())}')
                 print("-" * terminal_width)
-
                 print(wrapString(", ".join([k.strip() for k in font.keys()]),
-                                 indent=indent, max_lines=max_lines, width=terminal_width))
+                                 initial_indent=2, indent=2, max_lines=max_lines, width=terminal_width))
 
                 if len(feature_tags) > 0:
                     print()
                     print("-" * terminal_width)
-                    print(f'FONT FEATURES: {len(feature_tags)}')
+                    print(f'  FONT FEATURES: {len(feature_tags)}')
                     print("-" * terminal_width)
-                    print(wrapString(', '.join(feature_tags), indent=indent, max_lines=max_lines, width=terminal_width))
+                    print(wrapString(', '.join(feature_tags), initial_indent=2, indent=2, max_lines=max_lines,
+                                     width=terminal_width))
 
                 print("-" * terminal_width)
 
@@ -580,7 +580,8 @@ class CUI(object):
                             string = "platform: ({}, {}, {}),  nameID{} : {}".format(
                                 platformID, platEncID, langID, name.nameID, name.toUnicode())
 
-                            string = wrapString(string, indent, max_lines, terminal_width)
+                            string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
+                                                width=terminal_width)
                             print(string)
                 print()
             except Exception as e:
@@ -640,8 +641,8 @@ class CUI(object):
                                     string = "{:5d}".format(
                                         name.nameID) + " : " + "{0:<21}".format(name.nameID) + " : " + name.toUnicode()
 
-                                string = wrapString(
-                                    string, indent, max_lines, terminal_width)
+                                string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
+                                                    width=terminal_width)
 
                                 if minimal is False:
                                     print(string)
@@ -662,7 +663,8 @@ class CUI(object):
 
                     try:
                         string = "{0:<29}".format(' CFFFont name') + ' : ' + str(font['CFF '].cff.fontNames[0])
-                        string = wrapString(string, indent, max_lines, terminal_width)
+                        string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
+                                            width=terminal_width)
                         print(string)
                     except:
                         pass
@@ -670,42 +672,48 @@ class CUI(object):
                     if minimal is False:
                         try:
                             string = "{0:<29}".format(' version') + ' : ' + str(otFont.topDictIndex[0].version)
-                            string = wrapString(string, indent, max_lines, terminal_width)
+                            string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
+                                                width=terminal_width)
                             print(string)
                         except:
                             pass
 
                         try:
                             string = "{0:<29}".format(' Notice') + ' : ' + str(otFont.topDictIndex[0].Notice)
-                            string = wrapString(string, indent, max_lines, terminal_width)
+                            string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
+                                                width=terminal_width)
                             print(string)
                         except:
                             pass
 
                         try:
                             string = "{0:<29}".format(' Copyright') + ' : ' + str(otFont.topDictIndex[0].Copyright)
-                            string = wrapString(string, indent, max_lines, terminal_width)
+                            string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
+                                                width=terminal_width)
                             print(string)
                         except:
                             pass
 
                     try:
                         string = "{0:<29}".format(' FullName') + ' : ' + str(otFont.topDictIndex[0].FullName)
-                        string = wrapString(string, indent, max_lines, terminal_width)
+                        string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
+                                            width=terminal_width)
                         print(string)
                     except:
                         pass
 
                     try:
                         string = "{0:<29}".format(' FamilyName') + ' : ' + str(otFont.topDictIndex[0].FamilyName)
-                        string = wrapString(string, indent, max_lines, terminal_width)
+                        string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
+                                            width=terminal_width)
                         print(string)
                     except:
                         pass
 
                     try:
                         string = "{0:<29}".format(' Weight') + ' : ' + str(otFont.topDictIndex[0].Weight)
-                        string = wrapString(string, indent, max_lines, terminal_width)
+                        string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
+                                            width=terminal_width)
                         print(string)
                     except:
                         pass

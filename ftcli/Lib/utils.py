@@ -102,9 +102,9 @@ def getCsvPath(input_path: str) -> str:
     return data_file
 
 
-def wrapString(string: str, indent: int, max_lines: int, width: int) -> str:
+def wrapString(string: str, initial_indent: int, indent: int, max_lines: int, width: int) -> str:
     wrapped_string = TextWrapper(
-        initial_indent="",
+        initial_indent=" " * initial_indent,
         subsequent_indent=" " * indent,
         max_lines=max_lines,
         break_on_hyphens=True,
