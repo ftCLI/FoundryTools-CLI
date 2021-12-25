@@ -7,7 +7,7 @@ from fontTools.ttLib import newTable
 from fontTools.ttLib.tables._n_a_m_e import (_MAC_LANGUAGE_CODES, _MAC_LANGUAGE_TO_SCRIPT, _WINDOWS_LANGUAGE_CODES)
 
 
-class TTFontCLI(TTFont):
+class Font(TTFont):
 
     def __init__(self, file, recalcTimestamp=False):
         super().__init__(file=file, recalcTimestamp=recalcTimestamp)

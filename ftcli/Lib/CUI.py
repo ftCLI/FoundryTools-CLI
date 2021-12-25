@@ -9,7 +9,7 @@ from fontTools.misc.timeTools import timestampToString
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._n_a_m_e import (_MAC_LANGUAGES, _WINDOWS_LANGUAGES)
 
-from ftcli.Lib.TTFontCLI import TTFontCLI
+from ftcli.Lib.Font import Font
 from ftcli.Lib.configHandler import (DEFAULT_WEIGHTS, DEFAULT_WIDTHS, configHandler)
 from ftcli.Lib.csvHandler import csvHandler
 from ftcli.Lib.utils import (getFontsList, wrapString)
@@ -414,7 +414,7 @@ class CUI(object):
         for f in files:
 
             try:
-                font = TTFontCLI(f)
+                font = Font(f)
 
                 font_info = font.getFontInfo()
                 v_metrics = font.getVerticalMetrics()
@@ -518,7 +518,7 @@ class CUI(object):
 
         for f in files:
             try:
-                font = TTFontCLI(f, recalcTimestamp=False)
+                font = Font(f, recalcTimestamp=False)
                 filename = os.path.basename(f)
                 usWeightClass = font['OS/2'].usWeightClass
                 usWidthClass = font['OS/2'].usWidthClass

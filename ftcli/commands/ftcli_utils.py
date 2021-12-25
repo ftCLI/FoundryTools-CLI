@@ -5,7 +5,7 @@ from dehinter.font import dehint
 from fontTools.ttLib import TTCollection
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.removeOverlaps import removeOverlaps
-from ftcli.Lib.TTFontCLI import TTFontCLI
+from ftcli.Lib.Font import Font
 from ftcli.Lib.utils import getFontsList, makeOutputFileName, getSourceString
 
 
@@ -34,7 +34,7 @@ def add_dsig(input_path, recalc_timestamp, output_dir, overwrite):
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
             if 'DSIG' not in font:
                 font.addDummyDSIG()
                 if output_dir is None:

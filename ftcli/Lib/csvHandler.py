@@ -1,7 +1,7 @@
 import csv
 import os
 
-from ftcli.Lib.TTFontCLI import TTFontCLI
+from ftcli.Lib.Font import Font
 from ftcli.Lib.configHandler import configHandler
 from ftcli.Lib.utils import (getFontsList, getSourceString, guessFamilyName)
 
@@ -50,7 +50,7 @@ class csvHandler(object):
         obliques.sort(key=len, reverse=True)
 
         for f in files:
-            font = TTFontCLI(f, recalcTimestamp=False)
+            font = Font(f, recalcTimestamp=False)
             file_name = os.path.basename(f)
 
             # Get the source string
@@ -237,7 +237,7 @@ class csvHandler(object):
         for f in files:
 
             this_font_filename = os.path.basename(f)
-            font = TTFontCLI(f, recalcTimestamp=False)
+            font = Font(f, recalcTimestamp=False)
             is_bold = int(font.isBold())
             is_italic = int(font.isItalic())
             is_oblique = int(font.isOblique())

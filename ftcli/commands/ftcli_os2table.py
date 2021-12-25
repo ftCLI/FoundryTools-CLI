@@ -1,7 +1,7 @@
 import os
 
 import click
-from ftcli.Lib.TTFontCLI import TTFontCLI
+from ftcli.Lib.Font import Font
 from ftcli.Lib.utils import getFontsList, makeOutputFileName
 
 
@@ -69,7 +69,7 @@ def cli(input_path, set_bold, set_italic, set_oblique, set_wws, set_width, set_w
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
             is_bold = font.isBold()
             is_italic = font.isItalic()
             is_oblique = font.isOblique()

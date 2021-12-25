@@ -3,7 +3,7 @@ import sys
 
 import click
 from ftcli.Lib.CUI import CUI
-from ftcli.Lib.TTFontCLI import TTFontCLI
+from ftcli.Lib.Font import Font
 from ftcli.Lib.configHandler import configHandler
 from ftcli.Lib.csvHandler import csvHandler
 from ftcli.Lib.utils import (getConfigPath, getCsvPath, getFontsList, makeOutputFileName)
@@ -345,7 +345,7 @@ def recalc_names(
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
             font_data = {}
             for row in data:
                 if str(row['file_name']) == os.path.basename(f):

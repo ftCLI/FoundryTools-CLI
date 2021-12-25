@@ -2,7 +2,7 @@ import os
 
 import click
 from fontTools.ttLib import TTFont
-from ftcli.Lib.TTFontCLI import TTFontCLI
+from ftcli.Lib.Font import Font
 from ftcli.Lib.utils import (getFontsList, guessFamilyName, makeOutputFileName)
 
 
@@ -28,7 +28,7 @@ Parses all WOFF and WOFF2 files in INPUT_PATH and creates a CSS stylesheet to us
     unique_triplets = []
     for f in files:
 
-        font = TTFontCLI(f)
+        font = Font(f)
         this_font_triplet = (
             guessFamilyName(font),
             font['OS/2'].usWeightClass,
@@ -52,7 +52,7 @@ Parses all WOFF and WOFF2 files in INPUT_PATH and creates a CSS stylesheet to us
 
         for f in files:
 
-            font = TTFontCLI(f)
+            font = Font(f)
             this_font_triplet = (
                 guessFamilyName(font),
                 font['OS/2'].usWeightClass,

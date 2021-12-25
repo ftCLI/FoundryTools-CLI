@@ -2,7 +2,7 @@ import os
 import sys
 
 import click
-from ftcli.Lib.TTFontCLI import TTFontCLI
+from ftcli.Lib.Font import Font
 from ftcli.Lib.utils import getFontsList, makeOutputFileName, guessFamilyName
 
 
@@ -40,7 +40,7 @@ def set_linegap(input_path, percent, modify_family_name, output_dir, recalc_time
         file_dir = os.path.dirname(f)
 
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
             font.modifyLinegapPercent(percent)
 
             # Modify the family name according to the linegap percent
@@ -108,7 +108,7 @@ def align(input_path, sil_method, output_dir, recalc_timestamp, overwrite):
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
 
             yMax = font['head'].yMax
             yMin = font['head'].yMin
@@ -141,7 +141,7 @@ def align(input_path, sil_method, output_dir, recalc_timestamp, overwrite):
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
 
             font['hhea'].ascender = maxRealAscender
             font['hhea'].descender = -maxRealDescender
@@ -191,7 +191,7 @@ def copy(source_file, destination, output_dir, recalc_timestamp, overwrite):
     """
 
     try:
-        source_font = TTFontCLI(source_file)
+        source_font = Font(source_file)
 
         ascender = source_font['hhea'].ascender
         descender = source_font['hhea'].descender
@@ -210,7 +210,7 @@ def copy(source_file, destination, output_dir, recalc_timestamp, overwrite):
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
 
             font['hhea'].ascender = ascender
             font['hhea'].descender = descender

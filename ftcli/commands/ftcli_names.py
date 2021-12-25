@@ -2,7 +2,7 @@ import os
 
 import click
 
-from ftcli.Lib.TTFontCLI import TTFontCLI
+from ftcli.Lib.Font import Font
 from ftcli.Lib.utils import getFontsList, makeOutputFileName
 
 
@@ -30,7 +30,7 @@ def clean_nametable(input_path, output_dir, recalc_timestamp, overwrite):
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
             for name in font['name'].names:
                 font.delNameRecord(nameID=name.nameID)
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
@@ -88,7 +88,7 @@ def win_2_mac(input_path, output_dir, recalc_timestamp, overwrite):
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
             font.win2mac()
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
@@ -143,7 +143,7 @@ def del_mac_names(input_path, exclude_namerecord, output_dir, recalc_timestamp, 
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
             font.delMacNames(exclude_namerecord=exclude_namerecord)
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
@@ -185,7 +185,7 @@ def set_cff_name(input_path, font_name, full_name, family_name, weight, copyrigh
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
             if 'CFF ' not in font:
                 click.secho(f'{f} is not a CFF font', fg='red')
                 return
@@ -248,7 +248,7 @@ def set_name(input_path, name_id, platform, language, string, output_dir, recalc
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
             font.setMultilingualName(nameID=name_id, language=language, string=string, windows=windows, mac=mac)
 
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
@@ -305,7 +305,7 @@ def name_from_txt(input_path, name_id, platform, language, input_file, output_di
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
             font.setMultilingualName(nameID=name_id, language=language, string=string, windows=windows, mac=mac)
 
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
@@ -354,7 +354,7 @@ def del_name(input_path, name_id, platform, language, output_dir, recalc_timesta
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
             font.delNameRecord(name_id, language=language, windows=windows, mac=mac)
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
@@ -433,7 +433,7 @@ def find_replace(input_path, old_string, new_string, name_id, platform, fix_cff,
 
     for f in files:
         try:
-            font = TTFontCLI(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalc_timestamp)
             fix_count = font.findReplace(
                 old_string, new_string, fixCFF=fix_cff, nameID=name_id, platform=platform,
                 namerecords_to_ignore=exclude_namerecord)

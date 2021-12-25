@@ -3,7 +3,7 @@ import json
 import os
 import sys
 
-from ftcli.Lib.TTFontCLI import TTFontCLI
+from ftcli.Lib.Font import Font
 from ftcli.Lib.configHandler import configHandler
 from ftcli.Lib.utils import (getFontsList, getSourceString, guessFamilyName)
 
@@ -34,7 +34,7 @@ class DataHandler(object):
         for f in files:
             file_name = os.path.basename(f)
             json_data[file_name] = {'current-data': {}}
-            font = TTFontCLI(f)
+            font = Font(f)
             family_name = guessFamilyName(font)
 
             try:
@@ -103,7 +103,7 @@ class DataHandler(object):
 
         for f in files:
             file_name = os.path.basename(f)
-            font = TTFontCLI(f)
+            font = Font(f)
 
             # Get the source string
             string = getSourceString(f, source_string)
