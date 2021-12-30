@@ -87,7 +87,7 @@ def dehinter(input_path, keep_cvar, keep_cvt, keep_fpgm, keep_hdmx, keep_ltsh, k
                    overwrite=True):
     """Drops hinting from all glyphs.
 
-    Currently this only works with TrueType fonts with 'glyf' table.
+    Currently, this only works with TrueType fonts with 'glyf' table.
 
     This is a CLI for dehinter by Source Foundry: https://github.com/source-foundry/dehinter
     """
@@ -130,11 +130,10 @@ def remove_overlaps(input_path, output_dir=None, recalc_timestamp=False, overwri
 
     Overlapping components are first decomposed to simple contours, then merged.
 
-    Currently this only works with TrueType fonts with 'glyf' table.
+    Currently, this only works with TrueType fonts with 'glyf' table.
 
-    Note that removing overlaps invalidates the hinting. Hinting is dropped from
-    all glyphs whether or not overlaps are removed from a given one, as it would
-    look weird if only some glyphs are left (un)hinted.
+    Note that removing overlaps invalidates the hinting. Hinting is dropped from all glyphs whether or not overlaps are
+    removed from a given one, as it would look weird if only some glyphs are left (un)hinted.
     """
 
     files = getFontsList(input_path)

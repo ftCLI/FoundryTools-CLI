@@ -55,6 +55,8 @@ class Font(TTFont):
             self.setItalic()
             if oblique_not_italic:
                 is_italic = False
+                # If there are both obliques and italics in the same family, usWeightClass is increased by 10
+                us_weight_class += 10
                 self.unsetItalic()
         else:
             self.unsetOblique()
