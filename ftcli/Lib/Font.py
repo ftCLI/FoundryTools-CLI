@@ -321,7 +321,8 @@ class Font(TTFont):
                 macScript = _MAC_LANGUAGE_TO_SCRIPT.get(macLang)
                 self['name'].removeNames(nameID, 1, macScript, macLang)
 
-    def findReplace(self, oldString, newString, fixCFF=False, nameID=None, platform=None, namerecords_to_ignore=None):
+    def findReplace(self, oldString: str, newString: str, fixCFF=False, nameID=None, platform=None,
+                    namerecords_to_ignore=None):
 
         platforms_list = []
 
@@ -347,7 +348,7 @@ class Font(TTFont):
                 if name.platformID in platforms_list:
                     names_list.append([name.platformID, name.nameID])
 
-        # If a nameID is excluded, it won't be changed even if it's explicitly included.
+        # If a nameID is excluded, it won't be changed even if it has been explicitly included.
         if namerecords_to_ignore:
             for name in self['name'].names:
                 if name.nameID in namerecords_to_ignore and [name.platformID, name.nameID] in names_list:
@@ -390,6 +391,52 @@ class Font(TTFont):
                     pass
 
         return fixCount
+
+    def addPrefix(self, prefix: str, name_ids: list, platform: str = None):
+
+        # Builds the platforms list
+        platforms_list = []
+        if platform == 'mac':
+            platforms_list = [1]
+        if platform == 'win':
+            platforms_list = [3]
+        if platform is None:
+            platforms_list = [1, 3]
+
+        for namerecord in self['name'].names:
+            for p in platforms_list:
+                for n in name_ids:
+                    if (namerecord.nameID, namerecord.platformID) == (n, p):
+                        platEncID = namerecord.platEncID
+                        langID = namerecord.langID
+                        original_string = self['name'].getName(nameID=n, platformID=p, platEncID=platEncID,
+                                                               langID=langID).toUnicode()
+                        prefixed_string = f'{prefix}{original_string}'
+                        self.setMultilingualName(nameID=n, windows=True if p == 3 else False,
+                                                 mac=True if p == 1 else False, string=prefixed_string)
+
+    def addSuffix(self, suffix: str, name_ids: list, platform: str = None):
+
+        # Builds the platforms list
+        platforms_list = []
+        if platform == 'mac':
+            platforms_list = [1]
+        if platform == 'win':
+            platforms_list = [3]
+        if platform is None:
+            platforms_list = [1, 3]
+
+        for namerecord in self['name'].names:
+            for p in platforms_list:
+                for n in name_ids:
+                    if (namerecord.nameID, namerecord.platformID) == (n, p):
+                        platEncID = namerecord.platEncID
+                        langID = namerecord.langID
+                        original_string = self['name'].getName(nameID=n, platformID=p, platEncID=platEncID,
+                                                               langID=langID).toUnicode()
+                        suffixed_string = f'{original_string}{suffix}'
+                        self.setMultilingualName(nameID=n, windows=True if p == 3 else False,
+                                                 mac=True if p == 1 else False, string=suffixed_string)
 
     def removeEmptyNames(self):
         for name in self['name'].names:

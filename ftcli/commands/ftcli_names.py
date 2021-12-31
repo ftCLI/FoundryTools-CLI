@@ -448,7 +448,115 @@ def find_replace(input_path, old_string, new_string, name_id, platform, fix_cff,
             click.secho(f'ERROR: {e}', fg='red')
 
 
+@click.group()
+def copyNameTable():
+    pass
+
+
+@copyNameTable.command()
+@click.option('-s', '--source_font', required=True, type=click.Path(exists=True, resolve_path=True, dir_okay=False),
+              help="Path to the source font.")
+@click.option('-d', '--dest_font', required=True, type=click.Path(exists=True, resolve_path=True, dir_okay=False),
+              help="Path to the destination font.")
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
+              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
+                   'exist, will be created. If not specified, files are saved to the same folder.')
+@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
+              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
+                   'default, timestamp is not recalculated.')
+@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
+              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
+                   ' name). By default, files are overwritten.')
+def copy_names(source_font, dest_font, output_dir, recalc_timestamp, overwrite):
+    """Copies 'name' table from a source font to a destination font.
+    """
+
+    try:
+        s = Font(source_font)
+        d = Font(dest_font, recalcTimestamp=recalc_timestamp)
+        d['name'] = s['name']
+        output_file = makeOutputFileName(dest_font, outputDir=output_dir, overWrite=overwrite)
+        d.save(output_file)
+        click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
+    except Exception as e:
+        click.secho(f'ERROR: {e}', fg='red')
+
+
+@click.group()
+def addPrefix():
+    pass
+
+
+@addPrefix.command()
+@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
+@click.option('--prefix', required=True, type=str, help="The prefix string.")
+@click.option('-n', '--name-ids', required=True, multiple=True, type=click.IntRange(0, 32767),
+              help="nameID where to add the prefix (Integer between 0 and 32767)")
+@click.option("-p", "--platform", type=click.Choice(choices=["win", "mac"]),
+              help="platform [win, mac]. If no platform is specified, the prefix will be added in both tables.")
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
+              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
+                   'exist, will be created. If not specified, files are saved to the same folder.')
+@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
+              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
+                   'default, timestamp is not recalculated.')
+@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
+              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
+                   ' name). By default, files are overwritten.')
+def add_prefix(input_path, prefix, name_ids, platform, output_dir, recalc_timestamp, overwrite):
+    """Adds a prefix to the specified namerecords.
+    """
+    files = getFontsList(input_path)
+
+    for f in files:
+        try:
+            font = Font(f, recalcTimestamp=recalc_timestamp)
+            font.addPrefix(prefix=prefix, name_ids=name_ids, platform=platform)
+            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
+            font.save(output_file)
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
+        except Exception as e:
+            click.secho(f'ERROR: {e}', fg='red')
+
+@click.group()
+def addSuffix():
+    pass
+
+
+@addSuffix.command()
+@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
+@click.option('--suffix', required=True, type=str, help="The suffix string")
+@click.option('-n', '--name-ids', required=True, multiple=True, type=click.IntRange(0, 32767),
+              help="nameID where to add the suffix (Integer between 0 and 32767)")
+@click.option("-p", "--platform", type=click.Choice(choices=["win", "mac"]),
+              help="platform [win, mac]. If no platform is specified, the suffix will be added in both tables.")
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
+              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
+                   'exist, will be created. If not specified, files are saved to the same folder.')
+@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
+              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
+                   'default, timestamp is not recalculated.')
+@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
+              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
+                   ' name). By default, files are overwritten.')
+def add_suffix(input_path, suffix, name_ids, platform, output_dir, recalc_timestamp, overwrite):
+    """Adds a suffix to the specified namerecords.
+    """
+    files = getFontsList(input_path)
+
+    for f in files:
+        try:
+            font = Font(f, recalcTimestamp=recalc_timestamp)
+            font.addSuffix(suffix=suffix, name_ids=name_ids, platform=platform)
+            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
+            font.save(output_file)
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
+
+        except Exception as e:
+            click.secho(f'ERROR: {e}', fg='red')
+
+
 cli = click.CommandCollection(sources=[
     setNameRecord, setNameRecordFromTxt, delNameRecord, setCffName, findReplace, winToMac, deleteMacNames,
-    printLanguageCodes, delAllNames],
+    printLanguageCodes, delAllNames, copyNameTable, addPrefix, addSuffix],
     help="A command line tool to edit namerecords and CFF names.")
