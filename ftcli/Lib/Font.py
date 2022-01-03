@@ -5,7 +5,8 @@ from fontTools.misc.timeTools import timestampToString
 from fontTools.ttLib import TTFont
 from fontTools.ttLib import newTable
 from fontTools.ttLib.tables._n_a_m_e import (_MAC_LANGUAGE_CODES, _MAC_LANGUAGE_TO_SCRIPT, _WINDOWS_LANGUAGE_CODES)
-
+from fontTools.ttLib.tables._n_a_m_e import table__n_a_m_e
+from ftcli.Lib.utils import calcCodePageRanges, intListToNum
 
 class Font(TTFont):
 
@@ -48,7 +49,7 @@ class Font(TTFont):
         if is_italic:
             self.setItalic()
 
-        # If is_oblique is True, the oblique bit is set, as well as the italic bits. In case we don't want want to set
+        # If is_oblique is True, the oblique bit is set, as well as the italic bits. In case we don't want to set
         # also the italic bits, this can be achieved setting oblique_not_italic to True.
         if is_oblique:
             self.setOblique()
@@ -303,23 +304,22 @@ class Font(TTFont):
 
     def delNameRecord(self, nameID, language='en', windows=True, mac=True):
 
-        if nameID is not None:
-            if language == 'ALL':
-                windows = False
-                mac = False
-                for name in self['name'].names:
-                    if name.nameID == nameID:
-                        self['name'].removeNames(
-                            name.nameID, name.platformID, name.platEncID, name.langID)
+        if language == 'ALL':
+            windows = False
+            mac = False
+            for name in self['name'].names:
+                if name.nameID == nameID:
+                    self['name'].removeNames(
+                        name.nameID, name.platformID, name.platEncID, name.langID)
 
-            if windows is True:
-                langID = _WINDOWS_LANGUAGE_CODES.get(language.lower())
-                self['name'].removeNames(nameID, 3, 1, langID)
+        if windows is True:
+            langID = _WINDOWS_LANGUAGE_CODES.get(language.lower())
+            self['name'].removeNames(nameID, 3, 1, langID)
 
-            if mac is True:
-                macLang = _MAC_LANGUAGE_CODES.get(language.lower())
-                macScript = _MAC_LANGUAGE_TO_SCRIPT.get(macLang)
-                self['name'].removeNames(nameID, 1, macScript, macLang)
+        if mac is True:
+            macLang = _MAC_LANGUAGE_CODES.get(language.lower())
+            macScript = _MAC_LANGUAGE_TO_SCRIPT.get(macLang)
+            self['name'].removeNames(nameID, 1, macScript, macLang)
 
     def findReplace(self, oldString: str, newString: str, fixCFF=False, nameID=None, platform=None,
                     namerecords_to_ignore=None):
@@ -394,7 +394,6 @@ class Font(TTFont):
 
     def addPrefix(self, prefix: str, name_ids: list, platform: str = None):
 
-        # Builds the platforms list
         platforms_list = []
         if platform == 'mac':
             platforms_list = [1]
@@ -417,7 +416,6 @@ class Font(TTFont):
 
     def addSuffix(self, suffix: str, name_ids: list, platform: str = None):
 
-        # Builds the platforms list
         platforms_list = []
         if platform == 'mac':
             platforms_list = [1]
@@ -533,6 +531,19 @@ class Font(TTFont):
                     # MAYBE THERE'S A BETTER WAY?
                     self.setMultilingualName(nameID=name.nameID, language='en', string=string.encode(), windows=False,
                                              mac=True)
+
+    def recalcCodePageRanges(self) -> (int, int):
+        cmap = self['cmap']
+        unicodes = set()
+        for table in cmap.tables:
+            if table.isUnicode():
+                unicodes.update(table.cmap.keys())
+
+        codePageRanges = calcCodePageRanges(unicodes)
+        ulCodePageRange1 = intListToNum(codePageRanges, 0, 32)
+        ulCodePageRange2 = intListToNum(codePageRanges, 32, 32)
+
+        return ulCodePageRange1, ulCodePageRange2
 
     def isBold(self):
         return (is_nth_bit_set(self['head'].macStyle, 0) and is_nth_bit_set(self['OS/2'].fsSelection, 5))

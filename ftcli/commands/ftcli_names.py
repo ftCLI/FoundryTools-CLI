@@ -23,7 +23,7 @@ def delAllNames():
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
 def clean_nametable(input_path, output_dir, recalc_timestamp, overwrite):
-    """Deletes all name records
+    """Deletes all namerecords from the 'name' table.
     """
 
     files = getFontsList(input_path)
@@ -117,7 +117,7 @@ def deleteMacNames():
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    'name). By default, files are overwritten.')
 def del_mac_names(input_path, exclude_namerecord, output_dir, recalc_timestamp, overwrite):
-    """Deletes all namerecords in platformID 1.
+    """Deletes all namerecords where platformID is equal to 1.
 
     According to Apple (https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6name.html), "names with
     platformID 1 were required by earlier versions of macOS. Its use on modern platforms is discouraged. Use names with
@@ -136,7 +136,7 @@ def del_mac_names(input_path, exclude_namerecord, output_dir, recalc_timestamp, 
 
         ftcli names del-mac-names INPUT_PATH -ex 1 -ex 3 -ex 6
 
-    Input path can be a font or a folder.
+    INPUT_PATH can be a single font file or a folder containing fonts.
     """
 
     files = getFontsList(input_path)
@@ -271,7 +271,8 @@ def setNameRecordFromTxt():
 @click.option("-p", "--platform", type=click.Choice(choices=["win", "mac"]),
               help="platform [win, mac]. If it's not specified, name will be written in both tables.")
 @click.option('-l', '--language', default="en", show_default=True, help="language")
-@click.option('-i', '--input-file', type=click.Path(exists=True, resolve_path=True), required=True)
+@click.option('-i', '--input-file', type=click.Path(exists=True, resolve_path=True), required=True,
+              help="Path to the text file to read.")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
               help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
                    'exist, will be created. If not specified, files are saved to the same folder.')
@@ -307,7 +308,6 @@ def name_from_txt(input_path, name_id, platform, language, input_file, output_di
         try:
             font = Font(f, recalcTimestamp=recalc_timestamp)
             font.setMultilingualName(nameID=name_id, language=language, string=string, windows=windows, mac=mac)
-
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
@@ -468,7 +468,7 @@ def copyNameTable():
               help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
                    ' name). By default, files are overwritten.')
 def copy_names(source_font, dest_font, output_dir, recalc_timestamp, overwrite):
-    """Copies 'name' table from a source font to a destination font.
+    """Copies the 'name' table from source_font to dest_font.
     """
 
     try:

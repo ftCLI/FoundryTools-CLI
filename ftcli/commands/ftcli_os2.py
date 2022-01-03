@@ -50,6 +50,11 @@ See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
 """)
 @click.option('-ach', '--set-ach-vend-id', type=str,
               help='Sets the the OS/2.achVendID tag (vendor\'s four-character identifier).')
+@click.option('--recalc-codepage-ranges', is_flag=True,
+              help='Recalculates the OS/2.ulCodePageRange1 and OS/2.ulCodePageRange2 values.')
+@click.option('--recalc-unicode-ranges', is_flag=True,
+              help='Recalculates the OS/2.ulUnicodeRange1, OS/2.ulUnicodeRange2, OS/2.ulUnicodeRange3 '
+                   'and OS/2.ulUnicodeRange4 values.')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help='The output directory where the output files are to be created. If it doesn\'t exist, will be'
                    'created. If not specified, files are saved to the same folder.')
@@ -60,7 +65,8 @@ See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
               help='Overwrites existing output files or save them to a new file (numbers are appended at the end of '
                    'file name). By default, files are overwritten.')
 def cli(input_path, set_bold, set_italic, set_oblique, set_wws, set_width, set_weight, embed_level,
-        set_use_typo_metrics, set_ach_vend_id, recalc_timestamp, output_dir, overwrite):
+        set_use_typo_metrics, set_ach_vend_id, recalc_timestamp, output_dir, overwrite, recalc_codepage_ranges,
+        recalc_unicode_ranges):
     """
     A command line tool to edit some OS/2 table attributes.
     """
@@ -154,6 +160,40 @@ def cli(input_path, set_bold, set_italic, set_oblique, set_wws, set_width, set_w
                     if set_use_typo_metrics is False:
                         font.unsetUseTypoMetrics()
                         modified = True
+
+            if recalc_codepage_ranges is True:
+                ulCodePageRange1, ulCodePageRange2 = font.recalcCodePageRanges()
+                os2_version = font['OS/2'].version
+
+                # Check if OS/2.version is greater than 0.
+                if os2_version < 1:
+                    click.secho(f'{os.path.basename(f)} OS/2 table version is {os2_version}. '
+                                f'ulCodePageRange1 and ulCodePageRange2 are only defined in OS/2 version 1 and up.',
+                                fg='red')
+                    continue
+
+                # Check if for some reason ulCodePageRange1 is not present.
+                if not hasattr(font['OS/2'], 'ulCodePageRange1'):
+                    font['OS/2'].ulCodePageRange1 = ulCodePageRange1
+                    modified = True
+                else:
+                    if not font['OS/2'].ulCodePageRange1 == ulCodePageRange1:
+                        font['OS/2'].ulCodePageRange1 = ulCodePageRange1
+                        modified = True
+
+                # Check if for some reason ulCodePageRange2 is not present.
+                if not hasattr(font['OS/2'], 'ulCodePageRange2'):
+                    font['OS/2'].ulCodePageRange2 = ulCodePageRange2
+                    modified = True
+                else:
+                    if not font['OS/2'].ulCodePageRange2 == ulCodePageRange2:
+                        font['OS/2'].ulCodePageRange2 = ulCodePageRange2
+                        modified = True
+
+            if recalc_unicode_ranges is True:
+                if not font['OS/2'].getUnicodeRanges() == font['OS/2'].recalcUnicodeRanges(font):
+                    font['OS/2'].setUnicodeRanges(font['OS/2'].recalcUnicodeRanges(font))
+                    modified = True
 
             if output_dir is None:
                 output_dir = os.path.dirname(f)
