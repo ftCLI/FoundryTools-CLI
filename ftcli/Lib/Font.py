@@ -532,19 +532,6 @@ class Font(TTFont):
                     self.setMultilingualName(nameID=name.nameID, language='en', string=string.encode(), windows=False,
                                              mac=True)
 
-    def recalcCodePageRanges(self) -> (int, int):
-        cmap = self['cmap']
-        unicodes = set()
-        for table in cmap.tables:
-            if table.isUnicode():
-                unicodes.update(table.cmap.keys())
-
-        codePageRanges = calcCodePageRanges(unicodes)
-        ulCodePageRange1 = intListToNum(codePageRanges, 0, 32)
-        ulCodePageRange2 = intListToNum(codePageRanges, 32, 32)
-
-        return ulCodePageRange1, ulCodePageRange2
-
     def isBold(self):
         return (is_nth_bit_set(self['head'].macStyle, 0) and is_nth_bit_set(self['OS/2'].fsSelection, 5))
 
@@ -677,6 +664,114 @@ class Font(TTFont):
         }
 
         return vertical_metrics
+
+    def getGlyphsMetrics(self):
+        glyphs_metrics = {}
+        glyphset = self.getGlyphSet()
+        for glyphname in glyphset.keys():
+
+            if 'glyf' in self:
+                glyph = self["glyf"][glyphname]
+                if glyph.numberOfContours == 0:
+                    # no data
+                    continue
+                glyph_metrics = {
+                    "xMin": glyph.xMin,
+                    "yMin": glyph.yMin,
+                    "xMax": glyph.xMax,
+                    "yMax": glyph.yMax,
+                }
+                glyphs_metrics[glyphname] = glyph_metrics
+
+            else:
+                bounds = self.getGlyphSet()[glyphname]._glyph.calcBounds(self.getGlyphSet())
+                if bounds is None:
+                    continue
+                glyph_metrics = {
+                    "xMin": bounds[0],
+                    "yMin": bounds[1],
+                    "xMax": bounds[2],
+                    "yMax": bounds[3],
+                }
+                glyphs_metrics[glyphname] = glyph_metrics
+
+        return glyphs_metrics
+
+    def recalcXHeight(self) -> int:
+        metrics = self.getGlyphsMetrics()
+        try:
+            x_height = metrics['x']['yMax']
+        except KeyError:
+            x_height = 0
+        return round(x_height)
+
+    def recalcCapHeight(self) -> int:
+        metrics = self.getGlyphsMetrics()
+        try:
+            cap_height = metrics['H']['yMax']
+        except KeyError:
+            cap_height = 0
+        return round(cap_height)
+
+    def recalcCodePageRanges(self) -> (int, int):
+        cmap = self['cmap']
+        unicodes = set()
+        for table in cmap.tables:
+            if table.isUnicode():
+                unicodes.update(table.cmap.keys())
+
+        codePageRanges = calcCodePageRanges(unicodes)
+        ulCodePageRange1 = intListToNum(codePageRanges, 0, 32)
+        ulCodePageRange2 = intListToNum(codePageRanges, 32, 32)
+
+        return ulCodePageRange1, ulCodePageRange2
+
+    def setOS2Version(self, target_version: int):
+
+        current_version = self['OS/2'].version
+
+        # Let's ensure to clear bits 7, 8 and 9 in ['OS/2'].fsSelection when target version is lower than 4.
+        if target_version < 4:
+            self.unsetUseTypoMetrics()
+            self.unsetWWS()
+            self.unsetOblique()
+        self['OS/2'].version = target_version
+
+        # When upgrading from version is 0, at least ulCodePageRanges are to be recalculated.
+        if current_version == 0:
+            attrs = {
+                'ulCodePageRange1': self.recalcCodePageRanges()[0],
+                'ulCodePageRange2': self.recalcCodePageRanges()[1],
+            }
+            for k, v in attrs.items():
+                setattr(self['OS/2'], k, v)
+            if target_version == 1:
+                return
+
+        # Upgrading from version 1 requires creating sxHeight, sCapHeight, usDefaultChar, usBreakChar and usMaxContext
+        # entries.
+        if current_version < 2:
+            print(self.recalcXHeight())
+            attrs = {
+                'sxHeight': self.recalcXHeight(),
+                'sCapHeight': self.recalcCapHeight(),
+                'usDefaultChar': 0,
+                'usBreakChar': 32,
+                # NOTE: check if recalculating this value is needed.
+                'usMaxContext': 3,
+            }
+            print(attrs)
+            for k, v in attrs.items():
+                setattr(self['OS/2'], k, v)
+
+        # Write default values
+        if target_version == 5:
+            attrs = {
+                'usLowerOpticalPointSize': 0,
+                'usUpperOpticalPointSize': 65535 / 20
+            }
+            for k, v in attrs.items():
+                setattr(self['OS/2'], k, v)
 
     def getFontFeatures(self):
 

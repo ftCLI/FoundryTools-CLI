@@ -55,6 +55,8 @@ See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
 @click.option('--recalc-unicode-ranges', is_flag=True,
               help='Recalculates the OS/2.ulUnicodeRange1, OS/2.ulUnicodeRange2, OS/2.ulUnicodeRange3 '
                    'and OS/2.ulUnicodeRange4 values.')
+@click.option('--set-version', type=click.IntRange(1, 5),
+              help='Sets OS/2.version value.')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help='The output directory where the output files are to be created. If it doesn\'t exist, will be'
                    'created. If not specified, files are saved to the same folder.')
@@ -66,7 +68,7 @@ See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
                    'file name). By default, files are overwritten.')
 def cli(input_path, set_bold, set_italic, set_oblique, set_wws, set_width, set_weight, embed_level,
         set_use_typo_metrics, set_ach_vend_id, recalc_timestamp, output_dir, overwrite, recalc_codepage_ranges,
-        recalc_unicode_ranges):
+        recalc_unicode_ranges, set_version):
     """
     A command line tool to edit some OS/2 table attributes.
     """
@@ -74,139 +76,159 @@ def cli(input_path, set_bold, set_italic, set_oblique, set_wws, set_width, set_w
     files = getFontsList(input_path)
 
     for f in files:
-        try:
-            font = Font(f, recalcTimestamp=recalc_timestamp)
-            is_bold = font.isBold()
-            is_italic = font.isItalic()
-            is_oblique = font.isOblique()
-            is_wws = font.isWWS()
-            uses_typo_metrics = font.usesTypoMetrics()
-            usWeightClass = font['OS/2'].usWeightClass
-            usWidthClass = font['OS/2'].usWidthClass
-            fsType = font['OS/2'].fsType
+        # try:
+        font = Font(f, recalcTimestamp=recalc_timestamp)
+        is_bold = font.isBold()
+        is_italic = font.isItalic()
+        is_oblique = font.isOblique()
+        is_wws = font.isWWS()
+        uses_typo_metrics = font.usesTypoMetrics()
+        usWeightClass = font['OS/2'].usWeightClass
+        usWidthClass = font['OS/2'].usWidthClass
+        fsType = font['OS/2'].fsType
+        version = font['OS/2'].version
 
-            modified = False
+        modified = False
 
-            if set_bold is not None:
-                if is_bold != set_bold:
-                    if set_bold is True:
-                        font.setBold()
-                    else:
-                        font.unsetBold()
-                    modified = True
+        if set_bold is not None:
+            if is_bold != set_bold:
+                if set_bold is True:
+                    font.setBold()
+                else:
+                    font.unsetBold()
+                modified = True
 
-            if set_italic is not None:
-                if is_italic != set_italic:
-                    if set_italic is True:
-                        font.setItalic()
-                    else:
-                        font.unsetItalic()
-                    modified = True
+        if set_italic is not None:
+            if is_italic != set_italic:
+                if set_italic is True:
+                    font.setItalic()
+                else:
+                    font.unsetItalic()
+                modified = True
 
-            if set_oblique is not None:
-                if is_oblique != set_oblique:
-                    if set_oblique is True:
-                        font.setOblique()
-                    else:
-                        font.unsetOblique()
+        if set_oblique is not None:
+            if is_oblique != set_oblique:
+                if set_oblique is True:
+                    font.setOblique()
+                else:
+                    font.unsetOblique()
 
-                    modified = True
+                modified = True
 
-            if set_wws is not None:
-                if is_wws != set_wws:
-                    if set_wws is True:
-                        font.setWWS()
-                    else:
-                        font.unsetWWS()
+        if set_wws is not None:
+            if is_wws != set_wws:
+                if set_wws is True:
+                    font.setWWS()
+                else:
+                    font.unsetWWS()
 
-                    modified = True
+                modified = True
 
-            if set_weight is not None:
-                if usWeightClass != set_weight:
-                    font['OS/2'].usWeightClass = set_weight
-                    modified = True
+        if set_weight is not None:
+            if usWeightClass != set_weight:
+                font['OS/2'].usWeightClass = set_weight
+                modified = True
 
-            if set_width is not None:
-                if usWidthClass != set_width:
-                    font['OS/2'].usWidthClass = set_width
-                    modified = True
+        if set_width is not None:
+            if usWidthClass != set_width:
+                font['OS/2'].usWidthClass = set_width
+                modified = True
 
-            if embed_level is not None:
-                embed_level = int(embed_level)
-                if fsType != embed_level:
-                    font['OS/2'].fsType = embed_level
-                    modified = True
+        if embed_level is not None:
+            embed_level = int(embed_level)
+            if fsType != embed_level:
+                font['OS/2'].fsType = embed_level
+                modified = True
 
-            if set_ach_vend_id:
-                if len(set_ach_vend_id) > 4:
-                    set_ach_vend_id = set_ach_vend_id[0:4]
-                    click.secho('\nach_vend_id was longer than 4 characters, it has been truncated.', fg='yellow')
-                if len(set_ach_vend_id) < 4:
-                    set_ach_vend_id = str(set_ach_vend_id).ljust(4)
-                if not set_ach_vend_id == font['OS/2'].achVendID:
-                    font.setAchVendID(set_ach_vend_id)
-                    modified = True
+        if set_ach_vend_id:
+            if len(set_ach_vend_id) > 4:
+                set_ach_vend_id = set_ach_vend_id[0:4]
+                click.secho('\nach_vend_id was longer than 4 characters, it has been truncated.', fg='yellow')
+            if len(set_ach_vend_id) < 4:
+                set_ach_vend_id = str(set_ach_vend_id).ljust(4)
+            if not set_ach_vend_id == font['OS/2'].achVendID:
+                font.setAchVendID(set_ach_vend_id)
+                modified = True
 
-            if set_use_typo_metrics is not None:
-                if uses_typo_metrics != set_use_typo_metrics:
-                    font['OS/2'].version = 4
-                    if set_use_typo_metrics is True:
-                        if font['OS/2'].version > 3:
-                            font.setUseTypoMetrics()
-                            modified = True
-                        else:
-                            click.secho("\nfsSelection bits 7 is only defined in OS/2 table version 4 and up."
-                                        "Current version: {}".format(font['OS/2'].version), fg='red')
-                    if set_use_typo_metrics is False:
-                        font.unsetUseTypoMetrics()
+        if set_use_typo_metrics is not None:
+            if uses_typo_metrics != set_use_typo_metrics:
+                font['OS/2'].version = 4
+                if set_use_typo_metrics is True:
+                    if font['OS/2'].version > 3:
+                        font.setUseTypoMetrics()
                         modified = True
+                    else:
+                        click.secho("\nfsSelection bits 7 is only defined in OS/2 table version 4 and up."
+                                    "Current version: {}".format(font['OS/2'].version), fg='red')
+                if set_use_typo_metrics is False:
+                    font.unsetUseTypoMetrics()
+                    modified = True
 
-            if recalc_codepage_ranges is True:
-                ulCodePageRange1, ulCodePageRange2 = font.recalcCodePageRanges()
-                os2_version = font['OS/2'].version
+        if recalc_codepage_ranges is True:
+            ulCodePageRange1, ulCodePageRange2 = font.recalcCodePageRanges()
+            os2_version = font['OS/2'].version
 
-                # Check if OS/2.version is greater than 0.
-                if os2_version < 1:
-                    click.secho(f'{os.path.basename(f)} OS/2 table version is {os2_version}. '
-                                f'ulCodePageRange1 and ulCodePageRange2 are only defined in OS/2 version 1 and up.',
-                                fg='red')
-                    continue
+            # Check if OS/2.version is greater than 0.
+            if os2_version < 1:
+                click.secho(f'{os.path.basename(f)} OS/2 table version is {os2_version}. '
+                            f'ulCodePageRange1 and ulCodePageRange2 are only defined in OS/2 version 1 and up.',
+                            fg='red')
+                continue
 
-                # Check if for some reason ulCodePageRange1 is not present.
-                if not hasattr(font['OS/2'], 'ulCodePageRange1'):
+            # Check if for some reason ulCodePageRange1 is not present.
+            if not hasattr(font['OS/2'], 'ulCodePageRange1'):
+                font['OS/2'].ulCodePageRange1 = ulCodePageRange1
+                modified = True
+            else:
+                if not font['OS/2'].ulCodePageRange1 == ulCodePageRange1:
                     font['OS/2'].ulCodePageRange1 = ulCodePageRange1
                     modified = True
-                else:
-                    if not font['OS/2'].ulCodePageRange1 == ulCodePageRange1:
-                        font['OS/2'].ulCodePageRange1 = ulCodePageRange1
-                        modified = True
 
-                # Check if for some reason ulCodePageRange2 is not present.
-                if not hasattr(font['OS/2'], 'ulCodePageRange2'):
+            # Check if for some reason ulCodePageRange2 is not present.
+            if not hasattr(font['OS/2'], 'ulCodePageRange2'):
+                font['OS/2'].ulCodePageRange2 = ulCodePageRange2
+                modified = True
+            else:
+                if not font['OS/2'].ulCodePageRange2 == ulCodePageRange2:
                     font['OS/2'].ulCodePageRange2 = ulCodePageRange2
                     modified = True
-                else:
-                    if not font['OS/2'].ulCodePageRange2 == ulCodePageRange2:
-                        font['OS/2'].ulCodePageRange2 = ulCodePageRange2
-                        modified = True
 
-            if recalc_unicode_ranges is True:
-                if not font['OS/2'].getUnicodeRanges() == font['OS/2'].recalcUnicodeRanges(font):
-                    font['OS/2'].setUnicodeRanges(font['OS/2'].recalcUnicodeRanges(font))
-                    modified = True
+        if recalc_unicode_ranges is True:
+            if not font['OS/2'].getUnicodeRanges() == font['OS/2'].recalcUnicodeRanges(font):
+                font['OS/2'].setUnicodeRanges(font['OS/2'].recalcUnicodeRanges(font))
+                modified = True
 
-            if output_dir is None:
-                output_dir = os.path.dirname(f)
+        if set_version is not None:
+            current_version = version
+            target_version = set_version
+
+            # Prevent updating to the same version.
+            if target_version == current_version:
+                click.secho(f'{os.path.basename(f)}: OS/2 version is already {set_version}!', fg='yellow')
+                break
+
+            # Prevent version downgrade.
+            elif target_version < current_version:
+                click.secho(f'{os.path.basename(f)}: current OS/2 version is {version}. '
+                            f'Please, insert a value greater than {version}', fg='yellow')
+                break
             else:
-                if not os.path.exists(output_dir):
-                    os.mkdir(output_dir)
+                font.setOS2Version(target_version=target_version)
+                modified = True
 
-            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
-            if modified is True:
-                font.save(output_file)
-                click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
-            else:
-                click.secho(f'{os.path.basename(f)} --> no changes made', fg='yellow')
 
-        except Exception as e:
-            click.secho(f'ERROR: {e}', fg='red')
+        if output_dir is None:
+            output_dir = os.path.dirname(f)
+        else:
+            if not os.path.exists(output_dir):
+                os.mkdir(output_dir)
+
+        output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
+        if modified is True:
+            font.save(output_file)
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
+        else:
+            click.secho(f'{os.path.basename(f)} --> no changes made', fg='yellow')
+
+        # except Exception as e:
+            # click.secho(f'ERROR: {e}', fg='red')
