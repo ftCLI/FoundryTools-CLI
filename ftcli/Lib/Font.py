@@ -751,7 +751,6 @@ class Font(TTFont):
         # Upgrading from version 1 requires creating sxHeight, sCapHeight, usDefaultChar, usBreakChar and usMaxContext
         # entries.
         if current_version < 2:
-            print(self.recalcXHeight())
             attrs = {
                 'sxHeight': self.recalcXHeight(),
                 'sCapHeight': self.recalcCapHeight(),
@@ -760,7 +759,6 @@ class Font(TTFont):
                 # NOTE: check if recalculating this value is needed.
                 'usMaxContext': 3,
             }
-            print(attrs)
             for k, v in attrs.items():
                 setattr(self['OS/2'], k, v)
 
