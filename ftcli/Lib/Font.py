@@ -6,6 +6,7 @@ from fontTools.ttLib import TTFont
 from fontTools.ttLib import newTable
 from fontTools.ttLib.tables._n_a_m_e import (_MAC_LANGUAGE_CODES, _MAC_LANGUAGE_TO_SCRIPT, _WINDOWS_LANGUAGE_CODES)
 from ftcli.Lib.utils import calcCodePageRanges, intListToNum
+from fontTools.otlLib.maxContextCalc import maxCtxFont
 
 class Font(TTFont):
 
@@ -406,7 +407,7 @@ class Font(TTFont):
 
     def addPrefix(self, prefix: str, name_ids: list, platform: str = None):
 
-        platforms_list = []
+        platforms_list = [1, 3]
         if platform == 'mac':
             platforms_list = [1]
         if platform == 'win':
@@ -569,6 +570,7 @@ class Font(TTFont):
             self.unsetUseTypoMetrics()
             self.unsetWWS()
             self.unsetOblique()
+
         self['OS/2'].version = target_version
 
         # When upgrading from version is 0, at least ulCodePageRanges are to be recalculated.
@@ -590,8 +592,7 @@ class Font(TTFont):
                 'sCapHeight': self.recalcCapHeight(),
                 'usDefaultChar': 0,
                 'usBreakChar': 32,
-                # NOTE: check if recalculating this value is needed.
-                'usMaxContext': 3,
+                'usMaxContext': maxCtxFont(self),
             }
             for k, v in attrs.items():
                 setattr(self['OS/2'], k, v)

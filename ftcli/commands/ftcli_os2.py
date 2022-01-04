@@ -86,7 +86,6 @@ def cli(input_path, set_bold, set_italic, set_oblique, set_wws, set_width, set_w
             usWeightClass = font['OS/2'].usWeightClass
             usWidthClass = font['OS/2'].usWidthClass
             fsType = font['OS/2'].fsType
-            version = font['OS/2'].version
             modified = False
 
             if set_bold is not None:
