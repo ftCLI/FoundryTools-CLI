@@ -185,7 +185,7 @@ Output will be a ttf or otf file, depending on the webfont flavor (TTF or CFF).
                 ext = '.otf' if font.sfntVersion == 'OTTO' else '.ttf'
                 output_file = makeOutputFileName(f, outputDir=output_dir, extension=ext, overWrite=overwrite)
                 font.flavor = None
-                font.save(output_file)
+                font.save(output_file, reorderTables=False)
                 click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
                 if delete_source_file:
                     os.remove(f)

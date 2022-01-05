@@ -4,8 +4,8 @@ import sys
 from textwrap import TextWrapper
 
 import click
-from fontTools.ttLib import TTFont
 from fontTools.misc.textTools import binary2num
+from fontTools.ttLib import TTFont
 
 # Fork of fontTools.misc.cliTools.makeOutputFileName.
 # Output dir will be automatically created if it doesn't exist.

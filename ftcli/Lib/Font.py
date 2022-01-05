@@ -2,11 +2,13 @@ import sys
 
 import click
 from fontTools.misc.timeTools import timestampToString
+from fontTools.otlLib.maxContextCalc import maxCtxFont
 from fontTools.ttLib import TTFont
 from fontTools.ttLib import newTable
 from fontTools.ttLib.tables._n_a_m_e import (_MAC_LANGUAGE_CODES, _MAC_LANGUAGE_TO_SCRIPT, _WINDOWS_LANGUAGE_CODES)
+
 from ftcli.Lib.utils import calcCodePageRanges, intListToNum
-from fontTools.otlLib.maxContextCalc import maxCtxFont
+
 
 class Font(TTFont):
 
