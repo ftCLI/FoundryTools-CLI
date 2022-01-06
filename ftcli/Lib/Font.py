@@ -17,7 +17,7 @@ class Font(TTFont):
 
     def recalcNames(
             self, font_data, namerecords_to_ignore=None, shorten_weight=None, shorten_width=None, shorten_slope=None,
-            fixCFF=False, linked_styles=None, isSuperFamily=False, alt_uid=False, regular_italic=False,
+            fixCFF=False, linked_styles=None, is_superfamily=False, alt_uid=False, regular_italic=False,
             keep_regular=False, old_full_font_name=False, oblique_not_italic=False
     ):
 
@@ -58,9 +58,9 @@ class Font(TTFont):
             self.setItalic()
             if oblique_not_italic:
                 is_italic = False
+                self.unsetItalic()
                 # If there are both obliques and italics in the same family, usWeightClass is increased by 10
                 us_weight_class += 10
-                self.unsetItalic()
         else:
             self.unsetOblique()
 
@@ -73,7 +73,7 @@ class Font(TTFont):
         subfamily_name_ot = weight
 
         if width.lower() != "normal":
-            if isSuperFamily is False:
+            if is_superfamily is False:
                 family_name_ot = "{} {}".format(family_name, width)
             else:
                 subfamily_name_ot = "{} {}".format(width, weight)
@@ -609,10 +609,10 @@ class Font(TTFont):
                 setattr(self['OS/2'], k, v)
 
     def isBold(self):
-        return (is_nth_bit_set(self['head'].macStyle, 0) and is_nth_bit_set(self['OS/2'].fsSelection, 5))
+        return is_nth_bit_set(self['head'].macStyle, 0) and is_nth_bit_set(self['OS/2'].fsSelection, 5)
 
     def isItalic(self):
-        return (is_nth_bit_set(self['head'].macStyle, 1) and is_nth_bit_set(self['OS/2'].fsSelection, 0))
+        return is_nth_bit_set(self['head'].macStyle, 1) and is_nth_bit_set(self['OS/2'].fsSelection, 0)
 
     def isOblique(self):
         return is_nth_bit_set(self['OS/2'].fsSelection, 9)

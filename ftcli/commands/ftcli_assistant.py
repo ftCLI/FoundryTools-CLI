@@ -355,7 +355,7 @@ def recalc_names(
                 font_data,
                 linked_styles=linked_styles, namerecords_to_ignore=exclude_namerecord, shorten_weight=shorten_weight,
                 shorten_width=shorten_width, shorten_slope=shorten_slope, alt_uid=alt_uid, fixCFF=fix_cff,
-                isSuperFamily=super_family, regular_italic=regular_italic, keep_regular=keep_regular,
+                is_superfamily=super_family, regular_italic=regular_italic, keep_regular=keep_regular,
                 old_full_font_name=old_full_font_name, oblique_not_italic=oblique_not_italic)
 
             output_file = makeOutputFileName(
