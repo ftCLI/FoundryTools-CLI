@@ -718,6 +718,14 @@ class CUI(object):
                     except:
                         pass
 
+                    try:
+                        string = "{0:<29}".format(' UniqueID') + ' : ' + str(otFont.topDictIndex[0].UniqueID)
+                        string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
+                                            width=terminal_width)
+                        print(string)
+                    except:
+                        pass
+
                     print("-" * terminal_width)
             except Exception as e:
                 click.secho('ERROR: {}'.format(e), fg='red')
