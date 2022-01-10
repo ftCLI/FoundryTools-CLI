@@ -563,6 +563,9 @@ class Font(TTFont):
 
         return ulCodePageRange1, ulCodePageRange2
 
+    def recalcUsMaxContext(self) -> int:
+        return maxCtxFont(self)
+
     def setOS2Version(self, target_version: int):
 
         current_version = self['OS/2'].version
@@ -666,28 +669,40 @@ class Font(TTFont):
 
     def setUseTypoMetrics(self):
         if self['OS/2'].version > 3:
-            self['OS/2'].fsSelection = set_nth_bit(
-                self['OS/2'].fsSelection, 7)
+            self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 7)
 
     def unsetUseTypoMetrics(self):
-        self['OS/2'].fsSelection = unset_nth_bit(
-            self['OS/2'].fsSelection, 7)
+        self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 7)
 
     def setEmbedLevel(self, value):
+        fsType = self['OS/2'].fsType
+        if value == 0:
+            for b in (0, 1, 2, 3):
+                unset_nth_bit(fsType, b)
+        if value == 2:
+            for b in (0, 2, 3):
+                unset_nth_bit(fsType, b)
+            set_nth_bit(fsType, 1)
+        if value == 4:
+            for b in (0, 1, 3):
+                unset_nth_bit(fsType, b)
+            set_nth_bit(fsType, 2)
+        if value == 8:
+            for b in (0, 1, 2):
+                unset_nth_bit(fsType, b)
+            set_nth_bit(fsType, 3)
+
         if self['OS/2'].fsType != value:
             self['OS/2'].fsType = value
 
     def setUsWidthClass(self, value):
-        if self["OS/2"].usWidthClass != value:
-            self["OS/2"].usWidthClass = value
+        self["OS/2"].usWidthClass = value
 
     def setUsWeightClass(self, value):
-        if self["OS/2"].usWeightClass != value:
-            self["OS/2"].usWeightClass = value
+        self["OS/2"].usWeightClass = value
 
     def setAchVendID(self, value):
-        if self['OS/2'].achVendID != value:
-            self['OS/2'].achVendID = value
+        self['OS/2'].achVendID = value
 
     def addDummyDSIG(self):
         values = dict(
