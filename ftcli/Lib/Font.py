@@ -1,6 +1,7 @@
 import sys
 
 import click
+from fontTools.misc.textTools import num2binary
 from fontTools.misc.timeTools import timestampToString
 from fontTools.otlLib.maxContextCalc import maxCtxFont
 from fontTools.ttLib import TTFont
@@ -674,26 +675,43 @@ class Font(TTFont):
     def unsetUseTypoMetrics(self):
         self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 7)
 
-    def setEmbedLevel(self, value):
-        fsType = self['OS/2'].fsType
+    def setEmbedLevel(self, value: int):
         if value == 0:
             for b in (0, 1, 2, 3):
-                unset_nth_bit(fsType, b)
+                self['OS/2'].fsType = unset_nth_bit(self['OS/2'].fsType, b)
         if value == 2:
             for b in (0, 2, 3):
-                unset_nth_bit(fsType, b)
-            set_nth_bit(fsType, 1)
+                self['OS/2'].fsType = unset_nth_bit(self['OS/2'].fsType, b)
+            self['OS/2'].fsType = set_nth_bit(self['OS/2'].fsType, 1)
         if value == 4:
             for b in (0, 1, 3):
-                unset_nth_bit(fsType, b)
-            set_nth_bit(fsType, 2)
+                self['OS/2'].fsType = unset_nth_bit(self['OS/2'].fsType, b)
+            self['OS/2'].fsType = set_nth_bit(self['OS/2'].fsType, 2)
         if value == 8:
             for b in (0, 1, 2):
-                unset_nth_bit(fsType, b)
-            set_nth_bit(fsType, 3)
+                self['OS/2'].fsType = unset_nth_bit(self['OS/2'].fsType, b)
+            self['OS/2'].fsType = set_nth_bit(self['OS/2'].fsType, 3)
 
-        if self['OS/2'].fsType != value:
-            self['OS/2'].fsType = value
+    def getEmbedLevel(self) -> int:
+        return int(num2binary(self['OS/2'].fsType, 16)[9:17], 2)
+
+    def setNoSubsettingBit(self):
+        self['OS/2'].fsType = set_nth_bit(self['OS/2'].fsType, 8)
+
+    def clearNoSubsettingBit(self):
+        self['OS/2'].fsType = unset_nth_bit(self['OS/2'].fsType, 8)
+
+    def getNoSubsettingValue(self) -> bool:
+        return is_nth_bit_set(self['OS/2'].fsType, 8)
+
+    def setBitmapEmbedOnlyBit(self):
+        self['OS/2'].fsType = set_nth_bit(self['OS/2'].fsType, 9)
+
+    def clearBitmapEmbedOnlyBit(self):
+        self['OS/2'].fsType = unset_nth_bit(self['OS/2'].fsType, 9)
+
+    def getBitmapEmbedOnlyValue(self):
+        return is_nth_bit_set(self['OS/2'].fsType, 9)
 
     def setUsWidthClass(self, value):
         self["OS/2"].usWidthClass = value
@@ -732,7 +750,7 @@ class Font(TTFont):
             'is_oblique': {'label': 'Font is oblique', 'value': self.isOblique()},
             'is_wws_consistent': {'label': 'WWS consistent', 'value': self.isWWS()},
             'italic_angle': {'label': 'Italic angle', 'value': self['post'].italicAngle},
-            'embed_level': {'label': 'Embedding', 'value': self['OS/2'].fsType},
+            'embed_level': {'label': 'Embedding', 'value': self.getEmbedLevel(),}
         }
 
         return font_info
