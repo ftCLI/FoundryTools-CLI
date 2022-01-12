@@ -3,7 +3,7 @@ import os
 import click
 
 from ftcli.Lib.Font import Font
-from ftcli.Lib.utils import getFontsList, is_nth_bit_set, set_nth_bit, unset_nth_bit, makeOutputFileName
+from ftcli.Lib.utils import getFontsList, makeOutputFileName
 
 
 @click.command()
@@ -94,7 +94,6 @@ def cli(input_path, target_version, set_width, set_weight, embed_level, no_subse
     for f in files:
         try:
             font = Font(f, recalcTimestamp=recalc_timestamp)
-            fontInfo = font.getFontInfo()
 
             is_bold = font.isBold()
             is_italic = font.isItalic()
