@@ -5,6 +5,7 @@ from dehinter.font import dehint
 from fontTools.ttLib import TTCollection
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.removeOverlaps import removeOverlaps
+
 from ftcli.Lib.Font import Font
 from ftcli.Lib.utils import getFontsList, makeOutputFileName, getSourceString
 

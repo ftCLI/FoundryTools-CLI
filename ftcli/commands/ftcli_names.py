@@ -568,6 +568,7 @@ def add_prefix(input_path, prefix, name_ids, platform, output_dir, recalc_timest
         except Exception as e:
             click.secho(f'ERROR: {e}', fg='red')
 
+
 @click.group()
 def addSuffix():
     pass

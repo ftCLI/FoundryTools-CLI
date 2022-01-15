@@ -1,7 +1,7 @@
 import os
-import sys
 
 import click
+
 from ftcli.Lib.CUI import CUI
 from ftcli.Lib.Font import Font
 from ftcli.Lib.configHandler import configHandler

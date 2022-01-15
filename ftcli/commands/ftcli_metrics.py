@@ -2,6 +2,7 @@ import os
 import sys
 
 import click
+
 from ftcli.Lib.Font import Font
 from ftcli.Lib.utils import getFontsList, makeOutputFileName, guessFamilyName
 

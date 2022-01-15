@@ -24,6 +24,7 @@ def ft_name(input_path, name_id, max_lines):
     """
     CUI().printFtName(input_path, name_id=name_id, max_lines=max_lines)
 
+
 # printNames
 
 
@@ -50,6 +51,7 @@ def ft_names(input_path, max_lines, minimal):
     else:
         click.secho('\n{} is not a valid font'.format(input_path), fg='red')
 
+
 # printFontInfo
 
 
@@ -68,6 +70,7 @@ def ft_info(input_path):
         CUI().printFtInfo(input_path)
     else:
         click.secho('\n{} is not a valid font'.format(input_path), fg='red')
+
 
 # printFontsList
 
@@ -104,6 +107,7 @@ def tbl_head(input_path):
         CUI().printTableHead(input_path)
     else:
         click.secho('No valid font found.', fg='red')
+
 
 # printOS2Table
 
