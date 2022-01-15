@@ -548,39 +548,6 @@ See https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection fo
     ftcli os2 -ob 1 "C:\Fonts\MyFont-Oblique.otf"
     ftcli os2 -ob 0 "C:\Fonts\MyFont-Regular.otf"
 
-    -ach, --ach-vend-id TEXT
-
-
-
-
-
-
-Sets the OS/2.achVendID tag (vendor's four-character identifier).
-
-    -dsig, --add-dummy-dsig
-
-Adds a dummy signature.
-
-If the DSIG table is already present, this option will be ignored. Use '-dt DSIG -dsig' to force the replacement of an
-existing DSIG table.
-
-
-  
-    -o, --output-dir DIRECTORY
-  
-The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
-files are saved to the same folder.
-
-    --recalc-timestamp / --no-recalc-timestamp
-
-Keeps the original font 'modified' timestamp (head.modified) or set it to current time. By default, original timestamp
-is kept.
-
-    --overwrite / --no-overwrite
-
-Overwrites existing output files or save them to a new file (numbers are appended at the end of filename). By default,
-files are overwritten.
-
 ##### -ach, --ach-vend-id'
 Sets the achVendID tag (vendor's four-character identifier).
 
