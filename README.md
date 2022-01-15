@@ -349,14 +349,16 @@ Overwrite existing output files or save them to a new file (numbers are appended
 files are overwritten.
 
 ### ftcli os2
-Usage: ftcli cli-tool [OPTIONS] INPUT_PATH
-
 A command line tool to edit OS/2 table.
 
-Usage examples:
+**Usage:**
+
+    ftcli cli-tool [OPTIONS] INPUT_PATH
+
+
+**Usage examples:**
 
     ftcli os2 "C:\Fonts\" -el 4 -utm -o "C:\Fonts\Fixed fonts\"
-
     ftcli os2 "C:\Fonts\MyFont-BoldItalic.otf" -b -i --wg 700 --no-overwrite
 
 
@@ -627,13 +629,25 @@ Recalculates usMaxContext value.
 The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
 files are saved to the same folder.
 
+**Usage example:**
+
+    ftcli os2 -el 2 -utm "C:\Fonts" -o "C:\Fonts\Fixed"
+
 ##### --recalc-timestamp
 By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
 to current time.
 
+**Usage example:**
+
+    ftcli os2 -el 2 -utm "C:\Fonts" -o --recalc-timestamp
+
 ##### --no-overwrite
 By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
 of file name).
+
+**Usage example:**
+
+    ftcli os2 -el 2 -utm "C:\Fonts" --no-overwrite
 
 ### metrics
 Usage:
