@@ -622,7 +622,7 @@ class Font(TTFont):
         return is_nth_bit_set(self['OS/2'].fsSelection, 9)
 
     def isRegular(self):
-        return is_nth_bit_set(self['OS/2'].fsSelection, 6)
+        return is_nth_bit_set(self['OS/2'].fsSelection, 6) and not self.isBold() and not self.isItalic()
 
     def isWWS(self):
         return is_nth_bit_set(self['OS/2'].fsSelection, 8)
