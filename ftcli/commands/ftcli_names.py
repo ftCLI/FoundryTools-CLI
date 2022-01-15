@@ -13,15 +13,20 @@ def delAllNames():
 
 @delAllNames.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, original timestamp is kept.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   'name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def clean_nametable(input_path, output_dir, recalc_timestamp, overwrite):
     """Deletes all namerecords from the 'name' table.
     """
@@ -71,15 +76,20 @@ def winToMac():
 
 @winToMac.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, original timestamp is kept.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   'name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def win_2_mac(input_path, output_dir, recalc_timestamp, overwrite):
     """Copies all namerecords from Windows table to Macintosh table.
     """
@@ -107,15 +117,20 @@ def deleteMacNames():
 @click.option('-ex', '--exclude-namerecord', type=click.IntRange(0, 32767), multiple=True,
               help="Name IDs to ignore. The specified name IDs won't be deleted. This option can be repeated "
                    "(example: -ex 3 -ex 5 -ex 6...).")
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, original timestamp is kept.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   'name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def del_mac_names(input_path, exclude_namerecord, output_dir, recalc_timestamp, overwrite):
     """Deletes all namerecords where platformID is equal to 1.
 
@@ -168,15 +183,20 @@ def setCffName():
 @click.option('--weight', type=str, default=None, help="Sets the CFF weight.")
 @click.option('--copyright', type=str, default=None, help="Sets the CFF copyright.")
 @click.option('--notice', type=str, default=None, help="Sets the CFF notice.")
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, original timestamp is kept.')
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   ' name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def set_cff_name(input_path, font_name, full_name, family_name, weight, copyright, notice, output_dir,
                  recalc_timestamp, overwrite):
     """Sets names in the CFF table."""
@@ -218,15 +238,20 @@ def setNameRecord():
               help="platform [win, mac]. If it's not specified, name will be written in both tables.")
 @click.option('-l', '--language', default="en", show_default=True, help="language")
 @click.option('-s', '--string', required=True, help='string')
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, original timestamp is kept.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   ' name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def set_name(input_path, name_id, platform, language, string, output_dir, recalc_timestamp, overwrite):
     """Writes the specified namerecord in the name table.
 
@@ -273,15 +298,20 @@ def setNameRecordFromTxt():
 @click.option('-l', '--language', default="en", show_default=True, help="language")
 @click.option('-i', '--input-file', type=click.Path(exists=True, resolve_path=True), required=True,
               help="Path to the text file to read.")
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, original timestamp is kept.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   ' name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def name_from_txt(input_path, name_id, platform, language, input_file, output_dir, recalc_timestamp, overwrite):
     """Reads a text file and writes its content into the specified namerecord in the name table.
 
@@ -330,15 +360,20 @@ def delNameRecord():
               help="platform [win, mac]. If no platform is specified, the namerecord will be deleted from both tables.")
 @click.option('-l', '--language', default="en", show_default=True,
               help="Specify the name ID language (eg: 'de'), or use 'ALL' to delete the name ID from all languages.")
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, timestamp is not recalculated.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   ' name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def del_name(input_path, name_id, platform, language, output_dir, recalc_timestamp, overwrite):
     """Deletes the specified nemerecord from the name table.
 
@@ -385,15 +420,20 @@ def findReplace():
 @click.option('-ex', '--exclude-namerecord', type=click.IntRange(0, 32767), multiple=True,
               help="Name IDs to ignore. The specified name IDs won't be changed. This option can be repeated "
                    "(example: -ex 3 -ex 5 -ex 6...).")
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, timestamp is not recalculated.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   ' name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def find_replace(input_path, old_string, new_string, name_id, platform, fix_cff, exclude_namerecord, output_dir,
                  recalc_timestamp, overwrite):
     """Replaces a string in the name table with a new string.
@@ -458,15 +498,20 @@ def copyNameTable():
               help="Path to the source font.")
 @click.option('-d', '--dest_font', required=True, type=click.Path(exists=True, resolve_path=True, dir_okay=False),
               help="Path to the destination font.")
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, timestamp is not recalculated.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   ' name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def copy_names(source_font, dest_font, output_dir, recalc_timestamp, overwrite):
     """Copies the 'name' table from source_font to dest_font.
     """
@@ -494,15 +539,20 @@ def addPrefix():
               help="nameID where to add the prefix (Integer between 0 and 32767)")
 @click.option("-p", "--platform", type=click.Choice(choices=["win", "mac"]),
               help="platform [win, mac]. If no platform is specified, the prefix will be added in both tables.")
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, timestamp is not recalculated.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   ' name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def add_prefix(input_path, prefix, name_ids, platform, output_dir, recalc_timestamp, overwrite):
     """Adds a prefix to the specified namerecords.
     """
@@ -530,15 +580,20 @@ def addSuffix():
               help="nameID where to add the suffix (Integer between 0 and 32767)")
 @click.option("-p", "--platform", type=click.Choice(choices=["win", "mac"]),
               help="platform [win, mac]. If no platform is specified, the suffix will be added in both tables.")
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, timestamp is not recalculated.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   ' name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def add_suffix(input_path, suffix, name_ids, platform, output_dir, recalc_timestamp, overwrite):
     """Adds a suffix to the specified namerecords.
     """

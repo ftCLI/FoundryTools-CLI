@@ -17,15 +17,20 @@ def dsig_add():
 
 @dsig_add.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-@click.option('-o', '--output-dir', type=click.Path(resolve_path=True),
-              help='The output directory where the output files are to be created. If it doesn\'t exist, will be'
-                   'created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False,
-              help='Keeps the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, original timestamp is kept.')
-@click.option('--overwrite/--no-overwrite', default=True,
-              help='Overwrites existing output files or save them to a new file (numbers are appended at the end of'
-                   'filename). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def add_dsig(input_path, recalc_timestamp, output_dir, overwrite):
     """Adds a dummy DSIG to the font, if it's not present.
     """
@@ -73,18 +78,23 @@ def remove_hinting():
 @click.option('--keep-maxp', is_flag=True, default=False, help="do not modify maxp table")
 @click.option('--keep-head', is_flag=True, default=False, help="do not head glyf table")
 @click.option('--verbose', is_flag=True, default=False, help="display standard output")
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, original timestamp is kept.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of '
-                   'file name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def dehinter(input_path, keep_cvar, keep_cvt, keep_fpgm, keep_hdmx, keep_ltsh, keep_prep, keep_ttfa, keep_vdmx,
-                   keep_glyf, keep_gasp, keep_maxp, keep_head, verbose, output_dir=None, recalc_timestamp=False,
-                   overwrite=True):
+             keep_glyf, keep_gasp, keep_maxp, keep_head, verbose, output_dir=None, recalc_timestamp=False,
+             overwrite=True):
     """Drops hinting from all glyphs.
 
     Currently, this only works with TrueType fonts with 'glyf' table.
@@ -116,15 +126,20 @@ def overlaps_remove():
 
 @overlaps_remove.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, original timestamp is kept.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of '
-                   'file name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def remove_overlaps(input_path, output_dir=None, recalc_timestamp=False, overwrite=True):
     """Simplify glyphs in TTFont by merging overlapping contours.
 
@@ -232,15 +247,20 @@ def extract_ttc():
 
 @extract_ttc.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True, dir_okay=False))
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, original timestamp is kept.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of file'
-                   'name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def ttc_extractor(input_path, output_dir=None, recalc_timestamp=False, overwrite=True):
     """Extracts .ttc fonts to otf/ttf fonts.
     """
