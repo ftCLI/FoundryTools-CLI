@@ -75,17 +75,22 @@ def alignVMetrics():
 
 @alignVMetrics.command()
 @click.argument('input_path', type=click.Path(exists=True, file_okay=False, resolve_path=True))
-@click.option('-sil', '--sil-method', is_flag=True, help='Use SIL method: '
-                                                         'http://silnrsi.github.io/FDBP/en-US/Line_Metrics.html')
+@click.option('-sil', '--sil-method', is_flag=True,
+              help='Use SIL method: http://silnrsi.github.io/FDBP/en-US/Line_Metrics.html')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
-              help='The output directory where the output files are to be created. If it doesn\'t exist, will be '
-                   'created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False,
-              help='Keeps the original font \'modified\' timestamp (head.modified) or set it to current time. '
-                   'By default, original timestamp is kept.')
-@click.option('--overwrite/--no-overwrite', default=True,
-              help='Overwrites existing output files or save them to a new file (numbers are appended at the end of '
-                   'file name). By default, files are overwritten.')
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def align(input_path, sil_method, output_dir, recalc_timestamp, overwrite):
     """
     Aligns all fonts in INPUT_PATH to the same baseline.
@@ -177,14 +182,19 @@ def copyVMetrics():
 @click.option('-d', '--destination', type=click.Path(exists=True, resolve_path=True), required=True,
               help='Destination file or directory')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
-              help='The output directory where the output files are to be created. If it doesn\'t exist, will be '
-                   'created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False,
-              help='Keeps the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, original timestamp is kept.')
-@click.option('--overwrite/--no-overwrite', default=True,
-              help='Overwrites existing output files or save them to a new file (numbers are appended at the end of '
-                   'file name). By default, files are overwritten.')
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def copy(source_file, destination, output_dir, recalc_timestamp, overwrite):
     """
     Copies vertical metrics from a source font to one or more destination fonts.

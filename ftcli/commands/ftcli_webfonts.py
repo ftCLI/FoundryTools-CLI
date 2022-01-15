@@ -107,15 +107,20 @@ def fontToWebfont():
                    'will be created')
 @click.option('-d', '--delete-source-file', is_flag=True,
               help='If this option is active, source file will be deleted.')
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, original timestamp is kept.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of '
-                   'file name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def compress(input_path, flavor, delete_source_file=False, output_dir=None, recalc_timestamp=False, overwrite=True):
     """
 Converts OpenType fonts to WOFF/WOFF2 format.
@@ -160,15 +165,20 @@ def webfontToFont():
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-d', '--delete-source-file', is_flag=True,
               help='If this option is active, source file will be deleted after conversion.')
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help='Specify the output directory where the output files are to be saved. If output_directory doesn\'t '
-                   'exist, will be created. If not specified, files are saved to the same folder.')
-@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False, show_default=True,
-              help='Keep the original font \'modified\' timestamp (head.modified) or set it to current time. By '
-                   'default, original timestamp is kept.')
-@click.option('--overwrite/--no-overwrite', default=True, show_default=True,
-              help='Overwrite existing output files or save them to a new file (numbers are appended at the end of '
-                   'file name). By default, files are overwritten.')
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
 def decompress(input_path, delete_source_file=False, output_dir=None, recalc_timestamp=False, overwrite=True):
     """
 Converts WOFF/WOFF2 files to OpenType format.
