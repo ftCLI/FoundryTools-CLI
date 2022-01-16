@@ -30,7 +30,7 @@ def setLineGap():
 def set_linegap(input_path, percent, modify_family_name, output_dir, recalc_timestamp, overwrite):
     """Modifies the line spacing metrics in one or more fonts.
 
-    TThis is a CLI for font-line by Source Foundry: https://github.com/source-foundry/font-line
+    This is a fork of font-line by Source Foundry: https://github.com/source-foundry/font-line
     """
 
     files = getFontsList(input_path)
@@ -94,7 +94,7 @@ of file name).
 """)
 def align(input_path, sil_method, output_dir, recalc_timestamp, overwrite):
     """
-    Aligns all fonts in INPUT_PATH to the same baseline.
+    Aligns all fonts stored in INPUT_PATH folder to the same baseline.
 
     To achieve this, the script finds the maximum ascender and the minimum descender values of the fonts stored in the
     INPUT_PATH folder and applies those values to all fonts.
@@ -103,7 +103,7 @@ def align(input_path, sil_method, output_dir, recalc_timestamp, overwrite):
     In such cases, it's better to copy the vertical metrics from a template font to one or more destination fonts using
     the 'ftcli metrics copy' command.
 
-    See https://www.kltf.de/downloads/FontMetrics-kltf.pdf for more information.
+    See https://kltf.de/download/FontMetrics-kltf.pdf for more information.
     """
     files = getFontsList(input_path)
 
@@ -181,7 +181,7 @@ def copyVMetrics():
 @click.option('-s', '--source-file', type=click.Path(exists=True, dir_okay=False, resolve_path=True), required=True,
               help='Source file. Vertical metrics from this font will be applied to all destination fonts.')
 @click.option('-d', '--destination', type=click.Path(exists=True, resolve_path=True), required=True,
-              help='Destination file or directory')
+              help='Destination file or directory.')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help="""
 The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
@@ -242,11 +242,5 @@ def copy(source_file, destination, output_dir, recalc_timestamp, overwrite):
 
 
 cli = click.CommandCollection(sources=[alignVMetrics, copyVMetrics, setLineGap], help="""
-Aligns all the fonts to the same baseline.
-
-The 'ftcli metrics align' command calculates the maximum ascenders and descenders of a set of fonts and applies them to
-all fonts in that set.
-
-The 'ftcli metrics copy' command copies vertical metrics from a source font to one or more destination fonts.
-    """
-                              )
+Vertical metrics tools.
+""")
