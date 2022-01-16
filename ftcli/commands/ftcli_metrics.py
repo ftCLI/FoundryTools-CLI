@@ -15,9 +15,9 @@ def setLineGap():
 @setLineGap.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-p', '--percent', type=click.IntRange(1, 100), required=True,
-              help="adjust font line spacing to % of UPM value")
+              help="Adjust font line spacing to % of UPM value.")
 @click.option('-mfn', '--modify-family-name', is_flag=True,
-              help="adds 'LG% to the font family to reflect the modified line gap'")
+              help="Adds LG% to the font family to reflect the modified line gap.")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help='The output directory where the output files are to be created. If it doesn\'t exist, will be '
                    'created. If not specified, files are saved to the same folder.')
