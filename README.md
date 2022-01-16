@@ -1,6 +1,7 @@
 # ftCLI
 
-ftCLI is a command line interface built with [click](https://click.palletsprojects.com/en/8.0.x/) to edit fonts using [FontTools](https://github.com/fonttools/fonttools).
+ftCLI is a command line interface built with [click](https://click.palletsprojects.com/en/8.0.x/) to edit fonts using
+[FontTools](https://github.com/fonttools/fonttools).
 
 Python 3.8 or later is required to install ftCLI.
 
@@ -19,22 +20,20 @@ The following packages will be installed during setup:
     pip install -e .
  
 ## Commands list
-* assistant
+* **assistant**
   * edit-cfg
   * edit-csv
   * init-cfg
   * init-csv
   * recalc-csv
   * recalc-names
-
-
-* metrics
+  
+* **metrics**
     * align
     * copy
     * set-linegap
-
-
-* names
+    
+* **names**
     * del-mac-names
     * del-name
     * win-2-mac
@@ -43,28 +42,24 @@ The following packages will be installed during setup:
     * set-name
     * set-cff-name
 
+* **os2**
 
-* os2
-
-
-* print
+* **print**
     * ft-info
     * ft-list
     * ft-name
     * ft-names
     * tbl-head
     * tbl-os2
-
-
-* utils
+    
+* **utils**
   * add-dsig
   * font-renamer
   * remove-hinting
   * remove-overlaps
   * ttc-extractor
-
-
-* webfonts
+  
+* **webfonts**
     * compress
     * decompress
     * makecss
@@ -91,13 +86,21 @@ family, as well as the desired italic and oblique literals:
         "weights": {
             "250": ["Th", "Thin"],
             "275": ["ExLt", "ExtraLight"],
+
             ...
+
+            800: ["XBd", "ExtraBold"],
+            900: ["Blk", "Black"]
         },
             
         "widths": {
             "1": ["Cm", "Compressed"],
             "2": ["ExCn", "ExtraCondensed"],
+
             ...
+
+          "8": ["ExExtd", "ExtraExtended"],
+          "9": ["Exp", "Expanded"]
         }
     }
 
@@ -111,7 +114,7 @@ file).
 
 Once created the configuration file, you may be in need to edit it according to your needs.
 
-    ftcli assistant edit-cfg CONFIG_FILE
+    ftcli assistant edit-cfg FILE
 
 Values contained in the configuration file will be used to fill the data.csv file in the next steps.
 
@@ -122,22 +125,34 @@ usWeightClass values. Once properly filled, the values contained in this file wi
 
 It contains 13 columns:
 
-file_name, family_name, is_bold, is_italic, is_oblique, uswidthclass, wdt, width, usweightclass, wgt, weight, slp,
-slope.
+    file_name, family_name, is_bold, is_italic, is_oblique, uswidthclass, wdt, width, usweightclass, wgt, weight, slp,
+    slope.
 
-The 'is_bold' column is present only for completeness, but it's values will be ignored. A font will be set as bold only
-and only if, during the names recalculation, the user will choose to use linked styles (-ls / --linked styles option).
+**family_name:** the column is filled reading nameID 16, or nameID 1 if 16 is not present.
 
-The 'wdt' and 'width' columns contain the short and long literals for the width style names (for example: Cn;
+**is_italic:** if OS/2.fsSelection bit 0 and head.macStyle bit 1 are set, the value is 1, otherwise 0.
+
+**is_bold:** if OS/2.fsSelection bit 5 and head.macStyle bit 0 are set, the value is 1, otherwise 0.
+
+This column is present only for completeness, but it's value will be ignored. A font will be set as bold only
+and only if, while running the ftcli assistant recalc-names command, the user will choose to use linked styles
+(-ls / --linked styles) option:
+
+    ftcli assistant recalc-names "C:\Fonts" -ls 400 700
+
+**wdt** and **width**: these columns contain the short and long literals for the width style names (for example: Cn;
 Condensed).
 
-The 'wgt' and 'weight' columns contain the short and long literals for the weight style names (for example: Lt, Light).
+**wgt** and **weight**: these columns contain the short and long literals for the weight style names (for example: Lt, Light).
 
-The 'slp' and 'slope' columns contain the short and long literals for the slope style names (for example: It, Italic).
+**slp** and **slope**: these columns contain the short and long literals for the slope style names (for example: It,
+Italic).
 
-The user will choose the namerecords where to write long or short literals.
+The user will choose the namerecords where to write long or short literals. For example:
 
-The 'data.csv' file can be created using the following command:
+    ftcli assistant recalc-names "C:\Fonts" -swdt 1 -swdt 4 -swdt 6 -swgt 1 -swgt 4 -swgt 6 -sslp 4 -sslp 6
+
+The **data.csv** file can be created using the following command:
 
     ftcli assistant init-csv INPUT_PATH
 
@@ -348,6 +363,110 @@ is kept.
 Overwrite existing output files or save them to a new file (numbers are appended at the end of filename). By default,
 files are overwritten.
 
+### ftcli metrics
+Vertical metrics tools.
+
+**Usage:**
+
+    ftcli metrics COMMAND [ARGS]...
+
+**Commands:**
+
+* align
+* copy
+* set-linegap
+
+#### General options
+These options are valid for all the following commands:
+
+##### -o, -output-dir
+The directory where the output files are to be created. If it doesn't exist, will be created. If not specified, files
+are saved to the same folder.
+
+**Usage example:**
+
+    ftcli metrics align "C:\Fonts" -o "C:\Fonts\Aligned"
+
+##### --recalc-timestamp
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+
+**Usage example:**
+
+    ftcli metrics copy -s "C:\Fonts\SourceFont.otf" "C:\Fonts\" --recalc-timestamp
+
+##### --no-overwrite
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+
+**Usage example:**
+
+**Usage:**
+
+    ftcli metrics align [OPTIONS] INPUT_PATH
+    ftcli metrics copy [OPTIONS] INPUT_PATH
+    ftcli metrics set-linegap [OPTIONS] INPUT_PATH
+
+**Usage example:**
+
+    ftcli metrics align "C:\Fonts" --no-overwrite --output-dir "C:\Fonts\align"
+
+#### ftcli metrics align
+
+Aligns all fonts stored in INPUT_PATH folder to the same baseline.
+
+To achieve this, the script finds the maximum ascender and the minimum descender values of the fonts stored in the
+INPUT_PATH folder and applies those values to all fonts.
+
+This can produce undesired effects (an exaggerated line height) when one or more fonts contain swashes, for example.
+In such cases, it's better to copy the vertical metrics from a template font to one or more destination fonts using
+the 'ftcli metrics copy' command.
+
+See https://kltf.de/download/FontMetrics-kltf.pdf for more information.
+
+##### Options
+
+##### -sil, --sil-method
+Use SIL method: http://silnrsi.github.io/FDBP/en-US/Line_Metrics.html
+
+#### ftcli metrics copy
+    
+Copies vertical metrics from a source font to one or more destination fonts.
+
+##### Options
+
+**-s, --source-file FILE**: the source font from which vertical metrics will be retireved and applied to all fonts in
+destination path (required).
+
+**-d, --destination PATH**: Destination file or directory (required).
+
+**Usage:**
+
+    ftcli metrics copy -s/--source-file FILE -d/--destination PATH
+
+**Usage example:**
+
+    ftcli metrics copy -s "C:\MySourceFont.otf" -d "C:\Fonts\"
+
+#### ftcli metrics set-linegap
+Modifies the line spacing metrics in one or more fonts.
+
+This is a fork of font-line by Source Foundry: https://github.com/source-foundry/font-line
+
+##### Options:
+
+    -p, --percent INTEGER RANGE (1-100)
+
+Adjust font line spacing to % of UPM value.
+
+    -mfn, --modify-family-name
+
+Adds LG% to the font family to reflect the modified line gap.
+
+##### Usage example:
+
+    ftcli metrics set-linegap -p 20 -mfn
+
 ### ftcli os2
 A command line tool to edit OS/2 table.
 
@@ -355,6 +474,8 @@ A command line tool to edit OS/2 table.
 
     ftcli cli-tool [OPTIONS] INPUT_PATH
 
+The INPUT_PATH parameter can be a single file or a folder. In the last case, all fonts stored in the folder will be
+processed.
 
 **Usage examples:**
 
@@ -524,7 +645,7 @@ See also https://typedrawers.com/discussion/3857/fontlab-7-windows-reads-exporte
     ftcli os2 -wws 0 "C:\Fonts\MyFont-BlackItalicDisplay.otf"
 
 ##### -ob, --oblique
-Sets or clears the oblique bit (fsSelection bit 9).
+Sets or clears the OBLIQUE bit (fsSelection bit 9).
 
 If bit 9 is set, then this font is to be considered an “oblique” style by processes which make a distinction between
 oblique and italic styles, such as Cascading Style Sheets font matching. For example, a font created by algorithmically
@@ -615,27 +736,6 @@ of file name).
 **Usage example:**
 
     ftcli os2 -el 2 -utm "C:\Fonts" --no-overwrite
-
-### metrics
-Usage:
-
-    ftcli font-metrics [OPTIONS] COMMAND [ARGS]...
-
-Aligns all the fonts to the same baseline.
-
-The 'ftcli font-metrics align' command calculates the maximum ascenders and descenders of a set of fonts and applies them to all fonts in that set.
-
-The 'ftcli font-metrics copy' command copies vertical metrics from a source font to one or more destination fonts.
-
-Commands:
-
-    align
-
-Aligns all fonts in INPUT_PATH to the same baseline.
-
-    copy
-    
-Copies vertical metrics from a source font to one or more destination fonts.
 
 ### names
 
