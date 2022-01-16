@@ -69,7 +69,7 @@ Also: https://typedrawers.com/discussion/3857/fontlab-7-windows-reads-exported-f
 
 """)
 @click.option('-ob', '--oblique', type=click.Choice(['0', '1']),
-              help='Sets or clears the oblique bit (fsSelection bit 9).')
+              help='Sets or clears the OBLIQUE bit (fsSelection bit 9).')
 @click.option('-ach', '--ach-vend-id', type=str,
               help='Sets the achVendID tag (vendor\'s four-character identifier).')
 @click.option('--recalc-unicode-ranges', is_flag=True,
