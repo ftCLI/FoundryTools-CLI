@@ -65,7 +65,7 @@ The following packages will be installed during setup:
     * makecss
 
 
-### assistant
+## ftcli assistant
 A set of tools to correctly compile the name table and set proper values for usWeightClass, usWidthClass, bold, italic
 and oblique bits.
 
@@ -73,7 +73,7 @@ The process creates a JSON configuration file and a CSV file that will be used t
 automatically created and eventually edited manually or using the integrated command line editor. Once everything is
 correctly set in the CSV file, the values inside it can be written to fonts.
 
-#### 1) The JSON configuration file.
+### 1) The JSON configuration file.
 
 The 'config.json' file contains the desired style names to pair with each usWidthClass and usWeightClass values of the
 family, as well as the desired italic and oblique literals:
@@ -118,7 +118,7 @@ Once created the configuration file, you may be in need to edit it according to 
 
 Values contained in the configuration file will be used to fill the data.csv file in the next steps.
 
-#### 2) The CSV data file.
+### 2) The CSV data file.
 
 The final data.csv file will contain the desired style names, family name, italic and oblique bits, usWidthClass and
 usWeightClass values. Once properly filled, the values contained in this file will be written to the fonts.
@@ -166,21 +166,21 @@ according to the values contained in the JSON configuration file.
 When the 'data.csv' file contains the desired values, these values can be applied to fonts running the 'ftcli assistant
 recalc-names' command (see 'ftcli assistant recalc-names --help' for more information).
 
-#### edit-cfg
+### ftcli assistant edit-cfg
 Command line editor for JSON configuration files.
 
-Usage:
+**Usage:**
 
     ftcli  edit-cfg [OPTIONS] CONFIG_FILE
 
-Example:
+**Example:**
 
     ftcli assistant edit-cfg "C:\Fonts\config.json"
 
 It is strongly recommended using this tool to edit the JSON configuration files. It prevents malformed JSON errors and
 errors due to wrong values (for example, an out of range usWeightClass, or a string where's an integer is expected).
 
-#### edit-csv
+### ftcli assistant edit-csv
 Usage:
 
     ftcli assistant edit-csv [OPTIONS] INPUT_PATH
@@ -196,7 +196,7 @@ Options:
 
 Use a custom configuration file instead of the default config.json file located in the same folder of INPUT_PATH.
 
-#### init-cfg
+### ftcli assistant init-cfg
 Usage:
 
     ftcli assistant init-cfg [OPTIONS] INPUT_PATH
@@ -209,7 +209,7 @@ Options:
 
 Suppress overwrite confirmation message if the config.json file already exists.
 
-#### init-csv
+### ftcli assistant init-csv
 Usage:
 
     ftcli  init-csv [OPTIONS] INPUT_PATH
@@ -248,7 +248,7 @@ Use a custom configuration file instead of the default config.json file located 
 
 Suppress overwrite confirmation message if the data.csv and/or config.json files already exist.
 
-#### recalc-csv
+### ftcli assistant recalc-csv
 Usage:
 
     ftcli  recalc-csv [OPTIONS] INPUT_PATH
@@ -379,7 +379,7 @@ Vertical metrics tools.
 #### General options:
 These options are valid for all the subcommands:
 
-##### -o, -output-dir
+##### -o, -output-dir DIRECTORY
 The directory where the output files are to be created. If it doesn't exist, will be created. If not specified, files
 are saved to the same folder.
 
