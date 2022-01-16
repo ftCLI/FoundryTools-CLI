@@ -376,8 +376,8 @@ Vertical metrics tools.
 * copy
 * set-linegap
 
-#### General options
-These options are valid for all the following commands:
+#### General options:
+These options are valid for all the subcommands:
 
 ##### -o, -output-dir
 The directory where the output files are to be created. If it doesn't exist, will be created. If not specified, files
