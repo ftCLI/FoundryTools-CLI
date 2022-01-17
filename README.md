@@ -64,8 +64,38 @@ The following packages will be installed during setup:
     * decompress
     * makecss
 
+## Arguments
 
-## ftcli assistant
+### INPUT_PATH
+With some exceptions, all ftCLI subcommands process files in the given path. The INPUT_PATH argument can be generally a
+single font file or a folder containing one or more fonts. In case a directory is passed as INPUT_PATH, all fonts stored
+in it will be processed, with the exclusion of fonts stored in subdirectories.
+
+## General options
+The `-o, -output-dir`, `--recalc-timestamp` and `--no-overwrite` options can be used in all subcommands, unless
+otherwise specified.
+
+### `-o, -output-dir DIRECTORY`
+The directory where the output files are to be saved. If `output_dir` is not specified, files are saved to the same
+folder. If the user passes a directory that doesn't exist, it will be automatically created. 
+
+### `--recalc-timestamp`
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+
+### `--no-overwrite`
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name, so that Times-Bold.otf becomes TimesBold#1.otf).
+
+### Usage examples:
+
+    ftcli metrics align "C:\Fonts" --output-dir "C:\Fonts\Aligned"
+
+    ftcli metrics copy -s "C:\Fonts\SourceFont.otf" -d "C:\Fonts\" --recalc-timestamp
+
+    ftcli metrics copy -s "C:\Fonts\SourceFont.otf" -d "C:\Fonts\" --no-overwrite
+
+## Command: `ftcli assistant`
 A set of tools to correctly compile the name table and set proper values for usWeightClass, usWidthClass, bold, italic
 and oblique bits.
 
@@ -363,55 +393,17 @@ is kept.
 Overwrite existing output files or save them to a new file (numbers are appended at the end of filename). By default,
 files are overwritten.
 
-### ftcli metrics
-Vertical metrics tools.
+## ftCLI metrics
+Vertical metrics tools to align a group of fonts to the same baseline, copy vertical metrics from a font to other fonts
+and set the line gap for one or more fonts.
 
-**Usage:**
+### Usage:
 
     ftcli metrics COMMAND [ARGS]...
 
-**Commands:**
+Only one subcommand at time can be used.
 
-* align
-* copy
-* set-linegap
-
-#### General options:
-These options are valid for all the subcommands:
-
-##### -o, -output-dir DIRECTORY
-The directory where the output files are to be created. If it doesn't exist, will be created. If not specified, files
-are saved to the same folder.
-
-**Usage example:**
-
-    ftcli metrics align "C:\Fonts" -o "C:\Fonts\Aligned"
-
-##### --recalc-timestamp
-By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
-to current time.
-
-**Usage example:**
-
-    ftcli metrics copy -s "C:\Fonts\SourceFont.otf" "C:\Fonts\" --recalc-timestamp
-
-##### --no-overwrite
-By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
-of file name).
-
-**Usage example:**
-
-**Usage:**
-
-    ftcli metrics align [OPTIONS] INPUT_PATH
-    ftcli metrics copy [OPTIONS] INPUT_PATH
-    ftcli metrics set-linegap [OPTIONS] INPUT_PATH
-
-**Usage example:**
-
-    ftcli metrics align "C:\Fonts" --no-overwrite --output-dir "C:\Fonts\align"
-
-#### ftcli metrics align
+### Subcommand: `ftcli metrics align`
 
 Aligns all fonts stored in INPUT_PATH folder to the same baseline.
 
@@ -419,36 +411,41 @@ To achieve this, the script finds the maximum ascender and the minimum descender
 INPUT_PATH folder and applies those values to all fonts.
 
 This can produce undesired effects (an exaggerated line height) when one or more fonts contain swashes, for example.
-In such cases, it's better to copy the vertical metrics from a template font to one or more destination fonts using
-the 'ftcli metrics copy' command.
+In such cases, an alternative could be coping vertical metrics from a template font to one or more destination fonts
+using the `ftcli metrics copy` command.
 
 See https://kltf.de/download/FontMetrics-kltf.pdf for more information.
 
-##### Options
+#### Options
 
-##### -sil, --sil-method
+##### `-sil, --sil-method`
 Use SIL method: http://silnrsi.github.io/FDBP/en-US/Line_Metrics.html
 
-#### ftcli metrics copy
+#### Usage example
+
+    fcli metrics align "C:\Fonts" --sil
+
+### Subcommand: `ftcli metrics copy`
     
 Copies vertical metrics from a source font to one or more destination fonts.
 
-##### Options
+#### Options
 
-**-s, --source-file FILE**: the source font from which vertical metrics will be retireved and applied to all fonts in
-destination path (required).
+##### `-s, --source-file FILE`
+The source font from which vertical metrics will be retireved and applied to all fonts in destination path (required).
 
-**-d, --destination PATH**: Destination file or directory (required).
+##### `-d, --destination PATH`
+Destination file or directory (required).
 
-**Usage:**
+#### Usage
 
     ftcli metrics copy -s/--source-file FILE -d/--destination PATH
 
-**Usage example:**
+#### Usage example
 
     ftcli metrics copy -s "C:\MySourceFont.otf" -d "C:\Fonts\"
 
-#### ftcli metrics set-linegap
+#### `ftcli metrics set-linegap`
 Modifies the line spacing metrics in one or more fonts.
 
 This is a fork of font-line by Source Foundry: https://github.com/source-foundry/font-line
@@ -467,7 +464,7 @@ Adds LG% to the font family to reflect the modified line gap.
 
     ftcli metrics set-linegap -p 20 -mfn
 
-### ftcli os2
+## ftcli os2
 A command line tool to edit OS/2 table.
 
 **Usage:**
@@ -483,9 +480,9 @@ processed.
     ftcli os2 "C:\Fonts\MyFont-BoldItalic.otf" -b -i --wg 700 --no-overwrite
 
 
-#### Options:
+### Options:
 
-##### -v, --version
+#### -v, --version
 Updates OS/2.version value. Version can only be incremented at the moment.
 
 When upgrading from version 1, sxHeight, sCapHeight, usDefaultChar, usBreakChar and usMaxContext will be recalculated.
@@ -499,7 +496,7 @@ When upgrading from version 0, also ulCodePageRange1 and ulCodePageRange2 will b
 
     ftcli os2 -v 4 "C:\Fonts\"
 
-##### -wg,  --weight
+#### -wg,  --weight
 Sets the OS/2.usWeightClass value. This parameter must be an integer between 1 and 1000.
 
 **Usage:**
@@ -510,7 +507,7 @@ Sets the OS/2.usWeightClass value. This parameter must be an integer between 1 a
 
     ftcli os2 -wg 700 "C:\Fonts\MyFont-Bold.otf"
 
-##### -wd,  --width
+#### -wd,  --width
 Sets the OS/2.usWidthClass value. This parameter must be an integer between 1 and 9.
 
 **Usage:**
@@ -521,7 +518,7 @@ Sets the OS/2.usWidthClass value. This parameter must be an integer between 1 an
 
     ftcli os2 -wd 3 "C:\Fonts\MyFontCondensed-Bold.otf"
 
-##### -el, --embed-level
+#### -el, --embed-level
 Sets embedding level (OS/2.fsType bits 0-3).
 
 **Usage:**
@@ -544,7 +541,7 @@ Allowed values are 0, 2, 4 or 8:
 
 See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fstype for more information.
 
-##### -ns, --no-subsetting
+#### -ns, --no-subsetting
 Set or clears OS/2.fsType bit 8 (no subsetting).
 
 When this bit is set to 1, the font may not be subsetted prior to
@@ -558,7 +555,7 @@ embedding. Other embedding restrictions specified in bits 0 to 3 and bit 9 also 
 
     ftcli os2 -ns 1 "C:\Fonts\"
 
-##### -beo, --bitmap-embedding-only
+#### -beo, --bitmap-embedding-only
 Sets or clears fsType bit 9 (Bitmap embedding only).
 
 When this bit is set, only bitmaps contained in the font may be embedded. No outline data may be embedded. If there are
@@ -573,7 +570,7 @@ embedding restrictions specified in bits 0-3 and 8 also apply.
 
     ftcli os2 -beo "C:\Fonts"
 
-##### -i, --italic / -ni, --no-italic
+#### -i, --italic / -ni, --no-italic
 Sets or clears the italic bits (fsSelection bit 0 and head.macStyle bit 1).
 
 **Usage:**
@@ -586,7 +583,7 @@ Sets or clears the italic bits (fsSelection bit 0 and head.macStyle bit 1).
     ftcli os2 -i "C:\MyFont-Italic.otf"
     ftcli os2 -ni "C:\MyFont-Regular.otf"
 
-##### -b, --bold / -nb, --no-bold
+#### -b, --bold / -nb, --no-bold
 Sets or clears the bold bits (fsSelection bit 5 and head.macStyle bit 0).
 
 **Usage:**
@@ -599,7 +596,7 @@ Sets or clears the bold bits (fsSelection bit 5 and head.macStyle bit 0).
     ftcli os2 -b "C:\MyFont-Bold.otf"
     ftcli os2 -nb "C:\MyFont-Regular.otf"
 
-##### -r, --regular
+#### -r, --regular
 Sets fsSelection bit 6 and clears bold (fsSelection bit 5, head.macStyle bit 0) and italic (fsSelection bit 0, 
 head.macStyle bit 1) bits. This is equivalent to -nb -ni and can't be used in conjunction with -b or -i.
 
@@ -611,7 +608,7 @@ head.macStyle bit 1) bits. This is equivalent to -nb -ni and can't be used in co
 
     ftcli os2 -r "C:\MyFont-Regular.otf"
 
-##### -utm, --use-typo-metrics
+#### -utm, --use-typo-metrics
 Sets or clears the USE_TYPO_METRICS bit (fsSelection bit 7).
 
 If set, it is strongly recommended that applications use OS/2.sTypoAscender - OS/2.sTypoDescender + OS/2.sTypoLineGap
@@ -627,7 +624,7 @@ See https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection fo
 
     ftcli os2 -utm 1 "C:\Fonts\"
 
-##### -wws, --wws-consistent
+#### -wws, --wws-consistent
 If the OS/2.fsSelection bit is set, the font has 'name' table strings consistent with a weight/width/slope family
 without requiring use of name IDs 21 and 22.
 
@@ -644,7 +641,7 @@ See also https://typedrawers.com/discussion/3857/fontlab-7-windows-reads-exporte
     ftcli os2 -wws 1 "C:\Fonts\MyFont-BlackItalic.otf"
     ftcli os2 -wws 0 "C:\Fonts\MyFont-BlackItalicDisplay.otf"
 
-##### -ob, --oblique
+#### -ob, --oblique
 Sets or clears the OBLIQUE bit (fsSelection bit 9).
 
 If bit 9 is set, then this font is to be considered an “oblique” style by processes which make a distinction between
@@ -669,7 +666,7 @@ See https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection fo
     ftcli os2 -ob 1 "C:\Fonts\MyFont-Oblique.otf"
     ftcli os2 -ob 0 "C:\Fonts\MyFont-Regular.otf"
 
-##### -ach, --ach-vend-id'
+#### -ach, --ach-vend-id'
 Sets the achVendID tag (vendor's four-character identifier).
 
 **Usage:**
@@ -680,7 +677,7 @@ Sets the achVendID tag (vendor's four-character identifier).
 
     ftcli os2 -ach MyFo "C:\Fonts"
 
-##### --recalc-unicode-ranges
+#### --recalc-unicode-ranges
 Recalculates the ulUnicodeRanges 1-4 values.
 
 **Usage:**
@@ -691,7 +688,7 @@ Recalculates the ulUnicodeRanges 1-4 values.
 
     ftcli os2 --recalc-unicode-ranges "C:\Fonts\"
 
-##### --recalc-codepage-ranges
+#### --recalc-codepage-ranges
 Recalculates the ulCodePageRanges 1-2 values.
 
 **Usage:**
@@ -702,7 +699,7 @@ Recalculates the ulCodePageRanges 1-2 values.
 
     ftcli os2 --recalc-codepage-ranges "C:\Fonts\"
 
-##### --recalc-us-max-context
+#### --recalc-us-max-context
 Recalculates usMaxContext value.
 
 **Usage:**
@@ -713,29 +710,15 @@ Recalculates usMaxContext value.
 
     ftcli os2 --recalc-us-max-context "C:\Fonts\"
 
-##### -o, -output-dir
-The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
-files are saved to the same folder.
+### General options
 
-**Usage example:**
+`-o, -output-dir`
 
-    ftcli os2 -el 2 -utm "C:\Fonts" -o "C:\Fonts\Fixed"
+`--recalc-timestamp`
 
-##### --recalc-timestamp
-By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
-to current time.
+`--no-overwrite`
 
-**Usage example:**
-
-    ftcli os2 -el 2 -utm "C:\Fonts" -o --recalc-timestamp
-
-##### --no-overwrite
-By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
-of file name).
-
-**Usage example:**
-
-    ftcli os2 -el 2 -utm "C:\Fonts" --no-overwrite
+See the **General options** section for more information.
 
 ### names
 
