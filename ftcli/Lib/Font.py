@@ -665,7 +665,7 @@ class Font(TTFont):
         self.__clearBoldBits()
         self.__clearItalicBits()
 
-    def usesTypoMetrics(self):
+    def getUseTypoMetricsValue(self):
         return is_nth_bit_set(self['OS/2'].fsSelection, 7)
 
     def setUseTypoMetrics(self):
