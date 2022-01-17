@@ -76,6 +76,10 @@ Also: https://typedrawers.com/discussion/3857/fontlab-7-windows-reads-exported-f
               help='Recalculates the ulUnicodeRanges 1-4 values.')
 @click.option('--recalc-codepage-ranges', is_flag=True,
               help='Recalculates ulCodePageRange 1-2 values.')
+@click.option('--recalc-x-height', is_flag=True,
+              help='Recalculates sxHeight value.')
+@click.option('--recalc-cap-height', is_flag=True,
+              help='Recalculates sCapHeight value.')
 @click.option('--recalc-us-max-context', is_flag=True, help='Recalculates usMaxContext value.')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help="""
@@ -93,7 +97,7 @@ of file name).
 """)
 def cli(input_path, version, weight, width, embed_level, no_subsetting, bitmap_embedding_only, bold, italic, regular,
         use_typo_metrics, wws_consistent, oblique, ach_vend_id, recalc_unicode_ranges, recalc_codepage_ranges,
-        recalc_us_max_context, output_dir, recalc_timestamp, overwrite):
+        recalc_x_height, recalc_cap_height, recalc_us_max_context, output_dir, recalc_timestamp, overwrite):
     """
     Command line OS/2 table editor.
     """
@@ -167,8 +171,6 @@ def cli(input_path, version, weight, width, embed_level, no_subsetting, bitmap_e
                     if bitmap_embedding_only is False:
                         font.clearBitmapEmbedOnlyBit()
 
-                # print(modified)
-
             # Italic bit: fsSelection bit 0 and, consequently, 'head'.macStyle bit 1.
             if italic is not None:
                 if font.isItalic() != italic:
@@ -201,7 +203,7 @@ def cli(input_path, version, weight, width, embed_level, no_subsetting, bitmap_e
             if use_typo_metrics is not None:
                 # Convert string to bool as first thing.
                 use_typo_metrics=bool(int(use_typo_metrics))
-                if font.usesTypoMetrics() != use_typo_metrics:
+                if font.getUseTypoMetricsValue() != use_typo_metrics:
                     font['OS/2'].version = 4
                     if use_typo_metrics is True:
                         if font['OS/2'].version > 3:
@@ -283,6 +285,18 @@ def cli(input_path, version, weight, width, embed_level, no_subsetting, bitmap_e
                     if not font['OS/2'].ulCodePageRange2 == ulCodePageRange2:
                         font['OS/2'].ulCodePageRange2 = ulCodePageRange2
                         modified = True
+
+            # sxHeight value
+            if recalc_x_height is not None:
+                if not font['OS/2'].sxHeight == font.recalcXHeight():
+                    font['OS/2'].sxHeight = font.recalcXHeight()
+                    modified = True
+
+            # sCapHeightValue
+            if recalc_cap_height is not None:
+                if not font['OS/2'].sCapHeight == font.recalcCapHeight():
+                    font['OS/2'].sCapHeight = font.recalcCapHeight()
+                    modified = True
 
             # usMaxContext value.
             if recalc_us_max_context is True:

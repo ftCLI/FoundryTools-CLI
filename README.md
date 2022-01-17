@@ -699,6 +699,28 @@ Recalculates the ulCodePageRanges 1-2 values.
 
     ftcli os2 --recalc-codepage-ranges "C:\Fonts\"
 
+#### --recalc-x-height
+Recalculates sxHeight value.
+
+**Usage:**
+
+    ftcli os2 --recalc-x-height INPUT_PATH
+
+**Example:**
+
+    ftcli os2 --recalc-x-height "C:\Fonts\"
+
+#### --recalc-cap-height
+Recalculates sxHeight value.
+
+**Usage:**
+
+    ftcli os2 --recalc-cap-height INPUT_PATH
+
+**Example:**
+
+    ftcli os2 --recalc-cap-height "C:\Fonts\"
+
 #### --recalc-us-max-context
 Recalculates usMaxContext value.
 
