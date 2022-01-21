@@ -39,9 +39,9 @@ no bitmaps available in the font, then the font is considered unembeddable and t
 embedding restrictions specified in bits 0-3 and 8 also apply.
               """)
 @click.option('-i/-ni', '--italic/--no-italic', default=None,
-              help='Sets or clears the italic bits (fsSelection bit 0 and head.macStyle bit 1).')
+              help="Sets or clears the italic bits (fsSelection bit 0 and head.macStyle bit 1).")
 @click.option('-b/-nb', '--bold/--no-bold', default=None,
-              help='Sets or clears the bold bits (fsSelection bit 5 and head.macStyle bit 0).')
+              help="Sets or clears the bold bits (fsSelection bit 5 and head.macStyle bit 0).")
 @click.option('-r', '--regular', is_flag=True, default=None,
               help="""
 Sets fsSelection bit 6 and clears bold (fsSelection bit 5, head.macStyle bit 0) and italic (fsSelection bit 0, 
@@ -69,18 +69,23 @@ Also: https://typedrawers.com/discussion/3857/fontlab-7-windows-reads-exported-f
 
 """)
 @click.option('-ob', '--oblique', type=click.Choice(['0', '1']),
-              help='Sets or clears the OBLIQUE bit (fsSelection bit 9).')
+              help="Sets or clears the OBLIQUE bit (fsSelection bit 9).")
 @click.option('-ach', '--ach-vend-id', type=str,
-              help='Sets the achVendID tag (vendor\'s four-character identifier).')
-@click.option('--recalc-unicode-ranges', is_flag=True,
-              help='Recalculates the ulUnicodeRanges 1-4 values.')
-@click.option('--recalc-codepage-ranges', is_flag=True,
-              help='Recalculates ulCodePageRange 1-2 values.')
+              help="Sets the achVendID tag (vendor's four-character identifier).")
+@click.option('--recalc-unicodes', is_flag=True,
+              help="Recalculates the ulUnicodeRanges 1-4 values.")
+@click.option('--import-unicodes-from', type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+              help="""
+Imports ulUnicodeRanges from a template font file.
+              """)
+@click.option('--recalc-codepages', is_flag=True,
+              help="Recalculates ulCodePageRange 1-2 values.")
 @click.option('--recalc-x-height', is_flag=True,
-              help='Recalculates sxHeight value.')
+              help="Recalculates sxHeight value.")
 @click.option('--recalc-cap-height', is_flag=True,
-              help='Recalculates sCapHeight value.')
-@click.option('--recalc-us-max-context', is_flag=True, help='Recalculates usMaxContext value.')
+              help="Recalculates sCapHeight value.")
+@click.option('--recalc-us-max-context', is_flag=True,
+              help="Recalculates usMaxContext value.")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help="""
 The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
@@ -96,8 +101,9 @@ By default, modified files are overwritten. Use this switch to save them to a ne
 of file name).
 """)
 def cli(input_path, version, weight, width, embed_level, no_subsetting, bitmap_embedding_only, bold, italic, regular,
-        use_typo_metrics, wws_consistent, oblique, ach_vend_id, recalc_unicode_ranges, recalc_codepage_ranges,
-        recalc_x_height, recalc_cap_height, recalc_us_max_context, output_dir, recalc_timestamp, overwrite):
+        use_typo_metrics, wws_consistent, oblique, ach_vend_id, recalc_unicodes, import_unicodes_from, recalc_codepages,
+        recalc_x_height, recalc_cap_height, recalc_us_max_context, output_dir, recalc_timestamp,
+        overwrite):
     """
     Command line OS/2 table editor.
     """
@@ -251,13 +257,24 @@ def cli(input_path, version, weight, width, embed_level, no_subsetting, bitmap_e
                     modified = True
 
             # ulUnicodeRange1-4 bits.
-            if recalc_unicode_ranges is True:
+            if recalc_unicodes is True:
                 if not font['OS/2'].getUnicodeRanges() == font['OS/2'].recalcUnicodeRanges(font):
                     font['OS/2'].setUnicodeRanges(font['OS/2'].recalcUnicodeRanges(font))
                     modified = True
 
+            # Import ulUnicodeRanges.
+            if import_unicodes_from is not None:
+                try:
+                    source_font = Font(import_unicodes_from)
+                    source_unicodes = source_font['OS/2'].getUnicodeRanges()
+                    if not font['OS/2'].getUnicodeRanges() == source_unicodes:
+                        font['OS/2'].setUnicodeRanges(source_unicodes)
+                        modified = True
+                except Exception as e:
+                    print(f'ERROR: {e}')
+
             # ulCodePageRange(1-2) bits.
-            if recalc_codepage_ranges is True:
+            if recalc_codepages is True:
                 ulCodePageRange1, ulCodePageRange2 = font.recalcCodePageRanges()
                 os2_version = font['OS/2'].version
 
