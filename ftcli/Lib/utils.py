@@ -308,14 +308,6 @@ def intListToNum(intList, start, length):
     all = " ".join(all)
     return binary2num(all)
 
-# Replaced by click.clear()
-# def clear():
-#     from os import name, system
-#     if name == 'nt':
-#         _ = system('cls')
-#     else:
-#         _ = system('clear')
-
 
 def is_nth_bit_set(x: int, n: int) -> bool:
     if x & (1 << n):
@@ -329,3 +321,24 @@ def set_nth_bit(x: int, n: int) -> int:
 
 def unset_nth_bit(x: int, n: int) -> int:
     return x & ~(1 << n)
+
+
+class RequiredIf(click.Option):
+    def __init__(self, *args, **kwargs):
+        self.required_if: list = kwargs.pop("required_if")
+
+        assert self.required_if, "'required_if' parameter required"
+        kwargs["help"] = (kwargs.get("help", "") + "Option is mutually inclusive with " + ", ".join(
+            self.required_if) + ".").strip()
+        super(RequiredIf, self).__init__(*args, **kwargs)
+
+    def handle_parse_result(self, ctx, opts, args):
+        current_opt: bool = self.name in opts
+        for mutinc_opt in self.required_if:
+            if mutinc_opt not in opts:
+                if current_opt:
+                    raise click.UsageError(
+                        "Illegal usage: '" + str(self.name) + "' is mutually inclusive with " + str(mutinc_opt) + ".")
+                else:
+                    self.prompt = None
+        return super(RequiredIf, self).handle_parse_result(ctx, opts, args)
