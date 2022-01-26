@@ -74,7 +74,7 @@ Also: https://typedrawers.com/discussion/3857/fontlab-7-windows-reads-exported-f
               help="Sets the achVendID tag (vendor's four-character identifier).")
 @click.option('--recalc-unicodes', is_flag=True,
               help="Recalculates the ulUnicodeRanges 1-4 values.")
-@click.option('--import-unicodes-from', type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+@click.option('--import-unicodes-from', 'unicodes_source_font', type=click.Path(exists=True, dir_okay=False, resolve_path=True),
               help="""
 Imports ulUnicodeRanges from a template font file.
               """)
@@ -101,8 +101,8 @@ By default, modified files are overwritten. Use this switch to save them to a ne
 of file name).
 """)
 def cli(input_path, version, weight, width, embed_level, no_subsetting, bitmap_embedding_only, bold, italic, regular,
-        use_typo_metrics, wws_consistent, oblique, ach_vend_id, recalc_unicodes, import_unicodes_from, recalc_codepages,
-        recalc_x_height, recalc_cap_height, recalc_us_max_context, output_dir, recalc_timestamp,
+        use_typo_metrics, wws_consistent, oblique, ach_vend_id, recalc_unicodes, unicodes_source_font,
+        recalc_codepages, recalc_x_height, recalc_cap_height, recalc_us_max_context, output_dir, recalc_timestamp,
         overwrite):
     """
     Command line OS/2 table editor.
@@ -263,9 +263,9 @@ def cli(input_path, version, weight, width, embed_level, no_subsetting, bitmap_e
                     modified = True
 
             # Import ulUnicodeRanges.
-            if import_unicodes_from is not None:
+            if unicodes_source_font is not None:
                 try:
-                    source_font = Font(import_unicodes_from)
+                    source_font = Font(unicodes_source_font)
                     source_unicodes = source_font['OS/2'].getUnicodeRanges()
                     if not font['OS/2'].getUnicodeRanges() == source_unicodes:
                         font['OS/2'].setUnicodeRanges(source_unicodes)
