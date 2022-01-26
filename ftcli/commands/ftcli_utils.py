@@ -211,6 +211,10 @@ def font_renamer(input_path, source_string):
         if not string:
             string = os.path.splitext(n)[0]
 
+        # Remove illegal characters from the string.
+        for illegal_char in ['/', '\\', '<', '>', ':', '"', '|', '?', '*']:
+            string = string.replace(illegal_char, '')
+
         new_ext = None
         if font.flavor == 'woff':
             new_ext = '.woff'
