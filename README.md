@@ -671,33 +671,49 @@ Sets the achVendID tag (vendor's four-character identifier).
 
 **Usage:**
 
-    ftcli os2 -ach/--ach-vend-id string INPUT_PATH
+    ftcli os2 INPUT_PATH -ach/--ach-vend-id string
 
 **Example:**
 
-    ftcli os2 -ach MyFo "C:\Fonts"
+    ftcli os2 "C:\Fonts" -ach MyFo
 
-#### --recalc-unicode-ranges
+#### --recalc-unicodes
 Recalculates the ulUnicodeRanges 1-4 values.
+
+This uses the `fontTools.ttLib.tables.O_S_2f_2.table_O_S_2f_2.recalcUnicodeRanges` method.
+
+_Intersect the codepoints in the font's Unicode cmap subtables with the Unicode block ranges defined in the OpenType
+specification (v1.7), and set the respective 'ulUnicodeRange*' bits if there is at least ONE intersection._
 
 **Usage:**
 
-    ftcli os2 --recalc-unicode-ranges INPUT_PATH
+    ftcli os2 INPUT_PATH --recalc-unicodes
 
 **Example:**
 
-    ftcli os2 --recalc-unicode-ranges "C:\Fonts\"
+    ftcli os2 "C:\Fonts\" --recalc-unicodes
 
-#### --recalc-codepage-ranges
+#### --import-unicodes_from
+Imports ulUnicodeRanges from a source file.
+
+**Usage:**
+
+    ftcli os2 INPUT_PATH --import-unicodes-from FILE
+
+**Usage example:**
+
+    ftcli os2 "C:\Fonts" --import-unicodes-from "C:\Source\SourceFont-Regular.otf"
+
+#### --recalc-codepages
 Recalculates the ulCodePageRanges 1-2 values.
 
 **Usage:**
 
-    ftcli os2 --recalc-codepage-ranges INPUT_PATH
+    ftcli os2 --recalc-codepages INPUT_PATH
 
 **Example:**
 
-    ftcli os2 --recalc-codepage-ranges "C:\Fonts\"
+    ftcli os2 --recalc-codepages "C:\Fonts\"
 
 #### --recalc-x-height
 Recalculates sxHeight value.
@@ -742,7 +758,7 @@ Recalculates usMaxContext value.
 
 See the **General options** section for more information.
 
-### names
+## ftcli names
 
 Usage:
 
