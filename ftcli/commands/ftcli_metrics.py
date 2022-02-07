@@ -59,9 +59,9 @@ def set_linegap(input_path, percent, modify_family_name, output_dir, recalc_time
 
             # Before we add the "-linegap%" string to the new file name, let's remove it to avoid strange names like
             # Font-Bold-linegap20-linegap20.otf
-            new_file_path = os.path.join(file_dir, file_name.replace('-linegap' + str(percent), '') + '-linegap'
-                                         + str(percent) + ext)
-            output_file = makeOutputFileName(new_file_path, outputDir=output_dir, overWrite=overwrite)
+            # new_file_path = os.path.join(file_dir, file_name.replace('-linegap' + str(percent), '') + '-linegap'
+            #                              + str(percent) + ext)
+            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
 
