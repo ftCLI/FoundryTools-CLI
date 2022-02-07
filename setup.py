@@ -2,13 +2,13 @@ import setuptools
 
 setuptools.setup(
     name='ftcli',
-    version='0.6.1',
+    version='0.6.2',
     description='ftCLI',
     packages=setuptools.find_packages(),
     include_package_data=True,
     entry_points={'console_scripts': ['ftcli=ftcli.ftcli:main']},
     install_requires=[
-        'fonttools==4.28.5',
+        'fonttools==4.29.1',
         'brotli==1.0.9',
         'click==8.0.3',
         'colorama==0.4.4',
