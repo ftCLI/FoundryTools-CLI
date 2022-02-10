@@ -2,6 +2,7 @@ import os
 
 import click
 from dehinter.font import dehint
+from fontTools.feaLib.builder import addOpenTypeFeatures
 from fontTools.ttLib import TTCollection
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.removeOverlaps import removeOverlaps
@@ -10,13 +11,60 @@ from ftcli.Lib.Font import Font
 from ftcli.Lib.utils import getFontsList, makeOutputFileName, getSourceString
 
 
-# add-dsig
+# add-features
 @click.group()
-def dsig_add():
+def addFeatures():
     pass
 
 
-@dsig_add.command()
+@addFeatures.command()
+@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
+@click.option('-fea', '--feature-file', type=click.Path(exists=True, resolve_path=True, dir_okay=False), required=True,
+              help="Path to the feature file.")
+@click.option('-t', '--tables',
+              type=click.Choice(choices=["BASE", "GDEF", "GPOS", "GSUB", "OS/2", "head", "hhea", "name", "vhea",
+                                         "STAT"]),
+              multiple=True, help="Specify the table(s) to be built.")
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
+def add_features(input_path, feature_file, tables, recalc_timestamp, output_dir, overwrite):
+    """Import features form a fea file.
+    """
+    if tables == ():
+        tables = None
+    files = getFontsList(input_path)
+    for f in files:
+        try:
+            font = Font(f, recalcTimestamp=recalc_timestamp)
+            addOpenTypeFeatures(font, featurefile=feature_file, tables=tables)
+
+            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
+            font.save(output_file)
+            click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
+
+        except Exception as e:
+            click.secho(f'ERROR: {e}', fg='red')
+
+
+# add-dsig
+@click.group()
+def addDsig():
+    pass
+
+
+@addDsig.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help="""
@@ -60,11 +108,11 @@ def add_dsig(input_path, recalc_timestamp, output_dir, overwrite):
 
 # dehinter
 @click.group()
-def remove_hinting():
+def removeHinting():
     pass
 
 
-@remove_hinting.command()
+@removeHinting.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('--keep-cvar', is_flag=True, default=False, help="keep cvar table")
 @click.option('--keep-cvt', is_flag=True, default=False, help="keep cvt table")
@@ -121,11 +169,11 @@ def dehinter(input_path, keep_cvar, keep_cvt, keep_fpgm, keep_hdmx, keep_ltsh, k
 
 
 @click.group()
-def overlaps_remove():
+def removeOverlaps():
     pass
 
 
-@overlaps_remove.command()
+@removeOverlaps.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help="""
@@ -168,11 +216,11 @@ def remove_overlaps(input_path, output_dir=None, recalc_timestamp=False, overwri
 
 
 @click.group()
-def rename_fonts():
+def fontRenamer():
     pass
 
 
-@rename_fonts.command()
+@fontRenamer.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-s', '--source-string', type=click.Choice(
     choices=['1_1_2', '1_4', '1_6', '1_16_17', '1_18', '3_1_2', '3_4', '3_6', '3_16_17', 'cff_1', 'cff_2']),
@@ -246,11 +294,11 @@ def font_renamer(input_path, source_string):
 
 
 @click.group()
-def extract_ttc():
+def ttcExtractor():
     pass
 
 
-@extract_ttc.command()
+@ttcExtractor.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True, dir_okay=False))
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help="""
@@ -285,5 +333,5 @@ def ttc_extractor(input_path, output_dir=None, recalc_timestamp=False, overwrite
         click.secho('ERROR: {}'.format(e), fg='red')
 
 
-cli = click.CommandCollection(sources=[dsig_add, remove_hinting, rename_fonts, overlaps_remove, extract_ttc],
+cli = click.CommandCollection(sources=[addDsig, addFeatures, removeHinting, fontRenamer, removeOverlaps, ttcExtractor],
                               help="Miscellaneous utilities.")
