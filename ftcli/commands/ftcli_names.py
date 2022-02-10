@@ -354,7 +354,7 @@ def delNameRecord():
 
 @delNameRecord.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-@click.option('-n', '--name-id', type=click.IntRange(0, 32767), required=True,
+@click.option('-n', '--name-id', type=int, required=True,
               help="nameID (Integer between 0 and 32767)")
 @click.option("-p", "--platform", type=click.Choice(choices=["win", "mac"]),
               help="platform [win, mac]. If no platform is specified, the namerecord will be deleted from both tables.")
