@@ -168,8 +168,6 @@ def del_mac_names(input_path, exclude_namerecord, output_dir, recalc_timestamp, 
 
 
 # set-cff-name
-
-
 @click.group()
 def setCffName():
     pass
@@ -209,23 +207,16 @@ def set_cff_name(input_path, font_name, full_name, family_name, weight, copyrigh
             if 'CFF ' not in font:
                 click.secho(f'{f} is not a CFF font', fg='red')
                 return
-
-            count = font.setCFFName(fontNames=font_name, FullName=full_name, FamilyName=family_name, Weight=weight,
-                                    Copyright=copyright, Notice=notice)
-
-            if count > 0:
-                output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
-                font.save(output_file)
-                click.secho(f'{output_file} --> saved', fg='green')
-            else:
-                click.secho(f'{os.path.basename(f)} --> no changes made.', fg='yellow')
+            font.setCFFName(fontNames=font_name, FullName=full_name, FamilyName=family_name, Weight=weight,
+                            Copyright=copyright, Notice=notice)
+            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
+            font.save(output_file)
+            click.secho(f'{output_file} --> saved', fg='green')
         except Exception as e:
             click.secho(f'ERROR: {e}', fg='red')
 
 
 # set-name
-
-
 @click.group()
 def setNameRecord():
     pass
