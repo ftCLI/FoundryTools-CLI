@@ -260,39 +260,23 @@ class Font(TTFont):
 
     def setCFFName(self, fontNames=None, FullName=None, FamilyName=None, Weight=None, Copyright=None, Notice=None):
 
-        count = 0
-
         if fontNames:
-            if not self['CFF '].cff.fontNames == [fontNames]:
-                self['CFF '].cff.fontNames = [fontNames]
-                count += 1
+            self['CFF '].cff.fontNames = [fontNames]
 
         if FullName:
-            if not self['CFF '].cff.topDictIndex[0].FullName == FullName:
-                self['CFF '].cff.topDictIndex[0].FullName = FullName
-                count += 1
+            self['CFF '].cff.topDictIndex[0].FullName = FullName
 
         if FamilyName:
-            if not self['CFF '].cff.topDictIndex[0].FamilyName == FamilyName:
-                self['CFF '].cff.topDictIndex[0].FamilyName = FamilyName
-                count += 1
+            self['CFF '].cff.topDictIndex[0].FamilyName = FamilyName
 
         if Weight:
-            if not self['CFF '].cff.topDictIndex[0].Weight == Weight:
-                self['CFF '].cff.topDictIndex[0].Weight = Weight
-                count += 1
+            self['CFF '].cff.topDictIndex[0].Weight = Weight
 
         if Copyright:
-            if not self['CFF '].cff.topDictIndex[0].Copyright == Copyright:
-                self['CFF '].cff.topDictIndex[0].Copyright = Copyright
-                count += 1
+            self['CFF '].cff.topDictIndex[0].Copyright = Copyright
 
         if Notice:
-            if not self['CFF '].cff.topDictIndex[0].Notice == Notice:
-                self['CFF '].cff.topDictIndex[0].Notice = Notice
-                count += 1
-
-        return count
+            self['CFF '].cff.topDictIndex[0].Notice = Notice
 
     def setMultilingualName(self, nameID=None, language='en', string="", windows=True, mac=True):
 
