@@ -169,11 +169,11 @@ def dehinter(input_path, keep_cvar, keep_cvt, keep_fpgm, keep_hdmx, keep_ltsh, k
 
 
 @click.group()
-def removeOverlaps():
+def rmOverlaps():
     pass
 
 
-@removeOverlaps.command()
+@rmOverlaps.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help="""
@@ -333,5 +333,5 @@ def ttc_extractor(input_path, output_dir=None, recalc_timestamp=False, overwrite
         click.secho('ERROR: {}'.format(e), fg='red')
 
 
-cli = click.CommandCollection(sources=[addDsig, addFeatures, removeHinting, fontRenamer, removeOverlaps, ttcExtractor],
+cli = click.CommandCollection(sources=[addDsig, addFeatures, removeHinting, fontRenamer, rmOverlaps, ttcExtractor],
                               help="Miscellaneous utilities.")
