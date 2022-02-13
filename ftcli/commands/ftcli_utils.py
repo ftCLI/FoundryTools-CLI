@@ -11,6 +11,103 @@ from ftcli.Lib.Font import Font
 from ftcli.Lib.utils import getFontsList, makeOutputFileName, getSourceString
 
 
+def removeIllegalCharacters(string: str) -> str:
+    """
+    Removes illegal characters from file name before saving.
+    :param string: file name
+    :return: cleaned file name
+    """
+    string = string.replace('<', '_').replace('>', '_').replace(':', '_').replace('/', ':').replace(
+                '\\', '_').replace('*', '_').replace('?', '_').replace('|', '_').replace('"', '_')
+    return string
+
+@click.group()
+def fontOrganizer():
+    pass
+
+@fontOrganizer.command()
+@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
+def font_organizer(input_path):
+    """Renames font files according to PostScript name and sorts them by foundry and family names.
+
+    Usage: ftcli utils font-organizer INPUT_PATH
+
+    INPUT_PATH can be a single font file or a directory containing fonts (subdirectories are not processed by choice).
+
+    Fonts are renamed according to PostScript name ('name' table nameID 6) and sorted by Manufacturer Name (nameID 8).
+    If nameID 8 is not present, the script will try to read nameID 9 (Designer) and if also name ID 9 is not present,
+    the 4 characters achVendID stored in 'OS/2' table is used.
+
+    Family name is read from nameID 16, or nameID 1 where nameID 16 is not present.
+
+    If two files have identical foundry name, family name and PostScript name, a suffix with a number (#1, #2, etc.)
+    is added at the end of filename to avoid overwriting an existing file.
+    """
+
+    print(f'\nParsing {input_path}')
+
+    files = getFontsList(input_path)
+    if len(files) == 0:
+        click.pause('\nNo font files found.')
+        sys.exit()
+
+    print()
+    for f in files:
+        try:
+            font = TTFont(f, recalcTimestamp=False)
+
+            try:
+                foundry_name = font['name'].getName(8, 3, 1, 0x409).toUnicode()
+            except AttributeError:
+                try:
+                    foundry_name = font['name'].getName(9, 3, 1, 0x409).toUnicode()
+                except AttributeError:
+                    try:
+                        foundry_name = font['OS/2'].achVendID
+                    except AttributeError:
+                        foundry_name = 'Unknown foundry'
+
+            foundry_name = removeIllegalCharacters(foundry_name)
+
+            try:
+                family_name = font['name'].getName(16, 3, 1, 0x409).toUnicode()
+            except AttributeError:
+                try:
+                    family_name = font['name'].getName(1, 3, 1, 0x409).toUnicode()
+                except AttributeError:
+                    family_name = 'Unknown family'
+
+            family_name = removeIllegalCharacters(family_name)
+
+            new_ext = os.path.splitext(f)[1]
+            if font.flavor == 'woff':
+                new_ext = '.woff'
+            if font.flavor == 'woff2':
+                new_ext = '.woff2'
+            if font.flavor is None:
+                new_ext = '.otf' if font.sfntVersion == 'OTTO' else '.ttf'
+
+            try:
+                new_file_name = f"{font['name'].getName(6, 3, 1, 0x409).toUnicode()}{new_ext}"
+            except AttributeError:
+                try:
+                    new_file_name = f"{font['name'].getName(6, 1, 0, 0x0).toUnicode()}{new_ext}"
+                except AttributeError:
+                    new_file_name = f"{os.path.splitext(os.path.basename(f))[0]}{new_ext}"
+
+            new_file_name = removeIllegalCharacters(new_file_name)
+
+            new_dir = os.path.join(os.path.dirname(f), foundry_name, family_name)
+            os.makedirs(new_dir, exist_ok=True)
+            new_file = os.path.join(new_dir, new_file_name)
+            new_file = makeOutputFileName(new_file)
+            os.rename(f, new_file)
+            click.secho(f'\nOLD PATH: {f}', fg="green")
+            click.secho(f'NEW PATH: {new_file}', fg="green")
+
+        except Exception as e:
+            click.secho(f'{os.path.basename(f)}: {e}', fg='red')
+
 # add-features
 @click.group()
 def addFeatures():
@@ -169,11 +266,11 @@ def dehinter(input_path, keep_cvar, keep_cvt, keep_fpgm, keep_hdmx, keep_ltsh, k
 
 
 @click.group()
-def rmOverlaps():
+def rmvOverlaps():
     pass
 
 
-@rmOverlaps.command()
+@rmvOverlaps.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help="""
@@ -333,5 +430,5 @@ def ttc_extractor(input_path, output_dir=None, recalc_timestamp=False, overwrite
         click.secho('ERROR: {}'.format(e), fg='red')
 
 
-cli = click.CommandCollection(sources=[addDsig, addFeatures, removeHinting, fontRenamer, rmOverlaps, ttcExtractor],
+cli = click.CommandCollection(sources=[addDsig, addFeatures, fontOrganizer, removeHinting, fontRenamer, rmvOverlaps, ttcExtractor],
                               help="Miscellaneous utilities.")
