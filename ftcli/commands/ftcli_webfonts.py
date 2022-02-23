@@ -146,7 +146,7 @@ specified, both WOFF and WOFF2 files will be created.
                     output_file = makeOutputFileName(
                         f, outputDir=output_dir, extension='.' + flv, overWrite=overwrite)
                     font.flavor = flv
-                    font.save(output_file)
+                    font.save(output_file, reorderTables=False)
                     click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
                 if delete_source_file:
                     os.remove(f)
