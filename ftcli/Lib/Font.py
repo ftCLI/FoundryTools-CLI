@@ -82,14 +82,16 @@ class Font(TTFont):
         if len(slope) > 0:
             subfamily_name_ot = "{} {}".format(subfamily_name_ot, slope)
             if not keep_regular:
-                subfamily_name_ot = subfamily_name_ot.replace('Regular', '').replace('  ', ' ').strip()
+                subfamily_name_ot = subfamily_name_ot.replace(" Regular", "").replace("  ", " ").strip()
 
         # Windows family and subfamily name
-        family_name_win = "{} {} {}".format(
-            family_name, width.replace("Normal", "").replace("Nor", ""), weight).replace("  ", " ").strip()
+        family_name_win = "{} {} {}".format(family_name, width, weight)
 
-        # When there are both italic and oblique slopes in the family, the italic bits are cleared and the oblique bit
-        # is set. Consequently, in case the font is oblique, the slope is added to family name.
+        # Remove the normal width from family name.
+        family_name_win = family_name_win.replace(" Normal", "").replace(" Nor", "").strip()
+
+        # When there are both italic and oblique styles in a family, the italic bits are cleared and the oblique bit
+        # is set in the oblique style. Consequently, in case the font is oblique, the slope is added to family name.
         if len(slope) > 0 and is_italic is False:
             family_name_win = '{} {}'.format(family_name_win, slope)
 
@@ -252,10 +254,11 @@ class Font(TTFont):
                 self.delNameRecord(nameID=18)
 
         # CFF Names
+        cff_family_name = f'{family_name} {width}'.replace(' Normal', '').replace(' Nor', '').replace('  ', ' ').strip()
         if 'CFF ' in self and fixCFF is True:
             self['CFF '].cff.fontNames = [postscript_name]
             self['CFF '].cff.topDictIndex[0].FullName = full_font_name
-            self['CFF '].cff.topDictIndex[0].FamilyName = family_name_ot
+            self['CFF '].cff.topDictIndex[0].FamilyName = cff_family_name
             self['CFF '].cff.topDictIndex[0].Weight = weight
 
     def setCFFName(self, fontNames=None, FullName=None, FamilyName=None, Weight=None, Copyright=None, Notice=None):
