@@ -430,5 +430,41 @@ def ttc_extractor(input_path, output_dir=None, recalc_timestamp=False, overwrite
         click.secho('ERROR: {}'.format(e), fg='red')
 
 
-cli = click.CommandCollection(sources=[addDsig, addFeatures, fontOrganizer, removeHinting, fontRenamer, rmvOverlaps, ttcExtractor],
+@click.group()
+def delTable():
+    pass
+
+
+@delTable.command()
+@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
+@click.option('-t', '--table', required=True)
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help='The output directory where the output files are to be created. If it doesn\'t exist, will be '
+                   'created. If not specified, files are saved to the same folder.')
+@click.option('--recalc-timestamp/--no-recalc-timestamp', default=False,
+              help='Keeps the original font \'modified\' timestamp (head.modified) or set it to current time. By '
+                   'default, original timestamp is kept.')
+@click.option('--overwrite/--no-overwrite', default=True,
+              help='Overwrites existing output files or save them to a new file (numbers are appended at the end of '
+                   'file name). By default, files are overwritten.')
+def del_table(input_path, table, output_dir, recalc_timestamp, overwrite):
+    """Deletes the specified table from the font.
+    """
+    files = getFontsList(input_path)
+    for f in files:
+        try:
+            font = Font(f, recalcTimestamp=recalc_timestamp)
+            if table in font:
+                del font[table]
+                output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
+                font.save(output_file)
+                click.secho(f'{os.path.basename(output_file)} --> {table} table deleted.', fg='green')
+            else:
+                click.secho(f'{os.path.basename(f)} --> {table} table not found.', fg='yellow')
+        except Exception as e:
+            click.secho(f'{os.path.basename(f)} --> ERROR: {e}', fg='red')
+
+
+cli = click.CommandCollection(sources=[addDsig, addFeatures, delTable, fontOrganizer, removeHinting, fontRenamer,
+                                       rmvOverlaps, ttcExtractor],
                               help="Miscellaneous utilities.")
