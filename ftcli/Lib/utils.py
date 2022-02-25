@@ -76,7 +76,6 @@ def getFontsList(input_path: str) -> list:
 
     if len(files) == 0:
         print('\nNo valid font files found.')
-        sys.exit()
 
     return files
 
