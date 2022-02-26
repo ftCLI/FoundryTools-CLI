@@ -206,6 +206,7 @@ def copy(source_file, destination, output_dir, recalc_timestamp, overwrite):
 
         ascender = source_font['hhea'].ascender
         descender = source_font['hhea'].descender
+        lineGap = source_font['hhea'].lineGap
 
         usWinAscent = source_font['OS/2'].usWinAscent
         usWinDescent = source_font['OS/2'].usWinDescent
@@ -225,7 +226,7 @@ def copy(source_file, destination, output_dir, recalc_timestamp, overwrite):
 
             font['hhea'].ascender = ascender
             font['hhea'].descender = descender
-            font['hhea'].lineGap = 0
+            font['hhea'].lineGap = lineGap
 
             font['OS/2'].usWinAscent = usWinAscent
             font['OS/2'].usWinDescent = usWinDescent
