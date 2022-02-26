@@ -88,7 +88,8 @@ class Font(TTFont):
         family_name_win = "{} {} {}".format(family_name, width, weight)
 
         # Remove the normal width from family name.
-        family_name_win = family_name_win.replace(" Normal", "").replace(" Nor", "").strip()
+        family_name_win = "{} {} {}".format(
+            family_name, width.replace("Normal", "").replace("Nor", ""), weight).replace("  ", " ").strip()
 
         # When there are both italic and oblique styles in a family, the italic bits are cleared and the oblique bit
         # is set in the oblique style. Consequently, in case the font is oblique, the slope is added to family name.
