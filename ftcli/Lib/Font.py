@@ -75,17 +75,14 @@ class Font(TTFont):
 
         if width.lower() != "normal":
             if is_superfamily is False:
-                family_name_ot = "{} {}".format(family_name, width)
+                family_name_ot = f"{family_name} {width}"
             else:
-                subfamily_name_ot = "{} {}".format(width, weight)
+                subfamily_name_ot = f"{width} {weight}"
 
         if len(slope) > 0:
-            subfamily_name_ot = "{} {}".format(subfamily_name_ot, slope)
+            subfamily_name_ot = f"{subfamily_name_ot} {slope}"
             if not keep_regular:
-                subfamily_name_ot = subfamily_name_ot.replace(" Regular", "").replace("  ", " ").strip()
-
-        # Windows family and subfamily name
-        family_name_win = "{} {} {}".format(family_name, width, weight)
+                subfamily_name_ot = subfamily_name_ot.replace("Regular Italic", "Italic")
 
         # Remove the normal width from family name.
         family_name_win = "{} {} {}".format(
