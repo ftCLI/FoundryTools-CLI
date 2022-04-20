@@ -13,6 +13,9 @@ def delAllNames():
 
 @delAllNames.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
+@click.option('-ex-id', '--exclude-nameid', type=int, multiple=True,
+              help="Name IDs to skip. The specified name IDs won't be deleted. This option can be repeated"
+                   " (example: -ex 3 -ex 5 -ex 6...).")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help="""
 The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
@@ -27,9 +30,13 @@ to current time.
 By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
 of file name).
 """)
-def clean_nametable(input_path, output_dir, recalc_timestamp, overwrite):
+def clean_nametable(input_path, exclude_nameid, output_dir, recalc_timestamp, overwrite):
     """Deletes all namerecords from the 'name' table.
+
+    Use -ex-id / --exclude-nameid to preserve the specified namerecords.
     """
+
+    print(repr(exclude_nameid))
 
     files = getFontsList(input_path)
 
@@ -37,6 +44,8 @@ def clean_nametable(input_path, output_dir, recalc_timestamp, overwrite):
         try:
             font = Font(f, recalcTimestamp=recalc_timestamp)
             for name in font['name'].names:
+                if name.nameID in exclude_nameid:
+                    continue
                 font.delNameRecord(nameID=name.nameID)
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
