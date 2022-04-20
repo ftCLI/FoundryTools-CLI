@@ -77,7 +77,7 @@ def alignVMetrics():
 @alignVMetrics.command()
 @click.argument('input_path', type=click.Path(exists=True, file_okay=False, resolve_path=True))
 @click.option('-sil', '--sil-method', is_flag=True,
-              help='Use SIL method: http://silnrsi.github.io/FDBP/en-US/Line_Metrics.html')
+              help='Use SIL method: https://silnrsi.github.io/FDBP/en-US/Line_Metrics.html')
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help="""
 The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
