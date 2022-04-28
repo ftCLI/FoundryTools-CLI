@@ -1,4 +1,5 @@
 import os
+import sys
 
 import click
 from dehinter.font import dehint
@@ -257,8 +258,9 @@ def dehinter(input_path, keep_cvar, keep_cvt, keep_fpgm, keep_hdmx, keep_ltsh, k
             font = TTFont(f, recalcTimestamp=recalc_timestamp)
             if not font.sfntVersion == 'OTTO':
                 dehint(font, keep_cvar=keep_cvar, keep_cvt=keep_cvt, keep_fpgm=keep_fpgm, keep_gasp=keep_gasp,
-                       keep_glyf=keep_glyf, keep_head=keep_head, keep_ltsh=keep_ltsh, keep_maxp=keep_maxp,
-                       keep_prep=keep_prep, keep_ttfa=keep_ttfa, keep_vdmx=keep_vdmx, verbose=verbose)
+                       keep_glyf=keep_glyf, keep_head=keep_head, keep_hdmx=keep_hdmx, keep_ltsh=keep_ltsh,
+                       keep_maxp=keep_maxp, keep_prep=keep_prep, keep_ttfa=keep_ttfa, keep_vdmx=keep_vdmx,
+                       verbose=verbose)
                 output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
                 font.save(output_file)
                 click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
