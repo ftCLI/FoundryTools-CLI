@@ -18,12 +18,14 @@ def removeIllegalCharacters(string: str) -> str:
     :return: cleaned file name
     """
     string = string.replace('<', '_').replace('>', '_').replace(':', '_').replace('/', ':').replace(
-                '\\', '_').replace('*', '_').replace('?', '_').replace('|', '_').replace('"', '_')
+        '\\', '_').replace('*', '_').replace('?', '_').replace('|', '_').replace('"', '_')
     return string
+
 
 @click.group()
 def fontOrganizer():
     pass
+
 
 @fontOrganizer.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
@@ -107,6 +109,7 @@ def font_organizer(input_path):
 
         except Exception as e:
             click.secho(f'{os.path.basename(f)}: {e}', fg='red')
+
 
 # add-features
 @click.group()
