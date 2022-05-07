@@ -99,7 +99,7 @@ def font_organizer(input_path):
                 except AttributeError:
                     new_file_name = f"{os.path.splitext(os.path.basename(f))[0]}{new_ext}"
 
-            new_file_name = removeIllegalCharacters(new_file_name)
+            new_file_name = sanitize_filename(new_file_name)
 
             new_dir = os.path.join(os.path.dirname(f), foundry_name, family_name)
             os.makedirs(new_dir, exist_ok=True)
