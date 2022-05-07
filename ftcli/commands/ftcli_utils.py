@@ -7,6 +7,7 @@ from fontTools.feaLib.builder import addOpenTypeFeatures
 from fontTools.ttLib import TTCollection
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.removeOverlaps import removeOverlaps
+from pathvalidate import sanitize_filename
 
 from ftcli.Lib.Font import Font
 from ftcli.Lib.utils import getFontsList, makeOutputFileName, getSourceString
@@ -342,7 +343,8 @@ For example:
 If the font is CFF flavored, the cff_1 or cff_2 options can be used.
 """)
 def font_renamer(input_path, source_string):
-    """Renames font files according to the provided source string.
+    """
+Renames font files according to the provided source string.
     """
 
     files = getFontsList(input_path)
@@ -377,6 +379,7 @@ def font_renamer(input_path, source_string):
                 new_ext = '.ttf'
 
         new_file_name = string + new_ext
+        new_file_name = sanitize_filename(new_file_name)
         new_file = makeOutputFileName(os.path.join(d, new_file_name), overWrite=True)
 
         if new_file != f:
