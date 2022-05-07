@@ -133,7 +133,7 @@ class Font(TTFont):
             postscript_name = postscript_name.replace(width, wdt) if 6 in shorten_width else postscript_name
             postscript_name = postscript_name.replace(slope, slp) if 6 in shorten_slope else postscript_name
 
-            # Do not remove spaces and dots before, if not the -swdt, -swgt and -sita switches won't work!
+            # Do not remove spaces and dots before, if not the -swdt, -swgt and -sslp switches won't work!
             postscript_name = postscript_name.replace(" ", "").replace(".", "")
 
         # Build the Unique Identifier
