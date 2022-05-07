@@ -796,12 +796,18 @@ class Font(TTFont):
         feature_list = []
 
         if 'GSUB' in self.keys():
-            gsub_table = self['GSUB']
-            feature_list += gsub_table.table.FeatureList.FeatureRecord
+            try:
+                gsub_table = self['GSUB']
+                feature_list += gsub_table.table.FeatureList.FeatureRecord
+            except:
+                pass
 
         if 'GPOS' in self.keys():
-            gpos_table = self['GPOS']
-            feature_list += gpos_table.table.FeatureList.FeatureRecord
+            try:
+                gpos_table = self['GPOS']
+                feature_list += gpos_table.table.FeatureList.FeatureRecord
+            except:
+                pass
 
         feature_tags = []
         if len(feature_list) > 0:
