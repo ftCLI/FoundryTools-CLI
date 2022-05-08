@@ -377,8 +377,8 @@ of file name).
 def del_names(input_path, name_ids, platform, language, output_dir, recalc_timestamp, overwrite):
     """Deletes the specified namerecord(s) from the name table.
 
-    Use the -l/--language option to delete a namerecord in a language different than 'en'. Use 'ftcli nametable
-    langhelp' to display available languages.
+    Use the -l/--language option to delete a namerecord in a language different than 'en'. Use 'ftcli names lang-help'
+    to display available languages.
 
     Use '-l ALL' to delete the name ID from all languages.
     """
