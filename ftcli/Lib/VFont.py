@@ -26,7 +26,7 @@ class VariableFont(TTFont):
 
         self.gsubTable = self['GSUB'].table if 'GSUB' in self else None
 
-    def getFamilyName(self) -> str | None:
+    def getFamilyName(self):
         """
         Tries to retrieve the Family Name string from nameIDs 16, 1 or 25.
         """
@@ -54,7 +54,7 @@ class VariableFont(TTFont):
         finally:
             return family_name
 
-    def getInstancePostscriptName(self, instance: NamedInstance) -> str | None:
+    def getInstancePostscriptName(self, instance: NamedInstance):
         """
         Tries to retrieve the postscriptName string of a fvar instance.
         """
@@ -63,7 +63,7 @@ class VariableFont(TTFont):
         except:
             return None
 
-    def getInstanceSubfamilyName(self, instance: NamedInstance) -> str | None:
+    def getInstanceSubfamilyName(self, instance: NamedInstance):
         """
         Tries to retrieve the subfamilyName string of a fvar instance.
         """
