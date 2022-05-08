@@ -354,8 +354,8 @@ def delNameRecord():
 
 @delNameRecord.command()
 @click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-@click.option('-n', '--name-id', type=int, required=True,
-              help="nameID (Integer between 0 and 32767)")
+@click.option('-n', '--name-ids', type=int, required=True, multiple=True,
+              help="nameID (Integer)")
 @click.option("-p", "--platform", type=click.Choice(choices=["win", "mac"]),
               help="platform [win, mac]. If no platform is specified, the namerecord will be deleted from both tables.")
 @click.option('-l', '--language', default="en", show_default=True,
@@ -374,8 +374,8 @@ to current time.
 By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
 of file name).
 """)
-def del_name(input_path, name_id, platform, language, output_dir, recalc_timestamp, overwrite):
-    """Deletes the specified nemerecord from the name table.
+def del_names(input_path, name_ids, platform, language, output_dir, recalc_timestamp, overwrite):
+    """Deletes the specified namerecord(s) from the name table.
 
     Use the -l/--language option to delete a namerecord in a language different than 'en'. Use 'ftcli nametable
     langhelp' to display available languages.
@@ -390,7 +390,8 @@ def del_name(input_path, name_id, platform, language, output_dir, recalc_timesta
     for f in files:
         try:
             font = Font(f, recalcTimestamp=recalc_timestamp)
-            font.delNameRecord(name_id, language=language, windows=windows, mac=mac)
+            for n in name_ids:
+                font.delNameRecord(n, language=language, windows=windows, mac=mac)
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
