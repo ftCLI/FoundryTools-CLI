@@ -647,7 +647,7 @@ class CUI(object):
                                 if minimal is False:
                                     print(string)
                                 else:
-                                    if name.nameID in [1, 2, 3, 4, 5, 6, 16, 17, 18, 21, 22]:
+                                    if name.nameID in [1, 2, 3, 4, 5, 6, 16, 17, 18, 21, 22, 25]:
                                         print(string)
                         except Exception as e:
                             click.secho('nameID {} ERROR: {}'.format(name.nameID, e), fg='red')
@@ -662,7 +662,7 @@ class CUI(object):
                     otFont = font['CFF '].cff
 
                     try:
-                        string = "{0:<29}".format(' CFFFont name') + ' : ' + str(font['CFF '].cff.fontNames[0])
+                        string = "{0:<29}".format(' fontNames') + ' : ' + str(font['CFF '].cff.fontNames)
                         string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
                                             width=terminal_width)
                         print(string)
@@ -670,61 +670,14 @@ class CUI(object):
                         pass
 
                     if minimal is False:
-                        try:
-                            string = "{0:<29}".format(' version') + ' : ' + str(otFont.topDictIndex[0].version)
-                            string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
-                                                width=terminal_width)
-                            print(string)
-                        except:
-                            pass
 
-                        try:
-                            string = "{0:<29}".format(' Notice') + ' : ' + str(otFont.topDictIndex[0].Notice)
-                            string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
-                                                width=terminal_width)
-                            print(string)
-                        except:
-                            pass
+                        for a in ['version', 'Notice', 'Copyright', 'FullName', 'FamilyName', 'Weight', 'UniqueID']:
 
-                        try:
-                            string = "{0:<29}".format(' Copyright') + ' : ' + str(otFont.topDictIndex[0].Copyright)
-                            string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
-                                                width=terminal_width)
-                            print(string)
-                        except:
-                            pass
-
-                    try:
-                        string = "{0:<29}".format(' FullName') + ' : ' + str(otFont.topDictIndex[0].FullName)
-                        string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
-                                            width=terminal_width)
-                        print(string)
-                    except:
-                        pass
-
-                    try:
-                        string = "{0:<29}".format(' FamilyName') + ' : ' + str(otFont.topDictIndex[0].FamilyName)
-                        string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
-                                            width=terminal_width)
-                        print(string)
-                    except:
-                        pass
-
-                    try:
-                        string = "{0:<29}".format(' Weight') + ' : ' + str(otFont.topDictIndex[0].Weight)
-                        string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
-                                            width=terminal_width)
-                        print(string)
-                    except:
-                        pass
-
-                    try:
-                        string = "{0:<29}".format(' UniqueID') + ' : ' + str(otFont.topDictIndex[0].UniqueID)
-                        string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
-                                            width=terminal_width)
-                        print(string)
-                    except:
-                        pass
+                            if hasattr(otFont.topDictIndex[0], a):
+                                string = "{0:<29}".format(f' {a}') + ' : ' + str(getattr(otFont.topDictIndex[0], a))
+                                string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
+                                                    width=terminal_width)
+                                print(string)
 
                     print("-" * terminal_width)
             except Exception as e:
