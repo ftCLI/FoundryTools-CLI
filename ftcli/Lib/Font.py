@@ -297,8 +297,7 @@ class Font(TTFont):
             mac = False
             for name in self['name'].names:
                 if name.nameID == nameID:
-                    self['name'].removeNames(
-                        name.nameID, name.platformID, name.platEncID, name.langID)
+                    self['name'].removeNames(name.nameID, name.platformID, name.platEncID, name.langID)
 
         if windows is True:
             langID = _WINDOWS_LANGUAGE_CODES.get(language.lower())
