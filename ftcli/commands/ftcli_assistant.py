@@ -277,6 +277,10 @@ def recalcNames():
                    " override the default behaviour (for example, when the family has both italic and oblique styles"
                    " and you need to keep oblique and italic styles separate). The italic bits will be cleared when the"
                    " oblique bit is set.")
+@click.option('--no-auto-shorten', is_flag=True, default=False,
+              help="When name id 2, 4 or 6 are longer than maximum allowed (27 characters for name id 2, 31 characters "
+                   "for name id 4 and 6), the script tries to auto shorten those names. Use this option to prevent the "
+                   "script to auto shorten names.")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help="""
 The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
@@ -306,6 +310,7 @@ def recalc_names(
         keep_regular,
         old_full_font_name,
         oblique_not_italic,
+        no_auto_shorten,
         output_dir,
         recalc_timestamp,
         overwrite
@@ -351,6 +356,7 @@ def recalc_names(
     for f in files:
         try:
             font = Font(f, recalcTimestamp=recalc_timestamp)
+            print(f"\nParsing file: {os.path.basename(f)}")
             font_data = {}
             for row in data:
                 if str(row['file_name']) == os.path.basename(f):
@@ -361,7 +367,8 @@ def recalc_names(
                 linked_styles=linked_styles, namerecords_to_ignore=exclude_namerecord, shorten_weight=shorten_weight,
                 shorten_width=shorten_width, shorten_slope=shorten_slope, alt_uid=alt_uid, fixCFF=fix_cff,
                 is_superfamily=super_family, regular_italic=regular_italic, keep_regular=keep_regular,
-                old_full_font_name=old_full_font_name, oblique_not_italic=oblique_not_italic)
+                old_full_font_name=old_full_font_name, oblique_not_italic=oblique_not_italic,
+                no_auto_shorten=no_auto_shorten)
 
             output_file = makeOutputFileName(
                 f, outputDir=output_dir, overWrite=overwrite)

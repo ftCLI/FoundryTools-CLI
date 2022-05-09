@@ -19,7 +19,7 @@ class Font(TTFont):
     def recalcNames(
             self, font_data, namerecords_to_ignore=None, shorten_weight=None, shorten_width=None, shorten_slope=None,
             fixCFF=False, linked_styles=None, is_superfamily=False, alt_uid=False, regular_italic=False,
-            keep_regular=False, old_full_font_name=False, oblique_not_italic=False
+            keep_regular=False, old_full_font_name=False, oblique_not_italic=False, no_auto_shorten=True
     ):
 
         if linked_styles is None:
@@ -161,8 +161,14 @@ class Font(TTFont):
             name_id_1 = name_id_1.replace(weight, wgt) if 1 in shorten_weight else name_id_1
             name_id_1 = name_id_1.replace(width, wdt) if 1 in shorten_width else name_id_1
             name_id_1 = name_id_1.replace(slope, slp) if 1 in shorten_slope else name_id_1
+
             if len(name_id_1) > 27:
                 click.secho('WARNING: family name length is more than 27 characters', fg='yellow')
+                if no_auto_shorten is False:
+                    name_id_1 = autoShortenName(
+                        name_id_1, find_replace=[(weight, wgt), (width, wdt)], max_len=27)
+                    print(f"Family name shortened: {name_id_1}")
+
             self.setMultilingualName(nameID=1, string=name_id_1)
 
         # nameID 2
@@ -193,6 +199,9 @@ class Font(TTFont):
 
             if len(name_id_4) > 31:
                 click.secho('WARNING: full name length is more than 31 characters', fg='yellow')
+                if no_auto_shorten is False:
+                    name_id_4 = autoShortenName(name_id_4, [(slope, slp), (weight, wgt), (width, wdt)], 31)
+                    print(f"Full font name shortened: {name_id_4}")
 
             self.setMultilingualName(nameID=4, string=name_id_4)
 
@@ -212,6 +221,9 @@ class Font(TTFont):
 
             if len(name_id_6) > 31:
                 click.secho('WARNING: PostScript name length is more than 31 characters', fg='yellow')
+                if no_auto_shorten is False:
+                    name_id_6 = autoShortenName(name_id_6, [(slope, slp), (weight, wgt), (width, wdt)], 31)
+                    print(f"Postscript name shortened: {name_id_6}")
 
             self.setMultilingualName(nameID=6, string=name_id_6)
 
@@ -837,6 +849,21 @@ class Font(TTFont):
 
     def __clearRegularBit(self):
         self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 6)
+
+
+def autoShortenName(string: str, find_replace: list, max_len: int) -> str:
+
+    new_string = string
+
+    for i in find_replace:
+        new_string = new_string.replace(i[0], i[1])
+        if len(new_string) <= max_len:
+            return new_string
+
+    if len(new_string) > max_len:
+        click.secho(f"WARNING: {new_string} has been shortened, but is still longer than {max_len} characters",
+                    fg="yellow")
+    return new_string
 
 
 def is_nth_bit_set(x: int, n: int):
