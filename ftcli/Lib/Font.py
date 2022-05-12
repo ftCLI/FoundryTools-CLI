@@ -136,6 +136,16 @@ class Font(TTFont):
             # Do not remove spaces and dots before, if not the -swdt, -swgt and -sslp switches won't work!
             postscript_name = postscript_name.replace(" ", "").replace(".", "")
 
+            # When auto shortening postscript name, keep in mind that spaces have already been removed.
+            if len(postscript_name) > 31:
+                if no_auto_shorten is False:
+                    postscript_name = autoShortenName(postscript_name, [(slope.replace(" ", ""), slp.replace(" ", "")),
+                                                                        (weight.replace(" ", ""), wgt.replace(" ", "")),
+                                                                        (width.replace(" ", ""), wdt.replace(" ", ""))
+                                                                        ], 31)
+                    print(f"Postscript name shortened: {postscript_name}")
+
+
         # Build the Unique Identifier
         ach_vend_id = str(self['OS/2'].achVendID).replace(" ", "").replace(r'\x00', "")
         font_revision = str(round(self['head'].fontRevision, 3)).ljust(5, "0")
@@ -163,7 +173,6 @@ class Font(TTFont):
             name_id_1 = name_id_1.replace(slope, slp) if 1 in shorten_slope else name_id_1
 
             if len(name_id_1) > 27:
-                click.secho('WARNING: family name length is more than 27 characters', fg='yellow')
                 if no_auto_shorten is False:
                     name_id_1 = autoShortenName(
                         name_id_1, find_replace=[(weight, wgt), (width, wdt)], max_len=27)
@@ -198,7 +207,6 @@ class Font(TTFont):
             name_id_4 = name_id_4.replace(slope, slp) if 4 in shorten_slope else name_id_4
 
             if len(name_id_4) > 31:
-                click.secho('WARNING: full name length is more than 31 characters', fg='yellow')
                 if no_auto_shorten is False:
                     name_id_4 = autoShortenName(name_id_4, [(slope, slp), (weight, wgt), (width, wdt)], 31)
                     print(f"Full font name shortened: {name_id_4}")
@@ -218,13 +226,6 @@ class Font(TTFont):
         if 6 not in namerecords_to_ignore:
             # PostScript Name has already been shortened
             name_id_6 = postscript_name
-
-            if len(name_id_6) > 31:
-                click.secho('WARNING: PostScript name length is more than 31 characters', fg='yellow')
-                if no_auto_shorten is False:
-                    name_id_6 = autoShortenName(name_id_6, [(slope, slp), (weight, wgt), (width, wdt)], 31)
-                    print(f"Postscript name shortened: {name_id_6}")
-
             self.setMultilingualName(nameID=6, string=name_id_6)
 
         # nameID 16
@@ -861,7 +862,8 @@ def autoShortenName(string: str, find_replace: list, max_len: int) -> str:
             return new_string
 
     if len(new_string) > max_len:
-        click.secho(f"WARNING: {new_string} has been shortened, but is still longer than {max_len} characters",
+        click.secho(f"WARNING: {string} has been shortened to {new_string}, but is still longer than {max_len} "
+                    f"characters (actually {len(new_string)})",
                     fg="yellow")
     return new_string
 
