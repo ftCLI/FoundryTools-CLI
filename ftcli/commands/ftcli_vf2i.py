@@ -38,14 +38,14 @@ def cli(input_file, selectInstance=False, cleanup=True, updateFontNames=False,  
         os.makedirs(outputDir, exist_ok=True)
 
     try:
-        var_font = VariableFont(input_file, recalcTimestamp=recalcTimestamp)
-        name_ids_to_delete = var_font.getNameIDsToDelete()
+        variable_font = VariableFont(input_file, recalcTimestamp=recalcTimestamp)
+        name_ids_to_delete = variable_font.getNameIDsToDelete()
 
         instances = []
         if selectInstance is True:
             selected_coordinates = {}
             print(f"\nSelect coordinates\n")
-            for a in var_font.fvarTable.axes:
+            for a in variable_font.fvarTable.axes:
                 axis_tag = a.axisTag
                 min_value = a.minValue
                 max_value = a.maxValue
@@ -54,19 +54,19 @@ def cli(input_file, selectInstance=False, cleanup=True, updateFontNames=False,  
                                      type=click.FloatRange(min_value, max_value))
                 selected_coordinates[axis_tag] = value
 
-            is_named_instance = selected_coordinates in [i.coordinates for i in var_font.fvarTable.instances]
+            is_named_instance = selected_coordinates in [i.coordinates for i in variable_font.fvarTable.instances]
             if is_named_instance is False:
                 new_instance = NamedInstance()
                 new_instance.coordinates = selected_coordinates
                 instances.append(new_instance)
             else:
-                for i in var_font.fvarTable.instances:
+                for i in variable_font.fvarTable.instances:
                     if i.coordinates == selected_coordinates:
                         instances.append(i)
                         break
 
         else:
-            for i in var_font.fvarTable.instances:
+            for i in variable_font.fvarTable.instances:
                 instances.append(i)
 
         if len(instances) > 0:
@@ -75,13 +75,13 @@ def cli(input_file, selectInstance=False, cleanup=True, updateFontNames=False,  
             for i in instances:
                 instance_count += 1
                 print(f"\nExporting instance {instance_count} of {len(instances)}...")
-                staticfont = instantiateVariableFont(varfont=var_font, axisLimits=i.coordinates,
+                static_instance = instantiateVariableFont(varfont=variable_font, axisLimits=i.coordinates,
                                                      updateFontNames=updateFontNames, optimize=True,
                                                      overlap=OverlapMode.REMOVE_AND_IGNORE_ERRORS)
                 if cleanup is True:
-                    staticfont.cleanupInstance(name_ids_to_delete)
-                output_file = var_font.makeInstanceOutputFileName(i, outputDir, overWrite)
-                staticfont.save(output_file)
+                    static_instance.cleanupInstance(name_ids_to_delete)
+                output_file = variable_font.makeInstanceOutputFileName(i, outputDir, overWrite)
+                static_instance.save(output_file)
                 click.secho(f'{output_file} saved', fg='green')
         else:
             print("\nNo instances found.")
