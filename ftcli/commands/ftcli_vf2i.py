@@ -27,7 +27,7 @@ from ftcli.Lib.VFont import VariableFont
 @click.option('--no-overwrite', 'overWrite', is_flag=True, default=True,
               help="Overwrite existing output files or save them to a new file (numbers are appended at the end of "
                    "file name). By default, files are overwritten.")
-def cli(input_file, selectInstance=False, cleanup=True, updateFontNames=False,  outputDir=None, recalcTimestamp=False,
+def cli(input_file, selectInstance=False, cleanup=True, updateFontNames=False, outputDir=None, recalcTimestamp=False,
         overWrite=True):
     """Exports static instances from a variable font.
 
@@ -76,8 +76,8 @@ def cli(input_file, selectInstance=False, cleanup=True, updateFontNames=False,  
                 instance_count += 1
                 print(f"\nExporting instance {instance_count} of {len(instances)}...")
                 static_instance = instantiateVariableFont(varfont=variable_font, axisLimits=i.coordinates,
-                                                     updateFontNames=updateFontNames, optimize=True,
-                                                     overlap=OverlapMode.REMOVE_AND_IGNORE_ERRORS)
+                                                          updateFontNames=updateFontNames, optimize=True,
+                                                          overlap=OverlapMode.REMOVE_AND_IGNORE_ERRORS)
                 if cleanup is True:
                     static_instance.cleanupInstance(name_ids_to_delete)
                 output_file = variable_font.makeInstanceOutputFileName(i, outputDir, overWrite)
