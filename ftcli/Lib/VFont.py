@@ -138,7 +138,6 @@ class VariableFont(TTFont):
         return sorted(list(set(name_ids_to_delete)))
 
     def cleanupInstance(self, nameIDsToDelete: list):
-        del self.statTable
         for n in self.nameTable.names:
             if n.nameID in nameIDsToDelete:
                 self.nameTable.removeNames(n.nameID, n.platformID, n.platEncID, n.langID)

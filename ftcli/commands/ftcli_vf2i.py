@@ -80,6 +80,7 @@ def cli(input_file, selectInstance=False, cleanup=True, updateFontNames=False, o
                                                           overlap=OverlapMode.REMOVE_AND_IGNORE_ERRORS)
                 if cleanup is True:
                     static_instance.cleanupInstance(name_ids_to_delete)
+                    del static_instance['STAT']
                 output_file = variable_font.makeInstanceOutputFileName(i, outputDir, overWrite)
                 static_instance.save(output_file)
                 click.secho(f'{output_file} saved', fg='green')
