@@ -36,8 +36,6 @@ def clean_nametable(input_path, exclude_nameid, output_dir, recalc_timestamp, ov
     Use -ex-id / --exclude-nameid to preserve the specified namerecords.
     """
 
-    print(repr(exclude_nameid))
-
     files = getFontsList(input_path)
 
     for f in files:
