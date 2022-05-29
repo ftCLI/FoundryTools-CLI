@@ -461,7 +461,7 @@ def find_replace(input_path, old_string, new_string, name_id, platform, fix_cff,
 
         ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -ex 1 -ex 6
 
-    If a namerecord in explicitly included but also explicitly excluded, it wont be changed:
+    If a namerecord is explicitly included but also explicitly excluded, it won't be changed:
 
         ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -n 1 -ex 1 -ex 6
 
