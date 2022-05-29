@@ -59,7 +59,7 @@ def printLanguageCodes():
 
 @printLanguageCodes.command()
 def lang_help():
-    """Prints available languages that can be used with the 'set-name' and 'del-names' commands
+    """Prints available languages that can be used with the 'set-name' and 'del-names' commands.
     """
     from fontTools.ttLib.tables._n_a_m_e import (_MAC_LANGUAGES, _WINDOWS_LANGUAGES)
     print('\n[WINDOWS LANGUAGES]')
