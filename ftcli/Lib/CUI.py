@@ -635,11 +635,11 @@ class CUI(object):
                             if name.platformID == platformID and name.platEncID == platEncID and name.langID == langID:
                                 if name.nameID in NAMEIDS:
                                     string = "{:5d}".format(
-                                        name.nameID) + " : " + "{0:<21}".format(
+                                        name.nameID) + " : " + "{0:<22}".format(
                                         NAMEIDS[name.nameID]) + " : " + name.toUnicode()
                                 else:
                                     string = "{:5d}".format(
-                                        name.nameID) + " : " + "{0:<21}".format(name.nameID) + " : " + name.toUnicode()
+                                        name.nameID) + " : " + "{0:<22}".format(name.nameID) + " : " + name.toUnicode()
 
                                 string = wrapString(string=string, initial_indent=0, indent=indent, max_lines=max_lines,
                                                     width=terminal_width)
