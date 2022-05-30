@@ -780,7 +780,7 @@ Deletes all namerecords in platformID 1.
     
     del-name
 
-Deletes the specified nemerecord from the name table.
+Deletes the specified namerecord from the name table.
 
     find-replace
 
@@ -1029,6 +1029,41 @@ Options:
                               are appended at the end of file name).
   --help                      Show this message and exit.
 ```
+
+## `ftcli vf2i`
+Exports static instances from a variable font.
+
+INPUT_FILE must be a valid variable font (at least fvar and STAT tables must
+be present).
+
+```
+Usage: ftcli vf2i [OPTIONS] INPUT_FILE
+
+Options:
+  -s, --select-instance       By default, the script exports all named
+                              instances. Use this option to select custom axis
+                              valuesfor a single instance.
+  --no-cleanup                By default, STAT table is dropped and axis
+                              nameIDs are deleted from name table. Use --no-
+                              cleanup to keep STAT table and prevent axis
+                              nameIDs from nam table.
+  --update-name-table         Update the instantiated font's `name` table.
+                              Input font must have a STAT table with Axis
+                              Value Tables
+  -o, --output-dir DIRECTORY  Specify the output directory where instance
+                              files are to be saved. If output_directory
+                              doesn't exist, will be created. If not
+                              specified, files are saved to the same folder of
+                              INPUT_FILE.
+  --recalc-timestamp          Keep the original font 'modified' timestamp
+                              (head.modified) or set it to current time. By
+                              default, original timestamp is kept.
+  --no-overwrite              Overwrite existing output files or save them to
+                              a new file (numbers are appended at the end of
+                              file name). By default, files are overwritten.
+  --help                      Show this message and exit.
+```
+
 
 ## `ftcli webfonts`
 Web fonts related tools.
