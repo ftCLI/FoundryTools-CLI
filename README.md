@@ -1091,9 +1091,6 @@ Parses all WOFF and WOFF2 files in INPUT_PATH and creates a CSS stylesheet to us
 ```
 Usage: ftcli webfonts makecss [OPTIONS] INPUT_PATH
 
-  Parses all WOFF and WOFF2 files in INPUT_PATH and creates a CSS stylesheet
-  to use them on web pages.
-
 Options:
   --help  Show this message and exit.
 ```
