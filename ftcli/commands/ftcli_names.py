@@ -44,7 +44,7 @@ def clean_nametable(input_path, exclude_nameid, output_dir, recalc_timestamp, ov
             for name in font['name'].names:
                 if name.nameID in exclude_nameid:
                     continue
-                font.delNameRecord(nameID=name.nameID)
+                font.delNameRecord(nameID=name.nameID, language='ALL')
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
