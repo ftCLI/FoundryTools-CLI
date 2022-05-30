@@ -25,6 +25,46 @@ def removeIllegalCharacters(string: str) -> str:
 
 
 @click.group()
+def recalcItalicBits():
+    pass
+
+
+@recalcItalicBits.command()
+@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
+@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
+              help="""
+The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
+files are saved to the same folder.""")
+@click.option('--recalc-timestamp', is_flag=True, default=False,
+              help="""
+By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
+to current time.
+""")
+@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
+              help="""
+By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
+of file name).
+""")
+def recalc_italic_bits(input_path, output_dir, overwrite, recalc_timestamp):
+    """Sets or clears the italic bits according to the `italicAngle` value in `post` table.
+
+    If the `italicAngle` value is 0.0, the italic bits are cleared. If the value is not 0.0, the italic bits are set.
+    """
+    files = getFontsList(input_path)
+    if len(files) == 0:
+        click.pause('\nNo font files found.')
+        sys.exit()
+
+    for f in files:
+        try:
+            font = Font(f, recalcTimestamp=recalc_timestamp)
+            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
+            font.italicBitsFromItalicAngle(outputFile=output_file)
+        except Exception as e:
+            click.secho(f'{os.path.basename(f)}: {e}', fg='red')
+
+
+@click.group()
 def fontOrganizer():
     pass
 
@@ -227,7 +267,7 @@ def removeHinting():
 @click.option('--keep-glyf', is_flag=True, default=False, help="do not modify glyf table")
 @click.option('--keep-gasp', is_flag=True, default=False, help="do not modify gasp table")
 @click.option('--keep-maxp', is_flag=True, default=False, help="do not modify maxp table")
-@click.option('--keep-head', is_flag=True, default=False, help="do not head glyf table")
+@click.option('--keep-head', is_flag=True, default=False, help="do not modify head table")
 @click.option('--verbose', is_flag=True, default=False, help="display standard output")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help="""
@@ -474,5 +514,5 @@ def del_table(input_path, table, output_dir, recalc_timestamp, overwrite):
 
 
 cli = click.CommandCollection(sources=[addDsig, addFeatures, delTable, fontOrganizer, removeHinting, fontRenamer,
-                                       rmvOverlaps, ttcExtractor],
+                                       recalcItalicBits, rmvOverlaps, ttcExtractor],
                               help="Miscellaneous utilities.")
