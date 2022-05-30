@@ -587,7 +587,7 @@ class CUI(object):
             except Exception as e:
                 click.secho('ERROR: {}'.format(e), fg='red')
 
-    def printFtNames(self, input_path, minimal=False, indent=32, max_lines=None):
+    def printFtNames(self, input_path, minimal=False, indent=33, max_lines=None):
 
         terminal_width = min(120, get_terminal_size()[0] - 1)
 
