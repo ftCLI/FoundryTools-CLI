@@ -379,6 +379,10 @@ def del_names(input_path, name_ids, platform, language, output_dir, recalc_times
     to display available languages.
 
     Use '-l ALL' to delete the name ID from all languages.
+
+    The -n/--name-ids option can be repeated to delete multiple name records at once. For example:
+
+        ftcli names del-names C:\\Fonts -n 1 -n 2 -n 6
     """
     windows = False if platform == "mac" else True
     mac = False if platform == "win" else True
