@@ -7,7 +7,7 @@ from fontTools.feaLib.builder import addOpenTypeFeatures
 from fontTools.ttLib import TTCollection
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.removeOverlaps import removeOverlaps
-from pathvalidate import sanitize_filename
+from pathvalidate import sanitize_filename, sanitize_filepath
 
 from ftcli.Lib.Font import Font
 from ftcli.Lib.utils import getFontsList, makeOutputFileName, getSourceString
@@ -143,7 +143,7 @@ def font_organizer(input_path):
 
             new_dir = os.path.join(os.path.dirname(f), foundry_name, family_name)
             os.makedirs(new_dir, exist_ok=True)
-            new_file = os.path.join(new_dir, new_file_name)
+            new_file = sanitize_filepath(os.path.join(new_dir, new_file_name), platform="auto")
             new_file = makeOutputFileName(new_file)
             os.rename(f, new_file)
             click.secho(f'\nOLD PATH: {f}', fg="green")
