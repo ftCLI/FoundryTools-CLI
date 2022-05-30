@@ -53,7 +53,7 @@ The following packages will be installed during setup:
     * tbl-os2
     
 * **utils**
-  * add-dsig
+  * [add-dsig](#ftcli-utils-add-dsig)
   * add-features
   * dehinter
   * del-table
@@ -810,7 +810,7 @@ Usage: ftcli utils add-dsig [OPTIONS] INPUT_PATH
 Options:
   -o, --output-dir DIRECTORY  The output directory where the output files are
                               to be created. If it doesn't exist, will be
-                              created. If not specified, files are saved to
+                         add_dsig     created. If not specified, files are saved to
                               the same folder.
   --recalc-timestamp          By default, original head.modified value is kept
                               when a font is saved. Use this switch to set
