@@ -20,37 +20,42 @@ The following packages will be installed during setup:
     pip install -e .
  
 ## Commands list
-* **assistant**
-  * edit-cfg
-  * edit-csv
-  * init-cfg
-  * init-csv
-  * recalc-csv
-  * recalc-names
+* [**assistant**](#ftcli-assistant)
+  * [edit-cfg](#ftcli-assistant-edit-cfg)
+  * [edit-csv](#ftcli-assistant-edit-csv)
+  * [init-cfg](#ftcli-assistant-init-cfg)
+  * [init-csv](#ftcli-assistant-init-csv)
+  * [recalc-csv](#ftcli-assistant-recalc-csv)
+  * [recalc-names](#ftcli-assistant-recalc-names)
   
-* **metrics**
-    * align
-    * copy
-    * set-linegap
+* [**metrics**](#ftcli-metrics)
+    * [align](#ftcli-metrics-align)
+    * [copy](#ftcli-metrics-copy)
+    * [set-linegap](#ftcli-metrics-set-linegap)
     
-* **names**
-    * del-mac-names
-    * del-name
-    * win-2-mac
-    * find-replace
-    * lang-help
-    * set-name
-    * set-cff-name
+* [**names**](#ftcli-names)
+    * [add-prefix](#ftcli-names-add-prefix)
+    * [add-suffix](#ftcli-names-add-suffix)
+    * [clean-nametable](#ftcli-names-clean-nametable)
+    * [copy-names](#ftcli-names-copy-names)
+    * [del-mac-names](#ftcli-names-del-mac-names)
+    * [del-names](#ftcli-names-del-names)
+    * [find-replace](#ftcli-names-find-replace)
+    * [lang-help](#ftcli-names-lang-help)
+    * [name-from-txt](#ftcli-names-name-from-txt)
+    * [set-name](#ftcli-names-set-name)
+    * [set-cff-names](#ftcli-names-set-cff-names)
+    * [win-2-mac](#ftcli-names-win-2-mac)
 
-* **os2**
+* [**os2**](#ftcli-os2)
 
-* **print**
-    * ft-info
-    * ft-list
-    * ft-name
-    * ft-names
-    * tbl-head
-    * tbl-os2
+* [**print**](#ftcli-print)
+    * [ft-info](#ftcli-print-ft-info)
+    * [ft-list](#ftcli-print-ft-list)
+    * [ft-name](#ftcli-print-ft-name)
+    * [ft-names](#ftcli-print-ft-names)
+    * [tbl-head](#ftcli-print-tbl-head)
+    * [tbl-os2](#ftcli-print-tbl-os2)
     
 * [**utils**](#ftcli-utils)
   * [add-dsig](#ftcli-utils-add-dsig)
@@ -101,7 +106,7 @@ of file name, so that Times-Bold.otf becomes TimesBold#1.otf).
 
     ftcli metrics copy -s "C:\Fonts\SourceFont.otf" -d "C:\Fonts\" --no-overwrite
 
-## Command: `ftcli assistant`
+## ftcli assistant
 A set of tools to correctly compile the name table and set proper values for usWeightClass, usWidthClass, bold, italic
 and oblique bits.
 
@@ -312,7 +317,7 @@ For example, -s '1_1_2' will read a combination of namerecords 1 and 2 in the Ma
 
 Suppress overwrite confirmation message if the data.csv file already exists.
 
-#### recalc-names
+#### ftcli assistant recalc-names
 Usage:
 
     ftcli assistant recalc-names [OPTIONS] INPUT_PATH
@@ -399,370 +404,105 @@ is kept.
 Overwrite existing output files or save them to a new file (numbers are appended at the end of filename). By default,
 files are overwritten.
 
-## ftCLI metrics
-Vertical metrics tools to align a group of fonts to the same baseline, copy vertical metrics from a font to other fonts
-and set the line gap for one or more fonts.
+## ftcli metrics
+Vertical metrics tools.
 
-### Usage:
+```
+Usage: ftcli metrics [OPTIONS] COMMAND [ARGS]...
 
-    ftcli metrics COMMAND [ARGS]...
+Options:
+  --help  Show this message and exit.
 
-Only one subcommand at time can be used.
+Commands:
+  align        Aligns all fonts stored in INPUT_PATH folder to the same...
+  copy         Copies vertical metrics from a source font to one or more...
+  set-linegap  Modifies the line spacing metrics in one or more fonts.
+```
 
-### Subcommand: `ftcli metrics align`
-
+### ftcli metrics align
 Aligns all fonts stored in INPUT_PATH folder to the same baseline.
 
 To achieve this, the script finds the maximum ascender and the minimum descender values of the fonts stored in the
 INPUT_PATH folder and applies those values to all fonts.
 
-This can produce undesired effects (an exaggerated line height) when one or more fonts contain swashes, for example.
-In such cases, an alternative could be coping vertical metrics from a template font to one or more destination fonts
-using the `ftcli metrics copy` command.
+This can produce undesired effects (an exaggerated line height) when one or more fonts contain swashes, for example. In
+such cases, it's better to copy the vertical metrics from a template font to one or more destination fonts using the
+[`ftcli metrics copy`](#ftcli-metrics-copy) command.
 
 See https://kltf.de/download/FontMetrics-kltf.pdf for more information.
 
-#### Options
+```
+Usage: ftcli metrics align [OPTIONS] INPUT_PATH
 
-##### `-sil, --sil-method`
-Use SIL method: http://silnrsi.github.io/FDBP/en-US/Line_Metrics.html
+Options:
+  -sil, --sil-method          Use SIL method:
+                              https://silnrsi.github.io/FDBP/en-
+                              US/Line_Metrics.html
+  -o, --output-dir DIRECTORY  The output directory where the output files are
+                              to be created. If it doesn't exist, will be
+                              created. If not specified, files are saved to
+                              the same folder.
+  --recalc-timestamp          By default, original head.modified value is kept
+                              when a font is saved. Use this switch to set
+                              head.modified timestamp to current time.
+  --no-overwrite              By default, modified files are overwritten. Use
+                              this switch to save them to a new file (numbers
+                              are appended at the end of file name).
+  --help                      Show this message and exit.
 
-#### Usage example
+```
 
-    fcli metrics align "C:\Fonts" --sil
-
-### Subcommand: `ftcli metrics copy`
-    
+### ftcli metrics copy
 Copies vertical metrics from a source font to one or more destination fonts.
 
-#### Options
+```
+Usage: ftcli metrics copy [OPTIONS]
 
-##### `-s, --source-file FILE`
-The source font from which vertical metrics will be retrieved and applied to all fonts in destination path (required).
+Options:
+  -s, --source-file FILE      Source file. Vertical metrics from this font
+                              will be applied to all destination fonts.
+                              [required]
+  -d, --destination PATH      Destination file or directory.  [required]
+  -o, --output-dir DIRECTORY  The output directory where the output files are
+                              to be created. If it doesn't exist, will be
+                              created. If not specified, files are saved to
+                              the same folder.
+  --recalc-timestamp          By default, original head.modified value is kept
+                              when a font is saved. Use this switch to set
+                              head.modified timestamp to current time.
+  --no-overwrite              By default, modified files are overwritten. Use
+                              this switch to save them to a new file (numbers
+                              are appended at the end of file name).
+  --help                      Show this message and exit.
+```
 
-##### `-d, --destination PATH`
-Destination file or directory (required).
-
-#### Usage
-
-    ftcli metrics copy -s/--source-file FILE -d/--destination PATH
-
-#### Usage example
-
-    ftcli metrics copy -s "C:\MySourceFont.otf" -d "C:\Fonts\"
-
-#### `ftcli metrics set-linegap`
+### ftcli metrics set-linegap
 Modifies the line spacing metrics in one or more fonts.
 
 This is a fork of font-line by Source Foundry: https://github.com/source-foundry/font-line
 
-##### Options:
-
-    -p, --percent INTEGER RANGE (1-100)
-
-Adjust font line spacing to % of UPM value.
-
-    -mfn, --modify-family-name
-
-Adds LG% to the font family to reflect the modified line gap.
-
-##### Usage example:
-
-    ftcli metrics set-linegap -p 20 -mfn
-
-## ftcli os2
-A command line tool to edit OS/2 table.
-
-**Usage:**
-
-    ftcli cli-tool [OPTIONS] INPUT_PATH
-
-The INPUT_PATH parameter can be a single file or a folder. In the last case, all fonts stored in the folder will be
-processed.
-
-**Usage examples:**
-
-    ftcli os2 "C:\Fonts\" -el 4 -utm -o "C:\Fonts\Fixed fonts\"
-    ftcli os2 "C:\Fonts\MyFont-BoldItalic.otf" -b -i --wg 700 --no-overwrite
-
-
-### Options:
-
-#### -v, --version
-Updates OS/2.version value. Version can only be incremented at the moment.
-
-When upgrading from version 1, sxHeight, sCapHeight, usDefaultChar, usBreakChar and usMaxContext will be recalculated.
-When upgrading from version 0, also ulCodePageRange1 and ulCodePageRange2 will be recalculated.
-
-**Usage:**
-
-    ftcli os2 -v/--version [1|2|3|4|5] INPUT_PATH
-
-**Example:**
-
-    ftcli os2 -v 4 "C:\Fonts\"
-
-#### -wg,  --weight
-Sets the OS/2.usWeightClass value. This parameter must be an integer between 1 and 1000.
-
-**Usage:**
-
-    ftcli os2 -wg/--weight [1-1000] INPUT_PATH
-
-**Example:**
-
-    ftcli os2 -wg 700 "C:\Fonts\MyFont-Bold.otf"
-
-#### -wd,  --width
-Sets the OS/2.usWidthClass value. This parameter must be an integer between 1 and 9.
-
-**Usage:**
-
-    ftcli os2 -wd/--width [1-9] INPUT_PATH
-
-**Example:**
-
-    ftcli os2 -wd 3 "C:\Fonts\MyFontCondensed-Bold.otf"
-
-#### -el, --embed-level
-Sets embedding level (OS/2.fsType bits 0-3).
-
-**Usage:**
-
-    ftcli os2 -el/--embed-level [0|2|4|8] INPUT_PATH
-
-**Example:**
-
-    ftcli os2 -el 2 "C:\Fonts"
-
-Allowed values are 0, 2, 4 or 8:
-
-0: Installable embedding
-
-2: Restricted License embedding
-
-4: Preview & Print embedding
-
-8: Editable embedding
-
-See: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fstype for more information.
-
-#### -ns, --no-subsetting
-Set or clears OS/2.fsType bit 8 (no subsetting).
-
-When this bit is set to 1, the font may not be subsetted prior to
-embedding. Other embedding restrictions specified in bits 0 to 3 and bit 9 also apply.
-
-**Usage:**
-
-    ftcli os2 -ns/--no-subsetting [0|1] INPUT_PATH
-
-**Example:**
-
-    ftcli os2 -ns 1 "C:\Fonts\"
-
-#### -beo, --bitmap-embedding-only
-Sets or clears fsType bit 9 (Bitmap embedding only).
-
-When this bit is set, only bitmaps contained in the font may be embedded. No outline data may be embedded. If there are
-no bitmaps available in the font, then the font is considered unembeddable and the embedding services will fail. Other
-embedding restrictions specified in bits 0-3 and 8 also apply.
-
-**Usage:**
-
-    ftcli os2 -beo/--bitmap-embedding-only INPUT_PATH
-
-**Example**
-
-    ftcli os2 -beo "C:\Fonts"
-
-#### -i, --italic / -ni, --no-italic
-Sets or clears the italic bits (fsSelection bit 0 and head.macStyle bit 1).
-
-**Usage:**
-
-    ftcli os2 -i/--italic INPUT_PATH
-    ftcli os2 -ni/--no-italic INPUT_PATH
-
-**Examples:**
-
-    ftcli os2 -i "C:\MyFont-Italic.otf"
-    ftcli os2 -ni "C:\MyFont-Regular.otf"
-
-#### -b, --bold / -nb, --no-bold
-Sets or clears the bold bits (fsSelection bit 5 and head.macStyle bit 0).
-
-**Usage:**
-
-    ftcli os2 -b/--bold INPUT_PATH
-    ftcli os2 -nb/--no-bold INPUT_PATH
-
-**Examples:**
-
-    ftcli os2 -b "C:\MyFont-Bold.otf"
-    ftcli os2 -nb "C:\MyFont-Regular.otf"
-
-#### -r, --regular
-Sets fsSelection bit 6 and clears bold (fsSelection bit 5, head.macStyle bit 0) and italic (fsSelection bit 0, 
-head.macStyle bit 1) bits. This is equivalent to -nb -ni and can't be used in conjunction with -b or -i.
-
-**Usage:**
-
-    ftcli os2 -r/--regular INPUT_PATH
-
-**Examples:**
-
-    ftcli os2 -r "C:\MyFont-Regular.otf"
-
-#### -utm, --use-typo-metrics
-Sets or clears the USE_TYPO_METRICS bit (fsSelection bit 7).
-
-If set, it is strongly recommended that applications use OS/2.sTypoAscender - OS/2.sTypoDescender + OS/2.sTypoLineGap
-as the default line spacing for this font.
-
-See https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection for more information.
-
-**Usage:**
-
-    ftcli os2 -utm/--use-type-metrics value INPUT_PATH
-
-**Examples:**
-
-    ftcli os2 -utm 1 "C:\Fonts\"
-
-#### -wws, --wws-consistent
-If the OS/2.fsSelection bit is set, the font has 'name' table strings consistent with a weight/width/slope family
-without requiring use of name IDs 21 and 22.
-
-See https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection form more information.
-
-See also https://typedrawers.com/discussion/3857/fontlab-7-windows-reads-exported-font-name-differently.
-
-**Usage:**
-
-    ftcli os2 -wws/--wws-consistent value INPUT_PATH
-
-**Examples:**
-
-    ftcli os2 -wws 1 "C:\Fonts\MyFont-BlackItalic.otf"
-    ftcli os2 -wws 0 "C:\Fonts\MyFont-BlackItalicDisplay.otf"
-
-#### -ob, --oblique
-Sets or clears the OBLIQUE bit (fsSelection bit 9).
-
-If bit 9 is set, then this font is to be considered an “oblique” style by processes which make a distinction between
-oblique and italic styles, such as Cascading Style Sheets font matching. For example, a font created by algorithmically
-slanting an upright face will set this bit.
-
-If a font has a version 4 or later OS/2 table and this bit is not set, then this font is not to be considered an
-“oblique” style. For example, a font that has a classic italic design will not set this bit.
-
-This bit, unlike the ITALIC bit (bit 0), is not related to style-linking in applications that assume a four-member
-font-family model comprised of regular, italic, bold and bold italic. It may be set or unset independently of the ITALIC
-bit. In most cases, if OBLIQUE is set, then ITALIC will also be set, though this is not required.
-
-See https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection for more information.
-
-**Usage:**
-
-    ftcli os2 -ob/--oblique value INPUT_PATH
-
-**Examples:**
-
-    ftcli os2 -ob 1 "C:\Fonts\MyFont-Oblique.otf"
-    ftcli os2 -ob 0 "C:\Fonts\MyFont-Regular.otf"
-
-#### -ach, --ach-vend-id'
-Sets the achVendID tag (vendor's four-character identifier).
-
-**Usage:**
-
-    ftcli os2 INPUT_PATH -ach/--ach-vend-id string
-
-**Example:**
-
-    ftcli os2 "C:\Fonts" -ach MyFo
-
-#### --recalc-unicodes
-Recalculates the ulUnicodeRanges 1-4 values.
-
-This uses the `fontTools.ttLib.tables.O_S_2f_2.table_O_S_2f_2.recalcUnicodeRanges` method.
-
-_Intersect the codepoints in the font's Unicode cmap subtables with the Unicode block ranges defined in the OpenType
-specification (v1.7), and set the respective 'ulUnicodeRange*' bits if there is at least ONE intersection._
-
-**Usage:**
-
-    ftcli os2 INPUT_PATH --recalc-unicodes
-
-**Example:**
-
-    ftcli os2 "C:\Fonts\" --recalc-unicodes
-
-#### --import-unicodes_from
-Imports ulUnicodeRanges from a source file.
-
-**Usage:**
-
-    ftcli os2 INPUT_PATH --import-unicodes-from FILE
-
-**Usage example:**
-
-    ftcli os2 "C:\Fonts" --import-unicodes-from "C:\Source\SourceFont-Regular.otf"
-
-#### --recalc-codepages
-Recalculates the ulCodePageRanges 1-2 values.
-
-**Usage:**
-
-    ftcli os2 --recalc-codepages INPUT_PATH
-
-**Example:**
-
-    ftcli os2 --recalc-codepages "C:\Fonts\"
-
-#### --recalc-x-height
-Recalculates sxHeight value.
-
-**Usage:**
-
-    ftcli os2 --recalc-x-height INPUT_PATH
-
-**Example:**
-
-    ftcli os2 --recalc-x-height "C:\Fonts\"
-
-#### --recalc-cap-height
-Recalculates sxHeight value.
-
-**Usage:**
-
-    ftcli os2 --recalc-cap-height INPUT_PATH
-
-**Example:**
-
-    ftcli os2 --recalc-cap-height "C:\Fonts\"
-
-#### --recalc-us-max-context
-Recalculates usMaxContext value.
-
-**Usage:**
-
-    ftcli os2 --recalc-us-max-context INPUT_PATH
-
-**Example:**
-
-    ftcli os2 --recalc-us-max-context "C:\Fonts\"
-
-### General options
-
-`-o, -output-dir`
-
-`--recalc-timestamp`
-
-`--no-overwrite`
-
-See the **General options** section for more information.
+```
+Usage: ftcli metrics set-linegap [OPTIONS] INPUT_PATH
+
+Options:
+  -p, --percent INTEGER RANGE     Adjust font line spacing to % of UPM value.
+                                  [1<=x<=100; required]
+  -mfn, --modify-family-name      Adds LG% to the font family to reflect the
+                                  modified line gap.
+  -o, --output-dir DIRECTORY      The output directory where the output files
+                                  are to be created. If it doesn't exist, will
+                                  be created. If not specified, files are
+                                  saved to the same folder.
+  --recalc-timestamp / --no-recalc-timestamp
+                                  Keeps the original font 'modified' timestamp
+                                  (head.modified) or set it to current time.
+                                  By default, original timestamp is kept.
+  --overwrite / --no-overwrite    Overwrites existing output files or save
+                                  them to a new file (numbers are appended at
+                                  the end of file name). By default, files are
+                                  overwritten.
+  --help                          Show this message and exit.
+```
 
 ## ftcli names
 A command line tool to edit `name` table and CFF names.
@@ -956,7 +696,7 @@ Options:
 ### ftcli names find-replace
 Replaces a string in the name table with a new string.
 
-If the '-cff' option is passed, the string will be replaced also in the 'CFF' table:
+If the `-cff` option is passed, the string will be replaced also in the `CFF` table:
 
     ftcli names find-replace MyFont-Black.otf --os "Black" --ns "Heavy" --cff
 
@@ -972,12 +712,12 @@ To replace the string in a specific namerecord:
 
     ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -n 6
 
-The -p / --platform and -n / --name-id options can be combined:
+The `-p / --platform` and `-n / --name-id` options can be combined:
 
     ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -p win
     -n 6
 
-To exclude one or more namerecords, use the -ex / --exclude-namerecord option:
+To exclude one or more namerecords, use the `-ex / --exclude-namerecord` option:
 
     ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -ex 1
     -ex 6
@@ -987,7 +727,6 @@ If a namerecord is explicitly included but also explicitly excluded, it won't be
     ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -n 1 -ex 1 -ex 6
 
 The above command will replace the string only in nameID 6 in both platforms.
-
 
 ```
 Usage: ftcli names find-replace [OPTIONS] INPUT_PATH
@@ -1052,6 +791,675 @@ The command will produce the following output:
 'nl-BE', 'nn', 'no', 'ny', 'om', 'or', 'pa', 'pl', 'ps', 'pt', 'qu', 'rn', 'ro', 'ru', 'rw', 'sa', 'sd', 'se', 'si',
 'sk', 'sl', 'so', 'sq', 'sr', 'su', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'to', 'tr', 'tt', 'ug', 'uk',
 'ur', 'uz', 'vi', 'yi', 'zh', 'zh-Hant']
+```
+
+### ftcli names name-from-txt
+Reads a text file and writes its content into the specified namerecord in the name table.
+
+If the namerecord is not present, it will be created. If it already exists, will be overwritten.
+
+If `name_id` parameter is not specified, the first available nameID will be used.
+
+By default, the namerecord will be written both in platformID 1 (Macintosh) and platformID 3 (Windows) tables. Use 
+`-p/--platform-id [win|mac]` option to write the namerecord only in the specified platform.
+
+Use the `-l/--language` option to write the namerecord in a language different from 'en'. Use 
+[`ftcli names langhelp`](#ftcli-names-lang-help) to display available languages.
+
+```
+Usage: ftcli names name-from-txt [OPTIONS] INPUT_PATH
+
+Options:
+  -n, --name-id INTEGER RANGE  nameID (Integer between 1 and 32767)
+                               [0<=x<=32767]
+  -p, --platform [win|mac]     platform [win, mac]. If it's not specified,
+                               name will be written in both tables.
+  -l, --language TEXT          language  [default: en]
+  -i, --input-file PATH        Path to the text file to read.  [required]
+  -o, --output-dir DIRECTORY   The output directory where the output files are
+                               to be created. If it doesn't exist, will be
+                               created. If not specified, files are saved to
+                               the same folder.
+  --recalc-timestamp           By default, original head.modified value is
+                               kept when a font is saved. Use this switch to
+                               set head.modified timestamp to current time.
+  --no-overwrite               By default, modified files are overwritten. Use
+                               this switch to save them to a new file (numbers
+                               are appended at the end of file name).
+  --help                       Show this message and exit.
+```
+
+### ftcli names set-cff-names
+Set names in the CFF table.
+
+Usage example:
+    
+    ftcli names set-cff-names --family-name "IBM Plex" --weight "Bold" "D:\Fonts\IBM PLEX\IBMPlex-Bold.otf"
+
+```
+Usage: ftcli names set-cff-names [OPTIONS] INPUT_PATH
+
+Options:
+  --font-name TEXT            Sets the CFF font name.
+  --full-name TEXT            Sets the CFF full name.
+  --family-name TEXT          Sets the CFF family name.
+  --weight TEXT               Sets the CFF weight.
+  --copyright TEXT            Sets the CFF copyright.
+  --notice TEXT               Sets the CFF notice.
+  -o, --output-dir DIRECTORY  The output directory where the output files are
+                              to be created. If it doesn't exist, will be
+                              created. If not specified, files are saved to
+                              the same folder.
+  --recalc-timestamp          By default, original head.modified value is kept
+                              when a font is saved. Use this switch to set
+                              head.modified timestamp to current time.
+  --no-overwrite              By default, modified files are overwritten. Use
+                              this switch to save them to a new file (numbers
+                              are appended at the end of file name).
+  --help                      Show this message and exit.
+```
+
+### ftcli names set-name
+Writes the specified namerecord in the name table.
+
+If the namerecord is not present, it will be created. If it already exists, will be overwritten.
+
+If name_id parameter is not specified, the first available nameID will be used.
+
+By default, the namerecord will be written both in platformID 1 (Macintosh) and platformID 3 (Windows) tables. Use 
+`-p/--platform-id [win|mac]` option to write the namerecord only in the specified platform.
+
+Use the `-l/--language` option to write the namerecord in a language different from 'en'. Use 
+[`ftcli names langhelp`](#ftcli-names-lang-help) to display available languages.
+
+```
+Usage: ftcli names set-name [OPTIONS] INPUT_PATH
+
+Options:
+  -n, --name-id INTEGER RANGE  nameID (Integer between 1 and 32767)
+                               [0<=x<=32767]
+  -p, --platform [win|mac]     platform [win, mac]. If it's not specified,
+                               name will be written in both tables.
+  -l, --language TEXT          language  [default: en]
+  -s, --string TEXT            string  [required]
+  -o, --output-dir DIRECTORY   The output directory where the output files are
+                               to be created. If it doesn't exist, will be
+                               created. If not specified, files are saved to
+                               the same folder.
+  --recalc-timestamp           By default, original head.modified value is
+                               kept when a font is saved. Use this switch to
+                               set head.modified timestamp to current time.
+  --no-overwrite               By default, modified files are overwritten. Use
+                               this switch to save them to a new file (numbers
+                               are appended at the end of file name).
+  --help                       Show this message and exit.
+```
+
+### ftcli names win-2-mac
+Copies all namerecords from Windows table to Macintosh table.
+
+```
+Usage: ftcli names win-2-mac [OPTIONS] INPUT_PATH
+
+Options:
+  -o, --output-dir DIRECTORY  The output directory where the output files are
+                              to be created. If it doesn't exist, will be
+                              created. If not specified, files are saved to
+                              the same folder.
+  --recalc-timestamp          By default, original head.modified value is kept
+                              when a font is saved. Use this switch to set
+                              head.modified timestamp to current time.
+  --no-overwrite              By default, modified files are overwritten. Use
+                              this switch to save them to a new file (numbers
+                              are appended at the end of file name).
+  --help                      Show this message and exit.
+```
+
+## ftcli os2
+Command line `OS/2` table editor.
+
+```
+Usage: ftcli os2 [OPTIONS] INPUT_PATH
+
+Options:
+  -v, --version INTEGER RANGE     Updates OS/2 table version.  [1<=x<=5]
+  -wg, --weight INTEGER RANGE     Sets usWeightClass value.  [1<=x<=1000]
+  -wd, --width INTEGER RANGE      Sets usWidthClass value.  [1<=x<=9]
+  -el, --embed-level [0|2|4|8]    Sets/clears fsType bits 0-3 (embedding
+                                  level).
+
+                                  0: Installable embedding
+                                  2: Restricted License embedding
+                                  4: Preview & Print embedding
+                                  8: Editable embedding
+
+                                  See: https://docs.microsoft.com/en-
+                                  us/typography/opentype/spec/os2#fstype
+  -ns, --no-subsetting [0|1]      Sets or clears fsType bit 8 (No subsetting).
+
+                                  When this bit is set, the font may not be
+                                  subsetted prior to embedding. Other
+                                  embedding restrictions specified in bits 0-3
+                                  and 9 also apply.
+  -beo, --bitmap-embedding-only [0|1]
+                                  Sets or clears fsType bit 9 (Bitmap
+                                  embedding only).
+
+                                  When this bit is set, only bitmaps contained
+                                  in the font may be embedded. No outline data
+                                  may be embedded. If there are no bitmaps
+                                  available in the font, then the font is
+                                  considered unembeddable and the embedding
+                                  services will fail. Other embedding
+                                  restrictions specified in bits 0-3 and 8
+                                  also apply.
+  -i, --italic / -ni, --no-italic
+                                  Sets or clears the italic bits (fsSelection
+                                  bit 0 and head.macStyle bit 1).
+  -b, --bold / -nb, --no-bold     Sets or clears the bold bits (fsSelection
+                                  bit 5 and head.macStyle bit 0).
+  -r, --regular                   Sets fsSelection bit 6 and clears bold
+                                  (fsSelection bit 5, head.macStyle bit 0) and
+                                  italic (fsSelection bit 0,  head.macStyle
+                                  bit 1) bits.
+  -utm, --use-typo-metrics [0|1]  Sets or clears the USE_TYPO_METRICS bit
+                                  (fsSelection bit 7).
+
+                                  If set, it is strongly recommended that
+                                  applications use OS/2.sTypoAscender -
+                                  OS/2.sTypoDescender + OS/2.sTypoLineGap as
+                                  the default line spacing for this font.
+
+                                  See: https://docs.microsoft.com/en-
+                                  us/typography/opentype/spec/os2#fsselection
+  -wws, --wws-consistent [0|1]    Sets or clears the WWS bit (fsSelection bit
+                                  8).
+
+                                  If the OS/2.fsSelection bit is set, the font
+                                  has 'name' table strings consistent with a
+                                  weight/width/slope family without requiring
+                                  use of name IDs 21 and 22.
+
+                                  See: https://docs.microsoft.com/en-
+                                  us/typography/opentype/spec/os2#fsselection
+
+                                  Also: https://typedrawers.com/discussion/385
+                                  7/fontlab-7-windows-reads-exported-font-
+                                  name-differently
+  -ob, --oblique [0|1]            Sets or clears the OBLIQUE bit (fsSelection
+                                  bit 9).
+  -ach, --ach-vend-id TEXT        Sets the achVendID tag (vendor's four-
+                                  character identifier).
+  --recalc-unicodes               Recalculates the ulUnicodeRanges 1-4 values.
+  --import-unicodes-from FILE     Imports ulUnicodeRanges from a template font
+                                  file.
+  --recalc-codepages              Recalculates ulCodePageRange 1-2 values.
+  --recalc-x-height               Recalculates sxHeight value.
+  --recalc-cap-height             Recalculates sCapHeight value.
+  --recalc-us-max-context         Recalculates usMaxContext value.
+  -o, --output-dir DIRECTORY      The output directory where the output files
+                                  are to be created. If it doesn't exist, will
+                                  be created. If not specified, files are
+                                  saved to the same folder.
+  --recalc-timestamp              By default, original head.modified value is
+                                  kept when a font is saved. Use this switch
+                                  to set head.modified timestamp to current
+                                  time.
+  --no-overwrite                  By default, modified files are overwritten.
+                                  Use this switch to save them to a new file
+                                  (numbers are appended at the end of file
+                                  name).
+  --help                          Show this message and exit.
+```
+
+## ftcli print
+Prints various font's information.
+
+### ftcli print ft-info
+Prints detailed font information.
+
+```
+Usage: ftcli print ft-info [OPTIONS] INPUT_PATH
+
+Options:
+  --help  Show this message and exit.
+```
+**Usage example**
+
+    ftcli print ft-info IBMPlexMono-Bold.otf
+
+Prints the following output:
+
+```
+CURRENT FILE: D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-Bold.otf
+
+-------------------------------------------------------------------------------------------------------
+  BASIC INFORMATION
+-------------------------------------------------------------------------------------------------------
+  Flavor            : PostScript
+  Glyphs number     : 1031
+  Date created      : Fri Aug 13 10:46:23 2021
+  Date modified     : Fri Aug 13 08:46:27 2021
+  Version           : 2.003
+  Vendor code       : IBM
+  Unique identifier : 2.3;IBM ;IBMPlexMono-Bold
+  usWidthClass      : 5
+  usWeightClass     : 700
+  Font is bold      : True
+  Font is italic    : False
+  Font is oblique   : False
+  WWS consistent    : True
+  Italic angle      : 0.0
+  Embedding         : 0 (Installable embedding)
+
+-------------------------------------------------------------------------------------------------------
+  FONT METRICS
+-------------------------------------------------------------------------------------------------------
+
+  [OS/2]
+    sTypoAscender   : 780
+    sTypoDescender  : -220
+    sTypoLineGap    : 300
+    usWinAscent     : 1025
+    usWinDescent    : 275
+
+  [hhea]
+    ascent          : 1025
+    descent         : -275
+    lineGap         : 0
+
+  [head]
+    unitsPerEm      : 1000
+    xMin            : -307
+    yMin            : -350
+    xMax            : 637
+    yMax            : 1150
+    Font BBox       : (-307, -350) (637, 1150)
+
+-------------------------------------------------------------------------------------------------------
+  FONT TABLES: 15
+-------------------------------------------------------------------------------------------------------
+  GlyphOrder, head, hhea, maxp, OS/2, name, cmap, post, CFF, GDEF, GPOS, GSUB, hmtx, meta, DSIG
+
+-------------------------------------------------------------------------------------------------------
+  FONT FEATURES: 16
+-------------------------------------------------------------------------------------------------------
+  aalt, ccmp, dnom, frac, numr, ordn, salt, sinf, ss01, ss02, ss03, ss04, ss05, sups, zero, mark
+-------------------------------------------------------------------------------------------------------
+```
+
+### ftcli print ft-list
+Prints a list of fonts with basic information.
+```
+Usage: ftcli print ft-list [OPTIONS] INPUT_PATH
+
+Options:
+  --help  Show this message and exit.
+```
+
+**Usage example**
+
+    ftcli print ft-list "D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono"
+
+Prints the following output
+
+```
++----------------------------------+--------------+---------------+--------+----------+-----------+
+| File Name                        | usWidthClass | usWeightClass | isBold | isItalic | isOblique |
++----------------------------------+--------------+---------------+--------+----------+-----------+
+| IBMPlexMono-Bold.otf             |            5 |           700 |      1 |        0 |         0 |
+| IBMPlexMono-BoldItalic.otf       |            5 |           700 |      1 |        1 |         0 |
+| IBMPlexMono-ExtraLight.otf       |            5 |           200 |      0 |        0 |         0 |
+| IBMPlexMono-ExtraLightItalic.otf |            5 |           200 |      0 |        1 |         0 |
+| IBMPlexMono-Italic.otf           |            5 |           400 |      0 |        1 |         0 |
+| IBMPlexMono-Light.otf            |            5 |           300 |      0 |        0 |         0 |
+| IBMPlexMono-LightItalic.otf      |            5 |           300 |      0 |        1 |         0 |
+| IBMPlexMono-Medium.otf           |            5 |           500 |      0 |        0 |         0 |
+| IBMPlexMono-MediumItalic.otf     |            5 |           500 |      0 |        1 |         0 |
+| IBMPlexMono-Regular.otf          |            5 |           400 |      0 |        0 |         0 |
+| IBMPlexMono-SemiBold.otf         |            5 |           600 |      0 |        0 |         0 |
+| IBMPlexMono-SemiBoldItalic.otf   |            5 |           600 |      0 |        1 |         0 |
+| IBMPlexMono-Text.otf             |            5 |           450 |      0 |        0 |         0 |
+| IBMPlexMono-TextItalic.otf       |            5 |           450 |      0 |        1 |         0 |
+| IBMPlexMono-Thin.otf             |            5 |           100 |      0 |        0 |         0 |
+| IBMPlexMono-ThinItalic.otf       |            5 |           100 |      0 |        1 |         0 |
++----------------------------------+--------------+---------------+--------+----------+-----------+
+
+ Widths  : 5
+ Weights : 100, 200, 300, 400, 450, 500, 600, 700
+```
+
+### ftcli print ft-name
+Prints a single namerecord.
+```
+Use the -ml, --max-lines option to limit the printed line numbers to the
+desired value.
+
+Usage: ftcli print ft-name [OPTIONS] INPUT_PATH
+
+Options:
+  -n, --name-id INTEGER RANGE  nameID (Integer between 0 and 32767)
+                               [0<=x<=32767; required]
+  -ml, --max-lines INTEGER     Maximum number of lines to be printed.
+  --help                       Show this message and exit.
+```
+
+**Usage example**
+
+    ftcli print ft-name -n 6 "D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono"
+
+Prints the following output:
+
+```
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-Bold.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-Bold
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-Bold
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-BoldItalic.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-BoldItalic
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-BoldItalic
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-ExtraLight.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-ExtLt
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-ExtLt
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-ExtraLightItalic.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-ExtLtItalic
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-ExtLtItalic
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-Italic.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-Italic
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-Italic
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-Light.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-Light
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-Light
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-LightItalic.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-LightItalic
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-LightItalic
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-Medium.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-Medm
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-Medm
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-MediumItalic.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-MedmItalic
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-MedmItalic
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-Regular.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-SemiBold.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-SmBld
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-SmBld
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-SemiBoldItalic.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-SmBldItalic
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-SmBldItalic
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-Text.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-Text
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-Text
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-TextItalic.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-TextItalic
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-TextItalic
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-Thin.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-Thin
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-Thin
+
+------------------------------------------------------------------------------------------
+FILE NAME: IBMPlexMono-ThinItalic.otf
+------------------------------------------------------------------------------------------
+platform: (1, 0, 0),  nameID6 : IBMPlexMono-ThinItalic
+platform: (3, 1, 1033),  nameID6 : IBMPlexMono-ThinItalic
+```
+
+### ftcli print ft-names
+Prints the `name` table and `CFF` names (if present).
+
+Use the `-ml / --max-lines` option to limit the printed line numbers, and the `-min / --minimal` one to print a minimal
+set of namerecords.
+
+```
+Usage: ftcli print ft-names [OPTIONS] INPUT_PATH
+
+Options:
+  -ml, --max-lines INTEGER  Maximum number of lines to be printed for each
+                            namerecord
+  -min, --minimal           Prints only nameIDs 1, 2, 3, 4, 5, 6, 16, 17, 18,
+                            21 and 22.
+  --help                    Show this message and exit.
+```
+
+**Usage example**
+
+    ftcli print ft-names "D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-ExtraLightItalic.otf"
+
+Prints the following output:
+
+```
+CURRENT FILE: D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-ExtraLightItalic.otf
+
+-------------------------------------------------------------------------------------------------------
+ NAME TABLE
+-------------------------------------------------------------------------------------------------------
+ platformID: 1 (Macintosh) | platEncID: 0 (Roman) | langID: 0 (en)
+-------------------------------------------------------------------------------------------------------
+    0 : Copyright Notice       : Copyright 2017 IBM Corp. All rights reserved.
+    1 : Family name            : IBM Plex Mono ExtLt
+    2 : Subfamily name         : Italic
+    3 : Unique identifier      : 2.3;IBM ;IBMPlexMono-ExtLtItalic
+    4 : Full font name         : IBM Plex Mono ExtLt Italic
+    5 : Version string         : Version 2.3
+    6 : PostScript name        : IBMPlexMono-ExtLtItalic
+    7 : Trademark              : IBM Plex® is a trademark of IBM Corp, registered in many jurisdictions
+                                 worldwide.
+    8 : Manufacturer Name      : Bold Monday
+    9 : Designer               : Mike Abbink, Paul van der Laan, Pieter van Rosmalen
+   11 : URL Vendor             : http://www.boldmonday.com
+   12 : URL Designer           : http://www.ibm.com
+   13 : License Description    : This Font Software is licensed under the SIL Open Font License,
+                                 Version 1.1. This license is available with a FAQ at:
+                                 http://scripts.sil.org/OFL
+   14 : License Info URL       : http://scripts.sil.org/OFL
+   16 : Typographic Family     : IBM Plex Mono
+   17 : Typographic Subfamily  : ExtraLight Italic
+  256 : 256                    : alternate lowercase a
+  257 : 257                    : simple lowercase g
+  258 : 258                    : slashed number zero
+  259 : 259                    : plain number zero
+  260 : 260                    : alternate lowercase eszett
+-------------------------------------------------------------------------------------------------------
+ platformID: 3 (Windows) | platEncID: 1 (Unicode) | langID: 1033 (en)
+-------------------------------------------------------------------------------------------------------
+    0 : Copyright Notice       : Copyright 2017 IBM Corp. All rights reserved.
+    1 : Family name            : IBM Plex Mono ExtLt
+    2 : Subfamily name         : Italic
+    3 : Unique identifier      : 2.3;IBM ;IBMPlexMono-ExtLtItalic
+    4 : Full font name         : IBM Plex Mono ExtLt Italic
+    5 : Version string         : Version 2.3
+    6 : PostScript name        : IBMPlexMono-ExtLtItalic
+    7 : Trademark              : IBM Plex® is a trademark of IBM Corp, registered in many jurisdictions
+                                 worldwide.
+    8 : Manufacturer Name      : Bold Monday
+    9 : Designer               : Mike Abbink, Paul van der Laan, Pieter van Rosmalen
+   11 : URL Vendor             : http://www.boldmonday.com
+   12 : URL Designer           : http://www.ibm.com
+   13 : License Description    : This Font Software is licensed under the SIL Open Font License,
+                                 Version 1.1. This license is available with a FAQ at:
+                                 http://scripts.sil.org/OFL
+   14 : License Info URL       : http://scripts.sil.org/OFL
+   16 : Typographic Family     : IBM Plex Mono
+   17 : Typographic Subfamily  : ExtraLight Italic
+   19 : Sample text            : How razorback-jumping frogs can level six piqued gymnasts!
+  256 : 256                    : alternate lowercase a
+  257 : 257                    : simple lowercase g
+  258 : 258                    : slashed number zero
+  259 : 259                    : plain number zero
+  260 : 260                    : alternate lowercase eszett
+-------------------------------------------------------------------------------------------------------
+ CFF NAMES
+-------------------------------------------------------------------------------------------------------
+ fontNames                    : ['IBMPlexMono-ExtLtItalic']
+ version                      : 2.3
+ Notice                       : We are all, by any practical definition of the words, foolproof and
+                                 incapable of error.
+ Copyright                    : Copyright 2017 IBM Corp. All rights reserved.
+ FullName                     : IBM Plex Mono ExtLt Italic
+ FamilyName                   : IBM Plex Mono
+ Weight                       : ExtraLight
+-------------------------------------------------------------------------------------------------------
+```
+
+### ftcli print tbl-head
+Prints the 'head' table.
+
+```
+Usage: ftcli print tbl-head [OPTIONS] INPUT_PATH
+
+Options:
+  --help  Show this message and exit.
+```
+
+**Usage example**
+
+    ftcli print tbl-head "D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-BoldItalic.otf"
+
+Prints the following output:
+
+```
+CURRENT FILE: D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-BoldItalic.otf
+-------------------------------------------------------------------------------------------------------
+tableTag head
+-------------------------------------------------------------------------------------------------------
+
+    <tableVersion value="1.0"/>
+    <fontRevision value="2.00299072265625"/>
+    <checkSumAdjustment value="0xd80c0ca4"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="3"/>
+    <unitsPerEm value="1000"/>
+    <created value="Fri Aug 13 10:46:23 2021"/>
+    <modified value="Fri Aug 13 08:46:27 2021"/>
+    <xMin value="-256"/>
+    <yMin value="-350"/>
+    <xMax value="713"/>
+    <yMax value="1149"/>
+    <macStyle value="3"/>
+    <lowestRecPPEM value="3"/>
+    <fontDirectionHint value="2"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+
+-------------------------------------------------------------------------------------------------------
+```
+
+### ftcli print tbl-os2
+Prints the 'OS/2' table.
+
+```
+Usage: ftcli print tbl-os2 [OPTIONS] INPUT_PATH
+
+Options:
+  --help  Show this message and exit.
+```
+
+**Usage example**
+
+    ftcli print tbl-os2 "D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-BoldItalic.otf"
+
+Prints the following output:
+
+```
+CURRENT FILE: D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-BoldItalic.otf
+-------------------------------------------------------------------------------------------------------
+tableTag OS/2
+-------------------------------------------------------------------------------------------------------
+
+    <version value="4"/>
+    <xAvgCharWidth value="600"/>
+    <usWeightClass value="700"/>
+    <usWidthClass value="5"/>
+    <fsType value="00000000 00000000"/>
+    <ySubscriptXSize value="650"/>
+    <ySubscriptYSize value="600"/>
+    <ySubscriptXOffset value="-13"/>
+    <ySubscriptYOffset value="75"/>
+    <ySuperscriptXSize value="650"/>
+    <ySuperscriptYSize value="600"/>
+    <ySuperscriptXOffset value="59"/>
+    <ySuperscriptYOffset value="350"/>
+    <yStrikeoutSize value="100"/>
+    <yStrikeoutPosition value="309"/>
+    <sFamilyClass value="2057"/>
+    <panose>
+        <bFamilyType value="2"/>
+        <bSerifStyle value="11"/>
+        <bWeight value="8"/>
+        <bProportion value="9"/>
+        <bContrast value="5"/>
+        <bStrokeVariation value="2"/>
+        <bArmStyle value="3"/>
+        <bLetterForm value="0"/>
+        <bMidline value="2"/>
+        <bXHeight value="3"/>
+    </panose>
+    <ulUnicodeRange1 value="10100000 00000000 00000010 01101111"/>
+    <ulUnicodeRange2 value="01000000 00000000 00111000 00111011"/>
+    <ulUnicodeRange3 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange4 value="00000000 00000000 00000000 00000000"/>
+    <achVendID value="IBM "/>
+    <fsSelection value="00000001 00100001"/>
+    <usFirstCharIndex value="32"/>
+    <usLastCharIndex value="64258"/>
+    <sTypoAscender value="780"/>
+    <sTypoDescender value="-220"/>
+    <sTypoLineGap value="300"/>
+    <usWinAscent value="1025"/>
+    <usWinDescent value="275"/>
+    <ulCodePageRange1 value="01100000 00000000 00000001 10010111"/>
+    <ulCodePageRange2 value="00000000 00000000 00000000 00000000"/>
+    <sxHeight value="516"/>
+    <sCapHeight value="698"/>
+    <usDefaultChar value="0"/>
+    <usBreakChar value="32"/>
+    <usMaxContext value="3"/>
+
+-------------------------------------------------------------------------------------------------------
 ```
 
 ## ftcli utils
