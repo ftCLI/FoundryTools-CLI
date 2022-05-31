@@ -4,13 +4,14 @@ import click
 from fontTools.ttLib.tables._f_v_a_r import NamedInstance
 from fontTools.varLib.instancer import instantiateVariableFont, OverlapMode
 
+from ftcli.Lib.utils import add_file_argument, add_common_options
 from ftcli.Lib.VFont import VariableFont
 
 
 @click.command()
-@click.argument('input_file', type=click.Path(exists=True, resolve_path=True, dir_okay=False))
+@add_file_argument()
 @click.option('-s', '--select-instance', 'selectInstance', is_flag=True, default=False,
-              help="By default, the script exports all named instances. Use this option to select custom axis values"
+              help="By default, the script exports all named instances. Use this option to select custom axis values "
                    "for a single instance.")
 @click.option('--no-cleanup', 'cleanup', is_flag=True, default=True,
               help="By default, STAT table is dropped and axis nameIDs are deleted from name table. Use --no-cleanup "
@@ -18,20 +19,13 @@ from ftcli.Lib.VFont import VariableFont
 @click.option('--update-name-table', 'updateFontNames', is_flag=True, default=False,
               help="Update the instantiated font's `name` table. Input font must have a STAT table with Axis Value "
                    "Tables")
-@click.option('-o', '--output-dir', 'outputDir', type=click.Path(file_okay=False, resolve_path=True), default=None,
-              help="Specify the output directory where instance files are to be saved. If output_directory doesn't "
-                   "exist, will be created. If not specified, files are saved to the same folder of INPUT_FILE.")
-@click.option('--recalc-timestamp', 'recalcTimestamp', is_flag=True, default=False,
-              help="Keep the original font 'modified' timestamp (head.modified) or set it to current time. By "
-                   "default, original timestamp is kept.")
-@click.option('--no-overwrite', 'overWrite', is_flag=True, default=True,
-              help="Overwrite existing output files or save them to a new file (numbers are appended at the end of "
-                   "file name). By default, files are overwritten.")
+@add_common_options()
 def cli(input_file, selectInstance=False, cleanup=True, updateFontNames=False, outputDir=None, recalcTimestamp=False,
         overWrite=True):
-    """Exports static instances from a variable font.
+    """
+    Exports static instances from a variable font.
 
-    INPUT_FILE must be a valid variable font (at least fvar and STAT tables must be present).
+    INPUT_FILE must be a valid variable font (at least `fvar` and `STAT` tables must be present).
     """
 
     if outputDir is not None:
