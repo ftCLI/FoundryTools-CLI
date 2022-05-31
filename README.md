@@ -52,23 +52,23 @@ The following packages will be installed during setup:
     * tbl-head
     * tbl-os2
     
-* **utils**
+* [**utils**](#ftcli-utils)
   * [add-dsig](#ftcli-utils-add-dsig)
-  * add-features
-  * dehinter
-  * del-table
-  * font-organizer
-  * font-renamer
-  * recalc-italic-bits
-  * remove-overlaps
-  * ttc-extractor
+  * [add-features](#ftcli-utils-add-features)
+  * [dehinter](#ftcli-utils-dehinter)
+  * [del-table](#ftcli-utils-del-table)
+  * [font-organizer](#ftcli-utils-font-organizer)
+  * [font-renamer](#ftcli-utils-font-renamer)
+  * [recalc-italic-bits](#ftcli-utils-recalc-italic-bits)
+  * [remove-overlaps](#ftcli-utils-remove-overlaps)
+  * [ttc-extractor](#ftcli-utils-ttc-extractor)
 
-* **vf2i**
+* [**vf2i**](#ftcli-vf2i)
   
-* **webfonts**
-    * compress
-    * decompress
-    * makecss
+* [**webfonts**](#ftcli-webfonts)
+    * [compress](#ftcli-webfonts-compress)
+    * [decompress](#ftcli-webfonts-decompress)
+    * [makecss](#ftcli-webfonts-makecss)
 
 ## Arguments
 
@@ -765,43 +765,298 @@ Recalculates usMaxContext value.
 See the **General options** section for more information.
 
 ## ftcli names
+A command line tool to edit `name` table and CFF names.
 
-Usage:
+### ftcli names add-prefix
+Adds a prefix to the specified namerecords.
 
-    ftcli font-names [OPTIONS] COMMAND [ARGS]...
+```
+Usage: ftcli names add-prefix [OPTIONS] INPUT_PATH
 
-A command line tool to add, delete and edit namerecords.
+Options:
+  --prefix TEXT                 The prefix string.  [required]
+  -n, --name-ids INTEGER RANGE  nameID where to add the prefix (Integer
+                                between 0 and 32767)  [0<=x<=32767; required]
+  -p, --platform [win|mac]      platform [win, mac]. If no platform is
+                                specified, the prefix will be added in both
+                                tables.
+  -o, --output-dir DIRECTORY    The output directory where the output files
+                                are to be created. If it doesn't exist, will
+                                be created. If not specified, files are saved
+                                to the same folder.
+  --recalc-timestamp            By default, original head.modified value is
+                                kept when a font is saved. Use this switch to
+                                set head.modified timestamp to current time.
+  --no-overwrite                By default, modified files are overwritten.
+                                Use this switch to save them to a new file
+                                (numbers are appended at the end of file
+                                name).
+  --help                        Show this message and exit.
+```
 
-Commands:
+### ftcli names add-suffix
+Adds a suffix to the specified namerecords.
 
-    del-mac-names
+```
+Usage: ftcli names add-suffix [OPTIONS] INPUT_PATH
 
-Deletes all namerecords in platformID 1.
-    
-    del-name
+Options:
+  --suffix TEXT                 The suffix string  [required]
+  -n, --name-ids INTEGER RANGE  nameID where to add the suffix (Integer
+                                between 0 and 32767)  [0<=x<=32767; required]
+  -p, --platform [win|mac]      platform [win, mac]. If no platform is
+                                specified, the suffix will be added in both
+                                tables.
+  -o, --output-dir DIRECTORY    The output directory where the output files
+                                are to be created. If it doesn't exist, will
+                                be created. If not specified, files are saved
+                                to the same folder.
+  --recalc-timestamp            By default, original head.modified value is
+                                kept when a font is saved. Use this switch to
+                                set head.modified timestamp to current time.
+  --no-overwrite                By default, modified files are overwritten.
+                                Use this switch to save them to a new file
+                                (numbers are appended at the end of file
+                                name).
+  --help                        Show this message and exit.
+```
 
-Deletes the specified namerecord from the name table.
+### ftcli names clean-nametable
+Deletes all namerecords from the 'name' table.
 
-    find-replace
+Use -ex-id / --exclude-nameid to preserve the specified namerecords.
 
+```
+Usage: ftcli names clean-nametable [OPTIONS] INPUT_PATH
+
+Options:
+  -ex-id, --exclude-nameid INTEGER
+                                  Name IDs to skip. The specified name IDs
+                                  won't be deleted. This option can be
+                                  repeated (example: -ex 3 -ex 5 -ex 6...).
+  -o, --output-dir DIRECTORY      The output directory where the output files
+                                  are to be created. If it doesn't exist, will
+                                  be created. If not specified, files are
+                                  saved to the same folder.
+  --recalc-timestamp              By default, original head.modified value is
+                                  kept when a font is saved. Use this switch
+                                  to set head.modified timestamp to current
+                                  time.
+  --no-overwrite                  By default, modified files are overwritten.
+                                  Use this switch to save them to a new file
+                                  (numbers are appended at the end of file
+                                  name).
+  --help                          Show this message and exit.
+```
+
+### ftcli names copy-names
+Copies the `name` table from source_font to dest_font.
+
+```
+Usage: ftcli names copy-names [OPTIONS]
+
+Options:
+  -s, --source_font FILE      Path to the source font.  [required]
+  -d, --dest_font FILE        Path to the destination font.  [required]
+  -o, --output-dir DIRECTORY  The output directory where the output files are
+                              to be created. If it doesn't exist, will be
+                              created. If not specified, files are saved to
+                              the same folder.
+  --recalc-timestamp          By default, original head.modified value is kept
+                              when a font is saved. Use this switch to set
+                              head.modified timestamp to current time.
+  --no-overwrite              By default, modified files are overwritten. Use
+                              this switch to save them to a new file (numbers
+                              are appended at the end of file name).
+  --help                      Show this message and exit.
+```
+
+### ftcli names del-mac-names
+Deletes all namerecords where platformID is equal to 1.
+
+According to Apple (https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6name.html), _"names with
+platformID 1 were required by earlier versions of macOS. Its use on modern platforms is discouraged. Use names with
+platformID 3 instead for maximum compatibility. Some legacy software, however, may still require names with platformID
+1, platformSpecificID 0"_.
+
+USAGE:
+
+    ftcli names del-mac-names INPUT_PATH [OPTIONS]
+
+Use the `-ex / --exclude-namerecord` option to prevent certain namerecords to be deleted:
+
+    ftcli names del-mac-names INPUT_PATH -ex 1
+
+The `-ex / --exclude-namerecord` option can be repeated to exclude from deletion more than one namerecord:
+
+    ftcli names del-mac-names INPUT_PATH -ex 1 -ex 3 -ex 6
+
+`INPUT_PATH` can be a single font file or a folder containing fonts.
+
+```
+Usage: ftcli names del-mac-names [OPTIONS] INPUT_PATH
+
+Options:
+  -ex, --exclude-namerecord INTEGER RANGE
+                                  Name IDs to ignore. The specified name IDs
+                                  won't be deleted. This option can be
+                                  repeated (example: -ex 3 -ex 5 -ex 6...).
+                                  [0<=x<=32767]
+  -o, --output-dir DIRECTORY      The output directory where the output files
+                                  are to be created. If it doesn't exist, will
+                                  be created. If not specified, files are
+                                  saved to the same folder.
+  --recalc-timestamp              By default, original head.modified value is
+                                  kept when a font is saved. Use this switch
+                                  to set head.modified timestamp to current
+                                  time.
+  --no-overwrite                  By default, modified files are overwritten.
+                                  Use this switch to save them to a new file
+                                  (numbers are appended at the end of file
+                                  name).
+  --help                          Show this message and exit.
+```
+
+### ftcli names del-names
+Deletes the specified namerecord(s) from the name table.
+
+Use the `-l/--language` option to delete a namerecord in a language different than 'en'. Use 'ftcli names
+lang-help' to display available languages.
+
+Use `-l ALL` to delete the name ID from all languages.
+
+The -n/--name-ids option can be repeated to delete multiple name records at once. For example:
+  
+    ftcli names del-names C:\Fonts -n 1 -n 2 -n 6
+
+```
+Usage: ftcli names del-names [OPTIONS] INPUT_PATH
+
+Options:
+  -n, --name-ids INTEGER      nameID (Integer)  [required]
+  -p, --platform [win|mac]    platform [win, mac]. If no platform is
+                              specified, the namerecord will be deleted from
+                              both tables.
+  -l, --language TEXT         Specify the name ID language (eg: 'de'), or use
+                              'ALL' to delete the name ID from all languages.
+                              [default: en]
+  -o, --output-dir DIRECTORY  The output directory where the output files are
+                              to be created. If it doesn't exist, will be
+                              created. If not specified, files are saved to
+                              the same folder.
+  --recalc-timestamp          By default, original head.modified value is kept
+                              when a font is saved. Use this switch to set
+                              head.modified timestamp to current time.
+  --no-overwrite              By default, modified files are overwritten. Use
+                              this switch to save them to a new file (numbers
+                              are appended at the end of file name).
+  --help                      Show this message and exit.
+```
+
+### ftcli names find-replace
 Replaces a string in the name table with a new string.
 
-    lang-help
-  
-Prints available languages that can be used with the...
-    
-    set-name
+If the '-cff' option is passed, the string will be replaced also in the 'CFF' table:
 
-Writes the specified namerecord in the name table.
+    ftcli names find-replace MyFont-Black.otf --os "Black" --ns "Heavy" --cff
 
-    win-2-mac
+To simply remove a string, use an empty string as new string:
 
-Copies namerecords from Windows table to Macintosh table.
+    ftcli names find-replace MyFont-Black.otf --os "RemoveMe" --ns ""
 
-## `ftcli utils`
+To replace the string in a specific platform ('win' or 'mac'):
+
+    ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -p win
+
+To replace the string in a specific namerecord:
+
+    ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -n 6
+
+The -p / --platform and -n / --name-id options can be combined:
+
+    ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -p win
+    -n 6
+
+To exclude one or more namerecords, use the -ex / --exclude-namerecord option:
+
+    ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -ex 1
+    -ex 6
+
+If a namerecord is explicitly included but also explicitly excluded, it won't be changed:
+
+    ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -n 1 -ex 1 -ex 6
+
+The above command will replace the string only in nameID 6 in both platforms.
+
+
+```
+Usage: ftcli names find-replace [OPTIONS] INPUT_PATH
+
+Options:
+  -os, --old-string TEXT          old string  [required]
+  -ns, --new-string TEXT          new string  [required]
+  -n, --name-id INTEGER RANGE     nameID (Integer between 0 and 32767). If not
+                                  specified, the string will be replaced in
+                                  allnamerecords.  [0<=x<=32767]
+  -p, --platform [win|mac]        platform [win, mac]. If no platform is
+                                  specified, the string will be replaced in
+                                  both tables.
+  -cff, --fix-cff                 Replaces the string in the CFF table.
+  -ex, --exclude-namerecord INTEGER RANGE
+                                  Name IDs to ignore. The specified name IDs
+                                  won't be changed. This option can be
+                                  repeated (example: -ex 3 -ex 5 -ex 6...).
+                                  [0<=x<=32767]
+  -o, --output-dir DIRECTORY      The output directory where the output files
+                                  are to be created. If it doesn't exist, will
+                                  be created. If not specified, files are
+                                  saved to the same folder.
+  --recalc-timestamp              By default, original head.modified value is
+                                  kept when a font is saved. Use this switch
+                                  to set head.modified timestamp to current
+                                  time.
+  --no-overwrite                  By default, modified files are overwritten.
+                                  Use this switch to save them to a new file
+                                  (numbers are appended at the end of file
+                                  name).
+  --help                          Show this message and exit.
+```
+
+### ftcli names lang-help
+Usage: ftcli names lang-help
+Prints available languages that can be used with the 'set-name' and 'del-names' commands.
+
+The command will produce the following output:
+```
+[WINDOWS LANGUAGES]
+['aeb', 'af', 'am', 'ar', 'ar-AE', 'ar-BH', 'ar-DZ', 'ar-IQ', 'ar-JO', 'ar-KW', 'ar-LB', 'ar-LY', 'ar-OM', 'ar-QA',
+'ar-SA', 'ar-SY', 'ar-YE', 'arn', 'ary', 'as', 'az', 'az-Cyrl', 'ba', 'be', 'bg', 'bn', 'bn-IN', 'bo', 'br', 'bs',
+'bs-Cyrl', 'ca', 'co', 'cs', 'cy', 'da', 'de', 'de-AT', 'de-CH', 'de-LI', 'de-LU', 'dsb', 'dv', 'el', 'en', 'en-029',
+'en-AU', 'en-BZ', 'en-CA', 'en-GB', 'en-IE', 'en-IN', 'en-JM', 'en-MY', 'en-NZ', 'en-PH', 'en-SG', 'en-TT', 'en-ZA',
+'en-ZW', 'es', 'es', 'es-AR', 'es-BO', 'es-CL', 'es-CO', 'es-CR', 'es-DO', 'es-EC', 'es-GT', 'es-HN', 'es-MX', 'es-NI',
+'es-PA', 'es-PE', 'es-PR', 'es-PY', 'es-SV', 'es-US', 'es-UY', 'es-VE', 'et', 'eu', 'fi', 'fil', 'fo', 'fr', 'fr-BE',
+'fr-CA', 'fr-CH', 'fr-LU', 'fr-MC', 'fy', 'ga', 'gl', 'gsw', 'gu', 'ha', 'he', 'hi', 'hr', 'hr-BA', 'hsb', 'hu', 'hy',
+'id', 'ig', 'ii', 'is', 'it', 'it-CH', 'iu', 'iu-Latn', 'ja', 'ka', 'kk', 'kl', 'km', 'kn', 'ko', 'kok', 'ky', 'lb',
+'lo', 'lt', 'lv', 'mi', 'mk', 'ml', 'mn', 'mn-CN', 'moh', 'mr', 'ms', 'ms-BN', 'mt', 'nb', 'ne', 'nl', 'nl-BE', 'nn',
+'nso', 'oc', 'or', 'pa', 'pl', 'prs', 'ps', 'pt', 'pt-PT', 'qu', 'qu-BO', 'qu-EC', 'quc', 'rm', 'ro', 'ru', 'rw', 'sa',
+'sah', 'se', 'se-FI', 'se-SE', 'si', 'sk', 'sl', 'sma-NO', 'smj', 'smj-NO', 'smn', 'sms', 'sms', 'sq', 'sr',
+'sr-Cyrl-BA', 'sr-Latn', 'sr-Latn-BA', 'sv', 'sv-FI', 'sw', 'syr', 'ta', 'te', 'tg', 'th', 'tk', 'tn', 'tr', 'tt',
+'tzm', 'ug', 'uk', 'ur', 'uz', 'uz-Cyrl', 'vi', 'wo', 'xh', 'yo', 'zh', 'zh-HK', 'zh-MO', 'zh-SG', 'zh-TW', 'zu']
+
+[MAC LANGUAGES]
+['af', 'am', 'ar', 'as', 'ay', 'az', 'az-Arab', 'az-Cyrl', 'be', 'bg', 'bn', 'bo', 'br', 'ca', 'cy', 'cz', 'da', 'de',
+'dz', 'el', 'el-polyton', 'en', 'eo', 'es', 'es', 'eu', 'fa', 'fi', 'fo', 'fr', 'ga', 'ga', 'gd', 'gl', 'gn', 'gu',
+'gv', 'he', 'hi', 'hr', 'hu', 'hy', 'id', 'is', 'it', 'iu', 'ja', 'jv', 'ka', 'kk', 'kl', 'km', 'kn', 'ko', 'ks', 'ku',
+'ky', 'la', 'lo', 'lt', 'lv', 'mg', 'mk', 'ml', 'mn', 'mn-CN', 'mo', 'mr', 'ms', 'ms-Arab', 'mt', 'my', 'ne', 'nl',
+'nl-BE', 'nn', 'no', 'ny', 'om', 'or', 'pa', 'pl', 'ps', 'pt', 'qu', 'rn', 'ro', 'ru', 'rw', 'sa', 'sd', 'se', 'si',
+'sk', 'sl', 'so', 'sq', 'sr', 'su', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'to', 'tr', 'tt', 'ug', 'uk',
+'ur', 'uz', 'vi', 'yi', 'zh', 'zh-Hant']
+```
+
+## ftcli utils
 Miscellaneous utilities.
 
-### `ftcli utils add-dsig`
+### ftcli utils add-dsig
 Adds a dummy DSIG to the font, if it's not present.
 
 ```
@@ -821,7 +1076,7 @@ Options:
   --help                      Show this message and exit.
 ```
 
-### `ftcli utils add-features`
+### ftcli utils add-features
 Import features form a fea file.
 
 ```
@@ -846,7 +1101,7 @@ Options:
   --help                          Show this message and exit.
 ```
 
-### `ftcli utils dehinter`
+### ftcli utils dehinter
 Drops hinting from all glyphs.
 
 Currently, this only works with TrueType fonts with 'glyf' table.
@@ -883,7 +1138,7 @@ Options:
   --help                      Show this message and exit.
 ```
 
-### `ftcli utils del-table`
+### ftcli utils del-table
 Deletes the specified table from the font.
 
 ```
@@ -906,7 +1161,7 @@ Options:
   --help                          Show this message and exit.
 ```
 
-### `ftcli utils font-organizer`
+### ftcli utils font-organizer
 Renames font files according to PostScript name and sorts them by foundry  and family names.
 
 ```
@@ -930,7 +1185,7 @@ Usage: ftcli utils font-organizer [OPTIONS] INPUT_PATH
   overwriting an existing file.
 ```
 
-### `ftcli utils font-renamer`
+### ftcli utils font-renamer
 Renames font files according to the provided source string.
 
 ```
@@ -961,7 +1216,7 @@ Options:
   --help                          Show this message and exit.
 ```
 
-### `ftcli utils recalc-italic-bits`
+### ftcli utils recalc-italic-bits
 Sets or clears the italic bits according to the `italicAngle` value in `post` table.
 
 If the `italicAngle` value is 0.0, the italic bits are cleared. If the value is not 0.0, the italic bits are set.
@@ -983,7 +1238,7 @@ Options:
   --help                      Show this message and exit.
 ```
 
-### `ftcli utils remove-overlaps`
+### ftcli utils remove-overlaps
 Simplify glyphs in TTFont by merging overlapping contours.
 
 Overlapping components are first decomposed to simple contours, then merged.
@@ -1010,7 +1265,7 @@ Options:
   --help                      Show this message and exit.
 ```
 
-### `ftcli utils ttc-extractor`
+### ftcli utils ttc-extractor
 Extracts .ttc fonts to otf/ttf fonts.
 
 ```
@@ -1030,7 +1285,7 @@ Options:
   --help                      Show this message and exit.
 ```
 
-## `ftcli vf2i`
+## ftcli vf2i
 Exports static instances from a variable font.
 
 INPUT_FILE must be a valid variable font (at least fvar and STAT tables must
@@ -1064,11 +1319,10 @@ Options:
   --help                      Show this message and exit.
 ```
 
-
-## `ftcli webfonts`
+## ftcli webfonts
 Web fonts related tools.
 
-### `ftcli webfonts compress`
+### ftcli webfonts compress
 Converts OpenType fonts to WOFF/WOFF2 format.
 
 Use the -f/--flavor option to specify flavor of output font files. May be 'woff' or 'woff2'. If no flavor is specified,
@@ -1096,7 +1350,7 @@ Options:
   --help                      Show this message and exit.
 ```
 
-### `ftcli webfonts decompress`
+### ftcli webfonts decompress
 Converts WOFF/WOFF2 files to OpenType format.
 
 Output will be a ttf or otf file, depending on the webfont flavor (TTF or CFF).
@@ -1120,7 +1374,7 @@ Options:
   --help                      Show this message and exit.
 ```
 
-### `ftcli webfonts makecss`
+### ftcli webfonts makecss
 Parses all WOFF and WOFF2 files in INPUT_PATH and creates a CSS stylesheet to use them on web pages.
 
 ```
