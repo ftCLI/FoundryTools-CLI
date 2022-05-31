@@ -186,7 +186,7 @@ def setCffName():
 @click.option('--full-name', type=str, default=None, help="Sets the CFF full name.")
 @click.option('--family-name', type=str, default=None, help="Sets the CFF family name.")
 @click.option('--weight', type=str, default=None, help="Sets the CFF weight.")
-@click.option('--copyright', type=str, default=None, help="Sets the CFF copyright.")
+@click.option('--copyright', 'copyright_', type=str, default=None, help="Sets the CFF copyright.")
 @click.option('--notice', type=str, default=None, help="Sets the CFF notice.")
 @click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
               help="""
@@ -202,9 +202,14 @@ to current time.
 By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
 of file name).
 """)
-def set_cff_name(input_path, font_name, full_name, family_name, weight, copyright, notice, output_dir,
-                 recalc_timestamp, overwrite):
-    """Sets names in the CFF table."""
+def set_cff_names(input_path, font_name, full_name, family_name, weight, copyright_, notice, output_dir,
+                  recalc_timestamp, overwrite):
+    """Sets names in the CFF table.
+
+    Usage example:
+
+    ftcli names set-cff-names --family-name "IBM Plex" --weight "Bold" "D:\\Fonts\\IBM PLEX\\IBMPlex-Bold.otf"
+    """
 
     files = getFontsList(input_path)
 
@@ -215,7 +220,7 @@ def set_cff_name(input_path, font_name, full_name, family_name, weight, copyrigh
                 click.secho(f'{f} is not a CFF font', fg='red')
                 return
             font.setCFFName(fontNames=font_name, FullName=full_name, FamilyName=family_name, Weight=weight,
-                            Copyright=copyright, Notice=notice)
+                            Copyright=copyright_, Notice=notice)
             output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
             font.save(output_file)
             click.secho(f'{output_file} --> saved', fg='green')
@@ -260,7 +265,7 @@ def set_name(input_path, name_id, platform, language, string, output_dir, recalc
     By default, the namerecord will be written both in platformID 1 (Macintosh) and platformID 3 (Windows) tables. Use
     -p/--platform-id [win|mac] option to write the namerecord only in the specified platform.
 
-    Use the -l/--language option to write the namerecord in a language different than 'en'. Use 'ftcli nametable
+    Use the -l/--language option to write the namerecord in a language different from 'en'. Use 'ftcli nametable
     langhelp' to display available languages.
     """
 
@@ -320,7 +325,7 @@ def name_from_txt(input_path, name_id, platform, language, input_file, output_di
     By default, the namerecord will be written both in platformID 1 (Macintosh) and platformID 3 (Windows) tables. Use
     -p/--platform-id [win|mac] option to write the namerecord only in the specified platform.
 
-    Use the -l/--language option to write the namerecord in a language different than 'en'. Use 'ftcli nametable
+    Use the -l/--language option to write the namerecord in a language different from 'en'. Use 'ftcli nametable
     langhelp' to display available languages.
     """
 
@@ -375,7 +380,7 @@ of file name).
 def del_names(input_path, name_ids, platform, language, output_dir, recalc_timestamp, overwrite):
     """Deletes the specified namerecord(s) from the name table.
 
-    Use the -l/--language option to delete a namerecord in a language different than 'en'. Use 'ftcli names lang-help'
+    Use the -l/--language option to delete a namerecord in a language different from 'en'. Use 'ftcli names lang-help'
     to display available languages.
 
     Use '-l ALL' to delete the name ID from all languages.
