@@ -17,8 +17,15 @@ The following packages will be installed during setup:
 * zopfli
  
 ## Installation
-    pip install -e .
- 
+
+```
+git clone https://github.com/ftCLI/ftCLI.git
+
+cd ftCLI
+
+pip install -e .
+ ```
+
 ## Commands list
 * [**assistant**](#ftcli-assistant)
   * [edit-cfg](#ftcli-assistant-edit-cfg)
