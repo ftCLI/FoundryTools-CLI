@@ -74,7 +74,8 @@ Also: https://typedrawers.com/discussion/3857/fontlab-7-windows-reads-exported-f
               help="Sets the achVendID tag (vendor's four-character identifier).")
 @click.option('--recalc-unicodes', is_flag=True,
               help="Recalculates the ulUnicodeRanges 1-4 values.")
-@click.option('--import-unicodes-from', 'unicodes_source_font', type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+@click.option('--import-unicodes-from', 'unicodes_source_font', type=click.Path(exists=True, dir_okay=False,
+                                                                                resolve_path=True),
               help="""
 Imports ulUnicodeRanges from a template font file.
               """)
@@ -208,7 +209,7 @@ def cli(input_path, version, weight, width, embed_level, no_subsetting, bitmap_e
             # Use Typo Metrics: fsSelection bit 7.
             if use_typo_metrics is not None:
                 # Convert string to bool as first thing.
-                use_typo_metrics=bool(int(use_typo_metrics))
+                use_typo_metrics = bool(int(use_typo_metrics))
                 if font.getUseTypoMetricsValue() != use_typo_metrics:
                     font['OS/2'].version = 4
                     if use_typo_metrics is True:
