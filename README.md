@@ -1023,7 +1023,8 @@ Options:
 ```
 
 ### ftcli names lang-help
-Usage: ftcli names lang-help
+Usage: `ftcli names lang-help`
+
 Prints available languages that can be used with the 'set-name' and 'del-names' commands.
 
 The command will produce the following output:
