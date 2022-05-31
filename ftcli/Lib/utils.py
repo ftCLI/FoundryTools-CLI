@@ -55,6 +55,41 @@ def makeOutputFileName(inputFile, outputDir=None, extension=None, overWrite=Fals
     return output
 
 
+def add_options(options):
+    def _add_options(func):
+        for option in reversed(options):
+            func = option(func)
+        return func
+
+    return _add_options
+
+
+def add_file_or_path_argument():
+    _file_or_path_argument = [click.argument('input_path', type=click.Path(exists=True, resolve_path=True))]
+    return add_options(_file_or_path_argument)
+
+
+def add_file_argument():
+    _file_argument = [click.argument('input_file', type=click.Path(exists=True, resolve_path=True, dir_okay=False))]
+    return add_options(_file_argument)
+
+
+def add_common_options():
+    _common_options = [
+        click.option('-o', '--output-dir', 'outputDir', type=click.Path(file_okay=False, resolve_path=True),
+                     default=None,
+                     help="Specify the directory where output files are to be saved. If output_dir doesn't exist, will "
+                          "be created. If not specified, files are saved to the same folder."),
+        click.option('--recalc-timestamp', 'recalcTimestamp', is_flag=True, default=False,
+                     help="Keep the original font 'modified' timestamp (head.modified) or set it to current time. By "
+                          "default, original timestamp is kept."),
+        click.option('--no-overwrite', 'overWrite', is_flag=True, default=True,
+                     help="Overwrite existing output files or save them to a new file (numbers are appended at the end "
+                          "of file name). By default, files are overwritten.")
+    ]
+    return add_options(_common_options)
+
+
 def getFontsList(input_path: str) -> list:
     files = []
 
