@@ -10,7 +10,8 @@ from fontTools.ttLib.removeOverlaps import removeOverlaps
 from pathvalidate import sanitize_filename, sanitize_filepath
 
 from ftcli.Lib.Font import Font
-from ftcli.Lib.utils import getFontsList, makeOutputFileName, getSourceString
+from ftcli.Lib.utils import (getFontsList, makeOutputFileName, getSourceString, add_file_or_path_argument,
+                             add_common_options)
 
 
 def removeIllegalCharacters(string: str) -> str:
@@ -30,22 +31,9 @@ def recalcItalicBits():
 
 
 @recalcItalicBits.command()
-@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-@click.option('-o', '--output-dir', type=click.Path(file_okay=False, resolve_path=True),
-              help="""
-The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
-files are saved to the same folder.""")
-@click.option('--recalc-timestamp', is_flag=True, default=False,
-              help="""
-By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
-to current time.
-""")
-@click.option('--no-overwrite', 'overwrite', is_flag=True, default=True,
-              help="""
-By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
-of file name).
-""")
-def recalc_italic_bits(input_path, output_dir, overwrite, recalc_timestamp):
+@add_file_or_path_argument()
+@add_common_options()
+def recalc_italic_bits(input_path, outputDir, overWrite, recalcTimestamp):
     """Sets or clears the italic bits according to the `italicAngle` value in `post` table.
 
     If the `italicAngle` value is 0.0, the italic bits are cleared. If the value is not 0.0, the italic bits are set.
@@ -57,8 +45,8 @@ def recalc_italic_bits(input_path, output_dir, overwrite, recalc_timestamp):
 
     for f in files:
         try:
-            font = Font(f, recalcTimestamp=recalc_timestamp)
-            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
+            font = Font(f, recalcTimestamp=recalcTimestamp)
+            output_file = makeOutputFileName(f, outputDir=outputDir, overWrite=overWrite)
             font.italicBitsFromItalicAngle(outputFile=output_file)
         except Exception as e:
             click.secho(f'{os.path.basename(f)}: {e}', fg='red')
@@ -140,7 +128,6 @@ def font_organizer(input_path):
                     new_file_name = f"{os.path.splitext(os.path.basename(f))[0]}{new_ext}"
 
             new_file_name = sanitize_filename(new_file_name)
-
             new_dir = os.path.join(os.path.dirname(f), foundry_name, family_name)
             os.makedirs(new_dir, exist_ok=True)
             new_file = sanitize_filepath(os.path.join(new_dir, new_file_name), platform="auto")
