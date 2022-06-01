@@ -297,7 +297,7 @@ class Font(TTFont):
         else:
             click.secho(f'{os.path.basename(self.file)} --> no changes', fg='yellow')
 
-    def setCFFName(self, fontNames=None, FullName=None, FamilyName=None, Weight=None, Copyright=None, Notice=None):
+    def setCFFNames(self, fontNames=None, FullName=None, FamilyName=None, Weight=None, Copyright=None, Notice=None):
 
         if fontNames:
             self['CFF '].cff.fontNames = [fontNames]

@@ -403,8 +403,8 @@ def set_cff_names(input_path, font_name, full_name, family_name, weight, copyrig
             if 'CFF ' not in font:
                 click.secho(f'{f} is not a CFF font', fg='red')
                 return
-            font.setCFFName(fontNames=font_name, FullName=full_name, FamilyName=family_name, Weight=weight,
-                            Copyright=copyright_, Notice=notice)
+            font.setCFFNames(fontNames=font_name, FullName=full_name, FamilyName=family_name, Weight=weight,
+                             Copyright=copyright_, Notice=notice)
             output_file = makeOutputFileName(f, outputDir=outputDir, overWrite=overWrite)
             font.save(output_file)
             click.secho(f'{output_file} --> saved', fg='green')
