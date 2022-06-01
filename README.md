@@ -43,7 +43,7 @@ pip install -e .
 * [**names**](#ftcli-names)
     * [add-prefix](#ftcli-names-add-prefix)
     * [add-suffix](#ftcli-names-add-suffix)
-    * [clean-nametable](#ftcli-names-clean-nametable)
+    * [clean-nametable](#ftcli-names-clean-name-table)
     * [copy-names](#ftcli-names-copy-names)
     * [del-mac-names](#ftcli-names-del-mac-names)
     * [del-names](#ftcli-names-del-names)
@@ -512,110 +512,124 @@ Options:
 ```
 
 ## ftcli names
-A command line tool to edit `name` table and CFF names.
+A set command line tools to manipulate `name` table entries.
+
+    ftcli names [OPTIONS] COMMAND [ARGS]
+
+```
+Commands:
+  add-prefix        Adds a prefix to the specified namerecords.
+  add-suffix        Adds a suffix to the specified namerecords.
+  clean-name-table  Deletes all namerecords from the `name` table.
+  copy-names        Copies the `name` table from a source font to destination font.
+  del-mac-names     Deletes all namerecords where platformID is equal to 1.
+  del-names         Deletes the specified namerecord(s) from the name table.
+  find-replace      Replaces a string in the `name` table and, optionally, in the `CFF` table.
+  lang-help         Prints available languages that can be used with the `set-name` and `del-names` commands.
+  name-from-txt     Reads a text file and writes its content into the specified namerecord in the `name` table.
+  set-cff-names     Sets names in the CFF table.
+  set-name          Writes the specified namerecord in the `name` table.
+  win-2-mac         Copies all namerecords from Windows table to Macintosh table.
+```
 
 ### ftcli names add-prefix
 Adds a prefix to the specified namerecords.
 
-```
-Usage: ftcli names add-prefix [OPTIONS] INPUT_PATH
+    ftcli names add-prefix [OPTIONS] INPUT_PATH
 
+```
 Options:
-  --prefix TEXT                 The prefix string.  [required]
-  -n, --name-ids INTEGER RANGE  nameID where to add the prefix (Integer
-                                between 0 and 32767)  [0<=x<=32767; required]
-  -p, --platform [win|mac]      platform [win, mac]. If no platform is
-                                specified, the prefix will be added in both
-                                tables.
-  -o, --output-dir DIRECTORY    The output directory where the output files
-                                are to be created. If it doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            By default, original head.modified value is
-                                kept when a font is saved. Use this switch to
-                                set head.modified timestamp to current time.
-  --no-overwrite                By default, modified files are overwritten.
-                                Use this switch to save them to a new file
-                                (numbers are appended at the end of file
-                                name).
-  --help                        Show this message and exit.
+  --prefix TEXT                The prefix string.  [required]
+  -n, --name-id INTEGER RANGE  nameID where to add the prefix. This option can
+                               be repeated multiple times (for example: -n 3
+                               -n 5-n 6).  [0<=x<=32767; required]
+  -p, --platform [win|mac]     platform [win, mac]. If no platform is
+                               specified, the prefix will be added in both
+                               tables.
+  -o, --output-dir DIRECTORY   Specify the directory where output files are to
+                               be saved. If output_dir doesn't exist, will be
+                               created. If not specified, files are saved to
+                               the same folder.
+  --recalc-timestamp           Keep the original font 'modified' timestamp
+                               (head.modified) or set it to current time. By
+                               default, original timestamp is kept.
+  --no-overwrite               Overwrite existing output files or save them to
+                               a new file (numbers are appended at the end of
+                               file name). By default, files are overwritten.
 ```
 
 ### ftcli names add-suffix
 Adds a suffix to the specified namerecords.
 
-```
-Usage: ftcli names add-suffix [OPTIONS] INPUT_PATH
+    ftcli names add-suffix [OPTIONS] INPUT_PATH
 
+```
 Options:
-  --suffix TEXT                 The suffix string  [required]
-  -n, --name-ids INTEGER RANGE  nameID where to add the suffix (Integer
-                                between 0 and 32767)  [0<=x<=32767; required]
-  -p, --platform [win|mac]      platform [win, mac]. If no platform is
-                                specified, the suffix will be added in both
-                                tables.
-  -o, --output-dir DIRECTORY    The output directory where the output files
-                                are to be created. If it doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            By default, original head.modified value is
-                                kept when a font is saved. Use this switch to
-                                set head.modified timestamp to current time.
-  --no-overwrite                By default, modified files are overwritten.
-                                Use this switch to save them to a new file
-                                (numbers are appended at the end of file
-                                name).
-  --help                        Show this message and exit.
+  --suffix TEXT                The suffix string  [required]
+  -n, --name-id INTEGER RANGE  nameID where to add the suffix. This option can
+                               be repeated multiple times (for example: -n 3
+                               -n 5 -n 6).  [0<=x<=32767; required]
+  -p, --platform [win|mac]     platform [win, mac]. If no platform is
+                               specified, the suffix will be added in both
+                               tables.
+  -o, --output-dir DIRECTORY   Specify the directory where output files are to
+                               be saved. If output_dir doesn't exist, will be
+                               created. If not specified, files are saved to
+                               the same folder.
+  --recalc-timestamp           Keep the original font 'modified' timestamp
+                               (head.modified) or set it to current time. By
+                               default, original timestamp is kept.
+  --no-overwrite               Overwrite existing output files or save them to
+                               a new file (numbers are appended at the end of
+                               file name). By default, files are overwritten.
 ```
 
-### ftcli names clean-nametable
-Deletes all namerecords from the 'name' table.
+### ftcli names clean-name-table
+Deletes all namerecords from the `name` table.
 
-Use -ex-id / --exclude-nameid to preserve the specified namerecords.
+Use `-ex / --exclude-namerecord` (can be repeated multiple times) to preserve the specified namerecords.
+
+    ftcli names clean-nametable [OPTIONS] INPUT_PATH
 
 ```
-Usage: ftcli names clean-nametable [OPTIONS] INPUT_PATH
-
 Options:
-  -ex-id, --exclude-nameid INTEGER
-                                  Name IDs to skip. The specified name IDs
-                                  won't be deleted. This option can be
-                                  repeated (example: -ex 3 -ex 5 -ex 6...).
-  -o, --output-dir DIRECTORY      The output directory where the output files
-                                  are to be created. If it doesn't exist, will
-                                  be created. If not specified, files are
+  -ex, --exclude-namerecord INTEGER
+                                  NameIDs to skip. The specified nameIDs won't
+                                  be deleted. This option can be repeated
+                                  multiple times (for example: -ex 3 -ex 5 -ex
+                                  6).
+  -o, --output-dir DIRECTORY      Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist,
+                                  will be created. If not specified, files are
                                   saved to the same folder.
-  --recalc-timestamp              By default, original head.modified value is
-                                  kept when a font is saved. Use this switch
-                                  to set head.modified timestamp to current
-                                  time.
-  --no-overwrite                  By default, modified files are overwritten.
-                                  Use this switch to save them to a new file
-                                  (numbers are appended at the end of file
-                                  name).
-  --help                          Show this message and exit.
+  --recalc-timestamp              Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time.
+                                  By default, original timestamp is kept.
+  --no-overwrite                  Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the
+                                  end of file name). By default, files are
+                                  overwritten.
 ```
 
 ### ftcli names copy-names
-Copies the `name` table from source_font to dest_font.
+Copies the `name` table from a source font to destination font.
+
+    ftcli names copy-names [OPTIONS]
 
 ```
-Usage: ftcli names copy-names [OPTIONS]
-
 Options:
   -s, --source_font FILE      Path to the source font.  [required]
   -d, --dest_font FILE        Path to the destination font.  [required]
-  -o, --output-dir DIRECTORY  The output directory where the output files are
-                              to be created. If it doesn't exist, will be
+  -o, --output-dir DIRECTORY  Specify the directory where output files are to
+                              be saved. If output_dir doesn't exist, will be
                               created. If not specified, files are saved to
                               the same folder.
-  --recalc-timestamp          By default, original head.modified value is kept
-                              when a font is saved. Use this switch to set
-                              head.modified timestamp to current time.
-  --no-overwrite              By default, modified files are overwritten. Use
-                              this switch to save them to a new file (numbers
-                              are appended at the end of file name).
-  --help                      Show this message and exit.
+  --recalc-timestamp          Keep the original font 'modified' timestamp
+                              (head.modified) or set it to current time. By
+                              default, original timestamp is kept.
+  --no-overwrite              Overwrite existing output files or save them to
+                              a new file (numbers are appended at the end of
+                              file name). By default, files are overwritten.
 ```
 
 ### ftcli names del-mac-names
@@ -625,10 +639,6 @@ According to Apple (https://developer.apple.com/fonts/TrueType-Reference-Manual/
 platformID 1 were required by earlier versions of macOS. Its use on modern platforms is discouraged. Use names with
 platformID 3 instead for maximum compatibility. Some legacy software, however, may still require names with platformID
 1, platformSpecificID 0"_.
-
-USAGE:
-
-    ftcli names del-mac-names INPUT_PATH [OPTIONS]
 
 Use the `-ex / --exclude-namerecord` option to prevent certain namerecords to be deleted:
 
@@ -640,64 +650,63 @@ The `-ex / --exclude-namerecord` option can be repeated to exclude from deletion
 
 `INPUT_PATH` can be a single font file or a folder containing fonts.
 
-```
-Usage: ftcli names del-mac-names [OPTIONS] INPUT_PATH
+    ftcli names del-mac-names [OPTIONS] INPUT_PATH
 
+```
 Options:
   -ex, --exclude-namerecord INTEGER RANGE
-                                  Name IDs to ignore. The specified name IDs
+                                  NameIDs to ignore. The specified nameIDs
                                   won't be deleted. This option can be
-                                  repeated (example: -ex 3 -ex 5 -ex 6...).
-                                  [0<=x<=32767]
-  -o, --output-dir DIRECTORY      The output directory where the output files
-                                  are to be created. If it doesn't exist, will
-                                  be created. If not specified, files are
+                                  repeated multiple times (for example: -ex 3
+                                  -ex 5 -ex 6).  [0<=x<=32767]
+  -o, --output-dir DIRECTORY      Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist,
+                                  will be created. If not specified, files are
                                   saved to the same folder.
-  --recalc-timestamp              By default, original head.modified value is
-                                  kept when a font is saved. Use this switch
-                                  to set head.modified timestamp to current
-                                  time.
-  --no-overwrite                  By default, modified files are overwritten.
-                                  Use this switch to save them to a new file
-                                  (numbers are appended at the end of file
-                                  name).
-  --help                          Show this message and exit.
+  --recalc-timestamp              Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time.
+                                  By default, original timestamp is kept.
+  --no-overwrite                  Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the
+                                  end of file name). By default, files are
+                                  overwritten.
 ```
 
 ### ftcli names del-names
 Deletes the specified namerecord(s) from the name table.
 
-Use the `-l/--language` option to delete a namerecord in a language different than 'en'. Use 'ftcli names
-lang-help' to display available languages.
+Use the `-l/--language` option to delete a namerecord in a language different from 'en'. Use `ftcli names lang-help` to
+display available languages.
 
 Use `-l ALL` to delete the name ID from all languages.
 
-The -n/--name-ids option can be repeated to delete multiple name records at once. For example:
-  
+The `-n/--name-id` option can be repeated to delete multiple name records at once. For example:
+
     ftcli names del-names C:\Fonts -n 1 -n 2 -n 6
 
-```
-Usage: ftcli names del-names [OPTIONS] INPUT_PATH
+The above command will delete nameIDs 1, 2 and 6.
 
+    ftcli names del-names [OPTIONS] INPUT_PATH
+
+```
 Options:
-  -n, --name-ids INTEGER      nameID (Integer)  [required]
+  -n, --name-id INTEGER       nameID (Integer)  [required]
   -p, --platform [win|mac]    platform [win, mac]. If no platform is
                               specified, the namerecord will be deleted from
                               both tables.
   -l, --language TEXT         Specify the name ID language (eg: 'de'), or use
                               'ALL' to delete the name ID from all languages.
                               [default: en]
-  -o, --output-dir DIRECTORY  The output directory where the output files are
-                              to be created. If it doesn't exist, will be
+  -o, --output-dir DIRECTORY  Specify the directory where output files are to
+                              be saved. If output_dir doesn't exist, will be
                               created. If not specified, files are saved to
                               the same folder.
-  --recalc-timestamp          By default, original head.modified value is kept
-                              when a font is saved. Use this switch to set
-                              head.modified timestamp to current time.
-  --no-overwrite              By default, modified files are overwritten. Use
-                              this switch to save them to a new file (numbers
-                              are appended at the end of file name).
-  --help                      Show this message and exit.
+  --recalc-timestamp          Keep the original font 'modified' timestamp
+                              (head.modified) or set it to current time. By
+                              default, original timestamp is kept.
+  --no-overwrite              Overwrite existing output files or save them to
+                              a new file (numbers are appended at the end of
+                              file name). By default, files are overwritten.
 ```
 
 ### ftcli names find-replace
@@ -726,8 +735,7 @@ The `-p / --platform` and `-n / --name-id` options can be combined:
 
 To exclude one or more namerecords, use the `-ex / --exclude-namerecord` option:
 
-    ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -ex 1
-    -ex 6
+    ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -ex 1 -ex 6
 
 If a namerecord is explicitly included but also explicitly excluded, it won't be changed:
 
@@ -735,9 +743,9 @@ If a namerecord is explicitly included but also explicitly excluded, it won't be
 
 The above command will replace the string only in nameID 6 in both platforms.
 
-```
-Usage: ftcli names find-replace [OPTIONS] INPUT_PATH
+    ftcli names find-replace [OPTIONS] INPUT_PATH
 
+```
 Options:
   -os, --old-string TEXT          old string  [required]
   -ns, --new-string TEXT          new string  [required]
@@ -749,29 +757,27 @@ Options:
                                   both tables.
   -cff, --fix-cff                 Replaces the string in the CFF table.
   -ex, --exclude-namerecord INTEGER RANGE
-                                  Name IDs to ignore. The specified name IDs
+                                  NameIDs to ignore. The specified nameIDs
                                   won't be changed. This option can be
-                                  repeated (example: -ex 3 -ex 5 -ex 6...).
-                                  [0<=x<=32767]
-  -o, --output-dir DIRECTORY      The output directory where the output files
-                                  are to be created. If it doesn't exist, will
-                                  be created. If not specified, files are
+                                  repeated multiple times (for example: -ex 3
+                                  -ex 5 -ex 6).  [0<=x<=32767]
+  -o, --output-dir DIRECTORY      Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist,
+                                  will be created. If not specified, files are
                                   saved to the same folder.
-  --recalc-timestamp              By default, original head.modified value is
-                                  kept when a font is saved. Use this switch
-                                  to set head.modified timestamp to current
-                                  time.
-  --no-overwrite                  By default, modified files are overwritten.
-                                  Use this switch to save them to a new file
-                                  (numbers are appended at the end of file
-                                  name).
-  --help                          Show this message and exit.
+  --recalc-timestamp              Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time.
+                                  By default, original timestamp is kept.
+  --no-overwrite                  Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the
+                                  end of file name). By default, files are
+                                  overwritten.
 ```
 
 ### ftcli names lang-help
-Usage: `ftcli names lang-help`
+Prints available languages that can be used with the `set-name` and `del-names` commands.
 
-Prints available languages that can be used with the 'set-name' and 'del-names' commands.
+    ftcli names lang-help
 
 The command will produce the following output:
 ```
@@ -813,39 +819,35 @@ By default, the namerecord will be written both in platformID 1 (Macintosh) and 
 Use the `-l/--language` option to write the namerecord in a language different from 'en'. Use 
 [`ftcli names langhelp`](#ftcli-names-lang-help) to display available languages.
 
-```
-Usage: ftcli names name-from-txt [OPTIONS] INPUT_PATH
+    ftcli names name-from-txt [OPTIONS] INPUT_PATH
 
+```
 Options:
-  -n, --name-id INTEGER RANGE  nameID (Integer between 1 and 32767)
+  -n, --name-id INTEGER RANGE  nameID (Integer between 0 and 32767)
                                [0<=x<=32767]
   -p, --platform [win|mac]     platform [win, mac]. If it's not specified,
                                name will be written in both tables.
   -l, --language TEXT          language  [default: en]
   -i, --input-file PATH        Path to the text file to read.  [required]
-  -o, --output-dir DIRECTORY   The output directory where the output files are
-                               to be created. If it doesn't exist, will be
+  -o, --output-dir DIRECTORY   Specify the directory where output files are to
+                               be saved. If output_dir doesn't exist, will be
                                created. If not specified, files are saved to
                                the same folder.
-  --recalc-timestamp           By default, original head.modified value is
-                               kept when a font is saved. Use this switch to
-                               set head.modified timestamp to current time.
-  --no-overwrite               By default, modified files are overwritten. Use
-                               this switch to save them to a new file (numbers
-                               are appended at the end of file name).
+  --recalc-timestamp           Keep the original font 'modified' timestamp
+                               (head.modified) or set it to current time. By
+                               default, original timestamp is kept.
+  --no-overwrite               Overwrite existing output files or save them to
+                               a new file (numbers are appended at the end of
+                               file name). By default, files are overwritten.
   --help                       Show this message and exit.
 ```
 
 ### ftcli names set-cff-names
 Set names in the CFF table.
 
-Usage example:
-    
-    ftcli names set-cff-names --family-name "IBM Plex" --weight "Bold" "D:\Fonts\IBM PLEX\IBMPlex-Bold.otf"
+    ftcli names set-cff-names [OPTIONS] INPUT_PATH
 
 ```
-Usage: ftcli names set-cff-names [OPTIONS] INPUT_PATH
-
 Options:
   --font-name TEXT            Sets the CFF font name.
   --full-name TEXT            Sets the CFF full name.
@@ -853,73 +855,70 @@ Options:
   --weight TEXT               Sets the CFF weight.
   --copyright TEXT            Sets the CFF copyright.
   --notice TEXT               Sets the CFF notice.
-  -o, --output-dir DIRECTORY  The output directory where the output files are
-                              to be created. If it doesn't exist, will be
+  -o, --output-dir DIRECTORY  Specify the directory where output files are to
+                              be saved. If output_dir doesn't exist, will be
                               created. If not specified, files are saved to
                               the same folder.
-  --recalc-timestamp          By default, original head.modified value is kept
-                              when a font is saved. Use this switch to set
-                              head.modified timestamp to current time.
-  --no-overwrite              By default, modified files are overwritten. Use
-                              this switch to save them to a new file (numbers
-                              are appended at the end of file name).
-  --help                      Show this message and exit.
+  --recalc-timestamp          Keep the original font 'modified' timestamp
+                              (head.modified) or set it to current time. By
+                              default, original timestamp is kept.
+  --no-overwrite              Overwrite existing output files or save them to
+                              a new file (numbers are appended at the end of
+                              file name). By default, files are overwritten.
 ```
 
 ### ftcli names set-name
-Writes the specified namerecord in the name table.
+Writes the specified namerecord in the `name` table.
 
 If the namerecord is not present, it will be created. If it already exists, will be overwritten.
 
-If name_id parameter is not specified, the first available nameID will be used.
+If `name_id` parameter is not specified, the first available nameID will be used.
 
-By default, the namerecord will be written both in platformID 1 (Macintosh) and platformID 3 (Windows) tables. Use 
+By default, the namerecord will be written both in platformID 1 (Macintosh)and platformID 3 (Windows) tables. Use the
 `-p/--platform-id [win|mac]` option to write the namerecord only in the specified platform.
 
 Use the `-l/--language` option to write the namerecord in a language different from 'en'. Use 
 [`ftcli names langhelp`](#ftcli-names-lang-help) to display available languages.
 
-```
-Usage: ftcli names set-name [OPTIONS] INPUT_PATH
+    ftcli names set-name [OPTIONS] INPUT_PATH
 
+```
 Options:
-  -n, --name-id INTEGER RANGE  nameID (Integer between 1 and 32767)
+  -n, --name-id INTEGER RANGE  nameID (Integer between 0 and 32767)
                                [0<=x<=32767]
   -p, --platform [win|mac]     platform [win, mac]. If it's not specified,
                                name will be written in both tables.
   -l, --language TEXT          language  [default: en]
   -s, --string TEXT            string  [required]
-  -o, --output-dir DIRECTORY   The output directory where the output files are
-                               to be created. If it doesn't exist, will be
+  -o, --output-dir DIRECTORY   Specify the directory where output files are to
+                               be saved. If output_dir doesn't exist, will be
                                created. If not specified, files are saved to
                                the same folder.
-  --recalc-timestamp           By default, original head.modified value is
-                               kept when a font is saved. Use this switch to
-                               set head.modified timestamp to current time.
-  --no-overwrite               By default, modified files are overwritten. Use
-                               this switch to save them to a new file (numbers
-                               are appended at the end of file name).
-  --help                       Show this message and exit.
+  --recalc-timestamp           Keep the original font 'modified' timestamp
+                               (head.modified) or set it to current time. By
+                               default, original timestamp is kept.
+  --no-overwrite               Overwrite existing output files or save them to
+                               a new file (numbers are appended at the end of
+                               file name). By default, files are overwritten.
 ```
 
 ### ftcli names win-2-mac
 Copies all namerecords from Windows table to Macintosh table.
 
-```
-Usage: ftcli names win-2-mac [OPTIONS] INPUT_PATH
+    ftcli names win-2-mac [OPTIONS] INPUT_PATH
 
+```
 Options:
-  -o, --output-dir DIRECTORY  The output directory where the output files are
-                              to be created. If it doesn't exist, will be
+  -o, --output-dir DIRECTORY  Specify the directory where output files are to
+                              be saved. If output_dir doesn't exist, will be
                               created. If not specified, files are saved to
                               the same folder.
-  --recalc-timestamp          By default, original head.modified value is kept
-                              when a font is saved. Use this switch to set
-                              head.modified timestamp to current time.
-  --no-overwrite              By default, modified files are overwritten. Use
-                              this switch to save them to a new file (numbers
-                              are appended at the end of file name).
-  --help                      Show this message and exit.
+  --recalc-timestamp          Keep the original font 'modified' timestamp
+                              (head.modified) or set it to current time. By
+                              default, original timestamp is kept.
+  --no-overwrite              Overwrite existing output files or save them to
+                              a new file (numbers are appended at the end of
+                              file name). By default, files are overwritten.
 ```
 
 ## ftcli os2
