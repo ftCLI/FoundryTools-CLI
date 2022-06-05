@@ -46,8 +46,14 @@ def recalc_italic_bits(input_path, outputDir, overWrite, recalcTimestamp):
     for f in files:
         try:
             font = Font(f, recalcTimestamp=recalcTimestamp)
-            output_file = makeOutputFileName(f, outputDir=outputDir, overWrite=overWrite)
-            font.italicBitsFromItalicAngle(outputFile=output_file)
+            font.italicBitsFromItalicAngle()
+            # Checking if the font has changed. If not, file isn't saved.
+            if font.has_changed:
+                output_file = makeOutputFileName(f, outputDir=outputDir, overWrite=overWrite)
+                font.save(output_file)
+                click.secho(f'{os.path.basename(f)} --> saved', fg='green')
+            else:
+                click.secho(f'{os.path.basename(f)} --> no changes', fg='yellow')
         except Exception as e:
             click.secho(f'{os.path.basename(f)}: {e}', fg='red')
 
@@ -66,7 +72,7 @@ def font_organizer(input_path):
 
     INPUT_PATH can be a single font file or a directory containing fonts (subdirectories are not processed by choice).
 
-    Fonts are renamed according to PostScript name ('name' table nameID 6) and sorted by Manufacturer Name (nameID 8).
+    Fonts are renamed according to PostScript name (`name` table nameID 6) and sorted by Manufacturer Name (nameID 8).
     If nameID 8 is not present, the script will try to read nameID 9 (Designer) and if also name ID 9 is not present,
     the 4 characters achVendID stored in 'OS/2' table is used.
 

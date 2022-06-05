@@ -17,6 +17,7 @@ class Font(TTFont):
     def __init__(self, file, recalcTimestamp=False):
         super().__init__(file=file, recalcTimestamp=recalcTimestamp)
         self.file = file
+        self.has_changed = False
 
     def recalcNames(
             self, font_data, namerecords_to_ignore=None, shorten_weight=None, shorten_width=None, shorten_slope=None,
@@ -274,28 +275,22 @@ class Font(TTFont):
             self['CFF '].cff.topDictIndex[0].FamilyName = cff_family_name
             self['CFF '].cff.topDictIndex[0].Weight = weight
 
-    def italicBitsFromItalicAngle(self, outputFile):
+    def italicBitsFromItalicAngle(self):
         italic_angle = self['post'].italicAngle
         is_italic = self.isItalic()
         print(f"\nParsing file: {os.path.basename(self.file)}")
 
-        has_changed = False
+        self.has_changed = False
         if italic_angle != 0.0:
             if not self.isItalic():
                 self.setItalic()
-                has_changed = True
+                self.has_changed = True
                 print("Italic bits set to True")
         else:
             if self.isItalic():
                 self.unsetItalic()
-                has_changed = True
+                self.has_changed = True
                 print("Italic bits set to False")
-
-        if has_changed:
-            self.save(outputFile)
-            click.secho(f'{os.path.basename(self.file)} --> saved', fg='green')
-        else:
-            click.secho(f'{os.path.basename(self.file)} --> no changes', fg='yellow')
 
     def setCFFNames(self, fontNames=None, FullName=None, FamilyName=None, Weight=None, Copyright=None, Notice=None):
 
