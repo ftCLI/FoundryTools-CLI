@@ -136,6 +136,18 @@ def getCsvPath(input_path: str) -> str:
     return data_file
 
 
+def replaceIllegalCharacters(string: str, replacement_text: str = "") -> str:
+    """
+    Removes illegal characters from file names and directory names before saving the output files.
+    :param string: File or directory name
+    :param replacement_text: Replacement text for invalid characters. Defaults to ``""``.
+    :return: Cleaned string
+    """
+    for illegal_char in ['/', '\\', '<', '>', ':', '"', '|', '?', '*']:
+        string = string.replace(illegal_char, replacement_text)
+    return string
+
+
 def wrapString(string: str, initial_indent: int, indent: int, max_lines: int, width: int) -> str:
     wrapped_string = TextWrapper(
         initial_indent=" " * initial_indent,

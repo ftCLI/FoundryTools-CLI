@@ -10,19 +10,7 @@ from fontTools.ttLib.removeOverlaps import removeOverlaps
 
 from ftcli.Lib.Font import Font
 from ftcli.Lib.utils import (getFontsList, makeOutputFileName, getSourceString, add_file_or_path_argument,
-                             add_common_options)
-
-
-def replaceIllegalCharacters(string: str, replacement_text: str = "") -> str:
-    """
-    Removes illegal characters from file names and directory names before saving the output files.
-    :param string: File or directory name
-    :param replacement_text: Replacement text for invalid characters. Defaults to ``""``.
-    :return: Cleaned string
-    """
-    for illegal_char in ['/', '\\', '<', '>', ':', '"', '|', '?', '*']:
-        string = string.replace(illegal_char, replacement_text)
-    return string
+                             add_common_options, replaceIllegalCharacters)
 
 
 @click.group()
