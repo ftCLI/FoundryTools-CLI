@@ -375,7 +375,7 @@ def name_from_txt(input_path, name_id, platform, language, input_file, outputDir
             click.secho(f'ERROR: {e}', fg='red')
 
 
-# set-cff-name
+# set-cff-names
 @click.group()
 def setCffNames():
     pass
