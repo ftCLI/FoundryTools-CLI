@@ -7,21 +7,21 @@ from fontTools.feaLib.builder import addOpenTypeFeatures
 from fontTools.ttLib import TTCollection
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.removeOverlaps import removeOverlaps
-from pathvalidate import sanitize_filename, sanitize_filepath
 
 from ftcli.Lib.Font import Font
 from ftcli.Lib.utils import (getFontsList, makeOutputFileName, getSourceString, add_file_or_path_argument,
                              add_common_options)
 
 
-def removeIllegalCharacters(string: str) -> str:
+def replaceIllegalCharacters(string: str, replacement_text: str = "") -> str:
     """
-    Removes illegal characters from file name before saving.
-    :param string: file name
-    :return: cleaned file name
+    Removes illegal characters from file names and directory names before saving the output files.
+    :param string: File or directory name
+    :param replacement_text: Replacement text for invalid characters. Defaults to ``""``.
+    :return: Cleaned string
     """
-    string = string.replace('<', '_').replace('>', '_').replace(':', '_').replace('/', ':').replace(
-        '\\', '_').replace('*', '_').replace('?', '_').replace('|', '_').replace('"', '_')
+    for illegal_char in ['/', '\\', '<', '>', ':', '"', '|', '?', '*']:
+        string = string.replace(illegal_char, replacement_text)
     return string
 
 
@@ -105,7 +105,7 @@ def font_organizer(input_path):
                     except AttributeError:
                         foundry_name = 'Unknown foundry'
 
-            foundry_name = removeIllegalCharacters(foundry_name)
+            foundry_name = replaceIllegalCharacters(foundry_name, replacement_text="_")
 
             try:
                 family_name = font['name'].getName(16, 3, 1, 0x409).toUnicode()
@@ -115,7 +115,7 @@ def font_organizer(input_path):
                 except AttributeError:
                     family_name = 'Unknown family'
 
-            family_name = removeIllegalCharacters(family_name)
+            family_name = replaceIllegalCharacters(family_name, replacement_text="_")
 
             new_ext = os.path.splitext(f)[1]
             if font.flavor == 'woff':
@@ -133,12 +133,14 @@ def font_organizer(input_path):
                 except AttributeError:
                     new_file_name = f"{os.path.splitext(os.path.basename(f))[0]}{new_ext}"
 
-            new_file_name = sanitize_filename(new_file_name)
+            new_file_name = replaceIllegalCharacters(new_file_name, replacement_text="_")
+
             new_dir = os.path.join(os.path.dirname(f), foundry_name, family_name)
+            new_file = makeOutputFileName(os.path.join(new_dir, new_file_name))
+
             os.makedirs(new_dir, exist_ok=True)
-            new_file = sanitize_filepath(os.path.join(new_dir, new_file_name), platform="auto")
-            new_file = makeOutputFileName(new_file)
             os.rename(f, new_file)
+
             click.secho(f'\nOLD PATH: {f}', fg="green")
             click.secho(f'NEW PATH: {new_file}', fg="green")
 
@@ -397,8 +399,7 @@ Renames font files according to the provided source string.
             string = os.path.splitext(n)[0]
 
         # Remove illegal characters from the string.
-        for illegal_char in ['/', '\\', '<', '>', ':', '"', '|', '?', '*']:
-            string = string.replace(illegal_char, '')
+        string = replaceIllegalCharacters(string, replacement_text="_")
 
         new_ext = None
         if font.flavor == 'woff':
@@ -412,7 +413,6 @@ Renames font files according to the provided source string.
                 new_ext = '.ttf'
 
         new_file_name = string + new_ext
-        new_file_name = sanitize_filename(new_file_name)
         new_file = makeOutputFileName(os.path.join(d, new_file_name), overWrite=True)
 
         if new_file != f:
