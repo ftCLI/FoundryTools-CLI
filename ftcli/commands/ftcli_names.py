@@ -143,7 +143,7 @@ def delMacNames():
               help="NameIDs to ignore. The specified nameIDs won't be deleted. This option can be repeated multiple "
                    "times (for example: -ex 3 -ex 5 -ex 6).")
 @add_common_options()
-def del_mac_names(input_path, exclude_namerecord, output_dir, recalc_timestamp, overwrite):
+def del_mac_names(input_path, exclude_namerecord, outputDir, recalcTimestamp, overWrite):
     """Deletes all namerecords where platformID is equal to 1.
 
     According to Apple (https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6name.html), "names with
@@ -166,9 +166,9 @@ def del_mac_names(input_path, exclude_namerecord, output_dir, recalc_timestamp, 
 
     for f in files:
         try:
-            font = Font(f, recalcTimestamp=recalc_timestamp)
+            font = Font(f, recalcTimestamp=recalcTimestamp)
             font.delMacNames(exclude_namerecord=exclude_namerecord)
-            output_file = makeOutputFileName(f, outputDir=output_dir, overWrite=overwrite)
+            output_file = makeOutputFileName(f, outputDir=outputDir, overWrite=overWrite)
             font.save(output_file)
             click.secho(f'{os.path.basename(output_file)} --> saved', fg='green')
         except Exception as e:
