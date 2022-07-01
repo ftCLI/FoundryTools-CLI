@@ -115,7 +115,6 @@ def getFontsList(input_path: str) -> list:
 
 
 def getConfigPath(input_path: str) -> str:
-
     config_file = os.path.join(os.path.dirname(input_path), 'config.json') if os.path.isfile(
         input_path) else os.path.join(input_path, 'config.json')
 
@@ -123,7 +122,6 @@ def getConfigPath(input_path: str) -> str:
 
 
 def getJsonPath(input_path: str) -> str:
-
     json_file = os.path.join(os.path.dirname(input_path), 'fonts.json') if os.path.isfile(
         input_path) else os.path.join(input_path, 'fonts.json')
 
@@ -182,7 +180,7 @@ def guessFamilyName(font: TTFont) -> str:
     return family_name
 
 
-def getSourceString(font_file : str, string_source: str) -> str:
+def getSourceString(font_file: str, string_source: str) -> str:
     font = TTFont(font_file)
     file_name = os.path.basename(font_file)
     name_table = font['name']
