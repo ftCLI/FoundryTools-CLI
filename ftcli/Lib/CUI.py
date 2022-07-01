@@ -93,7 +93,7 @@ class CUI(object):
             self.csvEditor(config_file=config_file, csv_file=csv_file)
 
         if choice == 'x':
-            sys.exit()
+            return
 
     def cfgEditor(self, config_file):
         config = configHandler(config_file).getConfig()
