@@ -1,911 +1,807 @@
+import math
 import os
-import sys
 
 import click
-from fontTools.misc.textTools import num2binary
+import pathops
+from beziers.path import BezierPath, Line, Point
 from fontTools.misc.timeTools import timestampToString
-from fontTools.otlLib.maxContextCalc import maxCtxFont
-from fontTools.ttLib import TTFont
-from fontTools.ttLib import newTable
-from fontTools.ttLib.tables._n_a_m_e import (_MAC_LANGUAGE_CODES, _MAC_LANGUAGE_TO_SCRIPT, _WINDOWS_LANGUAGE_CODES)
+from fontTools.pens.boundsPen import BoundsPen
+from fontTools.pens.qu2cuPen import Qu2CuPen
+from fontTools.pens.recordingPen import DecomposingRecordingPen
+from fontTools.pens.t2CharStringPen import T2CharStringPen
+from fontTools.pens.ttGlyphPen import TTGlyphPen
+from fontTools.subset import Subsetter
+from fontTools.ttLib import TTFont, registerCustomTableClass, newTable
 
-from ftcli.Lib.utils import calcCodePageRanges, intListToNum
+from ftCLI.Lib import constants
+from ftCLI.Lib.tables.OS_2 import TableOS2
+from ftCLI.Lib.tables.head import TableHead
+from ftCLI.Lib.tables.hhea import TableHhea
+from ftCLI.Lib.tables.name import TableName
+from ftCLI.Lib.tables.post import TablePost
+from ftCLI.Lib.utils.misc import is_nth_bit_set
+
+registerCustomTableClass("OS/2", "ftCLI.Lib.tables.OS_2", "TableOS2")
+registerCustomTableClass("head", "ftCLI.Lib.tables.head", "TableHead")
+registerCustomTableClass("name", "ftCLI.Lib.tables.name", "TableName")
+registerCustomTableClass("post", "ftCLI.Lib.tables.post", "TablePost")
+registerCustomTableClass("hhea", "ftCLI.Lib.tables.hhea", "TableHhea")
 
 
 class Font(TTFont):
-
     def __init__(self, file, recalcTimestamp=False):
         super().__init__(file=file, recalcTimestamp=recalcTimestamp)
+
         self.file = file
-        self.has_changed = False
+        self.name_table: TableName = self["name"]
+        self.os_2_table: TableOS2 = self["OS/2"]
+        self.head_table: TableHead = self["head"]
+        self.post_table: TablePost = self["post"]
+        self.hhea_table: TableHhea = self["hhea"]
 
-    def recalcNames(
-            self, font_data, namerecords_to_ignore=None, shorten_weight=None, shorten_width=None, shorten_slope=None,
-            fixCFF=False, linked_styles=None, is_superfamily=False, alt_uid=False, regular_italic=False,
-            keep_regular=False, old_full_font_name=False, oblique_not_italic=False, no_auto_shorten=True
-    ):
+    @property
+    def is_cff(self) -> bool:
+        return self.sfntVersion == "OTTO"
 
-        if linked_styles is None:
-            linked_styles = []
-        if shorten_width is None:
-            shorten_width = []
-        if shorten_weight is None:
-            shorten_weight = []
-        if shorten_slope is None:
-            shorten_slope = []
-        if namerecords_to_ignore is None:
-            namerecords_to_ignore = []
+    @property
+    def is_true_type(self) -> bool:
+        return "glyf" in self
 
-        is_italic = bool(int(font_data['is_italic']))
-        is_oblique = bool(int(font_data['is_oblique']))
-        us_width_class = int(font_data['uswidthclass'])
-        wdt = str(font_data['wdt'])
-        width = str(font_data['width'])
-        us_weight_class = int(font_data['usweightclass'])
-        wgt = str(font_data['wgt'])
-        weight = str(font_data['weight'])
-        slp = str(font_data['slp'])
-        slope = str(font_data['slope'])
-        family_name = str(font_data['family_name'])
+    @property
+    def is_woff(self) -> bool:
+        return self.flavor == "woff"
 
-        # We clear the bold and italic bits. Only the italic bit value is read from the CSV file. The bold bits will be
-        # set only if the -ls / --linked-styles option is active.
-        self.setRegular()
+    @property
+    def is_woff2(self) -> bool:
+        return self.flavor == "woff2"
 
-        if is_italic:
-            self.setItalic()
+    @property
+    def is_variable(self) -> bool:
+        return "fvar" in self
 
-        # If is_oblique is True, the oblique bit is set, as well as the italic bits. In case we don't want to set
-        # also the italic bits, this can be achieved setting oblique_not_italic to True.
-        if is_oblique:
-            self.setOblique()
-            self.setItalic()
-            if oblique_not_italic:
-                is_italic = False
-                self.unsetItalic()
-                # If there are both obliques and italics in the same family, usWeightClass is increased by 10
-                # us_weight_class += 10
+    @property
+    def is_static(self) -> bool:
+        """
+        > Checks if ths font is static
+
+        :return: A boolean value.
+        """
+        return "fvar" not in self
+
+    @property
+    def is_bold(self) -> bool:
+        """
+        > Checks if OS/2.fsSelection bit 5 and head.macStyle bit 0 are set
+
+        :return: A boolean value.
+        """
+        return is_nth_bit_set(self.head_table.macStyle, 0) and is_nth_bit_set(
+            self.os_2_table.fsSelection, 5
+        )
+
+    @property
+    def is_italic(self) -> bool:
+        """
+        > Checks if  OS/2.fsSelection bit 0 and head.macStyle bit 1 are set
+
+        :return: A boolean value.
+        """
+        return is_nth_bit_set(self["head"].macStyle, 1) and is_nth_bit_set(
+            self["OS/2"].fsSelection, 0
+        )
+
+    @property
+    def is_regular(self) -> bool:
+        """
+        > Checks if the fsSelection bit 6 is set, and the bold and italic bits are not set
+
+        :return: A boolean value.
+        """
+        return (
+            self.os_2_table.is_regular_bit_set()
+            and not self.is_bold
+            and not self.is_italic
+        )
+
+    @property
+    def is_oblique(self) -> bool:
+        """
+        > Checks if OS/2.fsSelection bit 9 is set
+
+        :return: A bool value.
+        """
+        return self.os_2_table.is_oblique_bit_set()
+
+    @property
+    def is_upright(self) -> bool:
+        """
+        If the font is not italic and not oblique, then it is upright
+
+        :return: A bool value.
+        """
+        return not self.is_italic and not self.is_oblique
+
+    @property
+    def is_hinted_ttf(self) -> bool:
+        return "fpgm" in self and self.is_true_type
+
+    def set_bold(self):
+        """
+        Sets the bold bit in the OS/2 table and the head table, and clears the regular bit in the OS/2 table
+        """
+        self.os_2_table.set_bold_bit()
+        self.head_table.set_bold_bit()
+        self.os_2_table.clear_regular_bit()
+
+    def unset_bold(self):
+        """
+        Clears the bold bit in the OS/2 table, and if the font is not italic, it sets the regular bit.
+        """
+        self.os_2_table.clear_bold_bit()
+        self.head_table.clear_bold_bit()
+        if not self.is_italic:
+            self.os_2_table.set_regular_bit()
+
+    def set_italic(self):
+        """
+        Sets the italic bit in the OS/2 table and clears the regular bit
+        """
+        self.os_2_table.set_italic_bit()
+        self.head_table.set_italic_bit()
+        self.os_2_table.clear_regular_bit()
+
+    def unset_italic(self):
+        """
+        Clears the italic bit in the OS/2 table and the head table, and if the font is not bold, sets the regular bit
+        in the OS/2 table
+        """
+        self.os_2_table.clear_italic_bit()
+        self.head_table.clear_italic_bit()
+        if not self.is_bold:
+            self.os_2_table.set_regular_bit()
+
+    def recalc_italic_bits(self, mode: click.IntRange(1, 3) = 1):
+        """
+        If the italic angle is not 0, set the italic and/or oblique bits
+
+        :param mode: click.IntRange(1, 3) = 1, defaults to 1
+        :type mode: click.IntRange(1, 3) (optional)
+        """
+        """
+        If the italic angle (post.italicAngle) is 0, clear the italic bits, otherwise set them
+        """
+
+        italic_angle = self.post_table.italicAngle
+
+        if round(italic_angle) != 0:
+            # Set italic bits only
+            if mode == 1:
+                self.set_italic()
+                self.unset_oblique()
+            # Set italic and oblique bits
+            if mode == 2:
+                self.set_italic()
+                self.set_oblique()
+            # Set oblique bit only
+            if mode == 3:
+                self.set_oblique()
+                self.unset_italic()
         else:
-            self.unsetOblique()
-
-        # Set usWeightClass and usWidthClass values reading them from the CSV.
-        self.setUsWeightClass(us_weight_class)
-        self.setUsWidthClass(us_width_class)
-
-        # OT family and subfamily name
-        family_name_ot = family_name
-        subfamily_name_ot = weight
-
-        if width.lower() != "normal":
-            if is_superfamily is False:
-                family_name_ot = f"{family_name} {width}"
-            else:
-                subfamily_name_ot = f"{width} {weight}"
-
-        if len(slope) > 0:
-            subfamily_name_ot = f"{subfamily_name_ot} {slope}"
-            if not keep_regular:
-                subfamily_name_ot = subfamily_name_ot.replace("Regular Italic", "Italic")
-
-        # Remove the normal width from family name.
-        family_name_win = "{} {} {}".format(
-            family_name, width.replace("Normal", "").replace("Nor", ""), weight).replace("  ", " ").strip()
-
-        # When there are both italic and oblique styles in a family, the italic bits are cleared and the oblique bit
-        # is set in the oblique style. Consequently, in case the font is oblique, the slope is added to family name.
-        if len(slope) > 0 and is_italic is False:
-            family_name_win = '{} {}'.format(family_name_win, slope)
-
-        # In platformID 3, Subfamily name can be only Regular, Italic, Bold, Bold Italic.
-        subfamily_name_win = "Regular"
-        if is_italic is True or (is_oblique is True and oblique_not_italic is False):
-            subfamily_name_win = "Italic"
-
-        if len(linked_styles) == 2:
-
-            # Remove Weight from Family Name
-            if us_weight_class in linked_styles:
-                family_name_win = family_name_win.replace(weight, "").replace("  ", " ").strip()
-
-            linked_styles.sort()
-            if us_weight_class == linked_styles[1]:
-                # The bold bits are set HERE AND ONLY HERE.
-                self.setBold()
-                subfamily_name_win = "Bold"
-                if is_italic is True:
-                    subfamily_name_win = "Bold Italic"
-
-        # Build the PostScript name.
-        postscript_name = str(self['name'].getName(6, 3, 1, 0x409))
-
-        if 6 not in namerecords_to_ignore:
-            postscript_name = "{}-{}".format(
-                # Remove dots and dashes from both family name and subfamily name
-                family_name_ot.replace('.', '').replace('-', ''), subfamily_name_ot.replace('.', '').replace('-', ''))
-
-            # Remove illegal characters
-            for illegal_char in ('[', ']', '{', '}', '<', '>', '/', '%'):
-                postscript_name = postscript_name.replace(illegal_char, '')
-
-            if regular_italic:
-                postscript_name = postscript_name.replace("-Italic", "-RegularItalic")
-
-            # Let's replace long words (e.g. 'Italic') with short words (e.g. 'It') when --shorten-width,
-            # --shorten-weight or --shorten-slope are active.
-            postscript_name = postscript_name.replace(weight, wgt) if 6 in shorten_weight else postscript_name
-            postscript_name = postscript_name.replace(width, wdt) if 6 in shorten_width else postscript_name
-            postscript_name = postscript_name.replace(slope, slp) if 6 in shorten_slope else postscript_name
-
-            # Do not remove spaces and dots before, if not the -swdt, -swgt and -sslp switches won't work!
-            postscript_name = postscript_name.replace(" ", "").replace(".", "")
-
-            # When auto shortening postscript name, keep in mind that spaces have already been removed.
-            if len(postscript_name) > 31:
-                if no_auto_shorten is False:
-                    postscript_name = autoShortenName(postscript_name, [(slope.replace(" ", ""), slp.replace(" ", "")),
-                                                                        (weight.replace(" ", ""), wgt.replace(" ", "")),
-                                                                        (width.replace(" ", ""), wdt.replace(" ", ""))
-                                                                        ], 31)
-                    print(f"Postscript name shortened: {postscript_name}")
-
-
-        # Build the Unique Identifier
-        ach_vend_id = str(self['OS/2'].achVendID).replace(" ", "").replace(r'\x00', "")
-        font_revision = str(round(self['head'].fontRevision, 3)).ljust(5, "0")
-        version_string = "Version {}".format(font_revision)
-
-        unique_id = "{};{};{}".format(font_revision, ach_vend_id.ljust(4), postscript_name)
-
-        if alt_uid:
-            year_created = timestampToString(
-                self['head'].created).split(" ")[-1]
-            manufacturer = self['name'].getName(8, 3, 1, 0x409)
-            unique_id = "{}: {}-{}: {}".format(manufacturer, family_name_ot, subfamily_name_ot, year_created)
-
-        # Build the Full Font Name
-        full_font_name = "{} {}".format(family_name_ot, subfamily_name_ot)
-
-        # Finally, write the namerecords.
-
-        # nameID 1
-        if 1 not in namerecords_to_ignore:
-
-            name_id_1 = family_name_win
-            name_id_1 = name_id_1.replace(weight, wgt) if 1 in shorten_weight else name_id_1
-            name_id_1 = name_id_1.replace(width, wdt) if 1 in shorten_width else name_id_1
-            name_id_1 = name_id_1.replace(slope, slp) if 1 in shorten_slope else name_id_1
-
-            if len(name_id_1) > 27:
-                if no_auto_shorten is False:
-                    name_id_1 = autoShortenName(
-                        name_id_1, find_replace=[(weight, wgt), (width, wdt)], max_len=27)
-                    print(f"Family name shortened: {name_id_1}")
-
-            self.setMultilingualName(nameID=1, string=name_id_1)
-
-        # nameID 2
-        if 2 not in namerecords_to_ignore:
-            # Windows Subfamily Name can be only Regular, Italic, Bold or Bold Italic and can't be shortened.
-            name_id_2 = subfamily_name_win
-
-            # Maximum length is 31 characters, but since we only use Regular, Italic, Bold and Bold Italic, there's no
-            # need the check if the limit has been exceeded.
-            self.setMultilingualName(nameID=2, string=name_id_2)
-
-        # nameID 3
-        if 3 not in namerecords_to_ignore:
-            name_id_3 = unique_id
-            name_id_3 = name_id_3.replace(weight, wgt) if 3 in shorten_weight else name_id_3
-            name_id_3 = name_id_3.replace(width, wdt) if 3 in shorten_width else name_id_3
-            name_id_3 = name_id_3.replace(slope, slp) if 3 in shorten_slope else name_id_3
-
-            self.setMultilingualName(nameID=3, string=name_id_3)
-
-        # nameID 4
-        if 4 not in namerecords_to_ignore:
-
-            name_id_4 = full_font_name
-            name_id_4 = name_id_4.replace(weight, wgt) if 4 in shorten_weight else name_id_4
-            name_id_4 = name_id_4.replace(width, wdt) if 4 in shorten_width else name_id_4
-            name_id_4 = name_id_4.replace(slope, slp) if 4 in shorten_slope else name_id_4
-
-            if len(name_id_4) > 31:
-                if no_auto_shorten is False:
-                    name_id_4 = autoShortenName(name_id_4, [(slope, slp), (weight, wgt), (width, wdt)], 31)
-                    print(f"Full font name shortened: {name_id_4}")
-
-            self.setMultilingualName(nameID=4, string=name_id_4)
-
-            if old_full_font_name:
-                self.setMultilingualName(nameID=4, string=postscript_name, mac=False)
-
-        # nameID 5
-        if 5 not in namerecords_to_ignore:
-            name_id_5 = version_string
-
-            self.setMultilingualName(nameID=5, string=name_id_5)
-
-        # nameID6
-        if 6 not in namerecords_to_ignore:
-            # PostScript Name has already been shortened
-            name_id_6 = postscript_name
-            self.setMultilingualName(nameID=6, string=name_id_6)
-
-        # nameID 16
-        if 16 not in namerecords_to_ignore:
-            name_id_16 = family_name_ot
-            name_id_16 = name_id_16.replace(weight, wgt) if 16 in shorten_weight else name_id_16
-            name_id_16 = name_id_16.replace(width, wdt) if 16 in shorten_width else name_id_16
-            name_id_16 = name_id_16.replace(slope, slp) if 16 in shorten_slope else name_id_16
-            if not name_id_16 == str(self['name'].getName(1, 3, 1, 0x409)):
-                self.setMultilingualName(nameID=16, string=name_id_16)
-            else:
-                self.delNameRecord(nameID=16)
-
-        # nameID 17
-        if 17 not in namerecords_to_ignore:
-            name_id_17 = subfamily_name_ot
-            name_id_17 = name_id_17.replace(weight, wgt) if 17 in shorten_weight else name_id_17
-            name_id_17 = name_id_17.replace(width, wdt) if 17 in shorten_width else name_id_17
-            name_id_17 = name_id_17.replace(slope, slp) if 17 in shorten_slope else name_id_17
-            if not name_id_17 == str(self['name'].getName(2, 3, 1, 0x409)):
-                self.setMultilingualName(nameID=17, string=name_id_17)
-            else:
-                self.delNameRecord(nameID=17)
-
-        # nameID 18
-        if 18 not in namerecords_to_ignore:
-            name_id_18 = full_font_name
-            name_id_18 = name_id_18.replace(weight, wgt) if 18 in shorten_weight else name_id_18
-            name_id_18 = name_id_18.replace(width, wdt) if 18 in shorten_width else name_id_18
-            name_id_18 = name_id_18.replace(slope, slp) if 18 in shorten_slope else name_id_18
-
-            # We write nameID 18 only if different from nameID 4. Could be useful when nameID 4 string is longer than
-            # 31 characters. See: https://typedrawers.com/discussion/617/family-name
-            if not name_id_18 == str(self['name'].getName(4, 1, 0, 0x0)):
-                self.setMultilingualName(nameID=18, string=name_id_18, windows=False)
-            else:
-                self.delNameRecord(nameID=18)
-
-        # CFF Names
-        cff_family_name = f'{family_name} {width}'.replace(' Normal', '').replace(' Nor', '').replace('  ', ' ').strip()
-        if 'CFF ' in self and fixCFF is True:
-            self['CFF '].cff.fontNames = [postscript_name]
-            self['CFF '].cff.topDictIndex[0].FullName = full_font_name
-            self['CFF '].cff.topDictIndex[0].FamilyName = cff_family_name
-            self['CFF '].cff.topDictIndex[0].Weight = weight
-
-    def italicBitsFromItalicAngle(self):
-        italic_angle = self['post'].italicAngle
-        is_italic = self.isItalic()
-        print(f"\nParsing file: {os.path.basename(self.file)}")
-
-        self.has_changed = False
-        if italic_angle != 0.0:
-            if not self.isItalic():
-                self.setItalic()
-                self.has_changed = True
-                print("Italic bits set to True")
-        else:
-            if self.isItalic():
-                self.unsetItalic()
-                self.has_changed = True
-                print("Italic bits set to False")
-
-    def setCFFNames(self, fontNames=None, FullName=None, FamilyName=None, Weight=None, Copyright=None, Notice=None):
-
-        if fontNames:
-            self['CFF '].cff.fontNames = [fontNames]
-
-        if FullName:
-            self['CFF '].cff.topDictIndex[0].FullName = FullName
-
-        if FamilyName:
-            self['CFF '].cff.topDictIndex[0].FamilyName = FamilyName
-
-        if Weight:
-            self['CFF '].cff.topDictIndex[0].Weight = Weight
-
-        if Copyright:
-            self['CFF '].cff.topDictIndex[0].Copyright = Copyright
-
-        if Notice:
-            self['CFF '].cff.topDictIndex[0].Notice = Notice
-
-    def setMultilingualName(self, nameID=None, language='en', string="", windows=True, mac=True):
-
-        if windows is True:
-            self.delNameRecord(nameID, language=language, windows=True, mac=False)
-
-        if mac is True:
-            self.delNameRecord(nameID, language=language, windows=False, mac=True)
-
-        names = {language: string}
-        self['name'].addMultilingualName(names, ttFont=self, windows=windows, mac=mac, nameID=nameID)
-
-    def delNameRecord(self, nameID, language='en', windows=True, mac=True):
-
-        if language == 'ALL':
-            windows = False
-            mac = False
-            for name in self['name'].names:
-                if name.nameID == nameID:
-                    self['name'].removeNames(name.nameID, name.platformID, name.platEncID, name.langID)
-
-        if windows is True:
-            langID = _WINDOWS_LANGUAGE_CODES.get(language.lower())
-            self['name'].removeNames(nameID, 3, 1, langID)
-
-        if mac is True:
-            macLang = _MAC_LANGUAGE_CODES.get(language.lower())
-            macScript = _MAC_LANGUAGE_TO_SCRIPT.get(macLang)
-            self['name'].removeNames(nameID, 1, macScript, macLang)
-
-    def findReplace(self, oldString: str, newString: str, fixCFF=False, nameID=None, platform=None,
-                    namerecords_to_ignore=None):
-
-        platforms_list = []
-
-        if platform == 'mac':
-            platforms_list.append(1)
-
-        if platform == 'win':
-            platforms_list.append(3)
-
-        if platform is None:
-            for name in self['name'].names:
-                if name.platformID not in platforms_list:
-                    platforms_list.append(name.platformID)
-
-        names_list = []
-
-        if nameID is not None:
-            for p in platforms_list:
-                names_list.append([p, nameID])
-
-        else:
-            for name in self['name'].names:
-                if name.platformID in platforms_list:
-                    names_list.append([name.platformID, name.nameID])
-
-        # If a nameID is excluded, it won't be changed even if it has been explicitly included.
-        if namerecords_to_ignore:
-            for name in self['name'].names:
-                if name.nameID in namerecords_to_ignore and [name.platformID, name.nameID] in names_list:
-                    names_list.remove([name.platformID, name.nameID])
-
-        fixCount = 0
-
-        for name in self['name'].names:
-            if [name.platformID, name.nameID] in names_list:
-                if oldString in str(name):
-                    string = str(name).replace(oldString, newString).replace("  ", " ").strip()
-
-                    self['name'].setName(
-                        string, name.nameID, name.platformID, name.platEncID, name.langID)
-                    fixCount += 1
-
-        if 'CFF ' in self and fixCFF is True:
+            self.unset_italic()
+            self.unset_oblique()
+
+    def set_upright(self):
+        """
+        Clears the italic and oblique bits
+        """
+        self.os_2_table.clear_italic_bit()
+        self.os_2_table.clear_oblique_bit()
+        self.head_table.clear_italic_bit()
+        if not self.is_bold:
+            self.os_2_table.set_regular_bit()
+
+    def set_regular(self):
+        """
+        Sets the regular bit in the OS/2 table, clears the bold and italic bits in the OS/2 and head tables
+        """
+        self.os_2_table.set_regular_bit()
+        self.os_2_table.clear_bold_bit()
+        self.os_2_table.clear_italic_bit()
+        self.head_table.clear_bold_bit()
+        self.head_table.clear_italic_bit()
+
+    def set_oblique(self):
+        """
+        Sets the oblique bit in the OS/2 table
+        """
+        self.os_2_table.set_oblique_bit()
+
+    def unset_oblique(self):
+        """
+        Clears the oblique bit in the OS/2 table
+        """
+        self.os_2_table.clear_oblique_bit()
+
+    def calculate_italic_angle(self) -> float:
+        """
+        Calculates the italic angle of the font by processing the glyphs "bar" (uni007C), "bracketleft" (uni005B),
+        "H" (uni0048), "I" (uni0049)
+
+        Copied from fontbakery.profiles.post
+
+        :return: The calculated italic angle.
+        """
+
+        # Calculating italic angle from the font's glyph outlines
+        def x_leftmost_intersection(paths, y):
+            for y_adjust in range(0, 20, 2):
+                line = Line(
+                    Point(xMin - 100, y + y_adjust), Point(xMax + 100, y + y_adjust)
+                )
+                for path in paths:
+                    for s in path.asSegments():
+                        intersections = s.intersections(line)
+                        if intersections:
+                            return intersections[0].point.x
+
+        calculated_italic_angle = None
+        for glyph_name in (
+            "bar",
+            "uni007C",  # VERTICAL LINE
+            "bracketleft",
+            "uni005B",  # LEFT SQUARE BRACKET
+            "H",
+            "uni0048",  # LATIN CAPITAL LETTER H
+            "I",
+            "uni0049",
+        ):  # LATIN CAPITAL LETTER I
             try:
-                fontName = str(getattr(self['CFF '].cff, 'fontNames')[0])
-                fontName_new = fontName.replace(
-                    oldString, newString).replace("  ", " ").strip()
-
-                if not fontName == fontName_new:
-                    fixCount += 1
-                    self['CFF '].cff.fontNames = [fontName_new]
-            except Exception as e:
-                print(f"ERROR: {e}")
-
-            input_object = self['CFF '].cff.topDictIndex[0]
-            attr_list = ['FullName', 'FamilyName', 'Weight', 'Copyright', 'Notice']
-
-            for a in attr_list:
-                try:
-                    old_value = str(getattr(input_object, a))
-                    new_value = old_value.replace(oldString, newString).replace("  ", " ").strip()
-                    if not old_value == new_value:
-                        fixCount += 1
-                        setattr(input_object, a, new_value)
-                except:
-                    pass
-
-        return fixCount
-
-    def win2mac(self):
-        self.removeEmptyNames()
-        for name in self['name'].names:
-            if name.platformID == 3:
-                string = name.toUnicode()
-                try:
-                    self.setMultilingualName(nameID=name.nameID, language='en', string=string, windows=False, mac=True)
-                except:
-                    # IMPORTANT: FOR NON STANDARD LANGUAGES ENCODINGS
-                    # MAYBE THERE'S A BETTER WAY?
-                    self.setMultilingualName(nameID=name.nameID, language='en', string=string.encode(), windows=False,
-                                             mac=True)
-
-    def addPrefix(self, prefix: str, name_ids: list, platform: str = None):
-
-        platforms_list = [1, 3]
-        if platform == 'mac':
-            platforms_list = [1]
-        if platform == 'win':
-            platforms_list = [3]
-        if platform is None:
-            platforms_list = [1, 3]
-
-        for namerecord in self['name'].names:
-            for p in platforms_list:
-                for n in name_ids:
-                    if (namerecord.nameID, namerecord.platformID) == (n, p):
-                        platEncID = namerecord.platEncID
-                        langID = namerecord.langID
-                        original_string = self['name'].getName(nameID=n, platformID=p, platEncID=platEncID,
-                                                               langID=langID).toUnicode()
-                        prefixed_string = f'{prefix}{original_string}'
-                        self.setMultilingualName(nameID=n, windows=True if p == 3 else False,
-                                                 mac=True if p == 1 else False, string=prefixed_string)
-
-    def addSuffix(self, suffix: str, name_ids: list, platform: str = None):
-
-        platforms_list = []
-        if platform == 'mac':
-            platforms_list = [1]
-        if platform == 'win':
-            platforms_list = [3]
-        if platform is None:
-            platforms_list = [1, 3]
-
-        for namerecord in self['name'].names:
-            for p in platforms_list:
-                for n in name_ids:
-                    if (namerecord.nameID, namerecord.platformID) == (n, p):
-                        platEncID = namerecord.platEncID
-                        langID = namerecord.langID
-                        original_string = self['name'].getName(nameID=n, platformID=p, platEncID=platEncID,
-                                                               langID=langID).toUnicode()
-                        suffixed_string = f'{original_string}{suffix}'
-                        self.setMultilingualName(nameID=n, windows=True if p == 3 else False,
-                                                 mac=True if p == 1 else False, string=suffixed_string)
-
-    def removeEmptyNames(self):
-        for name in self['name'].names:
-            if len(str(name)) == 0:
-                self['name'].removeNames(
-                    name.nameID, name.platformID, name.platEncID, name.langID)
-
-    def delMacNames(self, exclude_namerecord=None):
-        if exclude_namerecord is None:
-            exclude_namerecord = []
-        exclude_namerecord = [int(i) for i in exclude_namerecord]
-        for name in self['name'].names:
-            if name.platformID != 1 or name.nameID in exclude_namerecord:
+                paths = BezierPath.fromFonttoolsGlyph(self, glyph_name)
+            except KeyError:
                 continue
-            self['name'].removeNames(name.nameID, name.platformID, name.platEncID, name.langID)
 
-    def modifyLinegapPercent(self, percent):
-        try:
+            # Get bounds
+            bounds_pen = BoundsPen(self.getGlyphSet())
+            self.getGlyphSet()[glyph_name].draw(bounds_pen)
+            (xMin, yMin, xMax, yMax) = bounds_pen.bounds
 
-            # get observed start values from the font
-            os2_typo_ascender = self["OS/2"].sTypoAscender
-            os2_typo_descender = self["OS/2"].sTypoDescender
-            os2_typo_linegap = self["OS/2"].sTypoLineGap
-            hhea_ascent = self["hhea"].ascent
-            hhea_descent = self["hhea"].descent
-            units_per_em = self["head"].unitsPerEm
+            # Measure at 20% distance from bottom and top
+            y_bottom = yMin + (yMax - yMin) * 0.2
+            y_top = yMin + (yMax - yMin) * 0.8
 
-            # calculate necessary delta values
-            os2_typo_ascdesc_delta = os2_typo_ascender + -(os2_typo_descender)
-            hhea_ascdesc_delta = hhea_ascent + -(hhea_descent)
+            x_intsctn_bottom = x_leftmost_intersection(paths, y_bottom)
+            x_intsctn_top = x_leftmost_intersection(paths, y_top)
 
-            # define percent UPM from command line request
-            factor = 1.0 * int(percent) / 100
+            # Fails to calculate the intersection for some situations,
+            # so try again with next glyph
+            if not x_intsctn_bottom or not x_intsctn_top:
+                continue
 
-            # define line spacing units
-            line_spacing_units = int(factor * units_per_em)
+            x_d = x_intsctn_top - x_intsctn_bottom
+            y_d = y_top - y_bottom
 
-            # define total height as UPM + line spacing units
-            total_height = line_spacing_units + units_per_em
+            calculated_italic_angle = -1 * math.degrees(math.atan2(x_d, y_d))
 
-            # height calculations for adjustments
-            delta_height = total_height - hhea_ascdesc_delta
-            upper_lower_add_units = int(0.5 * delta_height)
+        # If the italic angle is < .5, this allows to not set the italic bits when using ftcli fix italic-angle command
+        if abs(calculated_italic_angle) < .5:
+            return 0
+        else:
+            return round(calculated_italic_angle)
 
-            # redefine hhea linegap to 0 in all cases
-            hhea_linegap = 0
+    def check_italic_angle(self) -> bool:
+        # Allow .1 degrees tolerance
+        return abs(self.calculate_italic_angle() - self.post_table.italicAngle) < .1
 
-            # Define metrics based upon original design approach in the font
-            # Google metrics approach
-            if os2_typo_linegap == 0 and (os2_typo_ascdesc_delta > units_per_em):
-                # define values
-                os2_typo_ascender += upper_lower_add_units
-                os2_typo_descender -= upper_lower_add_units
-                hhea_ascent += upper_lower_add_units
-                hhea_descent -= upper_lower_add_units
-                os2_win_ascent = hhea_ascent
-                os2_win_descent = -hhea_descent
-            # Adobe metrics approach
-            elif os2_typo_linegap == 0 and (os2_typo_ascdesc_delta == units_per_em):
-                hhea_ascent += upper_lower_add_units
-                hhea_descent -= upper_lower_add_units
-                os2_win_ascent = hhea_ascent
-                os2_win_descent = -hhea_descent
-            else:
-                os2_typo_linegap = line_spacing_units
-                hhea_ascent = int(os2_typo_ascender + 0.5 * os2_typo_linegap)
-                hhea_descent = -(total_height - hhea_ascent)
-                os2_win_ascent = hhea_ascent
-                os2_win_descent = -hhea_descent
+    def calculate_caret_slope_rise(self) -> int:
+        if self.post_table.italicAngle == 0:
+            return 1
+        else:
+            return self.head_table.unitsPerEm
 
-            # define updated values from above calculations
-            self["hhea"].lineGap = hhea_linegap
-            self["OS/2"].sTypoAscender = os2_typo_ascender
-            self["OS/2"].sTypoDescender = os2_typo_descender
-            self["OS/2"].sTypoLineGap = os2_typo_linegap
-            self["OS/2"].usWinAscent = os2_win_ascent
-            self["OS/2"].usWinDescent = os2_win_descent
-            self["hhea"].ascent = hhea_ascent
-            self["hhea"].descent = hhea_descent
+    def calculate_caret_slope_run(self) -> int:
+        if self.post_table.italicAngle == 0:
+            return 0
+        else:
+            return round(math.tan(math.radians(-self.post_table.italicAngle)) * self.head_table.unitsPerEm)
 
-        except Exception as e:
-            click.secho("ERROR: {}".format(e), fg='red')
-            sys.exit(1)
+    def calculate_run_rise_angle(self) -> float:
+        rise = self.hhea_table.caretSlopeRise
+        run = self.hhea_table.caretSlopeRun
+        italic_angle = math.degrees(math.atan(-run / rise))
+        return italic_angle
 
-    def recalcXHeight(self) -> int:
-        metrics = self.getGlyphsMetrics()
-        try:
-            x_height = metrics['x']['yMax']
-        except KeyError:
-            x_height = 0
-        return round(x_height)
+    def get_file_name(self, source) -> str:
+        """
+        Returns the font's file name according to the passed source id.
 
-    def recalcCapHeight(self) -> int:
-        metrics = self.getGlyphsMetrics()
-        try:
-            cap_height = metrics['H']['yMax']
-        except KeyError:
-            cap_height = 0
-        return round(cap_height)
+        1: FamilyName-StyleName
 
-    def recalcCodePageRanges(self) -> (int, int):
-        cmap = self['cmap']
-        unicodes = set()
-        for table in cmap.tables:
-            if table.isUnicode():
-                unicodes.update(table.cmap.keys())
+        2: PostScript Name
 
-        codePageRanges = calcCodePageRanges(unicodes)
-        ulCodePageRange1 = intListToNum(codePageRanges, 0, 32)
-        ulCodePageRange2 = intListToNum(codePageRanges, 32, 32)
+        3: Full Font Name
 
-        return ulCodePageRange1, ulCodePageRange2
+        4: CFF TopDict fontNames. Valid for CFF fonts only. For TTF files will be used
+        '1' as fallback value.
 
-    def recalcUsMaxContext(self) -> int:
-        return maxCtxFont(self)
+        5: CFF TipDict FullName (returns: Family Name Style Name or FamilyName-StyleName, depending on how FullName has
+        been built). Valid for CFF fonts only. For TTF files will be used '1' as fallback value.
 
-    def setOS2Version(self, target_version: int):
+        :param source: The namerecord or combination of namerecords from which to build the file name.
+        :return: The file name of the font.
+        """
 
-        current_version = self['OS/2'].version
+        if self.is_true_type:
+            if source in (4, 5):
+                source = 1
 
-        # Let's ensure to clear bits 7, 8 and 9 in ['OS/2'].fsSelection when target version is lower than 4.
-        if target_version < 4:
-            self.unsetUseTypoMetrics()
-            self.unsetWWS()
-            self.unsetOblique()
+        if source == 1:
+            return f"{self.guess_family_name()}-{self.guess_subfamily_name()}".replace(
+                " ", ""
+            )
+        elif source == 2:
+            return self.name_table.getDebugName(6)
+        elif source == 3:
+            return self.name_table.getDebugName(4)
+        elif source == 4:
+            return self["CFF "].cff.fontNames[0]
+        elif source == 5:
+            return self["CFF "].cff.topDictIndex[0].FullName
+        else:
+            return os.path.basename(os.path.splitext(self.file)[0])
 
-        self['OS/2'].version = target_version
+    def get_real_extension(self) -> str:
+        if self.flavor is not None:
+            return f".{self.flavor}"
+        elif self.is_true_type:
+            return ".ttf"
+        elif self.is_cff:
+            return ".otf"
 
-        # When upgrading from version is 0, at least ulCodePageRanges are to be recalculated.
-        if current_version == 0:
-            attrs = {
-                'ulCodePageRange1': self.recalcCodePageRanges()[0],
-                'ulCodePageRange2': self.recalcCodePageRanges()[1],
-            }
-            for k, v in attrs.items():
-                setattr(self['OS/2'], k, v)
-            if target_version == 1:
-                return
+    def guess_family_name(self) -> str:
+        """
+        If the font has a family name (nameID 16 or 1) in the English language, return it. Otherwise, return the family
+        name in the first language in the font
 
-        # Upgrading from version 1 requires creating sxHeight, sCapHeight, usDefaultChar, usBreakChar and usMaxContext
-        # entries.
-        if current_version < 2:
-            attrs = {
-                'sxHeight': self.recalcXHeight(),
-                'sCapHeight': self.recalcCapHeight(),
-                'usDefaultChar': 0,
-                'usBreakChar': 32,
-                'usMaxContext': maxCtxFont(self),
-            }
-            for k, v in attrs.items():
-                setattr(self['OS/2'], k, v)
+        :return: The family name of the font.
+        """
+        family_name = self.name_table.getDebugName(16)
+        if family_name is None:
+            family_name = self.name_table.getDebugName(1)
 
-        # Write default values
-        if target_version == 5:
-            attrs = {
-                'usLowerOpticalPointSize': 0,
-                'usUpperOpticalPointSize': 65535 / 20
-            }
-            for k, v in attrs.items():
-                setattr(self['OS/2'], k, v)
+        return family_name
 
-    def isBold(self):
-        return is_nth_bit_set(self['head'].macStyle, 0) and is_nth_bit_set(self['OS/2'].fsSelection, 5)
+    def guess_subfamily_name(self) -> str:
+        """
+        If the font has a subfamily name (nameID 17 or 2) in the English language, return it. Otherwise, return the
+        subfamily name in the first language in the font
 
-    def isItalic(self):
-        return is_nth_bit_set(self['head'].macStyle, 1) and is_nth_bit_set(self['OS/2'].fsSelection, 0)
+        :return: The family name of the font.
+        """
+        subfamily_name = self.name_table.getDebugName(17)
+        if subfamily_name is None:
+            subfamily_name = self.name_table.getDebugName(2)
 
-    def isOblique(self):
-        return is_nth_bit_set(self['OS/2'].fsSelection, 9)
+        return subfamily_name
 
-    def isRegular(self):
-        return is_nth_bit_set(self['OS/2'].fsSelection, 6) and not self.isBold() and not self.isItalic()
+    def get_t2_charstrings(self) -> dict:
+        """
+        Get CFF charstrings using T2CharStringPen
 
-    def isWWS(self):
-        return is_nth_bit_set(self['OS/2'].fsSelection, 8)
+        :return: CFF charstrings.
+        """
+        charstrings = {}
+        glyph_set = self.getGlyphSet()
 
-    def setBold(self):
-        self.__setBoldBits()
-        self.__clearRegularBit()
+        for k, v in glyph_set.items():
+            # Remove overlaps and fix contours direction
+            pathops_path = pathops.Path()
+            pathops_pen = pathops_path.getPen(glyphSet=glyph_set)
+            try:
+                glyph_set[k].draw(pathops_pen)
+                pathops_path.simplify()
+            except TypeError:
+                pass
 
-    def setItalic(self):
-        self.__setItalicBits()
-        self.__clearRegularBit()
+            # Draw the glyph with T2CharStringPen and get the charstring
+            t2_pen = T2CharStringPen(v.width, glyphSet=glyph_set)
+            pathops_path.draw(t2_pen)
+            charstring = t2_pen.getCharString()
+            charstrings[k] = charstring
 
-    def setOblique(self):
-        if self['OS/2'].version < 4:
-            print('OS/2 table version was {} and has been updated to 4'.format(self['OS/2'].version))
-            self['OS/2'].version = 4
-        self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 9)
+        return charstrings
 
-    def setWWS(self):
-        self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 8)
+    def get_simplified_charstrings(
+            self,
+            tolerance: float = 1,
+            all_cubic: bool = True
+    ) -> dict:
 
-    def unsetBold(self):
-        self.__clearBoldBits()
-        if not self.isItalic():
-            self.__setRegularBit()
+        charstrings = {}
+        glyph_set = self.getGlyphSet()
 
-    def unsetItalic(self):
-        self.__clearItalicBits()
-        if not self.isBold():
-            self.__setRegularBit()
+        for k, v in glyph_set.items():
 
-    def unsetOblique(self):
-        self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 9)
+            # Correct contours direction and remove overlaps with pathops
+            pathops_path = pathops.Path()
+            pathops_pen = pathops_path.getPen(glyphSet=glyph_set)
+            try:
+                glyph_set[k].draw(pathops_pen)
+                pathops_path.simplify()
+            except TypeError:
+                pass
 
-    def unsetWWS(self):
-        self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 8)
+            t2_pen = T2CharStringPen(v.width, glyphSet=glyph_set)
+            qu2cu_pen = Qu2CuPen(t2_pen, max_err=tolerance, all_cubic=all_cubic, reverse_direction=False)
+            pathops_path.draw(qu2cu_pen)
 
-    def setRegular(self):
-        self.__setRegularBit()
-        self.__clearBoldBits()
-        self.__clearItalicBits()
+            charstring = t2_pen.getCharString()
+            charstrings[k] = charstring
 
-    def getUseTypoMetricsValue(self):
-        return is_nth_bit_set(self['OS/2'].fsSelection, 7)
+        return charstrings
 
-    def setUseTypoMetrics(self):
-        if self['OS/2'].version > 3:
-            self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 7)
+    def correct_contours_direction(self):
+        glyph_set = self.getGlyphSet()
+        charstrings = {}
+        for k, v in glyph_set.items():
+            pathops_path = pathops.Path()
+            pathops_pen = pathops_path.getPen(glyphSet=glyph_set)
+            try:
+                glyph_set[k].draw(pathops_pen)
+                pathops_path.simplify()
+            except TypeError:
+                pass
 
-    def unsetUseTypoMetrics(self):
-        self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 7)
+            t2_pen = T2CharStringPen(v.width, glyphSet=glyph_set)
+            qu2cu_pen = Qu2CuPen(t2_pen, max_err=1, all_cubic=True, reverse_direction=False)
 
-    def setEmbedLevel(self, value: int):
-        if value == 0:
-            for b in (0, 1, 2, 3):
-                self['OS/2'].fsType = unset_nth_bit(self['OS/2'].fsType, b)
-        if value == 2:
-            for b in (0, 2, 3):
-                self['OS/2'].fsType = unset_nth_bit(self['OS/2'].fsType, b)
-            self['OS/2'].fsType = set_nth_bit(self['OS/2'].fsType, 1)
-        if value == 4:
-            for b in (0, 1, 3):
-                self['OS/2'].fsType = unset_nth_bit(self['OS/2'].fsType, b)
-            self['OS/2'].fsType = set_nth_bit(self['OS/2'].fsType, 2)
-        if value == 8:
-            for b in (0, 1, 2):
-                self['OS/2'].fsType = unset_nth_bit(self['OS/2'].fsType, b)
-            self['OS/2'].fsType = set_nth_bit(self['OS/2'].fsType, 3)
+            pathops_path.draw(qu2cu_pen)
 
-    def getEmbedLevel(self) -> int:
-        return int(num2binary(self['OS/2'].fsType, 16)[9:17], 2)
+            charstring = t2_pen.getCharString()
+            charstrings[k] = charstring
 
-    def setNoSubsettingBit(self):
-        self['OS/2'].fsType = set_nth_bit(self['OS/2'].fsType, 8)
+        return charstrings
 
-    def clearNoSubsettingBit(self):
-        self['OS/2'].fsType = unset_nth_bit(self['OS/2'].fsType, 8)
+    def subset(self, glyph_ids: list):
+        """
+        Returns a subsetted font with only the glyph_ids passed
 
-    def getNoSubsettingValue(self) -> bool:
-        return is_nth_bit_set(self['OS/2'].fsType, 8)
+        :param glyph_ids: a list of glyphIDs
+        :type glyph_ids: list
+        """
+        subsetter = Subsetter()
+        subsetter.options.drop_tables = []
+        subsetter.options.passthrough_tables = True
+        subsetter.options.name_IDs = "*"
+        subsetter.options.name_legacy = True
+        subsetter.options.name_languages = "*"
+        subsetter.options.layout_features = "*"
+        subsetter.options.hinting = False
+        subsetter.glyph_ids_requested = glyph_ids
+        Subsetter.subset(subsetter, self)
 
-    def setBitmapEmbedOnlyBit(self):
-        self['OS/2'].fsType = set_nth_bit(self['OS/2'].fsType, 9)
+    def fix_cff_top_dict_version(self):
+        if not self.is_cff:
+            return
+        font_revision = str(round(self.head_table.fontRevision, 3)).split(".")
+        major_version = str(font_revision[0])
+        minor_version = str(font_revision[1]).ljust(3, "0")
+        cff_font_version = ".".join([major_version, str(int(minor_version))])
+        self["CFF "].cff.topDictIndex[0].version = cff_font_version
 
-    def clearBitmapEmbedOnlyBit(self):
-        self['OS/2'].fsType = unset_nth_bit(self['OS/2'].fsType, 9)
+    def get_font_info(self) -> dict:
+        """
+        Returns a dictionary of font information
 
-    def getBitmapEmbedOnlyValue(self):
-        return is_nth_bit_set(self['OS/2'].fsType, 9)
+        :return: A dictionary of dictionaries.
+        """
 
-    def setUsWidthClass(self, value):
-        self["OS/2"].usWidthClass = value
+        font_info = dict(
+            file_name={"label": "File name", "value": self.file},
+            sfnt_versions={
+                "label": "SFNT version",
+                "value": "PostScript" if self.sfntVersion == "OTTO" else "TrueType",
+            },
+            flavor={"label": "Flavor", "value": self.flavor},
+            glyphs_number={
+                "label": "Number of glyphs",
+                "value": self["maxp"].numGlyphs,
+            },
+            family_name={
+                "label": "Family name",
+                "value": self.name_table.getBestFamilyName(),
+            },
+            subfamily_name={
+                "label": "Subfamily name",
+                "value": self.name_table.getBestSubFamilyName(),
+            },
+            full_name={
+                "label": "Full name",
+                "value": self.name_table.getBestFullName(),
+            },
+            postscript_name={
+                "label": "PostScript name",
+                "value": self.name_table.getDebugName(6),
+            },
+            unique_identifier={
+                "label": "Unique ID",
+                "value": self.name_table.getDebugName(3),
+            },
+            vendor_code={"label": "Vendor code", "value": self.os_2_table.achVendID},
+            version={
+                "label": "Version",
+                "value": str(round(self.head_table.fontRevision, 3)),
+            },
+            date_created={
+                "label": "Date created",
+                "value": timestampToString(self.head_table.created),
+            },
+            date_modified={
+                "label": "Date modified",
+                "value": timestampToString(self.head_table.modified),
+            },
+            us_width_class={
+                "label": "usWidthClass",
+                "value": self.os_2_table.usWidthClass,
+            },
+            us_weight_class={
+                "label": "usWeightClass",
+                "value": self.os_2_table.usWeightClass,
+            },
+            is_bold={"label": "Font is bold", "value": self.is_bold},
+            is_italic={"label": "Font is italic", "value": self.is_italic},
+            is_oblique={"label": "Font is oblique", "value": self.is_oblique},
+            is_wws_consistent={
+                "label": "WWS consistent",
+                "value": self.os_2_table.is_wws_bit_set(),
+            },
+            use_typo_metrics={
+                "label": "Use Typo Metrics",
+                "value": self.os_2_table.is_use_typo_metrics_bit_set(),
+            },
+            underline_position={
+                "label": "UL position",
+                "value": self.post_table.underlinePosition,
+            },
+            underline_thickness={
+                "label": "UL thickness",
+                "value": self.post_table.underlineThickness,
+            },
+            italic_angle={"label": "Italic angle", "value": self["post"].italicAngle},
+            caret_slope_rise={
+                "label": "Caret Slope Rise",
+                "value": self["hhea"].caretSlopeRise,
+            },
+            caret_slope_run={
+                "label": "Caret Slope Run",
+                "value": self["hhea"].caretSlopeRun,
+            },
+            caret_offset={"label": "Caret Offset", "value": self["hhea"].caretOffset},
+            embed_level={
+                "label": "Embedding",
+                "value": f"{self.os_2_table.get_embed_level()} "
+                f"{constants.EMBED_LEVEL_STRINGS.get(self.os_2_table.get_embed_level())}",
+            },
+        )
 
-    def setUsWeightClass(self, value):
-        self["OS/2"].usWeightClass = value
+        return font_info
 
-    def setAchVendID(self, value):
-        self['OS/2'].achVendID = value
+    def get_font_v_metrics(self) -> dict:
+        """
+        The function returns a dictionary of dictionaries, where each dictionary contains a list of dictionaries.
 
-    def addDummyDSIG(self):
+        Each of the innermost dictionaries contains a label and a value.
+
+        The label is the name of the metric, and the value is the value of the metric.
+
+        The function returns the following metrics:
+
+        - OS/2 Typographic Ascender
+        - OS/2 Typographic Descender
+        - OS/2 Typographic Line Gap
+        - OS/2 Windows Ascent
+        - OS/2 Windows Descent
+        - hhea Ascent
+        - hhea Descent
+        - hhea Line Gap
+        - head Units Per Em
+        - head xMin
+        - head yMin
+        - head xMax
+        - head yMax
+        - head Font BBox
+
+        The function returns the metrics in a dictionary of dictionaries, where each dictionary contains a list of
+        dictionaries.
+
+        The innermost dictionaries contain a label
+        :return: A dictionary with three keys: os2_metrics, hhea_metrics, and head_metrics.
+        """
+        font_v_metrics = dict(
+            os2_metrics=[
+                {"label": "sTypoAscender", "value": self.os_2_table.sTypoAscender},
+                {"label": "sTypoDescender", "value": self.os_2_table.sTypoDescender},
+                {"label": "sTypoLineGap", "value": self.os_2_table.sTypoLineGap},
+                {"label": "usWinAscent", "value": self.os_2_table.usWinAscent},
+                {"label": "usWinDescent", "value": self.os_2_table.usWinDescent},
+            ],
+            hhea_metrics=[
+                {"label": "ascent", "value": self["hhea"].ascent},
+                {"label": "descent", "value": self["hhea"].descent},
+                {"label": "lineGap", "value": self["hhea"].lineGap},
+            ],
+            head_metrics=[
+                {"label": "unitsPerEm", "value": self.head_table.unitsPerEm},
+                {"label": "xMin", "value": self.head_table.xMin},
+                {"label": "yMin", "value": self.head_table.yMin},
+                {"label": "xMax", "value": self.head_table.xMax},
+                {"label": "yMax", "value": self.head_table.yMax},
+                {
+                    "label": "Font BBox",
+                    "value": f"({self.head_table.xMin}, {self.head_table.yMin}) "
+                    f"({self.head_table.xMax}, {self.head_table.yMax})",
+                },
+            ],
+        )
+
+        return font_v_metrics
+
+    def get_font_feature_tags(self) -> list:
+        """
+        Returns a sorted list of all the feature tags in the font's GSUB and GPOS tables
+
+        :return: A list of feature tags.
+        """
+
+        feature_tags = set()
+        for table_tag in ("GSUB", "GPOS"):
+            if table_tag in self:
+                if (
+                    not self[table_tag].table.ScriptList
+                    or not self[table_tag].table.FeatureList
+                ):
+                    continue
+                feature_tags.update(
+                    feature_record.FeatureTag
+                    for feature_record in self[
+                        table_tag
+                    ].table.FeatureList.FeatureRecord
+                )
+        return sorted(feature_tags)
+
+    def get_ui_name_ids(self) -> list:
+        """
+        Returns a list of all the UI name IDs in the font's GSUB table
+
+        :return: A list of integers.
+        """
+        ui_name_ids = []
+        if "GSUB" not in self.keys():
+            return []
+        else:
+            for record in self["GSUB"].table.FeatureList.FeatureRecord:
+                if record.Feature.FeatureParams is not None:
+                    ui_name_ids.append(record.Feature.FeatureParams.UINameID)
+        return sorted(set(ui_name_ids))
+
+    def reorder_ui_name_ids(self):
+        """
+        Takes the IDs of the UI names in the name table and reorders them to start at 256
+        """
+
+        if "GSUB" not in self:
+            return
+        ui_name_ids = self.get_ui_name_ids()
+        for count, value in enumerate(ui_name_ids, start=256):
+            for n in self.name_table.names:
+                if n.nameID == value:
+                    n.nameID = count
+            for record in self["GSUB"].table.FeatureList.FeatureRecord:
+                if record.Feature.FeatureParams:
+                    if record.Feature.FeatureParams.UINameID == value:
+                        record.Feature.FeatureParams.UINameID = count
+
+    def add_dummy_dsig(self):
+        """
+        Adds a dummy DSIG table to the font, unless the table is already present, or the font flavor is woff2
+        """
+        if self.flavor == "woff2":
+            return
         values = dict(
             ulVersion=1,
             usFlag=0,
             usNumSigs=0,
             signatureRecords=[],
         )
-        dsig = self['DSIG'] = newTable('DSIG')
-        for k, v in values.items():
-            setattr(dsig, k, v)
+        if "DSIG" not in self.keys():
+            dsig = self["DSIG"] = newTable("DSIG")
+            for k, v in values.items():
+                setattr(dsig, k, v)
 
-    def getFontInfo(self) -> dict:
+    def modify_linegap_percent(self, percent):
+        """
+        Modifies the line spacing metrics
 
-        font_info = {
-            'sfnt_version': {'label': 'Flavor', 'value': 'PostScript' if self.sfntVersion == 'OTTO' else 'TrueType'},
-            'glyphs_number': {'label': 'Glyphs number', 'value': self['maxp'].numGlyphs},
-            'date_created': {'label': 'Date created', 'value': timestampToString(self['head'].created)},
-            'date_modified': {'label': 'Date modified', 'value': timestampToString(self['head'].modified)},
-            'version': {'label': 'Version', 'value': self['head'].fontRevision},
-            'vend_id': {'label': 'Vendor code', 'value': self['OS/2'].achVendID},
-            'unique_identifier': {'label': 'Unique identifier', 'value': self['name'].getName(3, 3, 1, 0x409)},
-            'us_width_class': {'label': 'usWidthClass', 'value': self['OS/2'].usWidthClass},
-            'us_weight_class': {'label': 'usWeightClass', 'value': self['OS/2'].usWeightClass},
-            'is_bold': {'label': 'Font is bold', 'value': self.isBold()},
-            'is_italic': {'label': 'Font is italic', 'value': self.isItalic()},
-            'is_oblique': {'label': 'Font is oblique', 'value': self.isOblique()},
-            'is_wws_consistent': {'label': 'WWS consistent', 'value': self.isWWS()},
-            'italic_angle': {'label': 'Italic angle', 'value': self['post'].italicAngle},
-            'embed_level': {'label': 'Embedding', 'value': self.getEmbedLevel(),}
-        }
+        Adapted from https://github.com/source-foundry/font-line
+        """
 
-        return font_info
+        # get observed start values from the font
+        os2_typo_ascender = self.os_2_table.sTypoAscender
+        os2_typo_descender = self.os_2_table.sTypoDescender
+        os2_typo_linegap = self.os_2_table.sTypoLineGap
+        hhea_ascent = self["hhea"].ascent
+        hhea_descent = self["hhea"].descent
+        units_per_em = self.head_table.unitsPerEm
 
-    def getVerticalMetrics(self) -> dict:
-        vertical_metrics = {
-            'head_units_per_em': self['head'].unitsPerEm,
-            'hhea_ascent': self['hhea'].ascent,
-            'hhea_descent': self['hhea'].descent,
-            'hhea_linegap': self['hhea'].lineGap,
-            'head_x_min': self['head'].xMin,
-            'head_y_min': self['head'].yMin,
-            'head_x_max': self['head'].xMax,
-            'head_y_max': self['head'].yMax,
-            'os2_typo_ascender': self['OS/2'].sTypoAscender,
-            'os2_typo_descender': self['OS/2'].sTypoDescender,
-            'os2_typo_linegap': self['OS/2'].sTypoLineGap,
-            'os2_win_ascent': self['OS/2'].usWinAscent,
-            'os2_win_descent': self['OS/2'].usWinDescent,
-        }
+        # calculate necessary delta values
+        os2_typo_ascdesc_delta = os2_typo_ascender + -(os2_typo_descender)
+        hhea_ascdesc_delta = hhea_ascent + -(hhea_descent)
 
-        return vertical_metrics
+        # define percent UPM from command line request
+        factor = 1.0 * int(percent) / 100
 
-    def getGlyphsMetrics(self):
-        glyphs_metrics = {}
-        glyphset = self.getGlyphSet()
-        for glyphname in glyphset.keys():
+        # define line spacing units
+        line_spacing_units = int(factor * units_per_em)
 
-            if 'glyf' in self:
-                glyph = self["glyf"][glyphname]
-                if glyph.numberOfContours == 0:
-                    # no data
-                    continue
-                glyph_metrics = {
-                    "xMin": glyph.xMin,
-                    "yMin": glyph.yMin,
-                    "xMax": glyph.xMax,
-                    "yMax": glyph.yMax,
-                }
-                glyphs_metrics[glyphname] = glyph_metrics
+        # define total height as UPM + line spacing units
+        total_height = line_spacing_units + units_per_em
 
-            else:
-                bounds = self.getGlyphSet()[glyphname]._glyph.calcBounds(self.getGlyphSet())
-                if bounds is None:
-                    continue
-                glyph_metrics = {
-                    "xMin": bounds[0],
-                    "yMin": bounds[1],
-                    "xMax": bounds[2],
-                    "yMax": bounds[3],
-                }
-                glyphs_metrics[glyphname] = glyph_metrics
+        # height calculations for adjustments
+        delta_height = total_height - hhea_ascdesc_delta
+        upper_lower_add_units = int(0.5 * delta_height)
 
-        return glyphs_metrics
+        # redefine hhea linegap to 0 in all cases
+        hhea_linegap = 0
 
-    def getFontFeatures(self):
+        # Define metrics based upon original design approach in the font
+        # Google metrics approach
+        if os2_typo_linegap == 0 and (os2_typo_ascdesc_delta > units_per_em):
+            # define values
+            os2_typo_ascender += upper_lower_add_units
+            os2_typo_descender -= upper_lower_add_units
+            hhea_ascent += upper_lower_add_units
+            hhea_descent -= upper_lower_add_units
+            os2_win_ascent = hhea_ascent
+            os2_win_descent = -hhea_descent
+        # Adobe metrics approach
+        elif os2_typo_linegap == 0 and (os2_typo_ascdesc_delta == units_per_em):
+            hhea_ascent += upper_lower_add_units
+            hhea_descent -= upper_lower_add_units
+            os2_win_ascent = hhea_ascent
+            os2_win_descent = -hhea_descent
+        else:
+            os2_typo_linegap = line_spacing_units
+            hhea_ascent = int(os2_typo_ascender + 0.5 * os2_typo_linegap)
+            hhea_descent = -(total_height - hhea_ascent)
+            os2_win_ascent = hhea_ascent
+            os2_win_descent = -hhea_descent
 
-        feature_list = []
+        # define updated values from above calculations
+        self["hhea"].lineGap = hhea_linegap
+        self.os_2_table.sTypoAscender = os2_typo_ascender
+        self.os_2_table.sTypoDescender = os2_typo_descender
+        self.os_2_table.sTypoLineGap = os2_typo_linegap
+        self.os_2_table.usWinAscent = os2_win_ascent
+        self.os_2_table.usWinDescent = os2_win_descent
+        self["hhea"].ascent = hhea_ascent
+        self["hhea"].descent = hhea_descent
 
-        if 'GSUB' in self.keys():
-            try:
-                gsub_table = self['GSUB']
-                feature_list += gsub_table.table.FeatureList.FeatureRecord
-            except:
-                pass
+    def decomponentize(self):
+        if not self.is_true_type:
+            return
+        glyph_set = self.getGlyphSet()
+        glyf_table = self["glyf"]
+        dr_pen = DecomposingRecordingPen(glyph_set)
+        tt_pen = TTGlyphPen(None)
 
-        if 'GPOS' in self.keys():
-            try:
-                gpos_table = self['GPOS']
-                feature_list += gpos_table.table.FeatureList.FeatureRecord
-            except:
-                pass
+        for glyph_name in self.glyphOrder:
+            glyph = glyf_table[glyph_name]
+            if not glyph.isComposite():
+                continue
 
-        feature_tags = []
-        if len(feature_list) > 0:
-            for feature_record in feature_list:
-                if feature_record.FeatureTag not in feature_tags:
-                    feature_tags.append(feature_record.FeatureTag)
+            dr_pen.value = []
+            tt_pen.init()
 
-        return feature_tags
+            glyph.draw(dr_pen, glyf_table)
+            dr_pen.replay(tt_pen)
 
-    def __setBoldBits(self):
-        self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 5)
-        self['head'].macStyle = set_nth_bit(self['head'].macStyle, 0)
-
-    def __setItalicBits(self):
-        self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 0)
-        self['head'].macStyle = set_nth_bit(self['head'].macStyle, 1)
-
-    def __setRegularBit(self):
-        self['OS/2'].fsSelection = set_nth_bit(self['OS/2'].fsSelection, 6)
-
-    def __clearBoldBits(self):
-        self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 5)
-        self['head'].macStyle = unset_nth_bit(self['head'].macStyle, 0)
-
-    def __clearItalicBits(self):
-        self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 0)
-        self['head'].macStyle = unset_nth_bit(self['head'].macStyle, 1)
-
-    def __clearRegularBit(self):
-        self['OS/2'].fsSelection = unset_nth_bit(self['OS/2'].fsSelection, 6)
-
-
-def autoShortenName(string: str, find_replace: list, max_len: int) -> str:
-
-    new_string = string
-
-    for i in find_replace:
-        new_string = new_string.replace(i[0], i[1])
-        if len(new_string) <= max_len:
-            return new_string
-
-    if len(new_string) > max_len:
-        click.secho(f"WARNING: {string} has been shortened to {new_string}, but is still longer than {max_len} "
-                    f"characters (actually {len(new_string)})",
-                    fg="yellow")
-    return new_string
-
-
-def is_nth_bit_set(x: int, n: int):
-    if x & (1 << n):
-        return True
-    return False
-
-
-def set_nth_bit(x: int, n: int):
-    return x | 1 << n
-
-
-def unset_nth_bit(x: int, n: int):
-    return x & ~(1 << n)
-
-
-PLATFORMS = {
-    0: 'Unicode',
-    1: 'Macintosh',
-    2: 'ISO (deprecated)',
-    3: 'Windows',
-    4: 'Custom',
-}
+            glyf_table[glyph_name] = tt_pen.glyph()

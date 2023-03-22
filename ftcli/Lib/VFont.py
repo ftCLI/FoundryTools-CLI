@@ -1,166 +1,66 @@
-import logging
 import os
 
-from fontTools.misc.cliTools import makeOutputFileName
 from fontTools.ttLib.tables._f_v_a_r import NamedInstance
-from fontTools.ttLib.ttFont import TTFont
-from pathvalidate import sanitize_filename
 
-log = logging.getLogger(__name__)
+from ftCLI.Lib.Font import Font
 
 
-class VariableFont(TTFont):
-
+class VariableFont(Font):
     def __init__(self, file, recalcTimestamp=False):
         super().__init__(file=file, recalcTimestamp=recalcTimestamp)
+        self.fvar_table = self["fvar"]
 
-        self.file = file
+    def get_axes(self) -> list:
+        return [axis for axis in self["fvar"].axes if axis.flags == 0]
 
-        try:
-            self.fvarTable = self['fvar']
-            self.statTable = self['STAT'].table
-            self.nameTable = self['name']
-        except Exception:
-            raise Exception(f"{file}\nNot a valid variable font. Required table(s) missing: "
-                            f"{', '.join([t for t in ['fvar', 'STAT', 'name'] if t not in self])}\n")
+    def get_instances(self) -> list:
+        return [instance for instance in self["fvar"].instances]
 
-        self.gsubTable = self['GSUB'].table if 'GSUB' in self else None
-
-    def getFamilyName(self):
-        """
-        Tries to retrieve the Family Name string from nameIDs 16, 1 or 25.
-        """
-        family_name = None
-
-        try:
-            family_name = self.nameTable.getName(16, 3, 1, 0x409).toUnicode()
-        except AttributeError:
-            try:
-                family_name = self.nameTable.getName(16, 1, 0, 0x0).toUnicode()
-            except AttributeError:
-                try:
-                    family_name = self.nameTable.getName(1, 3, 1, 0x409).toUnicode()
-                except AttributeError:
-                    try:
-                        family_name = self.nameTable.getName(1, 1, 0, 0x0).toUnicode()
-                    except AttributeError:
-                        try:
-                            family_name = self.nameTable.getName(25, 3, 1, 0x409).toUnicode()
-                        except AttributeError:
-                            try:
-                                family_name = self.nameTable.getName(25, 1, 0, 0x0).toUnicode()
-                            except AttributeError:
-                                pass
-        finally:
-            return family_name
-
-    def getInstancePostscriptName(self, instance: NamedInstance):
-        """
-        Tries to retrieve the postscriptName string of a fvar instance.
-        """
-        try:
-            return self.nameTable.getName(instance.postscriptNameID, 3, 1, 0x409).toUnicode()
-        except:
-            return None
-
-    def getInstanceSubfamilyName(self, instance: NamedInstance):
-        """
-        Tries to retrieve the subfamilyName string of a fvar instance.
-        """
-        try:
-            return self.nameTable.getName(instance.subfamilyNameID, 3, 1, 0x409).toUnicode()
-        except:
-            return None
-
-    def makeInstanceOutputFileName(self, instance: NamedInstance, outputDir, overWrite) -> str:
-        psname = self.getInstancePostscriptName(instance) if instance.postscriptNameID < 65535 else None
-        family_name = self.getFamilyName()
-        subfamily_name = self.getInstanceSubfamilyName(instance) if instance.subfamilyNameID > 0 else None
-
-        file_name = (os.path.splitext(os.path.basename(self.file))[0])
-        ext = (os.path.splitext(self.file)[1])
-
-        if psname is not None:
-            s = psname
-        elif subfamily_name is not None:
-            if family_name is not None:
-                s = f"{family_name}-{subfamily_name}".replace(" ", "")
-            else:
-                s = f"{file_name}-{subfamily_name}".replace(" ", "")
-        else:
-            if family_name is not None:
-                s = f"{family_name}-"
-            else:
-                s = f"{file_name}-"
-            for k, v in instance.coordinates.items():
-                s += f"{k}_{v}-"
-            s = s[0:-1]
-
-        s = sanitize_filename(s)
-        s = os.path.join(os.path.dirname(self.file), f"{s}{ext}")
-        output_file = makeOutputFileName(input=s, outputDir=outputDir, overWrite=overWrite)
-        return output_file
-
-    def getNameIDsToDelete(self) -> list:
-        name_ids_to_keep = sorted(list(set(n.nameID for n in self.nameTable.names if n.nameID < 25)))
+    def get_var_name_ids_to_delete(self) -> list:
         name_ids_to_delete = [25]
 
-        try:
-            for a in self.fvarTable.axes:
-                if a.axisNameID not in name_ids_to_keep:
-                    name_ids_to_delete.append(a.axisNameID)
-        except:
-            pass
-
-        try:
-            for instance in self.fvarTable.instances:
-                if instance.subfamilyNameID not in name_ids_to_keep:
+        if "fvar" in self.keys():
+            for axis in self.get_axes():
+                name_ids_to_delete.append(axis.axisNameID)
+            for instance in self.get_instances():
+                if hasattr(instance, "subfamilyNameID"):
                     name_ids_to_delete.append(instance.subfamilyNameID)
-                if instance.postscriptNameID not in name_ids_to_keep:
+                if hasattr(instance, "postscriptNameID"):
                     name_ids_to_delete.append(instance.postscriptNameID)
-        except:
-            pass
 
-        try:
-            for a in self.statTable.DesignAxisRecord.Axis:
-                if a.AxisNameID not in name_ids_to_keep:
-                    name_ids_to_delete.append(a.AxisNameID)
-        except:
-            pass
+        if "STAT" in self.keys():
+            if hasattr(self["STAT"].table, "DesignAxisRecord"):
+                for axis in self["STAT"].table.DesignAxisRecord.Axis:
+                    name_ids_to_delete.append(axis.AxisNameID)
+            if (
+                hasattr(self["STAT"].table, "AxisValueArray")
+                and self["STAT"].table.AxisValueArray is not None
+            ):
+                for axis in self["STAT"].table.AxisValueArray.AxisValue:
+                    name_ids_to_delete.append(axis.ValueNameID)
 
-        try:
-            for v in self.statTable.AxisValueArray.AxisValue:
-                if v.ValueNameID not in name_ids_to_keep:
-                    name_ids_to_delete.append(v.ValueNameID)
-        except:
-            pass
+        name_ids_to_delete = [n for n in name_ids_to_delete if n > 24]
+        name_ids_to_delete = sorted(list(set(name_ids_to_delete)))
 
-        return sorted(list(set(name_ids_to_delete)))
+        return name_ids_to_delete
 
-    def cleanupInstance(self, nameIDsToDelete: list):
-        for n in self.nameTable.names:
-            if n.nameID in nameIDsToDelete:
-                self.nameTable.removeNames(n.nameID, n.platformID, n.platEncID, n.langID)
+    def get_static_instance_file_name(self, instance: NamedInstance) -> str:
+        if hasattr(instance, "postscriptNameID") and instance.postscriptNameID < 65535:
+            instance_file_name = self.name_table.getDebugName(instance.postscriptNameID)
 
-        if self.gsubTable is not None:
-            named_features = []
-            for r in self.gsubTable.FeatureList.FeatureRecord:
-                try:
-                    named_features.append(r.Feature.FeatureParams.UINameID)
-                    named_features = list(set(named_features))
-                except:
-                    pass
+        else:
+            if hasattr(instance, "subfamilyNameID") and instance.subfamilyNameID > 0:
+                subfamily_name = self.name_table.getDebugName(instance.subfamilyNameID)
+            else:
+                subfamily_name = "_".join(
+                    [f"{k}_{v}" for k, v in instance.coordinates.items()]
+                )
 
-            feature_name_ids = [n.nameID for n in self.nameTable.names if n.nameID in named_features]
-            feature_name_ids = list(set(feature_name_ids))
+            if self.name_table.getBestFamilyName() is not None:
+                family_name = self.name_table.getBestFamilyName()
+            else:
+                family_name = os.path.splitext(os.path.basename(self.file))[0]
 
-            for count, value in enumerate(feature_name_ids, start=256):
-                for n in self.nameTable.names:
-                    if n.nameID == value:
-                        n.nameID = count
-                try:
-                    for r in self.gsubTable.FeatureList.FeatureRecord:
-                        if r.Feature.FeatureParams.UINameID == value:
-                            r.Feature.FeatureParams.UINameID = count
-                except:
-                    pass
+            instance_file_name = f"{family_name}-{subfamily_name}".replace(" ", "")
+
+        return instance_file_name

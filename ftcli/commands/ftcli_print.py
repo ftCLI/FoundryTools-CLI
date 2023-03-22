@@ -1,134 +1,117 @@
+import os
+from pprint import pprint
+
 import click
 
-from ftcli.Lib.CUI import CUI
-from ftcli.Lib.utils import getFontsList
-
-
-# printName
-
-@click.group()
-def printName():
-    pass
-
-
-@printName.command()
-@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-@click.option('-n', '--name-id', type=click.IntRange(0, 32767), required=True,
-              help="nameID (Integer between 0 and 32767)")
-@click.option('-ml', '--max-lines', type=click.INT, default=None,
-              help="Maximum number of lines to be printed.")
-def ft_name(input_path, name_id, max_lines):
-    """Prints a single namerecord.
-
-    Use the -ml, --max-lines option to limit the printed line numbers to the desired value.
-    """
-    CUI().printFtName(input_path, name_id=name_id, max_lines=max_lines)
-
-
-# printNames
+from ftCLI.Lib.Font import Font
+from ftCLI.Lib.cui import CUI
+from ftCLI.Lib.utils.cli_tools import get_fonts_list
+from ftCLI.Lib.utils.click_tools import generic_error_message, add_file_or_path_argument
 
 
 @click.group()
-def printNames():
+def print_font_list():
     pass
 
 
-@printNames.command()
-@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-@click.option('-ml', '--max-lines', type=click.INT, default=None,
-              help="Maximum number of lines to be printed for each namerecord")
-@click.option('-min', '--minimal', is_flag=True,
-              help="Prints only nameIDs 1, 2, 3, 4, 5, 6, 16, 17, 18, 21 and 22.")
-def ft_names(input_path, max_lines, minimal):
-    """Prints the 'name' table and 'CFF' names (if present).
-
-    Use the -ml / --max-lines option to limit the printed line numbers, and the -min / --minimal one to print a minimal
-    set of namerecords.
+@print_font_list.command()
+@add_file_or_path_argument()
+def fonts_list(input_path):
     """
+    Prints a list of fonts with basic information.
+    """
+    files = get_fonts_list(input_path)
+    if len(files) == 0:
+        generic_error_message(f"No valid font files found in {input_path}.")
+        return
+    CUI.print_fonts_list(files)
 
-    if len(getFontsList(input_path)) > 0:
-        CUI().printFtNames(input_path, max_lines=max_lines, minimal=minimal)
+
+@click.group()
+def print_font_info():
+    pass
+
+
+@print_font_info.command()
+@add_file_or_path_argument()
+def font_info(input_path):
+    """
+    Prints detailed font info.
+    """
+    if len(get_fonts_list(input_path)) > 0:
+        for file in get_fonts_list(input_path):
+            try:
+                font = Font(file)
+                CUI.print_font_info(font)
+            except Exception as e:
+                generic_error_message(e)
     else:
-        click.secho('\n{} is not a valid font'.format(input_path), fg='red')
-
-
-# printFontInfo
+        click.secho("\nNo valid fonts found in {}".format(input_path), fg="red")
 
 
 @click.group()
-def printFontInfo():
+def print_font_os2_table():
     pass
 
 
-@printFontInfo.command()
-@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-def ft_info(input_path):
-    """Prints detailed font information.
+@print_font_os2_table.command()
+@add_file_or_path_argument()
+def os2_table(input_path):
     """
-
-    if len(getFontsList(input_path)) > 0:
-        CUI().printFtInfo(input_path)
+    Prints the OS/2 table.
+    """
+    if len(get_fonts_list(input_path)) > 0:
+        for file in get_fonts_list(input_path):
+            try:
+                font = Font(file)
+                CUI.print_os2_table(font)
+            except Exception as e:
+                generic_error_message(e)
     else:
-        click.secho('\n{} is not a valid font'.format(input_path), fg='red')
-
-
-# printFontsList
+        generic_error_message("No valid font files found")
 
 
 @click.group()
-def printFontsList():
+def print_font_names():
     pass
 
 
-@printFontsList.command()
-@click.argument('input_path', type=click.Path(exists=True, resolve_path=True))
-def ft_list(input_path):
-    """Prints a list of fonts with basic information.
+@print_font_names.command()
+@add_file_or_path_argument()
+@click.option(
+    "-ml",
+    "--max-lines",
+    type=click.INT,
+    default=None,
+    help="Maximum number of lines to be printed for each namerecord",
+)
+@click.option(
+    "-m",
+    "--minimal",
+    is_flag=True,
+    help="""
+              Prints a minimal set of namerecords, omitting the ones with nameID not in 1, 2, 3, 4, 5, 6, 16, 17, 18, 
+              21, 22, 25
+              """,
+)
+def font_names(input_path, max_lines, minimal=False):
     """
-    if len(getFontsList(input_path)) > 0:
-        CUI().printFtList(input_path)
-    else:
-        click.secho('\nNo valid fonts found in {}'.format(
-            input_path), fg='red')
-
-
-# printHeadTable
-@click.group()
-def printHeadTable():
-    pass
-
-
-@printHeadTable.command()
-@click.argument('input_path', type=click.Path(exists=True, resolve_path=True, dir_okay=False))
-def tbl_head(input_path):
-    """Prints the 'head' table.
+    Prints the `name` table and, if the font is CFF, tha names in the `CFF` table topDict.
     """
-    if len(getFontsList(input_path)) > 0:
-        CUI().printTableHead(input_path)
+    if len(get_fonts_list(input_path)) > 0:
+        for file in get_fonts_list(input_path):
+            try:
+                font = Font(file)
+                CUI.print_font_names(font, max_lines=max_lines, minimal=minimal)
+            except Exception as e:
+                generic_error_message(e)
     else:
-        click.secho('No valid font found.', fg='red')
+        generic_error_message("No valid font files found.")
 
 
-# printOS2Table
-
-
-@click.group()
-def printOS2Table():
-    pass
-
-
-@printOS2Table.command()
-@click.argument('input_path', type=click.Path(exists=True, resolve_path=True, dir_okay=False))
-def tbl_os2(input_path):
-    """Prints the 'OS/2' table.
-    """
-    if len(getFontsList(input_path)) > 0:
-        CUI().printTableOS2(input_path)
-    else:
-        click.secho('No valid font found.', fg='red')
-
-
-cli = click.CommandCollection(sources=[printName, printNames, printFontInfo, printFontsList, printOS2Table,
-                                       printHeadTable], help="""
-Prints various font's information.
-""")
+cli = click.CommandCollection(
+    sources=[print_font_list, print_font_info, print_font_names, print_font_os2_table],
+    help="""
+Prints various fonts information and tables.
+""",
+)
