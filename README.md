@@ -138,6 +138,8 @@ of file name, so that Times-Bold.otf becomes TimesBold#1.otf).
 A set of tools to correctly compile the 'name' table and set proper values for usWeightClass, usWidthClass, bold, italic
 and oblique bits.
 
+![image](https://user-images.githubusercontent.com/83063506/226935693-519309a4-c76c-4321-8f1d-5bc0e7a32de5.png "ftCLI assistant main window")
+
 The process creates a JSON configuration file and a CSV file that will be used to fix the fonts. Both files can be
 automatically created and eventually edited manually or using the integrated command line editor. Once everything is
 correctly set in the CSV file, the values inside it can be written to fonts.
