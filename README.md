@@ -129,7 +129,7 @@ of file name, so that Times-Bold.otf becomes TimesBold#1.otf).
 
 ### Usage examples:
 
-`ftcli metrics align "C:\Fonts" --output-dir "C:\Fonts\Aligned"`
+`ftcli metrics align "C:\Fonts" -out "C:\Fonts\Aligned"`
 
 `ftcli metrics copy -s "C:\Fonts\SourceFont.otf" -d "C:\Fonts\" --recalc-timestamp`
 
@@ -144,11 +144,12 @@ and Oblique bits.
 
     ftcli assistant
 
-    Commands:
-      commit       Writes data from CSV to fonts.
-      init-config  Creates the `styles_mapping.json` containing the default values in the `ftCLI_files` folder.
-      init-data    Creates the CSV database file `fonts_data.csv` in the `ftCLI_files` folder.
-      ui           Character user interface to edit the styles_mapping.json and fonts_data.csv files.
+**Commands**:
+
+      commit
+      init-config
+      init-data
+      ui
 
 The logical steps are the following:
 
@@ -382,36 +383,75 @@ is used.
                                     files already exist in the ftCLI_files folder.
     --help                          Show this message and exit.
 
-
 ## ftcli cff
 
 `CFF` table editor.
+
+**Usage:**
+
+    ftcli cff COMMAND [ARGS]
+
+**Commands:**
+
+    del-names
+    find-replace
+    fix-version
+    set-names
+
+### ftcli cff del-names
+
+Deletes CFF names.
+
+**Usage**:
+
+    ftcli cff del-names [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    --full-name                   Deletes CFF.cff.topDictIndex[0] FullName
+    --family-name                 Deletes CFF.cff.topDictIndex[0] FamilyName
+    --weight                      Deletes CFF.cff.topDictIndex[0] Weight
+    --version                     Deletes CFF.cff.topDictIndex[0] version
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli cff find-replace
 
 Finds a string in the following items of CFF table topDict and replaces it with a new string: `version`, `FullName`, 
 `FamilyName`, `Weight`, `Copyright`, `Notice`.
 
-```
-Usage: ftcli cff find-replace [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -os, --old-string TEXT        The string to be replaced  [required]
-  -ns, --new-string TEXT        The string to replace the old string with
-                                [required]
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+    ftcli cff find-replace [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -os, --old-string TEXT        The string to be replaced  [required]
+    -ns, --new-string TEXT        The string to replace the old string with
+                                  [required]
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
+
 
 ### ftcli cff fix-version
 
@@ -419,23 +459,53 @@ Aligns topDict version string to the `head.fontRevision` value.
 
 For example, if `head.fontRevision` value is 2.001, CFF topDict version value will
 be 2.1.
-```
-Usage: ftcli cff fix-version [OPTIONS] INPUT_PATH
 
-Options:
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+**Usage**:
+
+    ftcli cff fix-version [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
+
+### ftcli cff set-names
+
+Sets CFF names.
+
+**Usage**:
+
+    ftcli cff set-names [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    --font-names TEXT             Sets CFF.cff.fontNames value
+    --full-name TEXT              Sets CFF.cff.topDictIndex[0] FullName value
+    --family-name TEXT            Sets CFF.cff.topDictIndex[0] FamilyName value
+    --weight TEXT                 Sets CFF.cff.topDictIndex[0] Weight value
+    --version TEXT                Sets CFF.cff.topDictIndex[0] version value
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ## ftcli converter
 
