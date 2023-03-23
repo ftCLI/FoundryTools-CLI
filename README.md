@@ -226,13 +226,18 @@ Both files can be edited manually or using the command line interface.
 
 ### ftcli assistant ui
 
-Opens the 
+Opens the character user interface to edit the styles_mapping.json and fonts_data.csv files.
 
 **Usage**
 
     ftcli assistant ui INPUT_PATH
 
+The main window displays a list of fonts found in `INPUT_PATH` and allows to access the editors for
+`styles_mapping.json` and `fonts_data.csv`.
+
 ![image](https://user-images.githubusercontent.com/83063506/226935693-519309a4-c76c-4321-8f1d-5bc0e7a32de5.png "ftCLI assistant main window")
+
+
 
 ### 1) The styles_mapping.json file.
 
