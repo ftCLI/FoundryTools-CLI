@@ -43,11 +43,8 @@ pip install -e .
 ## Commands list
 
 * [**assistant**](#ftcli-assistant)
-  * [edit-cfg](#ftcli-assistant-edit-cfg)
-  * [init-cfg](#ftcli-assistant-init-cfg)
-  * [init-csv](#ftcli-assistant-init-csv)
-  * [recalc-csv](#ftcli-assistant-recalc-csv)
-  * [recalc-names](#ftcli-assistant-recalc-names)
+  * [ui](#ftcli-assistant-ui)
+  * [commit](#ftcli-assistant-commit)
 
 * [**cff**](#ftcli-cff)
     * [find-replace](#ftcli-cff-find-replace)
@@ -209,7 +206,10 @@ retrieved values and the JSON data, trying to determine the proper style names. 
 The `fonts_data.csv` contains the following columns:
 * `file_name`: path to the font file
 * `family_name`: the font's family name, retrieved reading the name table
-* `is_bold`: True if ths bold bits are set, False if they are not set
+* `is_bold`: True if ths bold bits are set, False if they are not set. This column is present only for completeness,
+but it's value will be ignored. A font will be set as bold only and only if, while running the `ftcli assistant commit`
+command, the user will choose to use linked styles.
+(-ls / --linked styles) option while writing data from CSV to fonts
 * `is_italic`: True if ths italic bits are set, False if they are not set
 * `is_oblique`: True if ths oblique bit is set, False if it's not set
 * `us_width_class`: usWidthClass value
@@ -222,7 +222,7 @@ The `fonts_data.csv` contains the following columns:
 * `slope`: long literal for the Slope style name
 * `selected`: 0 to exclude the file while writing data from CSV to fonts, 1 to include the file
 
-Both files can be edited manually or using the command line interface.
+Both files can be edited manually or using the character interface.
 
 ### ftcli assistant ui
 
@@ -247,289 +247,98 @@ The Fonts Data Editor:
 
 ![image](https://user-images.githubusercontent.com/83063506/227150698-c7c5c0c3-2374-422d-8be7-c19c8c41c69d.png "The Fonts Data Editor")
 
-### 1) The styles_mapping.json file.
-
-The 'styles_mapping.json' file contains the desired style names to pair with each usWidthClass and usWeightClass values
-of the family, as well as the desired italic and oblique literals:
-
-    {
-        "italics": ["It", "Italic"],
-        
-        "obliques": ["Obl", "Oblique"],
-        
-        "weights": {
-            "250": ["Th", "Thin"],
-            "275": ["ExLt", "ExtraLight"],
-            ...
-            "400": ["Rg", "Regular"],
-            ...
-            800: ["XBd", "ExtraBold"],
-            900: ["Blk", "Black"]
-        },
-            
-        "widths": {
-            "1": ["Cm", "Compressed"],
-            "2": ["ExCn", "ExtraCondensed"],
-            ...
-            "5": ["Nor", "Normal"],
-            ...
-            "8": ["ExExtd", "ExtraExtended"],
-            "9": ["Exp", "Expanded"]
-        }
-    }
-
-Unless you have previously created a configuration file and want to reuse it, you need to create a standard
-configuration file and eventually customize it.
-
-    ftcli assistant reset-cfg INPUT_PATH
-
-The above command will create a file named 'styles_mapping.json' in the INPUT_PATH folder (or parent folder if
-INPUT_PATH is a file).
-
-Once created the configuration file, you may be in need to edit it according to your needs.
-
-    ftcli assistant ui INPUT_PATH
-
-Values contained in the configuration file will be used to fill the data.csv file in the next steps.
-
-### 2) The CSV data file.
-
-The final data.csv file will contain the desired style names, family name, italic and oblique bits, usWidthClass and
-usWeightClass values. Once properly filled, the values contained in this file will be written to the fonts.
-
-It contains 13 columns:
-
-    file_name, family_name, is_bold, is_italic, is_oblique, uswidthclass, wdt, width, usweightclass, wgt, weight, slp,
-    slope.
-
-**family_name:** the column is filled reading nameID 16, or nameID 1 if 16 is not present.
-
-**is_italic:** if OS/2.fsSelection bit 0 and head.macStyle bit 1 are set, the value is 1, otherwise 0.
-
-**is_bold:** if OS/2.fsSelection bit 5 and head.macStyle bit 0 are set, the value is 1, otherwise 0.
-
-This column is present only for completeness, but it's value will be ignored. A font will be set as bold only
-and only if, while running the ftcli assistant recalc-names command, the user will choose to use linked styles
-(-ls / --linked styles) option:
-
-    ftcli assistant recalc-names "C:\Fonts" -ls 400 700
-
-**wdt** and **width**: these columns contain the short and long literals for the width style names (for example: Cn;
-Condensed).
-
-**wgt** and **weight**: these columns contain the short and long literals for the weight style names (for example: Lt, Light).
-
-**slp** and **slope**: these columns contain the short and long literals for the slope style names (for example: It,
-Italic).
-
-The user will choose the namerecords where to write long or short literals. For example:
-
-    ftcli assistant recalc-names "C:\Fonts" -swdt 1 -swdt 4 -swdt 6 -swgt 1 -swgt 4 -swgt 6 -sslp 4 -sslp 6
-
-The **fonts_data.csv** file can be created using the following command:
-
-    ftcli assistant init-csv INPUT_PATH
-
-At this point, the CSV file will contain a representation of the actual state of the fonts (the family_name column will
-contain values of nameID 16, or nameID 1 if 16 is not present). It can be edited manually, using the 'ftcli assistant
-edit-csv' command and also automatically recalculated using the 'ftcli assistant recalc-csv' command.
-
-The 'ftcli assistant recalc-csv' command will recalculate style names, italic bits, width and weight style names
-according to the values contained in the JSON configuration file.
-
-When the 'data.csv' file contains the desired values, these values can be applied to fonts running the 'ftcli assistant
-recalc-names' command (see 'ftcli assistant recalc-names --help' for more information).
-
-### ftcli assistant edit-cfg
-Command line editor for JSON configuration files.
-
-**Usage:**
-
-    ftcli  edit-cfg [OPTIONS] CONFIG_FILE
-
-**Example:**
-
-    ftcli assistant edit-cfg "C:\Fonts\config.json"
-
-It is strongly recommended using this tool to edit the JSON configuration files. It prevents malformed JSON errors and
-errors due to wrong values (for example, an out of range usWeightClass, or a string where's an integer is expected).
-
-### ftcli assistant ui
-Usage:
-
-    ftcli assistant ui INPUT_PATH
-
-Command line editor for 'fonts_data.csv' files.
-
-This tool is not intended to replace a code editor for CSV files, but can help to make small edits without leaving the
-command line. For complex projects, it's strongly recommended using a code editor like Visual Studio Code or even Excel.
-
-### ftcli assistant init-cfg
-Usage:
-
-    ftcli assistant init-cfg [OPTIONS] INPUT_PATH
-    
-Creates a JSON configuration file containing the default values in the specified INPUT_PATH folder.
-
-Options:
-
-    -q, --quiet
-
-Suppress overwrite confirmation message if the config.json file already exists.
-
-### ftcli assistant init-csv
-Usage:
-
-    ftcli  init-csv [OPTIONS] INPUT_PATH
-
-Creates or resets the CSV database file (data.csv).
-
-Example 1:
-
-    ftcli assistant init-csv "C:\Fonts\"
-
-The above command will create the 'data.csv' file in C:\Fonts\ (and a configuration file with default values if it does
-not exist).
-
-Example 2:
-
-    ftcli assistant init-csv "C:\Fonts\Font.otf"
-
-The above command will create the 'data.csv' in the INPUT_PATH folder (or parent folder, if INPUT_PATH is a file).
-
-data.csv file contains:
-
-* the file names;
-* the usWidthClass, usWeightClass, bold italic and oblique bits values of all font files found in INPUT_PATH;
-* tries to guess the family name reading the name table. It also contains weight and widths literals, retrieved parsing
-  the config.json file.
-
-It can be edited manually or using the 'ftcli assistant edit-csv INPUT_PATH' command.
-
-Options:
-
-    -c, --config-file PATH
-
-Use a custom configuration file instead of the default config.json file located in the same folder of INPUT_PATH.
-
-    -q, --quiet
-
-Suppress overwrite confirmation message if the data.csv and/or config.json files already exist.
-
-### ftcli assistant recalc-csv
-Usage:
-
-    ftcli  recalc-csv [OPTIONS] INPUT_PATH
-
-Recalculates the CSV database file (data.csv).
-
-Options:
-
-    -c, --config-file PATH
-
-Use a custom configuration file instead of the default config.json file located in the same folder of INPUT_PATH.
-
-    -f, --family-name TEXT
-
-The desired family name. This string will be used to recalculate the CSV lines.
-
-    -s, --source-string [fname|1_1_2|1_4|1_6|1_16_17|1_18|3_1_2|3_4|3_6|3_16_17|cff_1|cff_2]
-
-The source string be used to recalculate the CSV lines can be the file name, a namerecord, a combination of namerecords
-or values stored in the 'CFF' table.
-
-For example, -s '1_1_2' will read a combination of namerecords 1 and 2 in the Mac table.  [default: fname]
-
-    -q, --quiet
-
-Suppress overwrite confirmation message if the data.csv file already exists.
-
-#### ftcli assistant recalc-names
-Usage:
-
-    ftcli assistant recalc-names [OPTIONS] INPUT_PATH
-
-Recalculates namerecords according to the values stored in the data.csv file.
-
-Options:
-
-    -c, --config-file PATH
-
-Use a custom configuration file instead of the default config.json file located in the same folder of INPUT_PATH.
-
-    -ls, --linked-styles <INTEGER RANGE INTEGER RANGE>
-
-Use this option to activate linked styles. If this option is active, linked styles must be specified. For example:
--ls 400 700, or -ls 300 600.
-  
-    -ex, --exclude-namerecord [1|2|3|4|5|6|16|17|18]
-
-Name IDs to skip. The specified name IDs won't be recalculated. This option can be repeated(example: -ex 3 -ex 5 ...).
-    
-    -swdt, --shorten-width [1|2|3|4|5|6|16|17|18]
-
-Name IDs where to use the short word for width style name (example: 'Cond' instead of 'Condensed').This option can be
-repeated (example: -swdt 3 -swdt 5 -swdt 6...).
-    
-    -swgt, --shorten-weight [1|2|3|4|5|6|16|17|18]
-                                  
-Name IDs where to use the short word for weight style name (example: 'Md' instead of 'Medium').This option can be
-repeated (example: -swgt 3 -swgt 5 -swgt 6...).
-  
-    -sslp, --shorten-slope [1|2|3|4|5|6|16|17|18]
-
-Name IDs where to use the short word for slope style name (example: 'It' instead of 'Italic').This option can be
-repeated (example: -sslp 3 -sslp 5 -sslp 6...).
-
-    -sf, --super-family
-
-Superfamily mode. This option affects name IDs 3, 6, 16 and 17 in case of families with widths different from 'Normal'.
-If this option is active, name ID 6 will be 'FamilyName-WidthWeightSlope' instead of 'FamilyNameWidth-WeightSlope'.
-Mac and OT family/subfamily names will be FamilyName / Width Weight Slope' instead of 'Family Name Width / Weight Slope'.
-
-    -aui, --alt-uid
-
-Use alternate unique identifier. By default, nameID 3 (Unique identifier) is calculated according to the following
-scheme: 'Version;Vendor code;PostscriptName'. The alternate unique identifier is calculated according to the following
-scheme: 'Manufacturer:Full Font Name:Creation Year'
-
-    -ri, --regular-italic
-    
-Keep '-Regular' in nameID 6.
-
-    -kr, --keep-regular
-
-Keep the 'Regular' word in all nameIDs
-
-    -offn, --old-full-font-name
-
-Full font name in Microsoft name table is generally a combination of name IDs 1 and 2 or 16 and 17.With this option
-active, it will be equal to nameID 6 (PostScriptName).
-
-    -cff, --fix-cff
-
-fontNames, FullName, FamilyName and Weight values in the 'CFF' table will be recalculated.
-
-    -obni, --oblique-not-italic
-
-By default, if a font has the oblique bit set, the italic bits will be set too. Use this option to override the default
-behaviour (for example, when the family has both italic and oblique styles, and you don't want to set only the oblique
-bit). The italic bits will be cleared when the oblique bit is set.
-
-    -o, --output-dir DIRECTORY
-
-Specify the output directory where the output files are to be saved. If output_directory doesn't exist, will be created.
-If not specified, files are saved to the same folder.
-
-    --recalc-timestamp / --no-recalc-timestamp
-
-Keep the original font 'modified' timestamp (head.modified) or set it to current time. By default, original timestamp
-is kept.
-
-    --overwrite / --no-overwrite
-
-Overwrite existing output files or save them to a new file (numbers are appended at the end of filename). By default,
-files are overwritten.
+When the `fonts_data.csv` file contains the desired values, data are ready to be written to fonts using the `ftcli
+assistant commit` command.
+
+### ftcli assistant commit
+
+Writes data from CSV to fonts.
+
+**Usage**:
+
+    ftcli assistant commit [OPTIONS] INPUT_PATH
+
+**Options**:
+
+      --width-elidable TEXT           The width word to elide when building the
+                                      namerecords.  [default: Normal]
+      --weight-elidable TEXT          The weight word to elide when building the
+                                      namerecords.  [default: Regular]
+      -ls, --linked-styles <INTEGER RANGE INTEGER RANGE>...
+                                      Use this option to activate linked styles.
+                                      If this option is active, linked styles must
+                                      be specified. For example: -ls 400 700, or
+                                      -ls 300 600.
+      -x, --exclude-namerecords [1|2|3|4|5|6|16|17|18]
+                                      Name IDs to skip. The specified name IDs
+                                      won't be recalculated. This option can be
+                                      repeated (for example: -x 3 -x 5 -x 6...).
+      -swdt, --shorten-width [1|4|6|16|17]
+                                      Name IDs where to use the short word for
+                                      width style name (for example, 'Cn' instead
+                                      of 'Condensed'). This option can be repeated
+                                      (for example: -swdt 1 -swdt 5, -swdt 16...).
+      -swgt, --shorten-weight [1|4|6|17]
+                                      Name IDs where to use the short word for
+                                      weight style name (for example, 'Md' instead
+                                      of 'Medium'). This option can be repeated
+                                      (for example: -swgt 1 -swgt 5 -swgt 6...).
+      -kwdt, --keep-width-elidable    Doesn't remove the width elidable words (by
+                                      default, "Nor" and "Normal").
+      -kwgt, --keep-weight-elidable   Doesn't remove the weight elidable words (by
+                                      default, "Rg" and "Regular").
+      -sslp, --shorten-slope [4|6|16|17]
+                                      Name IDs where to use the short word for
+                                      slope style name (for example, 'It' instead
+                                      of 'Italic'). This option can be repeated
+                                      (for example: -sslp 3 -sslp 5 -sslp 6...).
+      -sf, --super-family             Superfamily mode. This option affects name
+                                      IDs 3, 6, 16 and 17 in case of families with
+                                      widths different than 'Normal'. If this
+                                      option is active, name ID 6 will be
+                                      'FamilyName-WidthWeightSlope' instead of
+                                      'FamilyNameWidth-WeightSlope'. Mac and OT
+                                      family/subfamily names will be FamilyName /
+                                      Width Weight Slope' instead of 'Family Name
+                                      Width / Weight Slope'.
+      -aui, --alt-uid                 Use alternate unique identifier. By default,
+                                      nameID 3 (Unique identifier) is calculated
+                                      according to the following scheme:
+                                      'Version;Vendor code;PostscriptName'. The
+                                      alternate unique identifier is calculated
+                                      according to the following scheme:
+                                      'Manufacturer: Full Font Name: Creation
+                                      Year'.
+      -obni, --oblique-not-italic     By default, if a font has the oblique bit
+                                      set, the italic bits will be set too. Use
+                                      this option to override the default
+                                      behaviour (for example, when the family has
+                                      both italic and oblique styles and you need
+                                      to keep oblique and italic styles separate).
+                                      The italic bits will be cleared when the
+                                      oblique bit is set.
+      --no-auto-shorten               When name id 1, 4 or 6 are longer than
+                                      maximum allowed (27 characters for nameID 1,
+                                      31 for nameID 4 and 29 for nameID 6), the
+                                      script tries to auto shorten those names
+                                      replacing long words with short words. Use
+                                      this option to prevent the script from auto
+                                      shortening names.
+      -cff                            If this option is active, fontNames,
+                                      FullName, FamilyName and Weight values in
+                                      the 'CFF' table will be recalculated.
+      -out, --output-dir DIRECTORY    Specify the directory where output files are
+                                      to be saved. If output_dir doesn't exist,
+                                      will be created. If not specified, files are
+                                      saved to the same folder.
+      --recalc-timestamp              Keep the original font 'modified' timestamp
+                                      (head.modified) or set it to current time.
+                                      By default, original timestamp is kept.
+      --no-overwrite                  Overwrite existing output files or save them
+                                      to a new file (numbers are appended at the
+                                      end of file name). By default, files are
+                                      overwritten.
+      --help                          Show this message and exit.
 
 ## ftcli cff
 
