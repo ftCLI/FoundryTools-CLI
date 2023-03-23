@@ -135,16 +135,106 @@ of file name, so that Times-Bold.otf becomes TimesBold#1.otf).
 
 ## ftcli assistant
 
-A set of tools to correctly compile the 'name' table and set proper values for usWeightClass, usWidthClass, bold, italic
-and oblique bits.
+A set of tools to correctly compile the 'name' table and set proper values for usWeightClass, usWidthClass, Bold, Italic
+and Oblique bits.
+
+**Usage**:
+
+    ftcli assistant
+
+    Commands:
+      commit       Writes data from CSV to fonts.
+      init-config  Creates the `styles_mapping.json` containing the default values in the `ftCLI_files` folder.
+      init-data    Creates the CSV database file `fonts_data.csv` in the `ftCLI_files` folder.
+      ui           Character user interface to edit the styles_mapping.json and fonts_data.csv files.
+
+The logical steps are the following:
+
+1. Create a CSV file containing, for each font in the source path, the following data:
+   * File path
+   * Family name
+   * usWidthClass
+   * usWeightClass
+   * Slope classes (Italic and/or Oblique) and Bold flag
+   * Weight, Width and Slope style names
+2. Review the CSV file
+3. Write data from the CSV file to the target fonts: this will compile the name table and set the proper
+usWidthClass, usWeightClass Slope class and Bold values.
+
+**Step 1** can be executed with one of the following commands:
+* `ftcli assistant init-data INPUT_PATH`
+* `ftcli assistant ui INPUT_PATH`
+
+The first command will create a directory named `ftCLI_files` containing two files: `fonts_data.csv` and
+`styles_mapping.json`. The second one will open the command line user interface that allows to edit both.
+
+The `styles_mapping.json` is created at first, unless it already exists, and contains the default Style Names to pair
+with usWidthClass, usWeightClass and Slope class. The default values are the following:
+
+    {
+        "italics": ["It", "Italic"],
+        "obliques": ["Obl", "Oblique"],
+        "weights": {
+            "250": ["Th", "Thin" ],
+            "275": ["XLt", "ExtraLight"],
+            "300": ["Lt", "Light"],
+            "350": ["Bk", "Book"],
+            "400": ["Rg", "Regular"],
+            "500": ["Md", "Medium"],
+            "600": ["SBd", "SemiBold"],
+            "700": ["Bd", "Bold"],
+            "800": ["XBd", "ExtraBold"],
+            "850": ["Hvy", "Heavy"],
+            "900": ["Blk","Black"],
+            "950": ["Ult", "Ultra"]
+        },
+        "widths": {
+            "1": ["Cm", "Compressed"],
+            "2": ["XCn", "ExtraCondensed"],
+            "3": ["Cn", "Condensed"],
+            "4": ["Nr", "Narrow"],
+            "5": ["Nor","Normal"],
+            "6": ["Wd", "Wide"],
+            "7": ["Ext", "Extended"],
+            "8": ["XExt", "ExtraExtended"],
+            "9": ["Exp", "Expanded"]
+        }
+    }
+
+After creation of `styles_mapping.json`, all valid font files found in `INPUT_PATH` are parsed to retrieve Family Name,
+usWidthClass, usWeightClass, Slope Class (Upright, Italic or Oblique). The process searches for matches between the
+retrieved values and the JSON data, trying to determine the proper style names. The results are written into the
+`fonts_data.csv` file.
+
+The `fonts_data.csv` contains the following columns:
+* `file_name`: path to the font file
+* `family_name`: the font's family name, retrieved reading the name table
+* `is_bold`: True if ths bold bits are set, False if they are not set
+* `is_italic`: True if ths italic bits are set, False if they are not set
+* `is_oblique`: True if ths oblique bit is set, False if it's not set
+* `us_width_class`: usWidthClass value
+* `us_weight_class`: usWeightClass value
+* `wdt`: short literal for the Width style name
+* `width`: long literal for the Width style name
+* `wgt`: short literal for the Weight style name
+* `weight`: long literal for the Weight style name
+* `slp`: short literal for the Slope style name
+* `slope`: long literal for the Slope style name
+* `selected`: 0 to exclude the file while writing data from CSV to fonts, 1 to include the file
+
+Both files can be edited manually or using the command line interface.
+
+### ftcli assistant ui
+
+Opens the 
+
+**Usage**
+
+    ftcli assistant ui INPUT_PATH
 
 ![image](https://user-images.githubusercontent.com/83063506/226935693-519309a4-c76c-4321-8f1d-5bc0e7a32de5.png "ftCLI assistant main window")
 
-The process creates a JSON configuration file and a CSV file that will be used to fix the fonts. Both files can be
-automatically created and eventually edited manually or using the integrated command line editor. Once everything is
-correctly set in the CSV file, the values inside it can be written to fonts.
-
-### 1) The JSON configuration file.
+### 1) The styles_mapping.json file.
 
 The 'styles_mapping.json' file contains the desired style names to pair with each usWidthClass and usWeightClass values
 of the family, as well as the desired italic and oblique literals:
