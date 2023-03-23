@@ -22,7 +22,7 @@ from ftCLI.Lib.utils.click_tools import (
     file_saved_message,
     file_not_changed_message,
     generic_warning_message,
-    file_not_selected_message,
+    file_not_selected_message, add_path_argument,
 )
 
 
@@ -67,18 +67,18 @@ def init_data(input_path, styles_mapping_file=None, quiet=False):
 
     Example 1:
 
-        ftCLI assistant ft2csv "C:\\Fonts\\"
+        ftCLI assistant init-data "C:\\Fonts\\"
 
     Example 2:
 
-        ftCLI assistant ft2csv "C:\\Fonts\\font.otf"
+        ftCLI assistant init-data "C:\\Fonts\\font.otf"
 
     Both commands will create the `fonts_data.csv` file in the C:\\Fonts\\ftCLI_files\\) (and the styles_mapping.json
     file in the same subdirectory, if it doesn't exist).
 
     `font_data.csv` file contains:
 
-    - the file names;
+    - the file paths;
 
     - the usWidthClass, usWeightClass, bold and italic bits values of all font files found in INPUT_PATH;
 
@@ -189,7 +189,7 @@ def write_data_to_fonts():
 
 
 @write_data_to_fonts.command()
-@add_file_or_path_argument()
+@add_path_argument()
 @click.option(
     "--width-elidable",
     default="Normal",
@@ -529,7 +529,7 @@ def assistant_ui():
 @add_file_or_path_argument()
 def ui(input_path):
     """
-    Character user interface to edit the styles_mapping.json and fonts_data.csv files.
+    Opens the character user interface to edit the styles_mapping.json and fonts_data.csv files.
     """
 
     styles_mapping_file = get_style_mapping_file_path(input_path)

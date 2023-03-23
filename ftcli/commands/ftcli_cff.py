@@ -28,7 +28,7 @@ def del_cff_names():
 @add_common_options()
 def del_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True, **kwargs):
     """
-    Delete CFF names.
+    Deletes CFF names.
     """
 
     params = {k: v for k, v in kwargs.items() if v}

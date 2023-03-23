@@ -99,15 +99,7 @@ Or, to install in editable mode:
   * [font-os2-table](#ftcli-print-os2-table)
     
 * [**utils**](#ftcli-utils)
-  * [add-dsig](#ftcli-utils-add-dsig)
-  * [add-features](#ftcli-utils-add-features)
-  * [dehinter](#ftcli-utils-dehinter)
-  * [del-table](#ftcli-utils-del-table)
-  * [font-organizer](#ftcli-utils-font-organizer)
-  * [font-renamer](#ftcli-utils-font-renamer)
-  * [recalc-italic-bits](#ftcli-utils-recalc-italic-bits)
-  * [remove-overlaps](#ftcli-utils-remove-overlaps)
-  * [ttc-extractor](#ftcli-utils-ttc-extractor)
+  * 
 
 
 ## Arguments
@@ -1494,235 +1486,295 @@ Prints the `OS/2` table.
     --help  Show this message and exit.
 
 ## ftcli utils
+
 Miscellaneous utilities.
 
+**Usage**:
+
+    ftcli utils [OPTIONS] COMMAND [ARGS]...
+
+**Options**:
+
+    --help  Show this message and exit.
+
+**Commands**:
+
+    add-dsig
+    cff-autohint
+    cff-check-outlines
+    cff-dehint
+    cff-desubr
+    cff-subr
+    font-organizer
+    font-renamer
+    ttf-autohint
+    ttf-dehint
+    ttf-remove-overlaps
+
 ### ftcli utils add-dsig
-Adds a dummy DSIG to the font, if it's not present.
 
-```
-Usage: ftcli utils add-dsig [OPTIONS] INPUT_PATH
+Adds a dummy DSIG table to fonts, unless the table is already present. WOFF2 flavored fonts are ignored, since encoders
+must remove the DSIG table from woff2 font data.
 
-Options:
-  -o, --output-dir DIRECTORY  The output directory where the output files are
-                              to be created. If it doesn't exist, will be
-                         add_dsig     created. If not specified, files are saved to
-                              the same folder.
-  --recalc-timestamp          By default, original head.modified value is kept
-                              when a font is saved. Use this switch to set
-                              head.modified timestamp to current time.
-  --no-overwrite              By default, modified files are overwritten. Use
-                              this switch to save them to a new file (numbers
-                              are appended at the end of file name).
-  --help                      Show this message and exit.
-```
+**Usage**:
 
-### ftcli utils add-features
-Import features form a fea file.
+    ftcli utils add-dsig [OPTIONS] INPUT_PATH
 
-```
-Usage: ftcli utils add-features [OPTIONS] INPUT_PATH
+**Options**:
 
-Options:
-  -fea, --feature-file FILE       Path to the feature file.  [required]
-  -t, --tables [BASE|GDEF|GPOS|GSUB|OS/2|head|hhea|name|vhea|STAT]
-                                  Specify the table(s) to be built.
-  -o, --output-dir DIRECTORY      The output directory where the output files
-                                  are to be created. If it doesn't exist, will
-                                  be created. If not specified, files are
-                                  saved to the same folder.
-  --recalc-timestamp              By default, original head.modified value is
-                                  kept when a font is saved. Use this switch
-                                  to set head.modified timestamp to current
-                                  time.
-  --no-overwrite                  By default, modified files are overwritten.
-                                  Use this switch to save them to a new file
-                                  (numbers are appended at the end of file
-                                  name).
-  --help                          Show this message and exit.
-```
-
-### ftcli utils dehinter
-Drops hinting from all glyphs.
-
-Currently, this only works with TrueType fonts with 'glyf' table.
-
-This is a CLI for [dehinter](https://github.com/source-foundry/dehinter) by Source Foundry.
-
-```
-Usage: ftcli utils dehinter [OPTIONS] INPUT_PATH
-
-Options:
-  --keep-cvar                 keep cvar table
-  --keep-cvt                  keep cvt table
-  --keep-fpgm                 keep fpgm table
-  --keep-hdmx                 keep hdmx table
-  --keep-ltsh                 keep LTSH table
-  --keep-prep                 keep prep table
-  --keep-ttfa                 keep ttfa table
-  --keep-vdmx                 keep vdmx table
-  --keep-glyf                 do not modify glyf table
-  --keep-gasp                 do not modify gasp table
-  --keep-maxp                 do not modify maxp table
-  --keep-head                 do not modify head table
-  --verbose                   display standard output
-  -o, --output-dir DIRECTORY  The output directory where the output files are
-                              to be created. If it doesn't exist, will be
-                              created. If not specified, files are saved to
-                              the same folder.
-  --recalc-timestamp          By default, original head.modified value is kept
-                              when a font is saved. Use this switch to set
-                              head.modified timestamp to current time.
-  --no-overwrite              By default, modified files are overwritten. Use
-                              this switch to save them to a new file (numbers
-                              are appended at the end of file name).
-  --help                      Show this message and exit.
-```
-
-### ftcli utils del-table
-Deletes the specified table from the font.
-
-```
-Usage: ftcli utils del-table [OPTIONS] INPUT_PATH
-
-Options:
-  -t, --table TEXT                [required]
-  -o, --output-dir DIRECTORY      The output directory where the output files
-                                  are to be created. If it doesn't exist, will
-                                  be created. If not specified, files are
-                                  saved to the same folder.
-  --recalc-timestamp / --no-recalc-timestamp
-                                  Keeps the original font 'modified' timestamp
-                                  (head.modified) or set it to current time.
-                                  By default, original timestamp is kept.
-  --overwrite / --no-overwrite    Overwrites existing output files or save
-                                  them to a new file (numbers are appended at
-                                  the end of file name). By default, files are
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
                                   overwritten.
-  --help                          Show this message and exit.
-```
+    --help                        Show this message and exit.
+
+### ftcli utils cff-autohint
+
+Autohints CFF fonts with psautohint.
+
+**Usage**:
+
+    ftcli utils cff-autohint [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    --optimize / --no-optimize    Optimize the hinted font by specializing the
+                                  charstrings and applying subroutines.
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
+
+### ftcli utils cff-check-outlines
+
+Performs `afdko.checkoutlinesufo` outline quality checks and overlaps removal. Supports CFF fonts only.
+
+**Usage**:
+
+    ftcli utils cff-check-outlines [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
+
+### ftcli utils cff-dehint
+
+Drops hinting from CFF fonts.
+
+**Usage**:
+
+    ftcli utils cff-dehint [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
+
+### ftcli utils cff-desubr
+
+Desoubroutinize CFF fonts.
+
+**Usage**:
+
+    ftcli utils cff-desubr [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
+
+### ftcli utils cff-subr
+
+Subroutinize CFF fonts.
+
+**Usage**:
+
+    ftcli utils cff-subr [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli utils font-organizer
-Renames font files according to PostScript name and sorts them by foundry  and family names.
 
-```
-Usage: ftcli utils font-organizer [OPTIONS] INPUT_PATH
+Organizes fonts by moving them into a subdirectory named after the font's family name, and eventually a subdirectory
+named after the font's extension and version.
 
-  Usage: ftcli utils font-organizer INPUT_PATH
+**Usage**:
 
-  INPUT_PATH can be a single font file or a directory containing fonts
-  (subdirectories are not processed by choice).
+    ftcli utils font-organizer [OPTIONS] INPUT_PATH
 
-  Fonts are renamed according to PostScript name ('name' table nameID 6) and
-  sorted by Manufacturer Name (nameID 8). If nameID 8 is not present, the
-  script will try to read nameID 9 (Designer) and if also name ID 9 is not
-  present, the 4 characters achVendID stored in 'OS/2' table is used.
+**Options**:
 
-  Family name is read from nameID 16, or nameID 1 where nameID 16 is not
-  present.
-
-  If two files have identical foundry name, family name and PostScript name, a
-  suffix with a number (#1, #2, etc.) is added at the end of filename to avoid
-  overwriting an existing file.
-```
+    --rename-source [1|2|3|4|5]  Renames the font files according to the
+                                 provided source string(s). See ftcli utils
+                                 font-renamer.
+    -ext, --extension            Sorts fonts by extension.
+    -ver, --version              Sorts fonts by version.
+    --help                       Show this message and exit.
 
 ### ftcli utils font-renamer
-Renames font files according to the provided source string.
 
-```
-Usage: ftcli utils font-renamer [OPTIONS] INPUT_PATH
+Takes a path to a single font file or directory of font files, extracts each font's metadata according to the
+`--source` parameter passed by the user, and renames the font file to match the metadata, adding the correct
+extension.
 
-Options:
-  -s, --source-string [1_1_2|1_4|1_6|1_16_17|1_18|3_1_2|3_4|3_6|3_16_17|cff_1|cff_2]
-                                  The source string is read from a namerecord
-                                  or from a combination of two namerecords,
-                                  and the font file is renamed according to
-                                  it.
+**Usage**:
 
-                                  The first number in the sequence is the
-                                  platformID, while the following numbers
-                                  represent the nameID(s) numbers.
+    ftcli utils font-renamer [OPTIONS] INPUT_PATH
 
-                                  For example:
+**Options**:
 
-                                  -s 1_1_2: reads the strings contained in
-                                  PlatformID 1 (Macintosh) nameID 1 and nameID
-                                  2 values and concatenates them.
+    -s, --source [1|2|3|4|5]  The source string(s) from which to extract the new
+                              file name. Default is 1 (FamilyName-StyleName),
+                              used also as fallback name when 4 or 5 are passed
+                              but the font is TrueType
+    
+                              1: FamilyName-StyleName
+                              2: PostScript Name
+                              3: Full Font Name
+                              4: CFF TopDict fontNames (CFF fonts only)
+                              5: CFF TopDict FullName (CFF fonts only)
+    --help                    Show this message and exit.
 
-                                  -s 3_6: reads the platformID 3 (Windows)
-                                  nameID 6 (PostScript name).
+### ftcli utils ttf-autohint
 
-                                  If the font is CFF flavored, the cff_1 or
-                                  cff_2 options can be used.
-  --help                          Show this message and exit.
-```
+Autohints TrueType fonts using ttfautohint-py.
 
-### ftcli utils recalc-italic-bits
-Sets or clears the italic bits according to the `italicAngle` value in `post` table.
+**Usage**:
 
-If the `italicAngle` value is 0.0, the italic bits are cleared. If the value is not 0.0, the italic bits are set.
+    ftcli utils ttf-autohint [OPTIONS] INPUT_PATH
 
-```
-Usage: ftcli utils recalc-italic-bits [OPTIONS] INPUT_PATH
+**Options**:
 
-Options:
-  -o, --output-dir DIRECTORY  The output directory where the output files are
-                              to be created. If it doesn't exist, will be
-                              created. If not specified, files are saved to
-                              the same folder.
-  --recalc-timestamp          By default, original head.modified value is kept
-                              when a font is saved. Use this switch to set
-                              head.modified timestamp to current time.
-  --no-overwrite              By default, modified files are overwritten. Use
-                              this switch to save them to a new file (numbers
-                              are appended at the end of file name).
-  --help                      Show this message and exit.
-```
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
-### ftcli utils remove-overlaps
-Simplify glyphs in TTFont by merging overlapping contours.
+### ftcli utils ttf-dehint
 
-Overlapping components are first decomposed to simple contours, then merged.
+Drops hinting from TrueType fonts.
 
-Currently, this only works with TrueType fonts with 'glyf' table.
+This is a CLI for dehinter by Source Foundry: https://github.com/source-foundry/dehinter
 
-Note that removing overlaps invalidates the hinting. Hinting is dropped from all glyphs whether overlaps are
-removed from a given one, as it would look weird if only some glyphs are left (un)hinted.
+**Usage**: ftcli utils ttf-dehint [OPTIONS] INPUT_PATH
 
-```
-Usage: ftcli utils remove-overlaps [OPTIONS] INPUT_PATH
+**Options**:
 
-Options:
-  -o, --output-dir DIRECTORY  The output directory where the output files are
-                              to be created. If it doesn't exist, will be
-                              created. If not specified, files are saved to
-                              the same folder.
-  --recalc-timestamp          By default, original head.modified value is kept
-                              when a font is saved. Use this switch to set
-                              head.modified timestamp to current time.
-  --no-overwrite              By default, modified files are overwritten. Use
-                              this switch to save them to a new file (numbers
-                              are appended at the end of file name).
-  --help                      Show this message and exit.
-```
+    --keep-cvar                   keep cvar table
+    --keep-cvt                    keep cvt table
+    --keep-fpgm                   keep fpgm table
+    --keep-hdmx                   keep hdmx table
+    --keep-ltsh                   keep LTSH table
+    --keep-prep                   keep prep table
+    --keep-ttfa                   keep ttfa table
+    --keep-vdmx                   keep vdmx table
+    --keep-glyf                   do not modify glyf table
+    --keep-gasp                   do not modify gasp table
+    --keep-maxp                   do not modify maxp table
+    --keep-head                   do not modify head table
+    --verbose                     display standard output
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
-### ftcli utils ttc-extractor
-Extracts .ttc fonts to otf/ttf fonts.
+### ftcli utils ttf-remove-overlaps
 
-```
-Usage: ftcli utils ttc-extractor [OPTIONS] INPUT_PATH
+Simplify glyphs in TrueType fonts by merging overlapping contours.
 
-Options:
-  -o, --output-dir DIRECTORY  The output directory where the output files are
-                              to be created. If it doesn't exist, will be
-                              created. If not specified, files are saved to
-                              the same folder.
-  --recalc-timestamp          By default, original head.modified value is kept
-                              when a font is saved. Use this switch to set
-                              head.modified timestamp to current time.
-  --no-overwrite              By default, modified files are overwritten. Use
-                              this switch to save them to a new file (numbers
-                              are appended at the end of file name).
-  --help                      Show this message and exit.
-```
+**Usage**:
+
+    ftcli utils ttf-remove-overlaps [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    --ignore-errors               Ignore errors while removing overlaps.
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 **To Sergiev. May you rest in peace.**

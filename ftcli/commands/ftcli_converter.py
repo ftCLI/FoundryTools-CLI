@@ -46,7 +46,7 @@ def ttf_to_otf():
     "--safe",
     is_flag=True,
     help="""
-              Sometimes Qu2CuPen may fail or produce distorted outlines. Most of times, use '--safe' will prevent
+              Sometimes Qu2CuPen may fail or produce distorted outlines. Most of times, use of '--safe' will prevent
               errors by converting the source TTF font to a temporary OTF built using T2CharstringsPen, and then
               reconverting it to a temporary TTF font. This last one will be used for TTF to OTF conversion instead of
               the source TTF file. This is slower, but safest.
@@ -307,7 +307,7 @@ def ft2wf(
     input_path, flavor=None, outputDir=None, recalcTimestamp=False, overWrite=True
 ):
     """
-    Converts SFNT fonts (TTF or OTF) to web fonts (WOFF and WOFF2)
+    Converts SFNT fonts (TTF or OTF) to web fonts (WOFF and/or WOFF2)
     """
 
     files = get_fonts_list(input_path, allow_extensions=[".otf", ".ttf"])

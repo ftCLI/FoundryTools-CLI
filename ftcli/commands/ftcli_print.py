@@ -96,7 +96,7 @@ def print_font_names():
 )
 def font_names(input_path, max_lines, minimal=False):
     """
-    Prints the `name` table and, if the font is CFF, tha names in the `CFF` table topDict.
+    Prints the `name` table and, if the font is CFF, the names in the `CFF` table topDict.
     """
     if len(get_fonts_list(input_path)) > 0:
         for file in get_fonts_list(input_path):

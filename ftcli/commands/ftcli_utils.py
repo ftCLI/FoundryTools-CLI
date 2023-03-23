@@ -79,6 +79,9 @@ def organizer():
     "--rename-source",
     type=click.Choice(choices=["1", "2", "3", "4", "5"]),
     default=None,
+    help="""
+    Renames the font files according to the provided source string(s). See ftcli utils font-renamer.
+    """
 )
 @click.option(
     "-ext",
