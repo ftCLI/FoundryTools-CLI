@@ -22,13 +22,16 @@ The following packages will be installed during setup:
  
 ## Installation
 
-```
-git clone https://github.com/ftCLI/ftCLI.git
+    pip install ftcli
 
-cd ftCLI
+Or, to install in editable mode:
 
-pip install -e .
-```
+    git clone https://github.com/ftCLI/ftCLI.git
+    
+    cd ftCLI
+    
+    pip install -e .
+
 
 ## Arguments
 
@@ -45,6 +48,8 @@ pip install -e .
 * [**assistant**](#ftcli-assistant)
   * [ui](#ftcli-assistant-ui)
   * [commit](#ftcli-assistant-commit)
+  * [init-config](#ftcli-assistant-init-config)
+  * [init-data](#ftcli-assistant-init-data)
 
 * [**cff**](#ftcli-cff)
     * [find-replace](#ftcli-cff-find-replace)
@@ -224,9 +229,12 @@ command, the user will choose to use linked styles.
 
 Both files can be edited manually or using the character interface.
 
+**Step 2** can be executed, after reviewing `fonts_data.csv`, running the `ftcli assistant commit` command. 
+
 ### ftcli assistant ui
 
-Opens the character user interface to edit the styles_mapping.json and fonts_data.csv files.
+Opens the character user interface to edit the `styles_mapping.json` and `fonts_data.csv` files. If one or both files
+do not exist, they will be automatically created.
 
 **Usage**
 
