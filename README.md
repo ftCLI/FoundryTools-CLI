@@ -340,6 +340,41 @@ Writes data from CSV to fonts.
                                       overwritten.
       --help                          Show this message and exit.
 
+### ftcli assistant init-config
+
+**Usage**:
+
+    ftcli assistant init-config [OPTIONS] INPUT_PATH
+
+**Options**
+
+    -q, --quiet  Suppress the overwrite confirmation message if the config.json
+                 file already exists.
+    --help       Show this message and exit.
+
+If, for some reason, the user needs to create or reset the `styles_mappings.json` file to the default values, this
+command will serve the purpose. Not needed if `ftcli assistant ui` is used.
+
+### ftcli assistant init-data
+
+Creates the CSV database file `fonts_data.csv` in the `ftCLI_files` subdirectory.  Not needed if `ftcli assistant ui`
+is used.
+
+**Usage**:
+
+    ftcli assistant init-data [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -s, --styles-mapping-file FILE  Use a custom styles mapping file instead of
+                                    the default styles_mapping.json file located
+                                    in the ftCLI_files folder.
+    -q, --quiet                     Suppress the overwrite confirmation message
+                                    if the fonts_data.csv and/or styles_mapping.json
+                                    files already exist in the ftCLI_files folder.
+    --help                          Show this message and exit.
+
+
 ## ftcli cff
 
 `CFF` table editor.
