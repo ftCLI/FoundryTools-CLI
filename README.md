@@ -1723,7 +1723,9 @@ Drops hinting from TrueType fonts.
 
 This is a CLI for dehinter by Source Foundry: https://github.com/source-foundry/dehinter
 
-**Usage**: ftcli utils ttf-dehint [OPTIONS] INPUT_PATH
+**Usage**:
+
+    ftcli utils ttf-dehint [OPTIONS] INPUT_PATH
 
 **Options**:
 
