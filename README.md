@@ -63,7 +63,7 @@ Or, to install in editable mode:
     * [ft2wf](#ftcli-converter-ft2wf)
     * [wf2ft](#ftcli-converter-wf2ft)
     * [var2static](#ftcli-converter-var2static)
-    * [ttf2sfnt](#ftcli-converter-ttc2sfnt)
+    * [ttc2sfnt](#ftcli-converter-ttc2sfnt)
 
 * [**fix**](#ftcli-fix)
   * [caret-offset](#ftcli-fix-caret-offset)
