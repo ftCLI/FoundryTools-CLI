@@ -241,9 +241,11 @@ The Main Window:
 
 The Styles Mapping Editor:
 
-
+![image](https://user-images.githubusercontent.com/83063506/227150344-6ffd5730-c75c-4836-a8a7-ccb1518d6414.png "Styles Mapping Editor")
 
 The Fonts Data Editor:
+
+![image](https://user-images.githubusercontent.com/83063506/227150698-c7c5c0c3-2374-422d-8be7-c19c8c41c69d.png "The Fonts Data Editor")
 
 ### 1) The styles_mapping.json file.
 
