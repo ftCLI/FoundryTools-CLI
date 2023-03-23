@@ -52,8 +52,10 @@ Or, to install in editable mode:
   * [init-data](#ftcli-assistant-init-data)
 
 * [**cff**](#ftcli-cff)
+    * [del-names](#ftcli-cff-del-names)
     * [find-replace](#ftcli-cff-find-replace)
     * [fix-version](#ftcli-cff-fix-version)
+    * [set-names](#ftcli-cff-set-names)
   
 * [**converter**](#ftcli-converter)
     * [otf2ttf](#ftcli-converter-otf2ttf)
@@ -62,6 +64,17 @@ Or, to install in editable mode:
     * [wf2ft](#ftcli-converter-wf2ft)
     * [var2static](#ftcli-converter-var2static)
     * [ttf2sfnt](#ftcli-converter-ttc2sfnt)
+
+* [**fix**](#ftcli-fix)
+  * [caret-offset](#ftcli-fix-caret-offset)
+  * [decompose-transformed](#ftcli-fix-decompose-transformed)
+  * [duplicate-components](#ftcli-fix-duplicate-components)
+  * [italic-angle](#ftcli-fix-italic-angle)
+  * [kern-table](#ftcli-fix-kern-table)
+  * [nbsp-missing](#ftcli-fix-nbsp-missing)
+  * [nbsp-width](#ftcli-fix-nbsp-width)
+  * [os2-ranges](#ftcli-fix-os2-ranges)
+  * [strip-names](#ftcli-fix-strip-names)
     
 * [**name**](#ftcli-names)
     * [add-prefix](#ftcli-names-add-prefix)
@@ -457,8 +470,7 @@ Finds a string in the following items of CFF table topDict and replaces it with 
 
 Aligns topDict version string to the `head.fontRevision` value.
 
-For example, if `head.fontRevision` value is 2.001, CFF topDict version value will
-be 2.1.
+For example, if `head.fontRevision` value is 2.001, CFF topDict version value will be 2.1.
 
 **Usage**:
 
@@ -511,175 +523,242 @@ Sets CFF names.
 
 Font converter.
 
+**Usage**:
+
+    ftcli converter [OPTIONS] COMMAND [ARGS]...
+
+**Options**:
+  --help  Show this message and exit.
+
+**Commands**:
+
+    ft2wf
+    otf2ttf
+    ttc2sfnt
+    ttf2otf
+    var2static
+    wf2ft
+
 ### ftcli converter ft2wf
 
-Converts SFNT fonts (TTF or OTF) to web fonts (WOFF and WOFF2)
+Converts SFNT fonts (TTF or OTF) to web fonts (WOFF and/or WOFF2)
 
-```
-Usage: ftcli converter ft2wf [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -f, --flavor [woff|woff2]     By default, the script converts SFNT fonts
-                                (TrueType or OpenType) both to woff and woff2
-                                flavored web fonts. Use this option to create
-                                only woff (--flavor woff) or woff2 (--flavor
-                                woff2) files.
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+    ftcli converter ft2wf [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -f, --flavor [woff|woff2]     By default, the script converts SFNT fonts
+                                  (TrueType or OpenType) both to woff and woff2
+                                  flavored web fonts. Use this option to create
+                                  only woff (--flavor woff) or woff2 (--flavor
+                                  woff2) files.
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
+
 
 ### ftcli converter otf2ttf
 
 Converts fonts from OTF to TTF format.
 
-```
-Usage: ftcli converter otf2ttf [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+    ftcli converter otf2ttf [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli converter ttc2sfnt
 
 Extracts each font from a TTC file, and saves it as a TTF or OTF file.
 
-```
-Usage: ftcli converter ttc2sfnt [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+    ftcli converter ttc2sfnt [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli converter ttf2otf
 
-Converts TTF fonts (or TrueType flavored woff/woff2 web fonts) to OTF fonts.
-```
-Usage: ftcli converter ttf2otf [OPTIONS] INPUT_PATH
+Converts TTF fonts (or TrueType flavored woff/woff2 web fonts) to OTF fonts (or CFF flavored woff/woff2 web fonts).
 
-Options:
-  --no-optimize                 To convert the outlines from TrueType to CFF,
-                                we use T2CharStringPen. This is not very
-                                efficient, as the conversion ends up with a
-                                CFF table containing charstrings that have
-                                much more points than needed. To prevent this,
-                                the script tries to get more simplified
-                                charstrings using makeotf (default). Use
-                                `--no-optimize` to change the default
-                                behaviour.
-  --purge-glyphs                Removes NULL and CR glyphs by subsetting the
-                                font
-  --check-outlines              Performs optional outline quality checks and
-                                removes overlaps with afdko.checkoutlinesufo
-  --autohint                    Auto hints the font with psautohint
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+**Usage**:
+
+    ftcli converter ttf2otf [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -t, --tolerance FLOAT RANGE   Conversion tolerance (0-10, default 1). This
+                                  is only used when the charstrings are obtained
+                                  using Qu2CuPen  [0<=x<=10]
+    --safe                        Sometimes Qu2CuPen may fail or produce
+                                  distorted outlines. Most of times, use of '--
+                                  safe' will prevent errors by converting the
+                                  source TTF font to a temporary OTF built using
+                                  T2CharstringsPen, and then reconverting it to
+                                  a temporary TTF font. This last one will be
+                                  used for TTF to OTF conversion instead of the
+                                  source TTF file. This is slower, but safest.
+    --keep-glyphs                 Keeps NULL and CR glyphs from the output font
+    --no-subr                     Do not subroutinize converted fonts
+    --check-outlines              Performs optional outline quality checks and
+                                  removes overlaps with afdko.checkoutlinesufo
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli converter var2static
 
 Exports static instances from variable fonts.
 
-```
-Usage: ftcli converter var2static [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -s, --select-instance         By default, the script exports all named
-                                instances. Use this option to select custom
-                                axis values for a single instance.
-  --no-cleanup                  By default, STAT table is dropped and axis
-                                nameIDs are deleted from name table. Use --no-
-                                cleanup to keep STAT table and prevent axis
-                                nameIDs to be deleted from name table.
-  --update-name-table           Update the instantiated font's `name` table.
-                                Input font must have a STAT table with Axis
-                                Value Tables
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+    ftcli converter var2static [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -s, --select-instance         By default, the script exports all named
+                                  instances. Use this option to select custom
+                                  axis values for a single instance.
+    --no-cleanup                  By default, STAT table is dropped and axis
+                                  nameIDs are deleted from name table. Use --no-
+                                  cleanup to keep STAT table and prevent axis
+                                  nameIDs to be deleted from name table.
+    --update-name-table           Update the instantiated font's `name` table.
+                                  Input font must have a STAT table with Axis
+                                  Value Tables
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli converter wf2ft
 
-Converts web fonts (WOFF and WOFF2) to SFNT fonts (TTF or OTF)
+Converts web fonts (WOFF and WOFF2) to SFNT fonts (TTF or OTF).
 
-```
-Usage: ftcli converter wf2ft [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -f, --flavor [woff|woff2]     By default, the script converts both woff and
-                                woff2 flavored web fonts to SFNT fonts
-                                (TrueType or OpenType). Use this option to
-                                convert only woff or woff2 flavored web fonts.
-  -d, --delete-source-file      Deletes the source files after conversion.
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+    ftcli converter wf2ft [OPTIONS] INPUT_PATH
 
+**Options**:
+
+    -f, --flavor [woff|woff2]     By default, the script converts both woff and
+                                  woff2 flavored web fonts to SFNT fonts
+                                  (TrueType or OpenType). Use this option to
+                                  convert only woff or woff2 flavored web fonts.
+    -d, --delete-source-file      Deletes the source files after conversion.
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ## ftcli fix
 
-A set of commands to detect and fix various errors.
+A set of commands to detect and automatically fix font errors.
+
+**Usage**:
+
+    ftcli fix [OPTIONS] COMMAND [ARGS]...
+
+**Options**:
+
+    --help  Show this message and exit.
+
+**Commands**:
+
+    caret-offset
+    decompose-transformed
+    duplicate-components
+    italic-angle
+    kern-table
+    nbsp-missing
+    nbsp-width
+    os2-ranges
+    strip-names
+
+### ftcli fix caret-offset
+
+Recalculates `hhea.caretOffset` value.
+
+**Usage**:
+
+    ftcli fix caret-offset [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli fix decompose-transformed
 
@@ -687,23 +766,24 @@ Decomposes composite glyphs that have transformed components.
 
 fontbakery check id: com.google.fonts/check/transformed_components
 
-```
-Usage: ftcli fix decompose-transformed [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+    ftcli fix decompose-transformed [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli fix duplicate-components
 
@@ -711,108 +791,104 @@ Removes duplicate components which have the same x,y coordinates.
 
 fontbakery check id: com.google.fonts/check/glyf_non_transformed_duplicate_components
 
-```
-Usage: ftcli fix duplicate-components [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+    ftcli fix duplicate-components [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli fix italic-angle
 
-Assuming that the italic bits are correctly set/clear, checks if the following values are properly set:
+Recalculates `post.italicAngle`, `hhea.caretSlopeRise`, `hhea.caretSlopeRun` and sets/clears the italic/oblique bits
+according to the calculated values. In CFF fonts, also `CFF.topDictIndex[0].ItalicAngle` is recalculated.
 
-`[post].italicAngle`: **0.0**, if the font is upright, **calculated value** if the font is italic or oblique
+**Usage**:
 
-`[hhea].caretSlopeRise`: **1** if the font is upright, `[head].unitsPerEm` if the font is italic or oblique
+    ftcli fix italic-angle [OPTIONS] INPUT_PATH
 
-`[hhea].caretSlopeRun`: **0** if the font is upright, **calculated value** if the font is italic or oblique
+**Options**:
 
-`[hhea].caretOffset`: **0** if the font is upright, **leave unchanged** if the font is italic or oblique
-
-`[CFF].cff.topDictIndex[0].ItalicAngle`: **0** if the font is upright, **calculated value** if the font is italic or
-oblique (CFF fonts only)
-
-The font is saved only if at least one of the above tables has changed.
-
-```
-Usage: ftcli fix italic-angle [OPTIONS] INPUT_PATH
-
-Options:
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+    -m, --mode INTEGER RANGE      1: sets only the italic bits and clears the oblique bit
+                                  2: sets italic and oblique bits
+                                  3: sets only the oblique bit and clears italic bits  [1<=x<=3]
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli fix kern-table
 
-Some applications such as MS PowerPoint require kerning info on the kern table. More specifically, they require a
-format 0 kern subtable from a kern table version 0 with only glyphs defined in the cmap table.
+Some applications such as MS PowerPoint require kerning info on the kern
+table. More specifically, they require a format 0 kern subtable from a kern
+table version 0 with only glyphs defined in the cmap table.
 
-Given this, the command deletes all kerning pairs from kern v0 subtables where one of the two glyphs is not defined
-in the cmap table.
+Given this, the command deletes all kerning pairs from kern v0 subtables
+where one of the two glyphs is not defined in the cmap table.
 
 fontbakery check id: com.google.fonts/check/kern_table
 
-```
-Usage: ftcli fix kern-table [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+    ftcli fix kern-table [OPTIONS] INPUT_PATH
 
-### ftcli fix missing-nbsp
+**Options**:
 
-Checks if the font has a non-breaking space character and, if it doesn't, adds one by double mapping 'space'.
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
-```
-Usage: ftcli fix missing-nbsp [OPTIONS] INPUT_PATH
+### ftcli fix nbsp-missing
 
-Options:
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+Checks if the font has a non-breaking space character, and if it doesn't, it adds one by double mapping 'space'
+
+**Usage**:
+
+    ftcli fix nbsp-missing [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli fix nbsp-width
 
@@ -820,23 +896,24 @@ Checks if 'nbspace' and 'space' glyphs have the same width. If not, corrects 'nb
 
 fontbakery check id: com.google.fonts/check/whitespace_widths
 
-```
-Usage: ftcli fix nbsp-width [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+    ftcli fix nbsp-width [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli fix os2-ranges
 
@@ -844,23 +921,24 @@ Generates a temporary Type 1 from the font file using tx, converts that to an Op
 Unicode ranges and codepage ranges from the temporary OpenType font file, and then writes those ranges to the
 original font's OS/2 table.
 
-```
-Usage: ftcli fix os2-ranges [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+    ftcli fix os2-ranges [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli fix strip-names
 
@@ -868,23 +946,24 @@ Removes leading and trailing spaces from all namerecords.
 
 fontbakery check id: com.google.fonts/check/name/trailing_spaces
 
-```
-Usage: ftcli fix strip-names [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                to be saved. If output_dir doesn't exist, will
-                                be created. If not specified, files are saved
-                                to the same folder.
-  --recalc-timestamp            Keep the original font 'modified' timestamp
-                                (head.modified) or set it to current time. By
-                                default, original timestamp is kept.
-  --no-overwrite                Overwrite existing output files or save them
-                                to a new file (numbers are appended at the end
-                                of file name). By default, files are
-                                overwritten.
-  --help                        Show this message and exit.
-```
+    ftcli fix strip-names [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ## ftcli metrics
 
