@@ -22,7 +22,7 @@ The following packages will be installed during setup:
  
 ## Installation
 
-    pip install ftcli
+    pip install font-cli
 
 Or, to install in editable mode:
 
