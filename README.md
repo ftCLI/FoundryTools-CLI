@@ -235,9 +235,15 @@ Opens the character user interface to edit the styles_mapping.json and fonts_dat
 The main window displays a list of fonts found in `INPUT_PATH` and allows to access the editors for
 `styles_mapping.json` and `fonts_data.csv`.
 
+The Main Window:
+
 ![image](https://user-images.githubusercontent.com/83063506/226935693-519309a4-c76c-4321-8f1d-5bc0e7a32de5.png "ftCLI assistant main window")
 
+The Styles Mapping Editor:
 
+
+
+The Fonts Data Editor:
 
 ### 1) The styles_mapping.json file.
 
