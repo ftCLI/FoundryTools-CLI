@@ -82,28 +82,21 @@ Or, to install in editable mode:
   * [set-linegap](#ftcli-metrics-set-linegap)
 
 * [**name**](#ftcli-name)
-    * [add-prefix](#ftcli-names-add-prefix)
-    * [add-suffix](#ftcli-names-add-suffix)
-    * [clean-nametable](#ftcli-names-clean-name-table)
-    * [copy-names](#ftcli-names-copy-names)
-    * [del-mac-names](#ftcli-names-del-mac-names)
-    * [del-names](#ftcli-names-del-names)
-    * [find-replace](#ftcli-names-find-replace)
-    * [lang-help](#ftcli-names-lang-help)
-    * [name-from-txt](#ftcli-names-name-from-txt)
-    * [set-name](#ftcli-names-set-name)
-    * [set-cff-names](#ftcli-names-set-cff-names)
-    * [win-2-mac](#ftcli-names-win-2-mac)
+    * [append](#ftcli-name-append)
+    * [del-mac-names](#ftcli-name-del-mac-names)
+    * [del-names](#ftcli-name-del-names)
+    * [find-replace](#ftcli-name-find-replace)
+    * [find-set-name](#ftcli-name-set-name)
 
 * [**os2**](#ftcli-os2)
 
+* [**post**](#ftcli-post)
+
 * [**print**](#ftcli-print)
-    * [ft-info](#ftcli-print-ft-info)
-    * [ft-list](#ftcli-print-ft-list)
-    * [ft-name](#ftcli-print-ft-name)
-    * [ft-names](#ftcli-print-ft-names)
-    * [tbl-head](#ftcli-print-tbl-head)
-    * [tbl-os2](#ftcli-print-tbl-os2)
+  * [font-info](#ftcli-print-font-info)
+  * [font-names](#ftcli-print-font-names)
+  * [font-fonts-list](#ftcli-print-fonts-list)
+  * [font-os2-table](#ftcli-print-os2-table)
     
 * [**utils**](#ftcli-utils)
   * [add-dsig](#ftcli-utils-add-dsig)
@@ -1076,978 +1069,429 @@ This is a fork of font-line by Source Foundry: https://github.com/source-foundry
     --help                          Show this message and exit.
 
 ## ftcli name
-A set command line tools to manipulate `name` table entries.
 
-    ftcli names [OPTIONS] COMMAND [ARGS]
+Command line `name` table editor.
 
-```
-Commands:
-  add-prefix        Adds a prefix to the specified namerecords.
-  add-suffix        Adds a suffix to the specified namerecords.
-  clean-name-table  Deletes all namerecords from the `name` table.
-  copy-names        Copies the `name` table from a source font to destination font.
-  del-mac-names     Deletes all namerecords where platformID is equal to 1.
-  del-names         Deletes the specified namerecord(s) from the name table.
-  find-replace      Replaces a string in the `name` table and, optionally, in the `CFF` table.
-  lang-help         Prints available languages that can be used with the `set-name` and `del-names` commands.
-  name-from-txt     Reads a text file and writes its content into the specified namerecord in the `name` table.
-  set-cff-names     Sets names in the CFF table.
-  set-name          Writes the specified namerecord in the `name` table.
-  win-2-mac         Copies all namerecords from Windows table to Macintosh table.
-```
+**Usage**:
 
-### ftcli names add-prefix
-Adds a prefix to the specified namerecords.
+    ftcli name [OPTIONS] COMMAND [ARGS]...
 
-    ftcli names add-prefix [OPTIONS] INPUT_PATH
+**Options**:
 
-```
-Options:
-  --prefix TEXT                The prefix string.  [required]
-  -n, --name-id INTEGER RANGE  nameID where to add the prefix. This option can
-                               be repeated multiple times (for example: -n 3
-                               -n 5-n 6).  [0<=x<=32767; required]
-  -p, --platform [win|mac]     platform [win, mac]. If no platform is
-                               specified, the prefix will be added in both
-                               tables.
-  -o, --output-dir DIRECTORY   Specify the directory where output files are to
-                               be saved. If output_dir doesn't exist, will be
-                               created. If not specified, files are saved to
-                               the same folder.
-  --recalc-timestamp           Keep the original font 'modified' timestamp
-                               (head.modified) or set it to current time. By
-                               default, original timestamp is kept.
-  --no-overwrite               Overwrite existing output files or save them to
-                               a new file (numbers are appended at the end of
-                               file name). By default, files are overwritten.
-```
+    --help  Show this message and exit.
 
-### ftcli names add-suffix
-Adds a suffix to the specified namerecords.
+**Commands**:
 
-    ftcli names add-suffix [OPTIONS] INPUT_PATH
+    append
+    del-mac-names
+    del-names
+    find-replace
+    set-name
 
-```
-Options:
-  --suffix TEXT                The suffix string  [required]
-  -n, --name-id INTEGER RANGE  nameID where to add the suffix. This option can
-                               be repeated multiple times (for example: -n 3
-                               -n 5 -n 6).  [0<=x<=32767; required]
-  -p, --platform [win|mac]     platform [win, mac]. If no platform is
-                               specified, the suffix will be added in both
-                               tables.
-  -o, --output-dir DIRECTORY   Specify the directory where output files are to
-                               be saved. If output_dir doesn't exist, will be
-                               created. If not specified, files are saved to
-                               the same folder.
-  --recalc-timestamp           Keep the original font 'modified' timestamp
-                               (head.modified) or set it to current time. By
-                               default, original timestamp is kept.
-  --no-overwrite               Overwrite existing output files or save them to
-                               a new file (numbers are appended at the end of
-                               file name). By default, files are overwritten.
-```
+### ftcli name append
 
-### ftcli names clean-name-table
-Deletes all namerecords from the `name` table.
+Appends a prefix, or a suffix to the specified namerecords
 
-Use `-ex / --exclude-namerecord` (can be repeated multiple times) to preserve the specified namerecords.
+**Usage**:
 
-    ftcli names clean-nametable [OPTIONS] INPUT_PATH
+    ftcli name append [OPTIONS] INPUT_PATH
 
-```
-Options:
-  -ex, --exclude-namerecord INTEGER
-                                  NameIDs to skip. The specified nameIDs won't
-                                  be deleted. This option can be repeated
-                                  multiple times (for example: -ex 3 -ex 5 -ex
-                                  6).
-  -o, --output-dir DIRECTORY      Specify the directory where output files are
-                                  to be saved. If output_dir doesn't exist,
-                                  will be created. If not specified, files are
-                                  saved to the same folder.
-  --recalc-timestamp              Keep the original font 'modified' timestamp
-                                  (head.modified) or set it to current time.
-                                  By default, original timestamp is kept.
-  --no-overwrite                  Overwrite existing output files or save them
-                                  to a new file (numbers are appended at the
-                                  end of file name). By default, files are
+**Options**:
+
+    -n, --name-id INTEGER         NameID where to append the prefix/suffix. This
+                                  option can be repeated to prepend/append the
+                                  string to multiple namerecords. For example:
+                                  -n 1 -n 2 -n 16 -n 17  [required]
+    -p, --platform-id [0|1|3]     Use this option to add the prefix/suffix only
+                                  to the namerecords matching the provided
+                                  platformID.
+  
+                                  0: Unicode
+                                  1: Macintosh
+                                  3: Windows
+    -l, --language-string TEXT    Use this option to append the prefix/suffix
+                                  only to the namerecords matching the provided
+                                  language string.
+  
+                                  See epilog for a list of valid language
+                                  strings.
+    --prefix TEXT                 The string to be prepended to the namerecords
+    --suffix TEXT                 The suffix to append to the namerecords
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
                                   overwritten.
-```
+    --help                        Show this message and exit.
 
-### ftcli names copy-names
-Copies the `name` table from a source font to destination font.
+### ftcli name del-mac-names
 
-    ftcli names copy-names [OPTIONS]
+Deletes all the Macintosh namerecords from the name table, except nameIDs 1, 2, 4, 5, and 6.
 
-```
-Options:
-  -s, --source_font FILE      Path to the source font.  [required]
-  -d, --dest_font FILE        Path to the destination font.  [required]
-  -o, --output-dir DIRECTORY  Specify the directory where output files are to
-                              be saved. If output_dir doesn't exist, will be
-                              created. If not specified, files are saved to
-                              the same folder.
-  --recalc-timestamp          Keep the original font 'modified' timestamp
-                              (head.modified) or set it to current time. By
-                              default, original timestamp is kept.
-  --no-overwrite              Overwrite existing output files or save them to
-                              a new file (numbers are appended at the end of
-                              file name). By default, files are overwritten.
-```
-
-### ftcli names del-mac-names
-Deletes all namerecords where platformID is equal to 1.
-
-According to Apple (https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6name.html), _"names with
+According to Apple (https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6name.html), "names with
 platformID 1 were required by earlier versions of macOS. Its use on modern platforms is discouraged. Use names with
-platformID 3 instead for maximum compatibility. Some legacy software, however, may still require names with platformID
-1, platformSpecificID 0"_.
+platformID 3 instead for maximum compatibility. Some legacy software, however, may still require names with
+platformID 1, platformSpecificID 0".
 
-Use the `-ex / --exclude-namerecord` option to prevent certain namerecords to be deleted:
+**Usage**:
 
-    ftcli names del-mac-names INPUT_PATH -ex 1
+    ftcli name del-mac-names [OPTIONS] INPUT_PATH
 
-The `-ex / --exclude-namerecord` option can be repeated to exclude from deletion more than one namerecord:
+**Options**:
 
-    ftcli names del-mac-names INPUT_PATH -ex 1 -ex 3 -ex 6
-
-`INPUT_PATH` can be a single font file or a folder containing fonts.
-
-    ftcli names del-mac-names [OPTIONS] INPUT_PATH
-
-```
-Options:
-  -ex, --exclude-namerecord INTEGER RANGE
-                                  NameIDs to ignore. The specified nameIDs
-                                  won't be deleted. This option can be
-                                  repeated multiple times (for example: -ex 3
-                                  -ex 5 -ex 6).  [0<=x<=32767]
-  -o, --output-dir DIRECTORY      Specify the directory where output files are
-                                  to be saved. If output_dir doesn't exist,
-                                  will be created. If not specified, files are
-                                  saved to the same folder.
-  --recalc-timestamp              Keep the original font 'modified' timestamp
-                                  (head.modified) or set it to current time.
-                                  By default, original timestamp is kept.
-  --no-overwrite                  Overwrite existing output files or save them
-                                  to a new file (numbers are appended at the
-                                  end of file name). By default, files are
+    --del-all                     Deletes also nameIDs 1, 2, 4, 5 and 6.
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
                                   overwritten.
-```
+    --help                        Show this message and exit.
 
-### ftcli names del-names
-Deletes the specified namerecord(s) from the name table.
+### ftcli name del-names
 
-Use the `-l/--language` option to delete a namerecord in a language different from 'en'. Use `ftcli names lang-help` to
-display available languages.
+Deletes one or more namerecords.
 
-Use `-l ALL` to delete the name ID from all languages.
+**Usage**:
 
-The `-n/--name-id` option can be repeated to delete multiple name records at once. For example:
+    ftcli name del-names [OPTIONS] INPUT_PATH
 
-    ftcli names del-names C:\Fonts -n 1 -n 2 -n 6
+**Options**:
 
-The above command will delete nameIDs 1, 2 and 6.
-
-    ftcli names del-names [OPTIONS] INPUT_PATH
-
-```
-Options:
-  -n, --name-id INTEGER       nameID (Integer)  [required]
-  -p, --platform [win|mac]    platform [win, mac]. If no platform is
-                              specified, the namerecord will be deleted from
-                              both tables.
-  -l, --language TEXT         Specify the name ID language (eg: 'de'), or use
-                              'ALL' to delete the name ID from all languages.
-                              [default: en]
-  -o, --output-dir DIRECTORY  Specify the directory where output files are to
-                              be saved. If output_dir doesn't exist, will be
-                              created. If not specified, files are saved to
-                              the same folder.
-  --recalc-timestamp          Keep the original font 'modified' timestamp
-                              (head.modified) or set it to current time. By
-                              default, original timestamp is kept.
-  --no-overwrite              Overwrite existing output files or save them to
-                              a new file (numbers are appended at the end of
-                              file name). By default, files are overwritten.
-```
-
-### ftcli names find-replace
-Replaces a string in the name table with a new string.
-
-If the `-cff` option is passed, the string will be replaced also in the `CFF` table:
-
-    ftcli names find-replace MyFont-Black.otf --os "Black" --ns "Heavy" --cff
-
-To simply remove a string, use an empty string as new string:
-
-    ftcli names find-replace MyFont-Black.otf --os "RemoveMe" --ns ""
-
-To replace the string in a specific platform ('win' or 'mac'):
-
-    ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -p win
-
-To replace the string in a specific namerecord:
-
-    ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -n 6
-
-The `-p / --platform` and `-n / --name-id` options can be combined:
-
-    ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -p win
-    -n 6
-
-To exclude one or more namerecords, use the `-ex / --exclude-namerecord` option:
-
-    ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -ex 1 -ex 6
-
-If a namerecord is explicitly included but also explicitly excluded, it won't be changed:
-
-    ftcli names find-replace MyFont-Black.otf -os "Black" -ns "Heavy" -n 1 -ex 1 -ex 6
-
-The above command will replace the string only in nameID 6 in both platforms.
-
-    ftcli names find-replace [OPTIONS] INPUT_PATH
-
-```
-Options:
-  -os, --old-string TEXT          old string  [required]
-  -ns, --new-string TEXT          new string  [required]
-  -n, --name-id INTEGER RANGE     nameID (Integer between 0 and 32767). If not
-                                  specified, the string will be replaced in
-                                  allnamerecords.  [0<=x<=32767]
-  -p, --platform [win|mac]        platform [win, mac]. If no platform is
-                                  specified, the string will be replaced in
-                                  both tables.
-  -cff, --fix-cff                 Replaces the string in the CFF table.
-  -ex, --exclude-namerecord INTEGER RANGE
-                                  NameIDs to ignore. The specified nameIDs
-                                  won't be changed. This option can be
-                                  repeated multiple times (for example: -ex 3
-                                  -ex 5 -ex 6).  [0<=x<=32767]
-  -o, --output-dir DIRECTORY      Specify the directory where output files are
-                                  to be saved. If output_dir doesn't exist,
-                                  will be created. If not specified, files are
-                                  saved to the same folder.
-  --recalc-timestamp              Keep the original font 'modified' timestamp
-                                  (head.modified) or set it to current time.
-                                  By default, original timestamp is kept.
-  --no-overwrite                  Overwrite existing output files or save them
-                                  to a new file (numbers are appended at the
-                                  end of file name). By default, files are
+    -n, --name-id INTEGER         NameID(s) to delete.
+  
+                                  This option can be repeated to delete multiple
+                                  namerecords at once. For example: -n 1 -n 2 -n
+                                  6  [required]
+    -p, --platform-id [0|1|3]     PlatformID of the namerecords to delete:
+  
+                                  0: Unicode
+                                  1: Macintosh
+                                  3: Windows
+  
+                                  If no platform is specified, namerecords will
+                                  be deleted from all tables.
+    -l, --language-string TEXT    Use this option to filter the namerecords to
+                                  delete by language string (for example: 'it',
+                                  'de', 'nl'). See epilog for a list of valid
+                                  language strings.
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
                                   overwritten.
-```
+    --help                        Show this message and exit.
 
-### ftcli names lang-help
-Prints available languages that can be used with the `set-name` and `del-names` commands.
+### ftcli name find-replace
 
-    ftcli names lang-help
+Finds a string in the specified namerecords and replaces it with a new string
 
-The command will produce the following output:
-```
-[WINDOWS LANGUAGES]
-['aeb', 'af', 'am', 'ar', 'ar-AE', 'ar-BH', 'ar-DZ', 'ar-IQ', 'ar-JO', 'ar-KW', 'ar-LB', 'ar-LY', 'ar-OM', 'ar-QA',
-'ar-SA', 'ar-SY', 'ar-YE', 'arn', 'ary', 'as', 'az', 'az-Cyrl', 'ba', 'be', 'bg', 'bn', 'bn-IN', 'bo', 'br', 'bs',
-'bs-Cyrl', 'ca', 'co', 'cs', 'cy', 'da', 'de', 'de-AT', 'de-CH', 'de-LI', 'de-LU', 'dsb', 'dv', 'el', 'en', 'en-029',
-'en-AU', 'en-BZ', 'en-CA', 'en-GB', 'en-IE', 'en-IN', 'en-JM', 'en-MY', 'en-NZ', 'en-PH', 'en-SG', 'en-TT', 'en-ZA',
-'en-ZW', 'es', 'es', 'es-AR', 'es-BO', 'es-CL', 'es-CO', 'es-CR', 'es-DO', 'es-EC', 'es-GT', 'es-HN', 'es-MX', 'es-NI',
-'es-PA', 'es-PE', 'es-PR', 'es-PY', 'es-SV', 'es-US', 'es-UY', 'es-VE', 'et', 'eu', 'fi', 'fil', 'fo', 'fr', 'fr-BE',
-'fr-CA', 'fr-CH', 'fr-LU', 'fr-MC', 'fy', 'ga', 'gl', 'gsw', 'gu', 'ha', 'he', 'hi', 'hr', 'hr-BA', 'hsb', 'hu', 'hy',
-'id', 'ig', 'ii', 'is', 'it', 'it-CH', 'iu', 'iu-Latn', 'ja', 'ka', 'kk', 'kl', 'km', 'kn', 'ko', 'kok', 'ky', 'lb',
-'lo', 'lt', 'lv', 'mi', 'mk', 'ml', 'mn', 'mn-CN', 'moh', 'mr', 'ms', 'ms-BN', 'mt', 'nb', 'ne', 'nl', 'nl-BE', 'nn',
-'nso', 'oc', 'or', 'pa', 'pl', 'prs', 'ps', 'pt', 'pt-PT', 'qu', 'qu-BO', 'qu-EC', 'quc', 'rm', 'ro', 'ru', 'rw', 'sa',
-'sah', 'se', 'se-FI', 'se-SE', 'si', 'sk', 'sl', 'sma-NO', 'smj', 'smj-NO', 'smn', 'sms', 'sms', 'sq', 'sr',
-'sr-Cyrl-BA', 'sr-Latn', 'sr-Latn-BA', 'sv', 'sv-FI', 'sw', 'syr', 'ta', 'te', 'tg', 'th', 'tk', 'tn', 'tr', 'tt',
-'tzm', 'ug', 'uk', 'ur', 'uz', 'uz-Cyrl', 'vi', 'wo', 'xh', 'yo', 'zh', 'zh-HK', 'zh-MO', 'zh-SG', 'zh-TW', 'zu']
+**Usage**:
 
-[MAC LANGUAGES]
-['af', 'am', 'ar', 'as', 'ay', 'az', 'az-Arab', 'az-Cyrl', 'be', 'bg', 'bn', 'bo', 'br', 'ca', 'cy', 'cz', 'da', 'de',
-'dz', 'el', 'el-polyton', 'en', 'eo', 'es', 'es', 'eu', 'fa', 'fi', 'fo', 'fr', 'ga', 'ga', 'gd', 'gl', 'gn', 'gu',
-'gv', 'he', 'hi', 'hr', 'hu', 'hy', 'id', 'is', 'it', 'iu', 'ja', 'jv', 'ka', 'kk', 'kl', 'km', 'kn', 'ko', 'ks', 'ku',
-'ky', 'la', 'lo', 'lt', 'lv', 'mg', 'mk', 'ml', 'mn', 'mn-CN', 'mo', 'mr', 'ms', 'ms-Arab', 'mt', 'my', 'ne', 'nl',
-'nl-BE', 'nn', 'no', 'ny', 'om', 'or', 'pa', 'pl', 'ps', 'pt', 'qu', 'rn', 'ro', 'ru', 'rw', 'sa', 'sd', 'se', 'si',
-'sk', 'sl', 'so', 'sq', 'sr', 'su', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'to', 'tr', 'tt', 'ug', 'uk',
-'ur', 'uz', 'vi', 'yi', 'zh', 'zh-Hant']
-```
+    ftcli name find-replace [OPTIONS] INPUT_PATH
 
-### ftcli names name-from-txt
-Reads a text file and writes its content into the specified namerecord in the name table.
+**Options**:
 
-If the namerecord is not present, it will be created. If it already exists, will be overwritten.
+    -os, --old-string TEXT         The string to be replaced  [required]
+    -ns, --new-string TEXT         The string to replace the old string with
+                                   [required]
+    -n, --name-id INTEGER          nameIDs where to search and replace the
+                                   string. If not specified, the string will be
+                                   replaced in all namerecords. This option can
+                                   be repeated to perform search and replace in
+                                   multiple namerecords (e.g.: -n 1 -n 4 -n 6)
+    -x, --exclude-name-id INTEGER  NameID to ignore. The specified nameID won't
+                                   be changed. This option can be repeated
+                                   multiple times (e.g.: -ex 3 -ex 5 -ex 16).
+    -p, --platform-id [1|3]        platform id [1: macintosh, 3: windows]. If no
+                                   platform is specified, the string will be
+                                   replaced in both tables.
+    -out, --output-dir DIRECTORY   Specify the directory where output files are
+                                   to be saved. If output_dir doesn't exist,
+                                   will be created. If not specified, files are
+                                   saved to the same folder.
+    --recalc-timestamp             Keep the original font 'modified' timestamp
+                                   (head.modified) or set it to current time. By
+                                   default, original timestamp is kept.
+    --no-overwrite                 Overwrite existing output files or save them
+                                   to a new file (numbers are appended at the
+                                   end of file name). By default, files are
+                                   overwritten.
+    --help                         Show this message and exit.
 
-If `name_id` parameter is not specified, the first available nameID will be used.
+### ftcli name set-name
 
-By default, the namerecord will be written both in platformID 1 (Macintosh) and platformID 3 (Windows) tables. Use 
-`-p/--platform-id [win|mac]` option to write the namerecord only in the specified platform.
+Adds a namerecord to one or more font files.
 
-Use the `-l/--language` option to write the namerecord in a language different from 'en'. Use 
-[`ftcli names langhelp`](#ftcli-names-lang-help) to display available languages.
+If the namerecord is already present, it will be overwritten.
 
-    ftcli names name-from-txt [OPTIONS] INPUT_PATH
+**Usage**:
 
-```
-Options:
-  -n, --name-id INTEGER RANGE  nameID (Integer between 0 and 32767)
-                               [0<=x<=32767]
-  -p, --platform [win|mac]     platform [win, mac]. If it's not specified,
-                               name will be written in both tables.
-  -l, --language TEXT          language  [default: en]
-  -i, --input-file PATH        Path to the text file to read.  [required]
-  -o, --output-dir DIRECTORY   Specify the directory where output files are to
-                               be saved. If output_dir doesn't exist, will be
-                               created. If not specified, files are saved to
-                               the same folder.
-  --recalc-timestamp           Keep the original font 'modified' timestamp
-                               (head.modified) or set it to current time. By
-                               default, original timestamp is kept.
-  --no-overwrite               Overwrite existing output files or save them to
-                               a new file (numbers are appended at the end of
-                               file name). By default, files are overwritten.
-  --help                       Show this message and exit.
-```
+    ftcli name set-name [OPTIONS] INPUT_PATH
 
-### ftcli names set-cff-names
-Set names in the CFF table.
+**Options**:
 
-    ftcli names set-cff-names [OPTIONS] INPUT_PATH
-
-```
-Options:
-  --font-name TEXT            Sets the CFF font name.
-  --full-name TEXT            Sets the CFF full name.
-  --family-name TEXT          Sets the CFF family name.
-  --weight TEXT               Sets the CFF weight.
-  --copyright TEXT            Sets the CFF copyright.
-  --notice TEXT               Sets the CFF notice.
-  -o, --output-dir DIRECTORY  Specify the directory where output files are to
-                              be saved. If output_dir doesn't exist, will be
-                              created. If not specified, files are saved to
-                              the same folder.
-  --recalc-timestamp          Keep the original font 'modified' timestamp
-                              (head.modified) or set it to current time. By
-                              default, original timestamp is kept.
-  --no-overwrite              Overwrite existing output files or save them to
-                              a new file (numbers are appended at the end of
-                              file name). By default, files are overwritten.
-```
-
-### ftcli names set-name
-Writes the specified namerecord in the `name` table.
-
-If the namerecord is not present, it will be created. If it already exists, will be overwritten.
-
-If `name_id` parameter is not specified, the first available nameID will be used.
-
-By default, the namerecord will be written both in platformID 1 (Macintosh)and platformID 3 (Windows) tables. Use the
-`-p/--platform-id [win|mac]` option to write the namerecord only in the specified platform.
-
-Use the `-l/--language` option to write the namerecord in a language different from 'en'. Use 
-[`ftcli names langhelp`](#ftcli-names-lang-help) to display available languages.
-
-    ftcli names set-name [OPTIONS] INPUT_PATH
-
-```
-Options:
-  -n, --name-id INTEGER RANGE  nameID (Integer between 0 and 32767)
-                               [0<=x<=32767]
-  -p, --platform [win|mac]     platform [win, mac]. If it's not specified,
-                               name will be written in both tables.
-  -l, --language TEXT          language  [default: en]
-  -s, --string TEXT            string  [required]
-  -o, --output-dir DIRECTORY   Specify the directory where output files are to
-                               be saved. If output_dir doesn't exist, will be
-                               created. If not specified, files are saved to
-                               the same folder.
-  --recalc-timestamp           Keep the original font 'modified' timestamp
-                               (head.modified) or set it to current time. By
-                               default, original timestamp is kept.
-  --no-overwrite               Overwrite existing output files or save them to
-                               a new file (numbers are appended at the end of
-                               file name). By default, files are overwritten.
-```
-
-### ftcli names win-2-mac
-Copies all namerecords from Windows table to Macintosh table.
-
-    ftcli names win-2-mac [OPTIONS] INPUT_PATH
-
-```
-Options:
-  -o, --output-dir DIRECTORY  Specify the directory where output files are to
-                              be saved. If output_dir doesn't exist, will be
-                              created. If not specified, files are saved to
-                              the same folder.
-  --recalc-timestamp          Keep the original font 'modified' timestamp
-                              (head.modified) or set it to current time. By
-                              default, original timestamp is kept.
-  --no-overwrite              Overwrite existing output files or save them to
-                              a new file (numbers are appended at the end of
-                              file name). By default, files are overwritten.
-```
+    -n, --name-id INTEGER RANGE   The nameID of the namerecord to add.
+                                  [0<=x<=32767; required]
+    -s, --string TEXT             String to write in the namerecord.  [required]
+    -p, --platform-id [1|3]       Use this option to write the namerecord only
+                                  in the specified table:
+  
+                                  1: Macintosh
+                                  3: Windows
+  
+                                  If not specified, namerecord will be written
+                                  in both tables.
+    -l, --language-string TEXT    Use this option to write the namerecord in a
+                                  language different than 'en' (e.g.: 'it',
+                                  'nl', 'de').
+  
+                                  See epilog for a list of valid language
+                                  strings  [default: en]
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ## ftcli os2
+
 Command line `OS/2` table editor.
 
-```
-Usage: ftcli os2 [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -ver, --version INTEGER RANGE   Upgrades `OS/2` table version.  [1<=x<=5]
-  -wgh, --weight INTEGER RANGE    Sets `usWeightClass` value.  [1<=x<=1000]
-  -wdt, --width INTEGER RANGE     Sets `usWidthClass` value.  [1<=x<=9]
-  -it, --italic / -no-it, --no-italic
-                                  Sets or clears the ITALIC bits
-                                  (`fsSelection` bit 0 and `head` table
-                                  `macStyle` bit 1).
-  -bd, --bold / -no-bd, --no-bold
-                                  Sets or clears the BOLD bits
-                                  (`OS/2.fsSelection` bit 5 and
-                                  `head.macStyle` bit 0).
-  -rg, --regular                  Sets REGULAR (`fsSelection` bit) 6 and
-                                  clears BOLD (`fsSelection` bit 5,
-                                  `head.macStyle` bit 0) and ITALIC
-                                  (`fsSelection` bit 0, `head.macStyle` bit 1)
-                                  bits. This is equivalent to `--no-bold --no-
-                                  italic`.
-  -obl, --oblique / -no-obl, --no-oblique
-                                  Sets or clears the OBLIQUE bit
-                                  (`fsSelection` bit 9).
-  -utm, --use-typo-metrics / -no-utm, --no-use-typo-metrics
-                                  Sets or clears the USE_TYPO_METRICS bit
-                                  (`fsSelection` bit 7).
+    ftcli os2 [OPTIONS] INPUT_PATH
 
-                                  If set, it is strongly recommended that
-                                  applications use `OS/2.sTypoAscender` -
-                                  `OS/2.sTypoDescender` +  `OS/2.sTypoLineGap`
-                                  as the default line spacing for the font.
+**Options**:
 
-                                  See: https://docs.microsoft.com/en-
-                                  us/typography/opentype/spec/os2#fsselection
-  -wws, --wws-consistent / -no-wws, --no-wws-consistent
-                                  Sets or clears the WWS bit (`fsSelection`
-                                  bit 8).
+    -ver, --version INTEGER RANGE   Upgrades `OS/2` table version.  [1<=x<=5]
+    -wgh, --weight INTEGER RANGE    Sets `usWeightClass` value.  [1<=x<=1000]
+    -wdt, --width INTEGER RANGE     Sets `usWidthClass` value.  [1<=x<=9]
+    -it, --italic / -no-it, --no-italic
+                                    Sets or clears the ITALIC bits
+                                    (`fsSelection` bit 0 and `head` table
+                                    `macStyle` bit 1).
+    -bd, --bold / -no-bd, --no-bold
+                                    Sets or clears the BOLD bits
+                                    (`OS/2.fsSelection` bit 5 and
+                                    `head.macStyle` bit 0).
+    -rg, --regular                  Sets REGULAR (`fsSelection` bit) 6 and
+                                    clears BOLD (`fsSelection` bit 5,
+                                    `head.macStyle` bit 0) and ITALIC
+                                    (`fsSelection` bit 0, `head.macStyle` bit 1)
+                                    bits. This is equivalent to `--no-bold --no-
+                                    italic`.
+    -obl, --oblique / -no-obl, --no-oblique
+                                    Sets or clears the OBLIQUE bit
+                                    (`fsSelection` bit 9).
+    -utm, --use-typo-metrics / -no-utm, --no-use-typo-metrics
+                                    Sets or clears the USE_TYPO_METRICS bit
+                                    (`fsSelection` bit 7).
+  
+                                    If set, it is strongly recommended that
+                                    applications use `OS/2.sTypoAscender` -
+                                    `OS/2.sTypoDescender` +  `OS/2.sTypoLineGap`
+                                    as the default line spacing for the font.
+  
+                                    See: https://docs.microsoft.com/en-
+                                    us/typography/opentype/spec/os2#fsselection
+    -wws, --wws-consistent / -no-wws, --no-wws-consistent
+                                    Sets or clears the WWS bit (`fsSelection`
+                                    bit 8).
+  
+                                    If the `OS/2.fsSelection` bit is set, the
+                                    font has `name` table strings consistent
+                                    with a weight/width/slope family without
+                                    requiring use of name IDs 21 and 22.
+  
+                                    See: https://docs.microsoft.com/en-
+                                    us/typography/opentype/spec/os2#fsselection
+  
+                                    Also: https://typedrawers.com/discussion/385
+                                    7/fontlab-7-windows-reads-exported-font-
+                                    name-differently
+    -vend, --ach-vend-id TEXT       Sets the `achVendID` tag (vendor's four-
+                                    character identifier).
+    -el, --embed-level [0|2|4|8]    Sets/clears `fsType` bits 0-3
+                                    (EMBEDDING_LEVEL).
+  
+                                    0: Installable embedding
+                                    2: Restricted License embedding
+                                    4: Preview & Print embedding
+                                    8: Editable embedding
+  
+                                    See: https://docs.microsoft.com/en-
+                                    us/typography/opentype/spec/os2#fstype
+    -ns, --no-subsetting / -as, --allow-subsetting
+                                    Sets or clears `fsType` bit 8
+                                    (NO_SUBSETTING).
+  
+                                    When this bit is set, the font may not be
+                                    subsetted prior to embedding. Other
+                                    embedding restrictions specified in bits 0-3
+                                    and 9 also apply.
+    -beo, --bitmap-embedding-only / -no-beo, --no-bitmap-embedding-only
+                                    Sets or clears `fsType` bit 9
+                                    (BITMAP_EMBEDDING_ONLY).
+  
+                                    When this bit is set, only bitmaps contained
+                                    in the font may be embedded. No outline data
+                                    may be embedded. If there are no bitmaps
+                                    available in the font, then the font is
+                                    considered unembeddable and the embedding
+                                    services will fail. Other embedding
+                                    restrictions specified in bits 0-3 and 8
+                                    also apply.
+    --recalc-unicode-ranges         Recalculates the `ulUnicodeRange*` values.
+    --recalc-codepage-ranges        Recalculates `ulCodePageRange1` and
+                                    `ulCodePageRange2` values.
+    --recalc-x-height               Recalculates `sxHeight` value.
+    --recalc-cap-height             Recalculates `sCapHeight` value.
+    --recalc-italic-bits            Sets or clears the italic bits in
+                                    OS/2.fsSelection and in head.macStyle,
+                                    according to the `italicAngle` value in
+                                    `post` table. If `italicAngle` value is
+                                    other than 0.0, italic bits will be set. If
+                                    `italicAngle` value is 0.0, italic bits will
+                                    be cleared.
+    --recalc-us-max-context         Recalculates `usMaxContext` value.
+    --import-unicodes FILE          Imports `ulUnicodeRanges*` from a source
+                                    font.
+    -out, --output-dir DIRECTORY    Specify the directory where output files are
+                                    to be saved. If output_dir doesn't exist,
+                                    will be created. If not specified, files are
+                                    saved to the same folder.
+    --recalc-timestamp              Keep the original font 'modified' timestamp
+                                    (head.modified) or set it to current time.
+                                    By default, original timestamp is kept.
+    --no-overwrite                  Overwrite existing output files or save them
+                                    to a new file (numbers are appended at the
+                                    end of file name). By default, files are
+                                    overwritten.
+    --help                          Show this message and exit.
 
-                                  If the `OS/2.fsSelection` bit is set, the
-                                  font has `name` table strings consistent
-                                  with a weight/width/slope family without
-                                  requiring use of name IDs 21 and 22.
+## ftcli post
 
-                                  See: https://docs.microsoft.com/en-
-                                  us/typography/opentype/spec/os2#fsselection
+Command line `post` table editor.
 
-                                  Also: https://typedrawers.com/discussion/385
-                                  7/fontlab-7-windows-reads-exported-font-
-                                  name-differently
-  -vend, --ach-vend-id TEXT       Sets the `achVendID` tag (vendor's four-
-                                  character identifier).
-  -el, --embed-level [0|2|4|8]    Sets/clears `fsType` bits 0-3
-                                  (EMBEDDING_LEVEL).
+**Usage**:
 
-                                  0: Installable embedding
-                                  2: Restricted License embedding
-                                  4: Preview & Print embedding
-                                  8: Editable embedding
+    ftcli post [OPTIONS] INPUT_PATH
 
-                                  See: https://docs.microsoft.com/en-
-                                  us/typography/opentype/spec/os2#fstype
-  -ns, --no-subsetting / -as, --allow-subsetting
-                                  Sets or clears `fsType` bit 8
-                                  (NO_SUBSETTING).
+**Options**:
 
-                                  When this bit is set, the font may not be
-                                  subsetted prior to embedding. Other
-                                  embedding restrictions specified in bits 0-3
-                                  and 9 also apply.
-  -beo, --bitmap-embedding-only / -no-beo, --no-bitmap-embedding-only
-                                  Sets or clears `fsType` bit 9
-                                  (BITMAP_EMBEDDING_ONLY).
-
-                                  When this bit is set, only bitmaps contained
-                                  in the font may be embedded. No outline data
-                                  may be embedded. If there are no bitmaps
-                                  available in the font, then the font is
-                                  considered unembeddable and the embedding
-                                  services will fail. Other embedding
-                                  restrictions specified in bits 0-3 and 8
-                                  also apply.
-  --recalc-unicode-ranges         Recalculates the `ulUnicodeRange*` values.
-  --recalc-codepage-ranges        Recalculates `ulCodePageRange1` and
-                                  `ulCodePageRange2` values.
-  --recalc-x-height               Recalculates `sxHeight` value.
-  --recalc-cap-height             Recalculates `sCapHeight` value.
-  --recalc-italic-bits            Sets or clears the italic bits in
-                                  OS/2.fsSelection and in head.macStyle,
-                                  according to the `italicAngle` value in
-                                  `post` table. If `italicAngle` value is
-                                  other than 0.0, italic bits will be set. If
-                                  `italicAngle` value is 0.0, italic bits will
-                                  be cleared.
-  --recalc-us-max-context         Recalculates `usMaxContext` value.
-  --import-unicodes FILE          Imports `ulUnicodeRanges*` from a source
-                                  font.
-  -out, --output-dir DIRECTORY    Specify the directory where output files are
-                                  to be saved. If output_dir doesn't exist,
-                                  will be created. If not specified, files are
-                                  saved to the same folder.
-  --recalc-timestamp              Keep the original font 'modified' timestamp
-                                  (head.modified) or set it to current time.
-                                  By default, original timestamp is kept.
-  --no-overwrite                  Overwrite existing output files or save them
-                                  to a new file (numbers are appended at the
-                                  end of file name). By default, files are
-                                  overwritten.
-  --help                          Show this message and exit.
-```
+    --italic-angle FLOAT RANGE      Sets the `italicAngle` value.
+                                    [-90.0<=x<=90.0]
+    --ul-position INTEGER           Sets the `underlinePosition` value.
+    --ul-thickness INTEGER          Sets the `underlineThickness` value.
+    --fixed-pitch / --no-fixed-pitch
+                                    Sets or clears the `isFixedPitch` value.
+    -out, --output-dir DIRECTORY    Specify the directory where output files are
+                                    to be saved. If output_dir doesn't exist,
+                                    will be created. If not specified, files are
+                                    saved to the same folder.
+    --recalc-timestamp              Keep the original font 'modified' timestamp
+                                    (head.modified) or set it to current time.
+                                    By default, original timestamp is kept.
+    --no-overwrite                  Overwrite existing output files or save them
+                                    to a new file (numbers are appended at the
+                                    end of file name). By default, files are
+                                    overwritten.
+    --help                          Show this message and exit.
 
 ## ftcli print
 Prints various font's information.
 
-### ftcli print ft-info
+**Usage**:
+    ftcli print [OPTIONS] COMMAND [ARGS]...
+
+**Options**:
+
+    --help  Show this message and exit.
+
+**Commands**:
+
+    font-info
+    font-names
+    fonts-list
+    os2-table
+
+### ftcli print font-info
+
 Prints detailed font information.
 
-```
-Usage: ftcli print ft-info [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  --help  Show this message and exit.
-```
-**Usage example**
+    ftcli print font-info [OPTIONS] INPUT_PATH
 
-    ftcli print ft-info IBMPlexMono-Bold.otf
+**Options**:
 
-Prints the following output:
+    --help  Show this message and exit.
 
-```
-CURRENT FILE: D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-Bold.otf
+### ftcli print font-names
 
--------------------------------------------------------------------------------------------------------
-  BASIC INFORMATION
--------------------------------------------------------------------------------------------------------
-  Flavor            : PostScript
-  Glyphs number     : 1031
-  Date created      : Fri Aug 13 10:46:23 2021
-  Date modified     : Fri Aug 13 08:46:27 2021
-  Version           : 2.003
-  Vendor code       : IBM
-  Unique identifier : 2.3;IBM ;IBMPlexMono-Bold
-  usWidthClass      : 5
-  usWeightClass     : 700
-  Font is bold      : True
-  Font is italic    : False
-  Font is oblique   : False
-  WWS consistent    : True
-  Italic angle      : 0.0
-  Embedding         : 0 (Installable embedding)
+Prints the `name` table and, if the font is CFF, the names in the `CFF` table topDict.
 
--------------------------------------------------------------------------------------------------------
-  FONT METRICS
--------------------------------------------------------------------------------------------------------
+**Usage**:
 
-  [OS/2]
-    sTypoAscender   : 780
-    sTypoDescender  : -220
-    sTypoLineGap    : 300
-    usWinAscent     : 1025
-    usWinDescent    : 275
+    ftcli print font-names [OPTIONS] INPUT_PATH
 
-  [hhea]
-    ascent          : 1025
-    descent         : -275
-    lineGap         : 0
+**Options**:
 
-  [head]
-    unitsPerEm      : 1000
-    xMin            : -307
-    yMin            : -350
-    xMax            : 637
-    yMax            : 1150
-    Font BBox       : (-307, -350) (637, 1150)
+    -ml, --max-lines INTEGER  Maximum number of lines to be printed for each
+                              namerecord
+    -m, --minimal             Prints a minimal set of namerecords, omitting the
+                              ones with nameID not in 1, 2, 3, 4, 5, 6, 16, 17,
+                              18,  21, 22, 25
+    --help                    Show this message and exit.
 
--------------------------------------------------------------------------------------------------------
-  FONT TABLES: 15
--------------------------------------------------------------------------------------------------------
-  GlyphOrder, head, hhea, maxp, OS/2, name, cmap, post, CFF, GDEF, GPOS, GSUB, hmtx, meta, DSIG
+### ftcli print fonts-list
 
--------------------------------------------------------------------------------------------------------
-  FONT FEATURES: 16
--------------------------------------------------------------------------------------------------------
-  aalt, ccmp, dnom, frac, numr, ordn, salt, sinf, ss01, ss02, ss03, ss04, ss05, sups, zero, mark
--------------------------------------------------------------------------------------------------------
-```
-
-### ftcli print ft-list
 Prints a list of fonts with basic information.
-```
-Usage: ftcli print ft-list [OPTIONS] INPUT_PATH
 
-Options:
-  --help  Show this message and exit.
-```
+**Usage**:
 
-**Usage example**
+    ftcli print fonts-list [OPTIONS] INPUT_PATH
 
-    ftcli print ft-list "D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono"
+**Options**:
 
-Prints the following output
+    --help  Show this message and exit.
 
-```
-+----------------------------------+--------------+---------------+--------+----------+-----------+
-| File Name                        | usWidthClass | usWeightClass | isBold | isItalic | isOblique |
-+----------------------------------+--------------+---------------+--------+----------+-----------+
-| IBMPlexMono-Bold.otf             |            5 |           700 |      1 |        0 |         0 |
-| IBMPlexMono-BoldItalic.otf       |            5 |           700 |      1 |        1 |         0 |
-| IBMPlexMono-ExtraLight.otf       |            5 |           200 |      0 |        0 |         0 |
-| IBMPlexMono-ExtraLightItalic.otf |            5 |           200 |      0 |        1 |         0 |
-| IBMPlexMono-Italic.otf           |            5 |           400 |      0 |        1 |         0 |
-| IBMPlexMono-Light.otf            |            5 |           300 |      0 |        0 |         0 |
-| IBMPlexMono-LightItalic.otf      |            5 |           300 |      0 |        1 |         0 |
-| IBMPlexMono-Medium.otf           |            5 |           500 |      0 |        0 |         0 |
-| IBMPlexMono-MediumItalic.otf     |            5 |           500 |      0 |        1 |         0 |
-| IBMPlexMono-Regular.otf          |            5 |           400 |      0 |        0 |         0 |
-| IBMPlexMono-SemiBold.otf         |            5 |           600 |      0 |        0 |         0 |
-| IBMPlexMono-SemiBoldItalic.otf   |            5 |           600 |      0 |        1 |         0 |
-| IBMPlexMono-Text.otf             |            5 |           450 |      0 |        0 |         0 |
-| IBMPlexMono-TextItalic.otf       |            5 |           450 |      0 |        1 |         0 |
-| IBMPlexMono-Thin.otf             |            5 |           100 |      0 |        0 |         0 |
-| IBMPlexMono-ThinItalic.otf       |            5 |           100 |      0 |        1 |         0 |
-+----------------------------------+--------------+---------------+--------+----------+-----------+
+### ftcli print os2-table
 
- Widths  : 5
- Weights : 100, 200, 300, 400, 450, 500, 600, 700
-```
+Prints the `OS/2` table.
 
-### ftcli print ft-name
-Prints a single namerecord.
-```
-Use the -ml, --max-lines option to limit the printed line numbers to the
-desired value.
+**Usage**:
 
-Usage: ftcli print ft-name [OPTIONS] INPUT_PATH
+    ftcli print os2-table [OPTIONS] INPUT_PATH
 
-Options:
-  -n, --name-id INTEGER RANGE  nameID (Integer between 0 and 32767)
-                               [0<=x<=32767; required]
-  -ml, --max-lines INTEGER     Maximum number of lines to be printed.
-  --help                       Show this message and exit.
-```
+**Options**:
 
-**Usage example**
-
-    ftcli print ft-name -n 6 "D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono"
-
-Prints the following output:
-
-```
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-Bold.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-Bold
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-Bold
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-BoldItalic.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-BoldItalic
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-BoldItalic
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-ExtraLight.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-ExtLt
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-ExtLt
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-ExtraLightItalic.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-ExtLtItalic
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-ExtLtItalic
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-Italic.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-Italic
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-Italic
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-Light.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-Light
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-Light
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-LightItalic.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-LightItalic
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-LightItalic
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-Medium.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-Medm
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-Medm
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-MediumItalic.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-MedmItalic
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-MedmItalic
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-Regular.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-SemiBold.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-SmBld
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-SmBld
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-SemiBoldItalic.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-SmBldItalic
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-SmBldItalic
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-Text.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-Text
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-Text
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-TextItalic.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-TextItalic
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-TextItalic
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-Thin.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-Thin
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-Thin
-
-------------------------------------------------------------------------------------------
-FILE NAME: IBMPlexMono-ThinItalic.otf
-------------------------------------------------------------------------------------------
-platform: (1, 0, 0),  nameID6 : IBMPlexMono-ThinItalic
-platform: (3, 1, 1033),  nameID6 : IBMPlexMono-ThinItalic
-```
-
-### ftcli print ft-names
-Prints the `name` table and `CFF` names (if present).
-
-Use the `-ml / --max-lines` option to limit the printed line numbers, and the `-min / --minimal` one to print a minimal
-set of namerecords.
-
-```
-Usage: ftcli print ft-names [OPTIONS] INPUT_PATH
-
-Options:
-  -ml, --max-lines INTEGER  Maximum number of lines to be printed for each
-                            namerecord
-  -min, --minimal           Prints only nameIDs 1, 2, 3, 4, 5, 6, 16, 17, 18,
-                            21 and 22.
-  --help                    Show this message and exit.
-```
-
-**Usage example**
-
-    ftcli print ft-names "D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-ExtraLightItalic.otf"
-
-Prints the following output:
-
-```
-CURRENT FILE: D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-ExtraLightItalic.otf
-
--------------------------------------------------------------------------------------------------------
- NAME TABLE
--------------------------------------------------------------------------------------------------------
- platformID: 1 (Macintosh) | platEncID: 0 (Roman) | langID: 0 (en)
--------------------------------------------------------------------------------------------------------
-    0 : Copyright Notice       : Copyright 2017 IBM Corp. All rights reserved.
-    1 : Family name            : IBM Plex Mono ExtLt
-    2 : Subfamily name         : Italic
-    3 : Unique identifier      : 2.3;IBM ;IBMPlexMono-ExtLtItalic
-    4 : Full font name         : IBM Plex Mono ExtLt Italic
-    5 : Version string         : Version 2.3
-    6 : PostScript name        : IBMPlexMono-ExtLtItalic
-    7 : Trademark              : IBM Plex® is a trademark of IBM Corp, registered in many jurisdictions
-                                 worldwide.
-    8 : Manufacturer Name      : Bold Monday
-    9 : Designer               : Mike Abbink, Paul van der Laan, Pieter van Rosmalen
-   11 : URL Vendor             : http://www.boldmonday.com
-   12 : URL Designer           : http://www.ibm.com
-   13 : License Description    : This Font Software is licensed under the SIL Open Font License,
-                                 Version 1.1. This license is available with a FAQ at:
-                                 http://scripts.sil.org/OFL
-   14 : License Info URL       : http://scripts.sil.org/OFL
-   16 : Typographic Family     : IBM Plex Mono
-   17 : Typographic Subfamily  : ExtraLight Italic
-  256 : 256                    : alternate lowercase a
-  257 : 257                    : simple lowercase g
-  258 : 258                    : slashed number zero
-  259 : 259                    : plain number zero
-  260 : 260                    : alternate lowercase eszett
--------------------------------------------------------------------------------------------------------
- platformID: 3 (Windows) | platEncID: 1 (Unicode) | langID: 1033 (en)
--------------------------------------------------------------------------------------------------------
-    0 : Copyright Notice       : Copyright 2017 IBM Corp. All rights reserved.
-    1 : Family name            : IBM Plex Mono ExtLt
-    2 : Subfamily name         : Italic
-    3 : Unique identifier      : 2.3;IBM ;IBMPlexMono-ExtLtItalic
-    4 : Full font name         : IBM Plex Mono ExtLt Italic
-    5 : Version string         : Version 2.3
-    6 : PostScript name        : IBMPlexMono-ExtLtItalic
-    7 : Trademark              : IBM Plex® is a trademark of IBM Corp, registered in many jurisdictions
-                                 worldwide.
-    8 : Manufacturer Name      : Bold Monday
-    9 : Designer               : Mike Abbink, Paul van der Laan, Pieter van Rosmalen
-   11 : URL Vendor             : http://www.boldmonday.com
-   12 : URL Designer           : http://www.ibm.com
-   13 : License Description    : This Font Software is licensed under the SIL Open Font License,
-                                 Version 1.1. This license is available with a FAQ at:
-                                 http://scripts.sil.org/OFL
-   14 : License Info URL       : http://scripts.sil.org/OFL
-   16 : Typographic Family     : IBM Plex Mono
-   17 : Typographic Subfamily  : ExtraLight Italic
-   19 : Sample text            : How razorback-jumping frogs can level six piqued gymnasts!
-  256 : 256                    : alternate lowercase a
-  257 : 257                    : simple lowercase g
-  258 : 258                    : slashed number zero
-  259 : 259                    : plain number zero
-  260 : 260                    : alternate lowercase eszett
--------------------------------------------------------------------------------------------------------
- CFF NAMES
--------------------------------------------------------------------------------------------------------
- fontNames                    : ['IBMPlexMono-ExtLtItalic']
- version                      : 2.3
- Notice                       : We are all, by any practical definition of the words, foolproof and
-                                 incapable of error.
- Copyright                    : Copyright 2017 IBM Corp. All rights reserved.
- FullName                     : IBM Plex Mono ExtLt Italic
- FamilyName                   : IBM Plex Mono
- Weight                       : ExtraLight
--------------------------------------------------------------------------------------------------------
-```
-
-### ftcli print tbl-head
-Prints the 'head' table.
-
-```
-Usage: ftcli print tbl-head [OPTIONS] INPUT_PATH
-
-Options:
-  --help  Show this message and exit.
-```
-
-**Usage example**
-
-    ftcli print tbl-head "D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-BoldItalic.otf"
-
-Prints the following output:
-
-```
-CURRENT FILE: D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-BoldItalic.otf
--------------------------------------------------------------------------------------------------------
-tableTag head
--------------------------------------------------------------------------------------------------------
-
-    <tableVersion value="1.0"/>
-    <fontRevision value="2.00299072265625"/>
-    <checkSumAdjustment value="0xd80c0ca4"/>
-    <magicNumber value="0x5f0f3cf5"/>
-    <flags value="3"/>
-    <unitsPerEm value="1000"/>
-    <created value="Fri Aug 13 10:46:23 2021"/>
-    <modified value="Fri Aug 13 08:46:27 2021"/>
-    <xMin value="-256"/>
-    <yMin value="-350"/>
-    <xMax value="713"/>
-    <yMax value="1149"/>
-    <macStyle value="3"/>
-    <lowestRecPPEM value="3"/>
-    <fontDirectionHint value="2"/>
-    <indexToLocFormat value="0"/>
-    <glyphDataFormat value="0"/>
-
--------------------------------------------------------------------------------------------------------
-```
-
-### ftcli print tbl-os2
-Prints the 'OS/2' table.
-
-```
-Usage: ftcli print tbl-os2 [OPTIONS] INPUT_PATH
-
-Options:
-  --help  Show this message and exit.
-```
-
-**Usage example**
-
-    ftcli print tbl-os2 "D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-BoldItalic.otf"
-
-Prints the following output:
-
-```
-CURRENT FILE: D:\Fonts\IBM Plex\OpenType\IBM-Plex-Mono\IBMPlexMono-BoldItalic.otf
--------------------------------------------------------------------------------------------------------
-tableTag OS/2
--------------------------------------------------------------------------------------------------------
-
-    <version value="4"/>
-    <xAvgCharWidth value="600"/>
-    <usWeightClass value="700"/>
-    <usWidthClass value="5"/>
-    <fsType value="00000000 00000000"/>
-    <ySubscriptXSize value="650"/>
-    <ySubscriptYSize value="600"/>
-    <ySubscriptXOffset value="-13"/>
-    <ySubscriptYOffset value="75"/>
-    <ySuperscriptXSize value="650"/>
-    <ySuperscriptYSize value="600"/>
-    <ySuperscriptXOffset value="59"/>
-    <ySuperscriptYOffset value="350"/>
-    <yStrikeoutSize value="100"/>
-    <yStrikeoutPosition value="309"/>
-    <sFamilyClass value="2057"/>
-    <panose>
-        <bFamilyType value="2"/>
-        <bSerifStyle value="11"/>
-        <bWeight value="8"/>
-        <bProportion value="9"/>
-        <bContrast value="5"/>
-        <bStrokeVariation value="2"/>
-        <bArmStyle value="3"/>
-        <bLetterForm value="0"/>
-        <bMidline value="2"/>
-        <bXHeight value="3"/>
-    </panose>
-    <ulUnicodeRange1 value="10100000 00000000 00000010 01101111"/>
-    <ulUnicodeRange2 value="01000000 00000000 00111000 00111011"/>
-    <ulUnicodeRange3 value="00000000 00000000 00000000 00000000"/>
-    <ulUnicodeRange4 value="00000000 00000000 00000000 00000000"/>
-    <achVendID value="IBM "/>
-    <fsSelection value="00000001 00100001"/>
-    <usFirstCharIndex value="32"/>
-    <usLastCharIndex value="64258"/>
-    <sTypoAscender value="780"/>
-    <sTypoDescender value="-220"/>
-    <sTypoLineGap value="300"/>
-    <usWinAscent value="1025"/>
-    <usWinDescent value="275"/>
-    <ulCodePageRange1 value="01100000 00000000 00000001 10010111"/>
-    <ulCodePageRange2 value="00000000 00000000 00000000 00000000"/>
-    <sxHeight value="516"/>
-    <sCapHeight value="698"/>
-    <usDefaultChar value="0"/>
-    <usBreakChar value="32"/>
-    <usMaxContext value="3"/>
-
--------------------------------------------------------------------------------------------------------
-```
+    --help  Show this message and exit.
 
 ## ftcli utils
 Miscellaneous utilities.
