@@ -75,8 +75,13 @@ Or, to install in editable mode:
   * [nbsp-width](#ftcli-fix-nbsp-width)
   * [os2-ranges](#ftcli-fix-os2-ranges)
   * [strip-names](#ftcli-fix-strip-names)
-    
-* [**name**](#ftcli-names)
+
+* [**metrics**](#ftcli-metrics)
+  * [align](#ftcli-metrics-align)
+  * [copy](#ftcli-metrics-copy)
+  * [set-linegap](#ftcli-metrics-set-linegap)
+
+* [**name**](#ftcli-name)
     * [add-prefix](#ftcli-names-add-prefix)
     * [add-suffix](#ftcli-names-add-suffix)
     * [clean-nametable](#ftcli-names-clean-name-table)
@@ -969,14 +974,20 @@ fontbakery check id: com.google.fonts/check/name/trailing_spaces
 
 Vertical metrics tools.
 
-```
-Usage: ftcli metrics COMMAND [ARGS]...
+**Usage**:
 
-Commands:
-  align
-  copy
-  set-linegap
-```
+    ftcli metrics [OPTIONS] COMMAND [ARGS]...
+
+**Options**:
+
+    --help  Show this message and exit.
+
+**Commands**:
+
+    align
+    copy
+    set-linegap
+
 
 ### ftcli metrics align
 Aligns all fonts stored in INPUT_PATH folder to the same baseline.
@@ -990,80 +1001,81 @@ such cases, it's better to copy the vertical metrics from a template font to one
 
 See https://kltf.de/download/FontMetrics-kltf.pdf for more information.
 
-```
-Usage: ftcli metrics align [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -sil, --sil-method          Use SIL method:
-                              https://silnrsi.github.io/FDBP/en-
-                              US/Line_Metrics.html
-  -o, --output-dir DIRECTORY  The output directory where the output files are
-                              to be created. If it doesn't exist, will be
-                              created. If not specified, files are saved to
-                              the same folder.
-  --recalc-timestamp          By default, original head.modified value is kept
-                              when a font is saved. Use this switch to set
-                              head.modified timestamp to current time.
-  --no-overwrite              By default, modified files are overwritten. Use
-                              this switch to save them to a new file (numbers
-                              are appended at the end of file name).
-  --help                      Show this message and exit.
+    ftcli metrics align [OPTIONS] INPUT_PATH
 
-```
+**Options**:
+
+    -sil, --sil-method            Use SIL method: https://silnrsi.github.io/FDBP/en-US/Line_Metrics.html
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
 
 ### ftcli metrics copy
 Copies vertical metrics from a source font to one or more destination fonts.
 
-```
-Usage: ftcli metrics copy [OPTIONS]
+**Usage**:
 
-Options:
-  -s, --source-file FILE      Source file. Vertical metrics from this font
-                              will be applied to all destination fonts.
-                              [required]
-  -d, --destination PATH      Destination file or directory.  [required]
-  -o, --output-dir DIRECTORY  The output directory where the output files are
-                              to be created. If it doesn't exist, will be
-                              created. If not specified, files are saved to
-                              the same folder.
-  --recalc-timestamp          By default, original head.modified value is kept
-                              when a font is saved. Use this switch to set
-                              head.modified timestamp to current time.
-  --no-overwrite              By default, modified files are overwritten. Use
-                              this switch to save them to a new file (numbers
-                              are appended at the end of file name).
-  --help                      Show this message and exit.
-```
+    ftcli metrics copy [OPTIONS]
+
+**Options**:
+
+    -s, --source-file FILE      Source file. Vertical metrics from this font
+                                will be applied to all destination fonts.
+                                [required]
+    -d, --destination PATH      Destination file or directory.  [required]
+    -o, --output-dir DIRECTORY  The output directory where the output files are
+                                to be created. If it doesn't exist, will be
+                                created. If not specified, files are saved to
+                                the same folder.
+    --recalc-timestamp          By default, original head.modified value is kept
+                                when a font is saved. Use this switch to set
+                                head.modified timestamp to current time.
+    --no-overwrite              By default, modified files are overwritten. Use
+                                this switch to save them to a new file (numbers
+                                are appended at the end of file name).
+    --help                      Show this message and exit.
 
 ### ftcli metrics set-linegap
 Modifies the line spacing metrics in one or more fonts.
 
 This is a fork of font-line by Source Foundry: https://github.com/source-foundry/font-line
 
-```
-Usage: ftcli metrics set-linegap [OPTIONS] INPUT_PATH
+**Usage**:
 
-Options:
-  -p, --percent INTEGER RANGE     Adjust font line spacing to % of UPM value.
-                                  [1<=x<=100; required]
-  -mfn, --modify-family-name      Adds LG% to the font family to reflect the
-                                  modified line gap.
-  -o, --output-dir DIRECTORY      The output directory where the output files
-                                  are to be created. If it doesn't exist, will
-                                  be created. If not specified, files are
-                                  saved to the same folder.
-  --recalc-timestamp / --no-recalc-timestamp
-                                  Keeps the original font 'modified' timestamp
-                                  (head.modified) or set it to current time.
-                                  By default, original timestamp is kept.
-  --overwrite / --no-overwrite    Overwrites existing output files or save
-                                  them to a new file (numbers are appended at
-                                  the end of file name). By default, files are
-                                  overwritten.
-  --help                          Show this message and exit.
-```
+    ftcli metrics set-linegap [OPTIONS] INPUT_PATH
 
-## ftcli names
+**Options**:
+
+    -p, --percent INTEGER RANGE     Adjust font line spacing to % of UPM value.
+                                    [1<=x<=100; required]
+    -mfn, --modify-family-name      Adds LG% to the font family to reflect the
+                                    modified line gap.
+    -o, --output-dir DIRECTORY      The output directory where the output files
+                                    are to be created. If it doesn't exist, will
+                                    be created. If not specified, files are
+                                    saved to the same folder.
+    --recalc-timestamp / --no-recalc-timestamp
+                                    Keeps the original font 'modified' timestamp
+                                    (head.modified) or set it to current time.
+                                    By default, original timestamp is kept.
+    --overwrite / --no-overwrite    Overwrites existing output files or save
+                                    them to a new file (numbers are appended at
+                                    the end of file name). By default, files are
+                                    overwritten.
+    --help                          Show this message and exit.
+
+## ftcli name
 A set command line tools to manipulate `name` table entries.
 
     ftcli names [OPTIONS] COMMAND [ARGS]
