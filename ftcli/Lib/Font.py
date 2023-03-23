@@ -167,9 +167,6 @@ class Font(TTFont):
         :param mode: click.IntRange(1, 3) = 1, defaults to 1
         :type mode: click.IntRange(1, 3) (optional)
         """
-        """
-        If the italic angle (post.italicAngle) is 0, clear the italic bits, otherwise set them
-        """
 
         italic_angle = self.post_table.italicAngle
 
