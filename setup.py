@@ -5,7 +5,7 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
 setuptools.setup(
-    name="ftCLI",
+    name="font-CLI",
     version="0.9.0",
     description="A set of command line tools to edit fonts with FontTools",
     long_description=long_description,
