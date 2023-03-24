@@ -28,9 +28,7 @@ class TableName(table__n_a_m_e):
         """
 
         # Remove the namerecord before writing it to avoid duplicates
-        self.del_names(
-            name_ids=[name_id], platform_id=platform_id, language_string=language_string
-        )
+        self.del_names(name_ids=[name_id], platform_id=platform_id, language_string=language_string)
 
         if platform_id == 1:
             mac, windows = True, False
@@ -41,9 +39,7 @@ class TableName(table__n_a_m_e):
 
         names = {language_string: string}
 
-        self.addMultilingualName(
-            names, ttFont=font, nameID=name_id, windows=windows, mac=mac
-        )
+        self.addMultilingualName(names, ttFont=font, nameID=name_id, windows=windows, mac=mac)
 
     def del_names(self, name_ids, platform_id=None, language_string=None) -> None:
         """
@@ -55,9 +51,7 @@ class TableName(table__n_a_m_e):
         :param language_string: The language of the name records to delete
         """
 
-        names = self.filter_namerecords(
-            name_ids=name_ids, platform_id=platform_id, lang_string=language_string
-        )
+        names = self.filter_namerecords(name_ids=name_ids, platform_id=platform_id, lang_string=language_string)
 
         for name in names:
             self.removeNames(name.nameID, name.platformID, name.platEncID, name.langID)
@@ -70,9 +64,7 @@ class TableName(table__n_a_m_e):
         :param language_string: The language string to filter by
         """
 
-        names = self.filter_namerecords(
-            platform_id=platform_id, lang_string=language_string
-        )
+        names = self.filter_namerecords(platform_id=platform_id, lang_string=language_string)
 
         for name in names:
             self.removeNames(name.nameID, name.platformID, name.platEncID, name.langID)
@@ -104,28 +96,17 @@ class TableName(table__n_a_m_e):
         name_ids = [name.nameID for name in self.names]
 
         if name_ids_to_include != ():
-            name_ids = [
-                name.nameID for name in self.names if name.nameID in name_ids_to_include
-            ]
+            name_ids = [name.nameID for name in self.names if name.nameID in name_ids_to_include]
 
         if name_ids_to_skip != ():
-            name_ids = [
-                name.nameID
-                for name in self.names
-                if name.nameID not in name_ids_to_skip
-            ]
+            name_ids = [name.nameID for name in self.names if name.nameID not in name_ids_to_skip]
 
         names = self.filter_namerecords(name_ids=name_ids, platform_id=platform_id)
 
         for name in self.names:
             if name in names:
                 if old_string in str(name):
-                    string = (
-                        str(name)
-                        .replace(old_string, new_string)
-                        .replace("  ", " ")
-                        .strip()
-                    )
+                    string = str(name).replace(old_string, new_string).replace("  ", " ").strip()
                     self.setName(
                         string,
                         name.nameID,
@@ -144,9 +125,7 @@ class TableName(table__n_a_m_e):
                 name.langID,
             )
 
-    def append_string(
-        self, name_ids, platform_id=None, language_string=None, prefix=None, suffix=None
-    ) -> None:
+    def append_string(self, name_ids, platform_id=None, language_string=None, prefix=None, suffix=None) -> None:
         """
         Appends a prefix, a suffix, or both to the namerecords that match the name IDs, platform ID, and language
         string.
@@ -158,9 +137,7 @@ class TableName(table__n_a_m_e):
         :param suffix: The string to append to the end of the namerecords
         """
 
-        names = self.filter_namerecords(
-            name_ids=name_ids, platform_id=platform_id, lang_string=language_string
-        )
+        names = self.filter_namerecords(name_ids=name_ids, platform_id=platform_id, lang_string=language_string)
 
         for name in names:
             string = name.toUnicode()
@@ -197,27 +174,17 @@ class TableName(table__n_a_m_e):
         """
         filtered_names = self.names
         if name_ids is not None:
-            filtered_names = [
-                name for name in filtered_names if name.nameID in name_ids
-            ]
+            filtered_names = [name for name in filtered_names if name.nameID in name_ids]
         if platform_id is not None:
-            filtered_names = [
-                name for name in filtered_names if name.platformID == platform_id
-            ]
+            filtered_names = [name for name in filtered_names if name.platformID == platform_id]
         if plat_enc_id is not None:
-            filtered_names = [
-                name for name in filtered_names if name.platEncID == plat_enc_id
-            ]
+            filtered_names = [name for name in filtered_names if name.platEncID == plat_enc_id]
         if lang_id is not None:
             filtered_names = [name for name in filtered_names if name.langID == lang_id]
         if lang_string is not None:
             mac_lang_id = _MAC_LANGUAGE_CODES.get(lang_string.lower())
             win_lang_id = _WINDOWS_LANGUAGE_CODES.get(lang_string.lower())
-            filtered_names = [
-                name
-                for name in filtered_names
-                if name.langID in (mac_lang_id, win_lang_id)
-            ]
+            filtered_names = [name for name in filtered_names if name.langID in (mac_lang_id, win_lang_id)]
         return filtered_names
 
     @staticmethod

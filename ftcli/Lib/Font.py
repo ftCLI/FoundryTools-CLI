@@ -75,9 +75,7 @@ class Font(TTFont):
 
         :return: A boolean value.
         """
-        return is_nth_bit_set(self.head_table.macStyle, 0) and is_nth_bit_set(
-            self.os_2_table.fsSelection, 5
-        )
+        return is_nth_bit_set(self.head_table.macStyle, 0) and is_nth_bit_set(self.os_2_table.fsSelection, 5)
 
     @property
     def is_italic(self) -> bool:
@@ -86,9 +84,7 @@ class Font(TTFont):
 
         :return: A boolean value.
         """
-        return is_nth_bit_set(self["head"].macStyle, 1) and is_nth_bit_set(
-            self["OS/2"].fsSelection, 0
-        )
+        return is_nth_bit_set(self["head"].macStyle, 1) and is_nth_bit_set(self["OS/2"].fsSelection, 0)
 
     @property
     def is_regular(self) -> bool:
@@ -97,11 +93,7 @@ class Font(TTFont):
 
         :return: A boolean value.
         """
-        return (
-            self.os_2_table.is_regular_bit_set()
-            and not self.is_bold
-            and not self.is_italic
-        )
+        return self.os_2_table.is_regular_bit_set() and not self.is_bold and not self.is_italic
 
     @property
     def is_oblique(self) -> bool:
@@ -232,9 +224,7 @@ class Font(TTFont):
         # Calculating italic angle from the font's glyph outlines
         def x_leftmost_intersection(paths, y):
             for y_adjust in range(0, 20, 2):
-                line = Line(
-                    Point(xMin - 100, y + y_adjust), Point(xMax + 100, y + y_adjust)
-                )
+                line = Line(Point(xMin - 100, y + y_adjust), Point(xMax + 100, y + y_adjust))
                 for path in paths:
                     for s in path.asSegments():
                         intersections = s.intersections(line)
@@ -280,14 +270,14 @@ class Font(TTFont):
             calculated_italic_angle = -1 * math.degrees(math.atan2(x_d, y_d))
 
         # If the italic angle is < .5, this allows to not set the italic bits when using ftcli fix italic-angle command
-        if abs(calculated_italic_angle) < .5:
+        if abs(calculated_italic_angle) < 0.5:
             return 0
         else:
             return round(calculated_italic_angle)
 
     def check_italic_angle(self) -> bool:
         # Allow .1 degrees tolerance
-        return abs(self.calculate_italic_angle() - self.post_table.italicAngle) < .1
+        return abs(self.calculate_italic_angle() - self.post_table.italicAngle) < 0.1
 
     def calculate_caret_slope_rise(self) -> int:
         if self.post_table.italicAngle == 0:
@@ -332,9 +322,7 @@ class Font(TTFont):
                 source = 1
 
         if source == 1:
-            return f"{self.guess_family_name()}-{self.guess_subfamily_name()}".replace(
-                " ", ""
-            )
+            return f"{self.guess_family_name()}-{self.guess_subfamily_name()}".replace(" ", "")
         elif source == 2:
             return self.name_table.getDebugName(6)
         elif source == 3:
@@ -407,17 +395,11 @@ class Font(TTFont):
 
         return charstrings
 
-    def get_simplified_charstrings(
-            self,
-            tolerance: float = 1,
-            all_cubic: bool = True
-    ) -> dict:
-
+    def get_simplified_charstrings(self, tolerance: float = 1, all_cubic: bool = True) -> dict:
         charstrings = {}
         glyph_set = self.getGlyphSet()
 
         for k, v in glyph_set.items():
-
             # Correct contours direction and remove overlaps with pathops
             pathops_path = pathops.Path()
             pathops_pen = pathops_path.getPen(glyphSet=glyph_set)
@@ -652,16 +634,10 @@ class Font(TTFont):
         feature_tags = set()
         for table_tag in ("GSUB", "GPOS"):
             if table_tag in self:
-                if (
-                    not self[table_tag].table.ScriptList
-                    or not self[table_tag].table.FeatureList
-                ):
+                if not self[table_tag].table.ScriptList or not self[table_tag].table.FeatureList:
                     continue
                 feature_tags.update(
-                    feature_record.FeatureTag
-                    for feature_record in self[
-                        table_tag
-                    ].table.FeatureList.FeatureRecord
+                    feature_record.FeatureTag for feature_record in self[table_tag].table.FeatureList.FeatureRecord
                 )
         return sorted(feature_tags)
 

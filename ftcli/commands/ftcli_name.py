@@ -29,9 +29,7 @@ def set_namerecord():
     required=True,
     help="The nameID of the namerecord to add.",
 )
-@click.option(
-    "-s", "--string", required=True, help="String to write in the namerecord."
-)
+@click.option("-s", "--string", required=True, help="String to write in the namerecord.")
 @click.option(
     "-p",
     "--platform-id",
@@ -107,9 +105,7 @@ def set_name(
 
             # The copied, and the current `name` tables must be compiled to reorder namerecords before comparison.
             if font.name_table.compile(font) != name_table_copy.compile(font):
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
 
@@ -135,9 +131,7 @@ def del_mac_namerecords():
               """,
 )
 @add_common_options()
-def del_mac_names(
-    input_path, del_all=False, recalcTimestamp=False, outputDir=None, overWrite=True
-):
+def del_mac_names(input_path, del_all=False, recalcTimestamp=False, outputDir=None, overWrite=True):
     """
     Deletes all the Macintosh namerecords from the name table, except nameIDs 1, 2, 4, 5, and 6.
 
@@ -162,9 +156,7 @@ def del_mac_names(
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
             name_table_copy = deepcopy(font.name_table)
-            name_ids = set(
-                name.nameID for name in font.name_table.names if name.platformID == 1
-            )
+            name_ids = set(name.nameID for name in font.name_table.names if name.platformID == 1)
             if not del_all:
                 for n in (1, 2, 4, 5, 6):
                     try:
@@ -175,9 +167,7 @@ def del_mac_names(
             font.name_table.del_names(name_ids=name_ids, platform_id=1)
 
             if name_table_copy.compile(font) != font.name_table.compile(font):
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
             else:
@@ -276,9 +266,7 @@ def del_names(
             )
 
             if name_table_copy.compile(font) != font.name_table.compile(font):
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
             else:
@@ -329,9 +317,7 @@ def append_prefix_suffix():
               See epilog for a list of valid language strings.
               """,
 )
-@click.option(
-    "--prefix", type=str, help="The string to be prepended to the namerecords"
-)
+@click.option("--prefix", type=str, help="The string to be prepended to the namerecords")
 @click.option("--suffix", type=str, help="The suffix to append to the namerecords")
 @add_common_options()
 def append(
@@ -388,9 +374,7 @@ def append(
             # Compile the copy, and the current `name` tables and compare.
             # `if name_table_copy != font.name_table` doesn't work in this case.
             if font.name_table.compile(font) != name_table_copy.compile(font):
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
 
@@ -488,9 +472,7 @@ def find_replace(
             )
 
             if name_table_copy.compile(font) != font.name_table.compile(font):
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
 

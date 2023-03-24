@@ -65,10 +65,7 @@ def otf_to_ttf(ttFont: Font, post_format=POST_FORMAT, **kwargs):
     maxp.maxInstructionDefs = 0
     maxp.maxStackElements = 0
     maxp.maxSizeOfInstructions = 0
-    maxp.maxComponentElements = max(
-        len(g.components if hasattr(g, "components") else [])
-        for g in glyf.glyphs.values()
-    )
+    maxp.maxComponentElements = max(len(g.components if hasattr(g, "components") else []) for g in glyf.glyphs.values())
     maxp.compile(ttFont)
 
     post = ttFont["post"]

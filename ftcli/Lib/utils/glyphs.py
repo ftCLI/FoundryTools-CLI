@@ -16,23 +16,21 @@ def get_glyphs_metrics_all(glyph_set):
     for glyph_name in glyph_set.keys():
         bounds = T2CharString.calcBounds(glyph_set[glyph_name], glyph_set)
         if bounds is not None:
-            mtx[glyph_name] = dict(
-                xMin=bounds[0], yMin=bounds[1], xMax=bounds[2], yMax=bounds[3]
-            )
+            mtx[glyph_name] = dict(xMin=bounds[0], yMin=bounds[1], xMax=bounds[2], yMax=bounds[3])
         else:
             mtx[glyph_name] = None
     # print(mtx)
 
     # for i in mtx.values():
-        # print(i)
+    # print(i)
 
     lowest_glyph = None
     min_y = 99999
     for k, v in mtx.items():
         # print(k, v)
         if v:
-            if v['yMin'] < min_y:
-                min_y = v['yMin']
+            if v["yMin"] < min_y:
+                min_y = v["yMin"]
                 lowest_glyph = {k: v}
 
     print(lowest_glyph)

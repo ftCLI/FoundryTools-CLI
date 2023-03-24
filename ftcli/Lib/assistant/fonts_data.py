@@ -66,9 +66,7 @@ class FontsDataFile(object):
                 if source_type in (4, 5):
                     if not font.is_cff:
                         source_type = 0
-                full_name = self.__normalize_string(
-                    font.get_file_name(source=source_type)
-                )
+                full_name = self.__normalize_string(font.get_file_name(source=source_type))
                 family_name = row["family_name"]
                 style_name = full_name.replace(self.__normalize_string(family_name), "")
 
@@ -77,15 +75,11 @@ class FontsDataFile(object):
                     remove_list=all_words_list,
                     keep_list=weights_list,
                 )
-                if weight_string in [
-                    self.__normalize_string(str(word)) for word in weights_list
-                ]:
+                if weight_string in [self.__normalize_string(str(word)) for word in weights_list]:
                     us_weight_class = self.__get_key_from_value(weights, weight_string)
                     wgt, weight = weights.get(us_weight_class)
                 else:
-                    us_weight_class = self.__get_font_row(font, styles_mapping_data)[
-                        "us_weight_class"
-                    ]
+                    us_weight_class = self.__get_font_row(font, styles_mapping_data)["us_weight_class"]
                     wgt = self.__get_font_row(font, styles_mapping_data)["wgt"]
                     weight = self.__get_font_row(font, styles_mapping_data)["weight"]
                 row["us_weight_class"], row["wgt"], row["weight"] = (
@@ -99,15 +93,11 @@ class FontsDataFile(object):
                     remove_list=all_words_list,
                     keep_list=widths_list,
                 )
-                if width_string in [
-                    self.__normalize_string(str(word)) for word in widths_list
-                ]:
+                if width_string in [self.__normalize_string(str(word)) for word in widths_list]:
                     us_width_class = self.__get_key_from_value(widths, width_string)
                     wdt, width = widths.get(us_width_class)
                 else:
-                    us_width_class = self.__get_font_row(font, styles_mapping_data)[
-                        "us_width_class"
-                    ]
+                    us_width_class = self.__get_font_row(font, styles_mapping_data)["us_width_class"]
                     wdt = self.__get_font_row(font, styles_mapping_data)["wdt"]
                     width = self.__get_font_row(font, styles_mapping_data)["width"]
                 row["us_width_class"], row["wdt"], row["width"] = (
@@ -127,20 +117,12 @@ class FontsDataFile(object):
                     keep_list=obliques,
                 )
                 slp = slope = None
-                if (
-                    italic_string
-                    in [self.__normalize_string(str(word)) for word in italics]
-                    or font.is_italic
-                ):
+                if italic_string in [self.__normalize_string(str(word)) for word in italics] or font.is_italic:
                     is_italic = "1"
                     slp, slope = italics
                 else:
                     is_italic = "0"
-                if (
-                    oblique_string
-                    in [self.__normalize_string(str(word)) for word in obliques]
-                    or font.is_oblique
-                ):
+                if oblique_string in [self.__normalize_string(str(word)) for word in obliques] or font.is_oblique:
                     is_oblique = "1"
                     slp, slope = obliques
                 else:
@@ -234,17 +216,13 @@ class FontsDataFile(object):
             subfamily_name_ot = f"{subfamily_name_ot} {slope}"
             if not keep_weight_elidable:
                 if weight.lower() == weight_elidable.lower():
-                    subfamily_name_ot = (
-                        subfamily_name_ot.replace(weight, "").replace("  ", " ").strip()
-                    )
+                    subfamily_name_ot = subfamily_name_ot.replace(weight, "").replace("  ", " ").strip()
 
         # Remove the elidable weight, but only if it's not the only word left.
         if subfamily_name_ot.lower() != weight.lower():
             if not keep_weight_elidable:
                 if weight.lower() == weight_elidable.lower():
-                    subfamily_name_ot = (
-                        subfamily_name_ot.replace(weight, "").replace("  ", " ").strip()
-                    )
+                    subfamily_name_ot = subfamily_name_ot.replace(weight, "").replace("  ", " ").strip()
 
         # Build Windows family and subfamily names
         family_name_win = f"{family_name} {width} {weight}"
@@ -265,9 +243,7 @@ class FontsDataFile(object):
         if linked_styles:
             # Remove Weight from Family Name
             if us_weight_class in linked_styles:
-                family_name_win = (
-                    family_name_win.replace(weight, "").replace("  ", " ").strip()
-                )
+                family_name_win = family_name_win.replace(weight, "").replace("  ", " ").strip()
 
             linked_styles.sort()
             if us_weight_class == linked_styles[1]:
@@ -307,35 +283,21 @@ class FontsDataFile(object):
                     postscript_family_name = postscript_family_name.replace(width, wdt)
                 else:
                     # Width is in the subfamily name string when super_family is True
-                    postscript_subfamily_name = postscript_subfamily_name.replace(
-                        width, wdt
-                    )
+                    postscript_subfamily_name = postscript_subfamily_name.replace(width, wdt)
             if 6 in shorten_weight:
-                postscript_subfamily_name = postscript_subfamily_name.replace(
-                    weight, wgt
-                )
+                postscript_subfamily_name = postscript_subfamily_name.replace(weight, wgt)
             if 6 in shorten_slope:
-                postscript_subfamily_name = postscript_subfamily_name.replace(
-                    slope, slp
-                )
+                postscript_subfamily_name = postscript_subfamily_name.replace(slope, slp)
 
             # Remove dots, dashes, commas etc. from PostScript family and subfamily name
             for char_to_remove in [".", ",", ":", ";", "-", " "]:
-                postscript_family_name = postscript_family_name.replace(
-                    char_to_remove, ""
-                )
-                postscript_subfamily_name = postscript_subfamily_name.replace(
-                    char_to_remove, ""
-                )
+                postscript_family_name = postscript_family_name.replace(char_to_remove, "")
+                postscript_subfamily_name = postscript_subfamily_name.replace(char_to_remove, "")
 
             # Remove illegal characters. The following characters are reserved in PostScript language.
             for illegal_char in ("[", "]", "{", "}", "<", ">", "/", "%"):
-                postscript_family_name = postscript_family_name.replace(
-                    illegal_char, ""
-                )
-                postscript_subfamily_name = postscript_subfamily_name.replace(
-                    illegal_char, ""
-                )
+                postscript_family_name = postscript_family_name.replace(illegal_char, "")
+                postscript_subfamily_name = postscript_subfamily_name.replace(illegal_char, "")
 
             # Finally, build the PostScript Name
             postscript_name = f"{postscript_family_name}-{postscript_subfamily_name}"
@@ -371,13 +333,9 @@ class FontsDataFile(object):
             # Apply the explicitly passed shortenings
             if 4 in shorten_width:
                 if not super_family:
-                    full_font_name = (
-                        f"{family_name_ot.replace(width, wdt)} {subfamily_name_ot}"
-                    )
+                    full_font_name = f"{family_name_ot.replace(width, wdt)} {subfamily_name_ot}"
                 else:
-                    full_font_name = (
-                        f"{family_name_ot} {subfamily_name_ot.replace(width, wdt)}"
-                    )
+                    full_font_name = f"{family_name_ot} {subfamily_name_ot.replace(width, wdt)}"
             if 4 in shorten_weight:
                 full_font_name = full_font_name.replace(weight, wgt)
             if 4 in shorten_slope:
@@ -394,23 +352,17 @@ class FontsDataFile(object):
 
         # Print a warning if Full Font Name is longer than 31 chars.
         if len(full_font_name) > MAX_FULL_NAME_LEN:
-            generic_warning_message(
-                f"Full Font Name is longer than {MAX_FULL_NAME_LEN} characters."
-            )
+            generic_warning_message(f"Full Font Name is longer than {MAX_FULL_NAME_LEN} characters.")
 
         # Build Unique Identifier
-        ach_vend_id = (
-            str(font.os_2_table.achVendID).replace(" ", "").replace(r"\x00", "")
-        )
+        ach_vend_id = str(font.os_2_table.achVendID).replace(" ", "").replace(r"\x00", "")
         font_revision = str(round(font.head_table.fontRevision, 3)).ljust(5, "0")
         unique_id = f"{font_revision};{ach_vend_id.ljust(4)};{postscript_name}"
 
         if alt_uid:
             year_created = timestampToString(font.head_table.created).split(" ")[-1]
             manufacturer = font.name_table.getDebugName(8)
-            unique_id = (
-                f"{manufacturer}: {family_name_ot}-{subfamily_name_ot}: {year_created}"
-            )
+            unique_id = f"{manufacturer}: {family_name_ot}-{subfamily_name_ot}: {year_created}"
 
         # Build font revision
         version_string = f"Version {font_revision}"
@@ -466,11 +418,7 @@ class FontsDataFile(object):
             # Weight and Slope literals shouldn't be here, so they are not shortened.
 
             # If nameID 16 is not equal to nameID 1, write it. Otherwise, delete it in case is present.
-            if name_id_16 != str(
-                font.name_table.getName(
-                    nameID=1, platformID=3, platEncID=1, langID=0x409
-                )
-            ):
+            if name_id_16 != str(font.name_table.getName(nameID=1, platformID=3, platEncID=1, langID=0x409)):
                 font.name_table.add_name(font=font, name_id=16, string=name_id_16)
             else:
                 font.name_table.del_names(name_ids=[16])
@@ -487,20 +435,14 @@ class FontsDataFile(object):
             if 17 in shorten_slope:
                 name_id_17 = name_id_17.replace(slope, slp)
             # If nameID 17 is not equal to nameID 2, write it. Otherwise, delete it in case is present.
-            if name_id_17 != str(
-                font.name_table.getName(
-                    nameID=2, platformID=3, platEncID=1, langID=0x409
-                )
-            ):
+            if name_id_17 != str(font.name_table.getName(nameID=2, platformID=3, platEncID=1, langID=0x409)):
                 font.name_table.add_name(font=font, name_id=17, string=name_id_17)
             else:
                 font.name_table.del_names(name_ids=[17])
 
         # Write CFF names
         if cff and font.is_cff:
-            cff_family_name = (
-                f"{family_name} {width.replace(width_elidable, '')}".strip()
-            )
+            cff_family_name = f"{family_name} {width.replace(width_elidable, '')}".strip()
             if keep_width_elidable:
                 cff_family_name = f"{family_name} {width}"
             font["CFF "].cff.fontNames = [postscript_name]
@@ -546,15 +488,11 @@ class FontsDataFile(object):
         """
         for word in remove_list:
             if word not in keep_list:
-                input_string = input_string.lower().replace(
-                    word.lower().replace(" ", ""), ""
-                )
+                input_string = input_string.lower().replace(word.lower().replace(" ", ""), "")
                 for k in keep_list:
                     if word.lower() in k.lower():
                         if len(input_string) > 0:
-                            input_string = input_string.lower().replace(
-                                k.lower().replace(word.lower(), ""), k
-                            )
+                            input_string = input_string.lower().replace(k.lower().replace(word.lower(), ""), k)
         return input_string
 
     @staticmethod

@@ -21,10 +21,10 @@ def del_cff_names():
 
 @del_cff_names.command()
 @add_file_or_path_argument()
-@click.option('--full-name', "FullName", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] FullName")
-@click.option('--family-name', "FamilyName", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] FamilyName")
-@click.option('--weight', "Weight", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Weight")
-@click.option('--version', "version", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] version")
+@click.option("--full-name", "FullName", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] FullName")
+@click.option("--family-name", "FamilyName", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] FamilyName")
+@click.option("--weight", "Weight", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Weight")
+@click.option("--version", "version", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] version")
 @add_common_options()
 def del_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True, **kwargs):
     """
@@ -63,9 +63,7 @@ def del_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True,
                     pass
 
             if cff_table.compile(font) != cff_table_copy.compile(font):
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
             else:
@@ -83,10 +81,10 @@ def set_cff_names():
 @set_cff_names.command()
 @add_file_or_path_argument()
 @click.option("--font-names", "fontNames", type=str, help="Sets CFF.cff.fontNames value")
-@click.option('--full-name', "FullName", type=str, help="Sets CFF.cff.topDictIndex[0] FullName value")
-@click.option('--family-name', "FamilyName", type=str, help="Sets CFF.cff.topDictIndex[0] FamilyName value")
-@click.option('--weight', "Weight", type=str, help="Sets CFF.cff.topDictIndex[0] Weight value")
-@click.option('--version', "version", type=str, help="Sets CFF.cff.topDictIndex[0] version value")
+@click.option("--full-name", "FullName", type=str, help="Sets CFF.cff.topDictIndex[0] FullName value")
+@click.option("--family-name", "FamilyName", type=str, help="Sets CFF.cff.topDictIndex[0] FamilyName value")
+@click.option("--weight", "Weight", type=str, help="Sets CFF.cff.topDictIndex[0] Weight value")
+@click.option("--version", "version", type=str, help="Sets CFF.cff.topDictIndex[0] version value")
 @add_common_options()
 def set_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True, **kwargs):
     """
@@ -124,9 +122,7 @@ def set_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True,
                 setattr(top_dict, attr_name, attr_value)
 
             if cff_table.compile(font) != cff_table_copy.compile(font):
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
             else:
@@ -182,9 +178,7 @@ def find_replace(
             cff_table = font["CFF "]
             cff_table_copy = deepcopy(cff_table)
             cff_font_name = cff_table.cff.fontNames[0]
-            cff_table.cff.fontNames = [
-                cff_font_name.replace(old_string, new_string).replace("  ", " ").strip()
-            ]
+            cff_table.cff.fontNames = [cff_font_name.replace(old_string, new_string).replace("  ", " ").strip()]
 
             top_dict = cff_table.cff.topDictIndex[0]
             attr_list = [
@@ -199,19 +193,13 @@ def find_replace(
             for attr_name in attr_list:
                 try:
                     old_value = str(getattr(top_dict, attr_name))
-                    new_value = (
-                        old_value.replace(old_string, new_string)
-                        .replace("  ", " ")
-                        .strip()
-                    )
+                    new_value = old_value.replace(old_string, new_string).replace("  ", " ").strip()
                     setattr(top_dict, attr_name, new_value)
                 except AttributeError:
                     pass
 
             if cff_table.compile(font) != cff_table_copy.compile(font):
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
             else:
@@ -255,9 +243,7 @@ def fix_version(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tru
             font.fix_cff_top_dict_version()
 
             if cff_table_copy.compile(font) != cff_table.compile(font):
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
             else:

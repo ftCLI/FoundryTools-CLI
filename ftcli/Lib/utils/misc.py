@@ -42,9 +42,7 @@ def unset_nth_bit(x: int, n: int):
     return x & ~(1 << n)
 
 
-def wrap_string(
-    string: str, width: int, initial_indent: int, indent: int, max_lines: int = None
-) -> str:
+def wrap_string(string: str, width: int, initial_indent: int, indent: int, max_lines: int = None) -> str:
     """
     It wraps a string to a given width, with a given indentation
 

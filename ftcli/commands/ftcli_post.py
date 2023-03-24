@@ -68,9 +68,7 @@ def cli(input_path, recalcTimestamp, outputDir, overWrite, **kwargs):
     for file in files:
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
-            output_file = makeOutputFileName(
-                file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
 
             # Using copy instead of deepcopy and avoiding to compile `post` tables is faster
 

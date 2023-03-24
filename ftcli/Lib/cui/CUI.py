@@ -34,17 +34,13 @@ class AssistantUI(object):
             generic_error_message("No valid font files found.")
             sys.exit()
 
-        self.styles_mapping_file = StylesMappingFile(
-            get_style_mapping_file_path(self.input_path)
-        )
+        self.styles_mapping_file = StylesMappingFile(get_style_mapping_file_path(self.input_path))
         if not os.path.exists(self.styles_mapping_file.file):
             self.styles_mapping_file.reset_defaults()
 
         self.fonts_data_file = FontsDataFile(get_fonts_data_file_path(self.input_path))
         if not os.path.exists(self.fonts_data_file.file):
-            self.fonts_data_file.reset_data(
-                styles_mapping_file=self.styles_mapping_file.file
-            )
+            self.fonts_data_file.reset_data(styles_mapping_file=self.styles_mapping_file.file)
 
         self.console = Console()
 
@@ -181,9 +177,7 @@ class AssistantUI(object):
             if self.__prompt_for_confirmation():
                 for row in fonts_data:
                     if row["selected"] == "1":
-                        row["us_width_class"] = (
-                            us_width_class if us_width_class else row["us_width_class"]
-                        )
+                        row["us_width_class"] = us_width_class if us_width_class else row["us_width_class"]
                         words = [
                             wdt if wdt else row["wdt"],
                             width if width else row["width"],
@@ -194,8 +188,7 @@ class AssistantUI(object):
                 self.fonts_data_file.save(fonts_data)
         if command == "g":
             us_weight_class = click.prompt(
-                f"usWeightClass {click.style('[1-1000]', bold=True, fg='cyan')} "
-                f"(Enter to skip)",
+                f"usWeightClass {click.style('[1-1000]', bold=True, fg='cyan')} " f"(Enter to skip)",
                 type=OptionalParamType(click.IntRange(1, 1000)),
                 default="",
                 show_default=False,
@@ -252,9 +245,7 @@ class AssistantUI(object):
                 self.fonts_data_file.save(fonts_data)
         if command == "r":
             if self.__prompt_for_confirmation(text="Reset data?"):
-                self.fonts_data_file.reset_data(
-                    styles_mapping_file=self.styles_mapping_file.file
-                )
+                self.fonts_data_file.reset_data(styles_mapping_file=self.styles_mapping_file.file)
         if command == "c":
             click.echo("\nPlease, select the string to use to recalculate data")
             click.secho("[0]", bold=True, fg="cyan", nl=False)
@@ -269,9 +260,7 @@ class AssistantUI(object):
             click.echo(" : CFF fontNames")
             click.secho("[5]", bold=True, fg="cyan", nl=False)
             click.echo(" : CFF FullName")
-            source_type = self.__prompt_for_int_range(
-                "Your selection", min_value=0, max_value=5, default=0
-            )
+            source_type = self.__prompt_for_int_range("Your selection", min_value=0, max_value=5, default=0)
             if self.__prompt_for_confirmation(text="Recalc data?"):
                 self.fonts_data_file.recalc_data(
                     source_type=source_type,
@@ -331,12 +320,8 @@ class AssistantUI(object):
     def __select_deselect_files(self, action):
         data = self.fonts_data_file.get_data()
 
-        start = self.__prompt_for_int_range(
-            text="From line", min_value=1, max_value=len(data), default=1
-        )
-        end = self.__prompt_for_int_range(
-            text="To line", min_value=start, max_value=len(data), default=len(data)
-        )
+        start = self.__prompt_for_int_range(text="From line", min_value=1, max_value=len(data), default=1)
+        end = self.__prompt_for_int_range(text="To line", min_value=start, max_value=len(data), default=len(data))
 
         for i in range(start - 1, end):
             if action == "select":
@@ -413,21 +398,15 @@ class AssistantUI(object):
             box=box.HORIZONTALS,
         )
 
-        table.add_row(
-            "Weight", "Short word", "Long word", style="bright_cyan", end_section=True
-        )
+        table.add_row("Weight", "Short word", "Long word", style="bright_cyan", end_section=True)
         for k, v in data["weights"].items():
             table.add_row(k, v[0], v[1])
         table.add_section()
-        table.add_row(
-            "Width", "Short word", "Long word", style="bright_cyan", end_section=True
-        )
+        table.add_row("Width", "Short word", "Long word", style="bright_cyan", end_section=True)
         for k, v in data["widths"].items():
             table.add_row(k, v[0], v[1])
         table.add_section()
-        table.add_row(
-            "Slope", "Short word", "Long word", style="bright_cyan", end_section=True
-        )
+        table.add_row("Slope", "Short word", "Long word", style="bright_cyan", end_section=True)
         table.add_row("Italic", data["italics"][0], data["italics"][1])
         table.add_row("Oblique", data["obliques"][0], data["obliques"][1])
 
@@ -456,9 +435,7 @@ class AssistantUI(object):
 
     def __add_width_weight(self, key: str, max_value: int):
         data = self.styles_mapping_file.get_data()
-        value = str(
-            self.__prompt_for_int_range(text="Value", min_value=1, max_value=max_value)
-        )
+        value = str(self.__prompt_for_int_range(text="Value", min_value=1, max_value=max_value))
 
         defaults = [None, None]
         if value in data[key].keys():
@@ -475,14 +452,12 @@ class AssistantUI(object):
             value = new_value
 
         short_word = click.prompt(
-            f"Short word "
-            f"{click.style(f'[{defaults[0]}]', bold=True, fg='cyan') if defaults[0] else ''}",
+            f"Short word " f"{click.style(f'[{defaults[0]}]', bold=True, fg='cyan') if defaults[0] else ''}",
             default=defaults[0],
             show_default=False,
         )
         long_word = click.prompt(
-            f"Long word  "
-            f"{click.style(f'[{defaults[1]}]', bold=True, fg='cyan') if defaults[1] else ''}",
+            f"Long word  " f"{click.style(f'[{defaults[1]}]', bold=True, fg='cyan') if defaults[1] else ''}",
             default=defaults[1],
             show_default=False,
         )
@@ -691,27 +666,19 @@ def print_font_info(font: Font):
     for v in font_info.values():
         if v["label"] == "File name":
             v["value"] = os.path.basename(v["value"])
-        sub_table_1.add_row(
-            f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value'])}"
-        )
+        sub_table_1.add_row(f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value'])}")
 
     sub_table_2 = Table(box=None, show_header=False)
     for v in font_v_metrics["os2_metrics"]:
-        sub_table_2.add_row(
-            f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value']).rjust(4)}"
-        )
+        sub_table_2.add_row(f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value']).rjust(4)}")
 
     sub_table_3 = Table(box=None, show_header=False)
     for v in font_v_metrics["hhea_metrics"]:
-        sub_table_3.add_row(
-            f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value']).rjust(4)}"
-        )
+        sub_table_3.add_row(f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value']).rjust(4)}")
 
     sub_table_4 = Table(box=None, show_header=False)
     for v in font_v_metrics["head_metrics"]:
-        sub_table_4.add_row(
-            f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value']).rjust(4)}"
-        )
+        sub_table_4.add_row(f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value']).rjust(4)}")
 
     table.add_row("[bold green]BASIC INFORMATION")
     table.add_section()
@@ -809,11 +776,7 @@ def print_font_names(font: Font, max_lines=None, minimal=False):
             platform_id=platform_id, plat_enc_id=plat_enc_id, lang_id=language_id
         )
         if minimal:
-            names = [
-                n
-                for n in names
-                if n.nameID in (1, 2, 3, 4, 5, 6, 16, 17, 18, 21, 22, 25)
-            ]
+            names = [n for n in names if n.nameID in (1, 2, 3, 4, 5, 6, 16, 17, 18, 21, 22, 25)]
 
         for name in names:
             if name.nameID in constants.NAME_IDS.keys():
@@ -857,24 +820,12 @@ def print_font_names(font: Font, max_lines=None, minimal=False):
         ]
         minimal_cff_names = ["version", "FullName", "FamilyName", "Weight"]
 
-        cff_names = [
-            {k: v}
-            for k, v in cff_table.cff.topDictIndex[0].rawDict.items()
-            if k not in cff_names_to_skip
-        ]
+        cff_names = [{k: v} for k, v in cff_table.cff.topDictIndex[0].rawDict.items() if k not in cff_names_to_skip]
 
         if minimal:
-            cff_names = [
-                {k: v}
-                for k, v in cff_table.cff.topDictIndex[0].rawDict.items()
-                if k in minimal_cff_names
-            ]
+            cff_names = [{k: v} for k, v in cff_table.cff.topDictIndex[0].rawDict.items() if k in minimal_cff_names]
 
-        table.add_row(
-            "[bold cyan]{0:<30}".format("fontNames")
-            + "[reset] : "
-            + str(cff_table.cff.fontNames)
-        )
+        table.add_row("[bold cyan]{0:<30}".format("fontNames") + "[reset] : " + str(cff_table.cff.fontNames))
         for cff_name in cff_names:
             for k, v in cff_name.items():
                 row_string = "[bold cyan]{0:<30}".format(k) + "[reset] : " + str(v)

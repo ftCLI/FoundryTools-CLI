@@ -55,15 +55,11 @@ def add_dsig(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
             font = Font(file, recalcTimestamp=recalcTimestamp)
             if "DSIG" not in font.keys():
                 font.add_dummy_dsig()
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
             else:
-                file_not_changed_message(
-                    f"DSIG table is already present in {os.path.basename(file)}"
-                )
+                file_not_changed_message(f"DSIG table is already present in {os.path.basename(file)}")
         except Exception as e:
             generic_error_message(e)
 
@@ -81,7 +77,7 @@ def organizer():
     default=None,
     help="""
     Renames the font files according to the provided source string(s). See ftcli utils font-renamer.
-    """
+    """,
 )
 @click.option(
     "-ext",
@@ -90,12 +86,8 @@ def organizer():
     is_flag=True,
     help="Sorts fonts by extension.",
 )
-@click.option(
-    "-ver", "--version", "sort_by_version", is_flag=True, help="Sorts fonts by version."
-)
-def font_organizer(
-    input_path, rename_source=None, sort_by_extension=False, sort_by_version=False
-):
+@click.option("-ver", "--version", "sort_by_version", is_flag=True, help="Sorts fonts by version.")
+def font_organizer(input_path, rename_source=None, sort_by_extension=False, sort_by_version=False):
     """
     Organizes fonts by moving them into a subdirectory named after the font's family name, and eventually a subdirectory
     named after the font's extension and version.
@@ -113,13 +105,9 @@ def font_organizer(
             extension = font.get_real_extension()
             file_name = os.path.basename(file)
             if rename_source:
-                file_name = (
-                    f"{font.get_file_name(source=int(rename_source))}{extension}"
-                )
+                file_name = f"{font.get_file_name(source=int(rename_source))}{extension}"
 
-            version_string = (
-                font.name_table.getDebugName(5).replace("Version ", "v").split(";")[0]
-            )
+            version_string = font.name_table.getDebugName(5).replace("Version ", "v").split(";")[0]
 
             output_dir = os.path.join(os.path.dirname(file), family_name)
             if sort_by_version:
@@ -128,9 +116,7 @@ def font_organizer(
             if sort_by_extension:
                 output_dir = os.path.join(output_dir, f"{extension}"[1:].lower())
 
-            output_file = makeOutputFileName(
-                file_name, outputDir=output_dir, overWrite=False
-            )
+            output_file = makeOutputFileName(file_name, outputDir=output_dir, overWrite=False)
             output_file = sanitize_filepath(output_file, platform="auto")
             os.renames(file, output_file)
             generic_info_message(f"{os.path.basename(file)} moved")
@@ -186,29 +172,19 @@ def font_renamer(input_path, source):
 
             old_file_name, old_extension = os.path.splitext(os.path.basename(font.file))
 
-            new_file_name = sanitize_filename(
-                font.get_file_name(source=source), platform="auto"
-            )
+            new_file_name = sanitize_filename(font.get_file_name(source=source), platform="auto")
             new_extension = font.get_real_extension()
 
-            output_file = os.path.join(
-                os.path.dirname(file), f"{new_file_name}{new_extension}"
-            )
+            output_file = os.path.join(os.path.dirname(file), f"{new_file_name}{new_extension}")
 
             if f"{new_file_name}{new_extension}" != f"{old_file_name}{old_extension}":
                 try:
-                    output_file = makeOutputFileName(
-                        output_file, outputDir=os.path.dirname(file), overWrite=True
-                    )
+                    output_file = makeOutputFileName(output_file, outputDir=os.path.dirname(file), overWrite=True)
                     os.renames(file, output_file)
                 except FileExistsError:
-                    output_file = makeOutputFileName(
-                        output_file, outputDir=os.path.dirname(file), overWrite=False
-                    )
+                    output_file = makeOutputFileName(output_file, outputDir=os.path.dirname(file), overWrite=False)
                     os.renames(file, output_file)
-                file_saved_message(
-                    f"{os.path.basename(file)} --> {os.path.basename(output_file)}"
-                )
+                file_saved_message(f"{os.path.basename(file)} --> {os.path.basename(output_file)}")
             else:
                 file_not_changed_message(file)
 
@@ -251,9 +227,7 @@ def ttf_autohint(input_path, outputDir=None, recalcTimestamp=False, overWrite=Tr
             hinted_font = Font(BytesIO(data))
             if recalcTimestamp is False:
                 hinted_font.head_table.modified = font.head_table.modified
-            output_file = makeOutputFileName(
-                font.file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
             hinted_font.save(output_file)
             file_saved_message(output_file)
         except Exception as e:
@@ -275,18 +249,10 @@ def ttf_dehinter():
 @click.option("--keep-prep", is_flag=True, default=False, help="keep prep table")
 @click.option("--keep-ttfa", is_flag=True, default=False, help="keep ttfa table")
 @click.option("--keep-vdmx", is_flag=True, default=False, help="keep vdmx table")
-@click.option(
-    "--keep-glyf", is_flag=True, default=False, help="do not modify glyf table"
-)
-@click.option(
-    "--keep-gasp", is_flag=True, default=False, help="do not modify gasp table"
-)
-@click.option(
-    "--keep-maxp", is_flag=True, default=False, help="do not modify maxp table"
-)
-@click.option(
-    "--keep-head", is_flag=True, default=False, help="do not modify head table"
-)
+@click.option("--keep-glyf", is_flag=True, default=False, help="do not modify glyf table")
+@click.option("--keep-gasp", is_flag=True, default=False, help="do not modify gasp table")
+@click.option("--keep-maxp", is_flag=True, default=False, help="do not modify maxp table")
+@click.option("--keep-head", is_flag=True, default=False, help="do not modify head table")
 @click.option("--verbose", is_flag=True, default=False, help="display standard output")
 @add_common_options()
 def ttf_dehint(
@@ -344,9 +310,7 @@ def ttf_dehint(
                 keep_vdmx=keep_vdmx,
                 verbose=verbose,
             )
-            output_file = makeOutputFileName(
-                file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
             font.save(output_file)
             file_saved_message(output_file)
         except Exception as e:
@@ -360,14 +324,15 @@ def ttf_overlaps_remover():
 
 @ttf_overlaps_remover.command()
 @add_file_or_path_argument()
-@click.option("--ignore-errors", is_flag=True,
-              help="""
+@click.option(
+    "--ignore-errors",
+    is_flag=True,
+    help="""
               Ignore errors while removing overlaps.
-              """)
+              """,
+)
 @add_common_options()
-def ttf_remove_overlaps(
-    input_path, ignore_errors, outputDir=None, recalcTimestamp=False, overWrite=True
-):
+def ttf_remove_overlaps(input_path, ignore_errors, outputDir=None, recalcTimestamp=False, overWrite=True):
     """
     Simplify glyphs in TrueType fonts by merging overlapping contours.
     """
@@ -386,9 +351,7 @@ def ttf_remove_overlaps(
     for file in files:
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
-            output_file = makeOutputFileName(
-                font.file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
             removeOverlaps(font, removeHinting=True, ignoreErrors=ignore_errors)
             font.save(output_file)
             file_saved_message(output_file)
@@ -405,9 +368,7 @@ def cff_check_outlines_ufo():
 @cff_check_outlines_ufo.command()
 @add_file_or_path_argument()
 @add_common_options()
-def cff_check_outlines(
-    input_path, outputDir=None, recalcTimestamp=False, overWrite=True
-):
+def cff_check_outlines(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
     """
     Performs afdko.checkoutlinesufo outline quality checks and overlaps removal. Supports CFF fonts only.
     """
@@ -428,13 +389,9 @@ def cff_check_outlines(
         generic_info_message(f"Checking file {os.path.basename(file)}")
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
-            output_file = makeOutputFileName(
-                font.file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
             font.save(output_file)
-            checkoutlinesufo.run(
-                args=[output_file, "--error-correction-mode", "--quiet-mode"]
-            )
+            checkoutlinesufo.run(args=[output_file, "--error-correction-mode", "--quiet-mode"])
             file_saved_message(output_file)
 
         except Exception as e:
@@ -456,9 +413,7 @@ def cff_autohinter():
               """,
 )
 @add_common_options()
-def cff_autohint(
-    input_path, optimize=True, outputDir=None, recalcTimestamp=False, overWrite=True
-):
+def cff_autohint(input_path, optimize=True, outputDir=None, recalcTimestamp=False, overWrite=True):
     """
     Autohints CFF fonts with psautohint.
     """
@@ -481,19 +436,13 @@ def cff_autohint(
         counter += 1
         try:
             print()
-            generic_info_message(
-                f"Autohinting file {os.path.basename(file)}: {counter} of {len(files)}"
-            )
+            generic_info_message(f"Autohinting file {os.path.basename(file)}: {counter} of {len(files)}")
             font = Font(file, recalcTimestamp=recalcTimestamp)
             original_timestamp = font.head_table.modified
-            output_file = makeOutputFileName(
-                font.file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
             font.save(output_file)
             font.close()
-            run_shell_command(
-                ["psautohint", output_file, "--no-zones-stems"], suppress_output=False
-            )
+            run_shell_command(["psautohint", output_file, "--no-zones-stems"], suppress_output=False)
 
             if not recalcTimestamp:
                 tmp_font = Font(output_file, recalcTimestamp=False)
@@ -557,14 +506,10 @@ def cff_dehint(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
             subsetter.options.name_languages = "*"
             subsetter.options.layout_features = "*"
             subsetter.options.hinting = False
-            subsetter.glyph_ids_requested = [
-                i for i in font.getReverseGlyphMap().values()
-            ]
+            subsetter.glyph_ids_requested = [i for i in font.getReverseGlyphMap().values()]
             Subsetter.subset(subsetter, font)
 
-            output_file = makeOutputFileName(
-                font.file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
             font.save(output_file)
             file_saved_message(output_file)
 
@@ -634,9 +579,7 @@ def cff_desubr(input_path, recalcTimestamp=False, outputDir=None, overWrite=True
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
             cffsubr.desubroutinize(otf=font)
-            output_file = makeOutputFileName(
-                file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
             font.save(output_file)
             file_saved_message(output_file)
 

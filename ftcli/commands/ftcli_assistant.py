@@ -22,7 +22,8 @@ from ftCLI.Lib.utils.click_tools import (
     file_saved_message,
     file_not_changed_message,
     generic_warning_message,
-    file_not_selected_message, add_path_argument,
+    file_not_selected_message,
+    add_path_argument,
 )
 
 
@@ -167,20 +168,14 @@ def recalc_data(input_path, input_string, quiet=False):
 
     fonts_data_file = get_fonts_data_file_path(input_path)
     if not os.path.exists(fonts_data_file):
-        FontsDataFile(fonts_data_file).reset_data(
-            styles_mapping_file=styles_mapping_file
-        )
+        FontsDataFile(fonts_data_file).reset_data(styles_mapping_file=styles_mapping_file)
 
     if os.path.exists(fonts_data_file) and not quiet:
-        confirmation = click.confirm(
-            f"{fonts_data_file} already exists. Do you want to overwrite it?"
-        )
+        confirmation = click.confirm(f"{fonts_data_file} already exists. Do you want to overwrite it?")
         if not confirmation:
             return
 
-    FontsDataFile(fonts_data_file).recalc_data(
-        source_type=input_string, styles_mapping_file=styles_mapping_file
-    )
+    FontsDataFile(fonts_data_file).recalc_data(source_type=input_string, styles_mapping_file=styles_mapping_file)
 
 
 @click.group()
@@ -377,9 +372,7 @@ def commit(
 
         file_exists = os.path.exists(file)
         if not file_exists:
-            generic_warning_message(
-                f"{file} {click.style('file does not exist', fg='yellow')}"
-            )
+            generic_warning_message(f"{file} {click.style('file does not exist', fg='yellow')}")
             continue
 
         file_is_selected = bool(int(row["selected"]))
@@ -430,9 +423,7 @@ def commit(
                     font_has_changed = True
 
             if font_has_changed:
-                output_file = makeOutputFileName(
-                    file, outputDir=outputDir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=outputDir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
             else:

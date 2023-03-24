@@ -52,7 +52,6 @@ def monospace(input_path, outputDir=None, recalcTimestamp=False, overWrite=True)
         return
 
     for file in files:
-
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
 
@@ -97,7 +96,6 @@ def monospace(input_path, outputDir=None, recalcTimestamp=False, overWrite=True)
             generic_error_message(e)
 
 
-
 @click.group()
 def fix_os2_table_unicode_codepage():
     pass
@@ -126,21 +124,15 @@ def os2_ranges(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
     for file in files:
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
-            output_file = makeOutputFileName(
-                file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
 
             os_2_table_copy = deepcopy(font.os_2_table)
 
-            temp_t1_file = makeOutputFileName(
-                output_file, outputDir=output_dir, extension=".t1", overWrite=True
-            )
+            temp_t1_file = makeOutputFileName(output_file, outputDir=output_dir, extension=".t1", overWrite=True)
             command = ["tx", "-t1", file, temp_t1_file]
             run_shell_command(command, suppress_output=True)
 
-            temp_otf_file = makeOutputFileName(
-                output_file, outputDir=output_dir, suffix="_tmp", overWrite=True
-            )
+            temp_otf_file = makeOutputFileName(output_file, outputDir=output_dir, suffix="_tmp", overWrite=True)
             command = ["makeotf", "-f", temp_t1_file, "-o", temp_otf_file]
             run_shell_command(command, suppress_output=True)
 
@@ -205,9 +197,7 @@ def nbsp_width(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
             font["hmtx"][nbspace_name] = font["hmtx"][space_name]
 
             if hmtx_table_copy.compile(font) != hmtx_table.compile(font):
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
             else:
@@ -229,9 +219,7 @@ def caret_offset(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tr
     """
     Recalculates hhea.caretOffset value.
     """
-    files = get_fonts_list(
-        input_path, allow_variable=False, allow_extensions=[".ttf", ".otf"]
-    )
+    files = get_fonts_list(input_path, allow_variable=False, allow_extensions=[".ttf", ".otf"])
     if len(files) == 0:
         no_valid_fonts_message(input_path)
         return
@@ -247,18 +235,12 @@ def caret_offset(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tr
         generic_info_message(f"Checking file: {os.path.basename(file)}")
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
-            output_file = makeOutputFileName(
-                file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
 
             offset = font.hhea_table.caretOffset
 
-            temp_t1_file = makeOutputFileName(
-                file, extension=".t1", suffix="_tmp", overWrite=True
-            )
-            temp_otf_file = makeOutputFileName(
-                file, extension=".otf", suffix="_tmp", overWrite=True
-            )
+            temp_t1_file = makeOutputFileName(file, extension=".t1", suffix="_tmp", overWrite=True)
+            temp_otf_file = makeOutputFileName(file, extension=".otf", suffix="_tmp", overWrite=True)
             run_shell_command(["tx", "-t1", file, temp_t1_file], suppress_output=True)
             run_shell_command(
                 ["makeotf", "-f", temp_t1_file, "-o", temp_otf_file],
@@ -275,9 +257,7 @@ def caret_offset(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tr
             offset_ok = offset == calculated_offset
 
             if offset_ok:
-                generic_success_message(
-                    f"hhea.caretOffset: {click.style(offset, fg='green', bold=True)}"
-                )
+                generic_success_message(f"hhea.caretOffset: {click.style(offset, fg='green', bold=True)}")
                 file_not_changed_message(os.path.basename(file))
             else:
                 font.hhea_table.caretOffset = calculated_offset
@@ -312,9 +292,7 @@ def fix_italic_metadata():
               """,
 )
 @add_common_options()
-def italic_angle(
-    input_path, mode, recalcTimestamp=False, outputDir=None, overWrite=True
-):
+def italic_angle(input_path, mode, recalcTimestamp=False, outputDir=None, overWrite=True):
     """
     Recalculates post.italicAngle, hhea.caretSlopeRise, hhea.caretSlopeRun and sets/clears the italic/oblique bits
     according to the calculated values. In CFF fonts, also CFF.topDictIndex[0].ItalicAngle is recalculated.
@@ -335,9 +313,7 @@ def italic_angle(
         generic_info_message(f"Checking file: {os.path.basename(file)}")
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
-            output_file = makeOutputFileName(
-                file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
 
             # Check post.italicAngle
             post_italic_angle = font.post_table.italicAngle
@@ -362,16 +338,10 @@ def italic_angle(
             rise = font.hhea_table.caretSlopeRise
             run = font.hhea_table.caretSlopeRun
             hhea_italic_angle = font.calculate_run_rise_angle()
-            hhea_italic_angle_ok = (
-                abs(font.post_table.italicAngle - hhea_italic_angle) < 0.1
-            )
+            hhea_italic_angle_ok = abs(font.post_table.italicAngle - hhea_italic_angle) < 0.1
             if hhea_italic_angle_ok:
-                generic_success_message(
-                    f"hhea.caretSlopeRise : {click.style(rise, fg='green', bold=True)}"
-                )
-                generic_success_message(
-                    f"hhea.caretSlopeRun  : {(click.style(run, fg='green', bold=True))}"
-                )
+                generic_success_message(f"hhea.caretSlopeRise : {click.style(rise, fg='green', bold=True)}")
+                generic_success_message(f"hhea.caretSlopeRun  : {(click.style(run, fg='green', bold=True))}")
             else:
                 font.hhea_table.caretSlopeRise = calculated_rise
                 generic_warning_message(
@@ -388,19 +358,14 @@ def italic_angle(
             if font.is_cff:
                 cff_table = font["CFF "]
                 cff_italic_angle = cff_table.cff.topDictIndex[0].ItalicAngle
-                cff_italic_angle_ok = cff_italic_angle == round(
-                    font.post_table.italicAngle
-                )
+                cff_italic_angle_ok = cff_italic_angle == round(font.post_table.italicAngle)
 
                 if cff_italic_angle_ok:
                     generic_success_message(
-                        f"CFF.ItalicAngle     : "
-                        f"{click.style(cff_italic_angle, fg='green', bold=True)}"
+                        f"CFF.ItalicAngle     : " f"{click.style(cff_italic_angle, fg='green', bold=True)}"
                     )
                 else:
-                    cff_table.cff.topDictIndex[0].ItalicAngle = round(
-                        font.post_table.italicAngle
-                    )
+                    cff_table.cff.topDictIndex[0].ItalicAngle = round(font.post_table.italicAngle)
                     generic_warning_message(
                         f"CFF.ItalicAngle     : "
                         f"{click.style(cff_italic_angle, fg='red', bold=True)} -> "
@@ -425,10 +390,7 @@ def italic_angle(
                 oblique_bit_ok = False
 
             if italic_bits_ok:
-                generic_success_message(
-                    f"Italic              : "
-                    f"{click.style(is_italic, fg='green', bold=True)}"
-                )
+                generic_success_message(f"Italic              : " f"{click.style(is_italic, fg='green', bold=True)}")
             else:
                 generic_info_message(
                     f"Italic              : "
@@ -437,10 +399,7 @@ def italic_angle(
                 )
 
             if oblique_bit_ok:
-                generic_success_message(
-                    f"Oblique             : "
-                    f"{click.style(is_oblique, fg='green', bold=True)}"
-                )
+                generic_success_message(f"Oblique             : " f"{click.style(is_oblique, fg='green', bold=True)}")
             else:
                 generic_info_message(
                     f"Oblique             : "
@@ -493,9 +452,7 @@ def nbsp_missing(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tr
     for file in files:
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
-            output_file = makeOutputFileName(
-                file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
 
             cmap_table = font["cmap"]
             cmap_table_copy = deepcopy(cmap_table)
@@ -523,9 +480,7 @@ def decompose_transformed_components():
 @decompose_transformed_components.command()
 @add_file_or_path_argument()
 @add_common_options()
-def decompose_transformed(
-    input_path, recalcTimestamp=False, outputDir=None, overWrite=True
-):
+def decompose_transformed(input_path, recalcTimestamp=False, outputDir=None, overWrite=True):
     """
     Decomposes composite glyphs that have transformed components.
 
@@ -550,9 +505,7 @@ def decompose_transformed(
     for file in files:
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
-            output_file = makeOutputFileName(
-                file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
 
             glyph_set = font.getGlyphSet()
             glyph_table = font["glyf"]
@@ -609,9 +562,7 @@ def remove_glyf_duplicate_components():
 @remove_glyf_duplicate_components.command()
 @add_file_or_path_argument()
 @add_common_options()
-def duplicate_components(
-    input_path, recalcTimestamp=False, outputDir=None, overWrite=True
-):
+def duplicate_components(input_path, recalcTimestamp=False, outputDir=None, overWrite=True):
     """
     Removes duplicate components which have the same x,y coordinates.
 
@@ -656,9 +607,7 @@ def duplicate_components(
                         seen.append(comp_info)
 
             if glyph_table_copy.compile(font) != glyph_table.compile(font):
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
             else:
@@ -706,9 +655,7 @@ def kern_table(input_path, recalcTimestamp=False, outputDir=None, overWrite=True
             kern = font["kern"]
 
             if all(kernTable.format != 0 for kernTable in kern.kernTables):
-                generic_warning_message(
-                    f"{os.path.basename(file)} The 'kern' table doesn't have any format-0 subtable"
-                )
+                generic_warning_message(f"{os.path.basename(file)} The 'kern' table doesn't have any format-0 subtable")
                 continue
 
             kern_table_copy = deepcopy(kern)
@@ -721,19 +668,14 @@ def kern_table(input_path, recalcTimestamp=False, outputDir=None, overWrite=True
                 if table.format == 0:
                     pairs_to_delete = []
                     for left_glyph, right_glyph in table.kernTable.keys():
-                        if (
-                            left_glyph not in character_glyphs
-                            or right_glyph not in character_glyphs
-                        ):
+                        if left_glyph not in character_glyphs or right_glyph not in character_glyphs:
                             pairs_to_delete.append((left_glyph, right_glyph))
                     if len(pairs_to_delete) > 0:
                         for pair in pairs_to_delete:
                             del table.kernTable[pair]
 
             if kern_table_copy.compile(font) != kern.compile(font):
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
             else:
@@ -777,9 +719,7 @@ def strip_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tru
             font.name_table.remove_leading_trailing_spaces()
 
             if name_table_copy.compile(font) != font.name_table.compile(font):
-                output_file = makeOutputFileName(
-                    file, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
 

@@ -29,9 +29,7 @@ def set_linegap_percent():
     help="Adjust font line spacing to % of UPM value.",
 )
 @add_common_options()
-def set_linegap(
-    input_path, percent, outputDir=None, recalcTimestamp=False, overWrite=True
-):
+def set_linegap(input_path, percent, outputDir=None, recalcTimestamp=False, overWrite=True):
     """Modifies the line spacing metrics in one or more fonts.
 
     This is a fork of font-line by Source Foundry: https://github.com/source-foundry/font-line
@@ -52,9 +50,7 @@ def set_linegap(
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
             font.modify_linegap_percent(percent=percent)
-            output_file = makeOutputFileName(
-                file, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
             font.save(output_file)
             file_saved_message(file)
         except Exception as e:
@@ -75,9 +71,7 @@ def align_vertical_metrics():
     help="Use SIL method: https://silnrsi.github.io/FDBP/en-US/Line_Metrics.html",
 )
 @add_common_options()
-def align(
-    input_path, sil_method=False, outputDir=None, recalcTimestamp=False, overWrite=True
-):
+def align(input_path, sil_method=False, outputDir=None, recalcTimestamp=False, overWrite=True):
     """
     Aligns all fonts stored in INPUT_PATH folder to the same baseline.
 
@@ -136,9 +130,7 @@ def align(
     max_real_descender = max(real_descenders)
     max_ideal_ascender = max(ideal_ascenders)
     max_ideal_descender = max(ideal_descenders)
-    typo_line_gap = (max_real_ascender + max_real_descender) - (
-        max_ideal_ascender + max_ideal_descender
-    )
+    typo_line_gap = (max_real_ascender + max_real_descender) - (max_ideal_ascender + max_ideal_descender)
 
     for file in files:
         try:
@@ -159,9 +151,7 @@ def align(
                 font.os_2_table.sTypoDescender = -max_real_descender
                 font.os_2_table.sTypoLineGap = 0
 
-            output_file = makeOutputFileName(
-                file, outputDir=outputDir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(file, outputDir=outputDir, overWrite=overWrite)
             font.save(output_file)
             file_saved_message(file)
         except Exception as e:
@@ -255,9 +245,7 @@ def copy(source_file, destination, outputDir, recalcTimestamp, overWrite):
             font["OS/2"].sTypoDescender = sTypoDescender
             font["OS/2"].sTypoLineGap = sTypoLineGap
 
-            output_file = makeOutputFileName(
-                f, outputDir=outputDir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(f, outputDir=outputDir, overWrite=overWrite)
             font.save(output_file)
             click.secho(f"{os.path.basename(output_file)} --> saved", fg="green")
         except Exception as e:

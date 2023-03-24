@@ -44,9 +44,7 @@ class TableOS2(table_O_S_2f_2):
         :type value: str
         """
         if len(value) > 4:
-            print(
-                "achVendID string was longer than 4 characters and has been truncated."
-            )
+            print("achVendID string was longer than 4 characters and has been truncated.")
         value = value[0:4].ljust(4)
         setattr(self, "achVendID", value)
 
@@ -151,9 +149,7 @@ class TableOS2(table_O_S_2f_2):
         if self.version >= 4:
             setattr(self, "fsSelection", set_nth_bit(self.fsSelection, 8))
         else:
-            print(
-                "WARNING: fsSelection bit 8 is only defined in OS/2 version 4 and up."
-            )
+            print("WARNING: fsSelection bit 8 is only defined in OS/2 version 4 and up.")
             return
 
     def clear_wws_bit(self) -> None:
@@ -177,9 +173,7 @@ class TableOS2(table_O_S_2f_2):
         if self.version >= 4:
             setattr(self, "fsSelection", set_nth_bit(self.fsSelection, 9))
         else:
-            print(
-                "WARNING: fsSelection bit 9 is only defined in OS/2 version 4 and up."
-            )
+            print("WARNING: fsSelection bit 9 is only defined in OS/2 version 4 and up.")
             return
 
     def clear_oblique_bit(self):
@@ -314,9 +308,7 @@ class TableOS2(table_O_S_2f_2):
             x_height = get_glyph_bounds(font.getGlyphSet(), "x")
             setattr(self, "sxHeight", x_height["yMax"])
         else:
-            print(
-                f"WARNING: sxHeight is only defined in OS/2 version 2 and up. Current version is {self.version}"
-            )
+            print(f"WARNING: sxHeight is only defined in OS/2 version 2 and up. Current version is {self.version}")
 
     # sCapHeight
     def recalc_cap_height(self, font):
@@ -324,18 +316,14 @@ class TableOS2(table_O_S_2f_2):
             cap_height = get_glyph_bounds(font.getGlyphSet(), "H")
             setattr(self, "sCapHeight", cap_height["yMax"])
         else:
-            print(
-                f"WARNING: sCapHeight is only defined in OS/2 version 2 and up. Current version is {self.version}"
-            )
+            print(f"WARNING: sCapHeight is only defined in OS/2 version 2 and up. Current version is {self.version}")
 
     # usMaxContext
     def recalc_max_context(self, font):
         if self.version >= 2:
             setattr(self, "usMaxContext", maxCtxFont(font))
         else:
-            print(
-                f"WARNING: usMaxContext is only defined in OS/2 version 2 and up. Current version is {self.version}"
-            )
+            print(f"WARNING: usMaxContext is only defined in OS/2 version 2 and up. Current version is {self.version}")
 
     # OS/2 table version
 
@@ -353,9 +341,7 @@ class TableOS2(table_O_S_2f_2):
 
         # Target version must be greater than current version.
         if not target_version > current_version:
-            print(
-                f"WARNING: OS/2 version is {current_version}. Target version must be greater than current version."
-            )
+            print(f"WARNING: OS/2 version is {current_version}. Target version must be greater than current version.")
             return
 
         # Set the target version as first to suppress FontTools warnings

@@ -1,6 +1,7 @@
 import setuptools
 
 from pathlib import Path
+
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
@@ -9,7 +10,7 @@ setuptools.setup(
     version="0.9.1",
     description="A set of command line tools to edit fonts with FontTools",
     long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     author="ftCLI",
     author_email="ftcli@proton.me",
     url="https://github.com/ftCLI/ftCLI",

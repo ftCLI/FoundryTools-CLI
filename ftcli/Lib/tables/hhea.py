@@ -4,7 +4,6 @@ from fontTools.ttLib.tables._h_h_e_a import table__h_h_e_a
 
 
 class TableHhea(table__h_h_e_a):
-
     def set_caret_slope_rise(self, value: int):
         setattr(self, "caretSlopeRise", value)
 
@@ -22,4 +21,3 @@ class TableHhea(table__h_h_e_a):
 
     def set_linegap(self, value: int):
         setattr(self, "lineGap", value)
-

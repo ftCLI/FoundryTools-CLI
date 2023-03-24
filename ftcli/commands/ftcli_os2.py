@@ -24,12 +24,8 @@ from ftCLI.Lib.utils.click_tools import (
     type=click.IntRange(1, 5),
     help="Upgrades `OS/2` table version.",
 )
-@click.option(
-    "-wgh", "--weight", type=click.IntRange(1, 1000), help="Sets `usWeightClass` value."
-)
-@click.option(
-    "-wdt", "--width", type=click.IntRange(1, 9), help="Sets `usWidthClass` value."
-)
+@click.option("-wgh", "--weight", type=click.IntRange(1, 1000), help="Sets `usWeightClass` value.")
+@click.option("-wdt", "--width", type=click.IntRange(1, 9), help="Sets `usWidthClass` value.")
 @click.option(
     "-it/-no-it",
     "--italic/--no-italic",
@@ -206,9 +202,7 @@ def cli(input_path, recalcTimestamp, outputDir, overWrite, **kwargs):
     for file in files:
         # try:
         font = Font(file, recalcTimestamp=recalcTimestamp)
-        output_file = makeOutputFileName(
-            file, outputDir=output_dir, overWrite=overWrite
-        )
+        output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
 
         # Using copy instead of deepcopy and avoiding to compile OS/2 tables is faster
 
@@ -294,15 +288,11 @@ def cli(input_path, recalcTimestamp, outputDir, overWrite, **kwargs):
             # fontTools way, too permissive
             # unicode_ranges = font.os_2_table.recalcUnicodeRanges(font)
 
-            temp_t1_file = makeOutputFileName(
-                output_file, outputDir=output_dir, extension=".t1", overWrite=True
-            )
+            temp_t1_file = makeOutputFileName(output_file, outputDir=output_dir, extension=".t1", overWrite=True)
             command = ["tx", "-t1", file, temp_t1_file]
             run_shell_command(command, suppress_output=True)
 
-            temp_otf_file = makeOutputFileName(
-                output_file, outputDir=output_dir, suffix="_tmp", overWrite=True
-            )
+            temp_otf_file = makeOutputFileName(output_file, outputDir=output_dir, suffix="_tmp", overWrite=True)
             command = ["makeotf", "-f", temp_t1_file, "-o", temp_otf_file]
             run_shell_command(command, suppress_output=True)
 
@@ -343,9 +333,7 @@ def cli(input_path, recalcTimestamp, outputDir, overWrite, **kwargs):
                 )
 
         # Check if tables have changed before saving the font. No need to compile here.
-        if (font.os_2_table != os_2_table_copy) or (
-            font.head_table != head_table_copy
-        ):
+        if (font.os_2_table != os_2_table_copy) or (font.head_table != head_table_copy):
             font.save(output_file)
             file_saved_message(output_file)
         else:

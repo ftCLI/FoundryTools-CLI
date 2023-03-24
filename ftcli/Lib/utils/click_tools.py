@@ -16,9 +16,7 @@ def add_file_or_path_argument(dir_okay=True, file_okay=True):
     _file_or_path_argument = [
         click.argument(
             "input_path",
-            type=click.Path(
-                exists=True, resolve_path=True, dir_okay=dir_okay, file_okay=file_okay
-            ),
+            type=click.Path(exists=True, resolve_path=True, dir_okay=dir_okay, file_okay=file_okay),
         )
     ]
     return add_options(_file_or_path_argument)
@@ -94,6 +92,7 @@ def add_platform_id_option(required=False, multiple=False, help_string=""):
 def file_overwrite_prompt(input_file) -> bool:
     return click.confirm(f"{input_file} already exists. Do you want to overwrite it?")
 
+
 def file_not_selected_message(file):
     click.secho(
         f"[{click.style('SKIP', fg='yellow')}] {os.path.basename(file)} "
@@ -124,9 +123,7 @@ def file_not_exists_message(file):
 
 
 def file_saved_message(file):
-    click.secho(
-        f"[{click.style('DONE', fg='green')}] {file} {click.style('saved', fg='green')}"
-    )
+    click.secho(f"[{click.style('DONE', fg='green')}] {file} {click.style('saved', fg='green')}")
 
 
 def generic_success_message(success_message):
