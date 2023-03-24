@@ -82,11 +82,12 @@ class TrueTypeToCFF(object):
 
         cff_font_info = dict(
             version=".".join([major_version, str(int(minor_version))]),
-            FullName=self.font["name"].getBestFullName(),
-            FamilyName=self.font["name"].getBestFamilyName(),
-            ItalicAngle=self.font["post"].italicAngle,
-            UnderlinePosition=self.font["post"].underlinePosition,
-            UnderlineThickness=self.font["post"].underlineThickness,
+            FullName=self.font.name_table.getBestFullName(),
+            FamilyName=self.font.name_table.getBestFamilyName(),
+            ItalicAngle=self.font.post_table.italicAngle,
+            UnderlinePosition=self.font.post_table.underlinePosition,
+            UnderlineThickness=self.font.post_table.underlineThickness,
+            isFixedPitch=False if self.font.post_table.isFixedPitch == 0 else True
         )
 
         return cff_font_info
