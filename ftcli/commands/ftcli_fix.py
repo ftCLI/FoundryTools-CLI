@@ -21,6 +21,79 @@ from ftCLI.Lib.utils.click_tools import (
 
 
 @click.group()
+def fix_monospaced_fonts():
+    pass
+
+
+@fix_monospaced_fonts.command()
+@add_file_or_path_argument()
+@add_common_options()
+def monospace(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
+    """
+    If the family is monospaced:
+
+    \b
+    * post.isFixedPitch must be set to a non-zero value
+    * OS/2.panose.bProportion must be set to 9
+    * CFF.cff.TopDictIndex[0].isFixedPitch must be set to True
+
+    fontbakery check id: com.google.fonts/check/monospace
+    """
+
+    files = get_fonts_list(input_path)
+    if len(files) == 0:
+        generic_error_message(f"No valid font files found in {input_path}.")
+        return
+
+    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    dir_ok, error_message = check_output_dir(output_dir)
+    if dir_ok is False:
+        generic_error_message(error_message)
+        return
+
+    for file in files:
+
+        try:
+            font = Font(file, recalcTimestamp=recalcTimestamp)
+
+            post_table_copy = deepcopy(font.post_table)
+            os2_table_copy = deepcopy(font.os_2_table)
+
+            font.post_table.set_fixed_pitch(True)
+            font.os_2_table.panose.bProportion = 9
+
+            post_table_changed = False
+            if post_table_copy.compile(font) != font.post_table.compile(font):
+                post_table_changed = True
+
+            os2_table_changed = False
+            if os2_table_copy.compile(font) != font.os_2_table.compile(font):
+                os2_table_changed = True
+
+            cff_table_changed = False
+            if font.is_cff:
+                cff_table = font["CFF "]
+                cff_table_copy = deepcopy(cff_table)
+                top_dict = cff_table.cff.topDictIndex[0]
+                setattr(top_dict, "isFixedPitch", True)
+
+                if cff_table_copy.compile(font) != cff_table.compile(font):
+                    cff_table_changed = True
+
+            if post_table_changed or os2_table_changed or cff_table_changed:
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
+                font.save(output_file)
+                file_saved_message(file)
+
+            else:
+                file_not_changed_message(file)
+
+        except Exception as e:
+            generic_error_message(e)
+
+
+
+@click.group()
 def fix_os2_table_unicode_codepage():
     pass
 
@@ -719,6 +792,7 @@ cli = click.CommandCollection(
         fix_italic_metadata,
         fix_caret_offset,
         fix_missing_nbspace,
+        fix_monospaced_fonts,
         decompose_transformed_components,
         remove_glyf_duplicate_components,
         fix_unmapped_glyphs_kern_table,

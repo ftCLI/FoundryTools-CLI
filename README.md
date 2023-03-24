@@ -35,7 +35,7 @@ Or, to install in editable mode:
 
 ## Arguments
 
-* [INPUT_PATH](#input_path)
+* [INPUT_PATH](#inputpath)
 
 ## Common options
 
@@ -71,6 +71,7 @@ Or, to install in editable mode:
   * [duplicate-components](#ftcli-fix-duplicate-components)
   * [italic-angle](#ftcli-fix-italic-angle)
   * [kern-table](#ftcli-fix-kern-table)
+  * [monospace](#ftcli-fix-monospace)
   * [nbsp-missing](#ftcli-fix-nbsp-missing)
   * [nbsp-width](#ftcli-fix-nbsp-width)
   * [os2-ranges](#ftcli-fix-os2-ranges)
@@ -850,6 +851,35 @@ fontbakery check id: com.google.fonts/check/kern_table
 **Usage**:
 
     ftcli fix kern-table [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
+
+### ftcli fix monospace
+
+If the family is monospaced:
+
+* post.isFixedPitch must be set to a non-zero value
+* OS/2.panose.bProportion must be set to 9
+* CFF.cff.TopDictIndex[0].isFixedPitch must be set to True
+
+fontbakery check id: com.google.fonts/check/monospace
+
+**Usage**:
+
+    ftcli fix monospace [OPTIONS] INPUT_PATH
 
 **Options**:
 
