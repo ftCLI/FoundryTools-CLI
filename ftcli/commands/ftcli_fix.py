@@ -60,7 +60,12 @@ def monospace(input_path, outputDir=None, recalcTimestamp=False, overWrite=True)
             os2_table_copy = deepcopy(font.os_2_table)
 
             font.post_table.set_fixed_pitch(True)
-            font.os_2_table.panose.bProportion = 9
+
+            if font.os_2_table.panose.bProportion != 9:
+                font.os_2_table.panose.bProportion = 9
+                # Ensure that panose.bFamilyType is non-zero when panose.bProportion is 9
+                if font.os_2_table.panose.bFamilyType == 0:
+                    font.os_2_table.panose.bFamilyType = 2
 
             post_table_changed = False
             if post_table_copy.compile(font) != font.post_table.compile(font):
