@@ -99,8 +99,17 @@ Or, to install in editable mode:
   * [font-os2-table](#ftcli-print-os2-table)
     
 * [**utils**](#ftcli-utils)
-  * 
-
+  * [add-dsig](#ftcli-utils-add-dsig)
+  * [cff-autohint](#ftcli-utils-cff-autohint)
+  * [cff-check-outlines](#ftcli-utils-cff-check-outlines)
+  * [cff-dehint](#ftcli-utils-cff-dehint)
+  * [cff-desubr](#ftcli-utils-cff-desubr)
+  * [cff-subr](#ftcli-utils-cff-subr)
+  * [font-organizer](#ftcli-utils-font-organizer)
+  * [font-renamer](#ftcli-utils-font-renamer)
+  * [ttf-autohint](#ftcli-utils-ttf-autohint)
+  * [ttf-dehint](#ftcli-utils-ttf-dehint)
+  * [remove-overlaps](#ftcli-utils-ttf-remove-overlaps)
 
 ## Arguments
 
