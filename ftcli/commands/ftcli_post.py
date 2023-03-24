@@ -84,8 +84,6 @@ def cli(input_path, recalcTimestamp, outputDir, overWrite, **kwargs):
             # Process the arguments
             if "italic_angle" in params.keys():
                 font.post_table.set_italic_angle(params.get("italic_angle"))
-                # font.hhea_table.caretSlopeRise = 99
-                # font.hhea_table.caretSlopeRun = 99
                 if font.is_cff:
                     font["CFF "].cff.topDictIndex[0].ItalicAngle = int(params.get("italic_angle"))
 
