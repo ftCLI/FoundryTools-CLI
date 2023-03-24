@@ -5,8 +5,8 @@ from fontTools.pens.qu2cuPen import Qu2CuPen
 from fontTools.pens.t2CharStringPen import T2CharStringPen
 from fontTools.subset import Subsetter
 
-from font_converter.Lib.Font import Font
-from font_converter.Lib.click_tools import generic_error_message, generic_warning_message
+from ftCLI.Lib.Font import Font
+from ftCLI.Lib.utils.click_tools import generic_error_message, generic_warning_message
 
 
 class TrueTypeToCFF(object):
