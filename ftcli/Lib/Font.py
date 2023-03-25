@@ -2,14 +2,11 @@ import math
 import os
 
 import click
-import pathops
 from beziers.path import BezierPath, Line, Point
 from fontTools.misc.timeTools import timestampToString
 from fontTools.otlLib.maxContextCalc import maxCtxFont
 from fontTools.pens.boundsPen import BoundsPen
-from fontTools.pens.qu2cuPen import Qu2CuPen
 from fontTools.pens.recordingPen import DecomposingRecordingPen
-from fontTools.pens.t2CharStringPen import T2CharStringPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.subset import Subsetter
 from fontTools.ttLib import TTFont, registerCustomTableClass, newTable
@@ -451,78 +448,6 @@ class Font(TTFont):
             subfamily_name = self.name_table.getDebugName(2)
 
         return subfamily_name
-
-    def get_t2_charstrings(self) -> dict:
-        """
-        Get CFF charstrings using T2CharStringPen
-
-        :return: CFF charstrings.
-        """
-        charstrings = {}
-        glyph_set = self.getGlyphSet()
-
-        for k, v in glyph_set.items():
-            # Remove overlaps and fix contours direction
-            pathops_path = pathops.Path()
-            pathops_pen = pathops_path.getPen(glyphSet=glyph_set)
-            try:
-                glyph_set[k].draw(pathops_pen)
-                pathops_path.simplify()
-            except TypeError:
-                pass
-
-            # Draw the glyph with T2CharStringPen and get the charstring
-            t2_pen = T2CharStringPen(v.width, glyphSet=glyph_set)
-            pathops_path.draw(t2_pen)
-            charstring = t2_pen.getCharString()
-            charstrings[k] = charstring
-
-        return charstrings
-
-    def get_simplified_charstrings(self, tolerance: float = 1, all_cubic: bool = True) -> dict:
-        charstrings = {}
-        glyph_set = self.getGlyphSet()
-
-        for k, v in glyph_set.items():
-            # Correct contours direction and remove overlaps with pathops
-            pathops_path = pathops.Path()
-            pathops_pen = pathops_path.getPen(glyphSet=glyph_set)
-            try:
-                glyph_set[k].draw(pathops_pen)
-                pathops_path.simplify()
-            except TypeError:
-                pass
-
-            t2_pen = T2CharStringPen(v.width, glyphSet=glyph_set)
-            qu2cu_pen = Qu2CuPen(t2_pen, max_err=tolerance, all_cubic=all_cubic, reverse_direction=False)
-            pathops_path.draw(qu2cu_pen)
-
-            charstring = t2_pen.getCharString()
-            charstrings[k] = charstring
-
-        return charstrings
-
-    def correct_contours_direction(self):
-        glyph_set = self.getGlyphSet()
-        charstrings = {}
-        for k, v in glyph_set.items():
-            pathops_path = pathops.Path()
-            pathops_pen = pathops_path.getPen(glyphSet=glyph_set)
-            try:
-                glyph_set[k].draw(pathops_pen)
-                pathops_path.simplify()
-            except TypeError:
-                pass
-
-            t2_pen = T2CharStringPen(v.width, glyphSet=glyph_set)
-            qu2cu_pen = Qu2CuPen(t2_pen, max_err=1, all_cubic=True, reverse_direction=False)
-
-            pathops_path.draw(qu2cu_pen)
-
-            charstring = t2_pen.getCharString()
-            charstrings[k] = charstring
-
-        return charstrings
 
     def subset(self, glyph_ids: list):
         """
