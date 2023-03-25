@@ -1409,7 +1409,7 @@ Command line `OS/2` table editor.
                                     other than 0.0, italic bits will be set. If
                                     `italicAngle` value is 0.0, italic bits will
                                     be cleared.
-    --recalc-us-max-context         Recalculates `usMaxContext` value.
+    --recalc-max-context            Recalculates `usMaxContext` value.
     --import-unicodes FILE          Imports `ulUnicodeRanges*` from a source
                                     font.
     -out, --output-dir DIRECTORY    Specify the directory where output files are
