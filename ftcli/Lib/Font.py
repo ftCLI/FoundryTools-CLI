@@ -5,6 +5,7 @@ import click
 import pathops
 from beziers.path import BezierPath, Line, Point
 from fontTools.misc.timeTools import timestampToString
+from fontTools.otlLib.maxContextCalc import maxCtxFont
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.qu2cuPen import Qu2CuPen
 from fontTools.pens.recordingPen import DecomposingRecordingPen
@@ -12,6 +13,8 @@ from fontTools.pens.t2CharStringPen import T2CharStringPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.subset import Subsetter
 from fontTools.ttLib import TTFont, registerCustomTableClass, newTable
+from ufo2ft.fontInfoData import intListToNum
+from ufo2ft.util import calcCodePageRanges
 
 from ftCLI.Lib import constants
 from ftCLI.Lib.tables.OS_2 import TableOS2
@@ -19,7 +22,8 @@ from ftCLI.Lib.tables.head import TableHead
 from ftCLI.Lib.tables.hhea import TableHhea
 from ftCLI.Lib.tables.name import TableName
 from ftCLI.Lib.tables.post import TablePost
-from ftCLI.Lib.utils.misc import is_nth_bit_set
+from ftCLI.Lib.utils.glyphs import get_glyph_bounds
+from ftCLI.Lib.utils.misc import is_nth_bit_set, unset_nth_bit
 
 registerCustomTableClass("OS/2", "ftCLI.Lib.tables.OS_2", "TableOS2")
 registerCustomTableClass("head", "ftCLI.Lib.tables.head", "TableHead")
@@ -152,33 +156,6 @@ class Font(TTFont):
         if not self.is_bold:
             self.os_2_table.set_regular_bit()
 
-    def recalc_italic_bits(self, mode: click.IntRange(1, 3) = 1):
-        """
-        If the italic angle is not 0, set the italic and/or oblique bits
-
-        :param mode: click.IntRange(1, 3) = 1, defaults to 1
-        :type mode: click.IntRange(1, 3) (optional)
-        """
-
-        italic_angle = self.post_table.italicAngle
-
-        if round(italic_angle) != 0:
-            # Set italic bits only
-            if mode == 1:
-                self.set_italic()
-                self.unset_oblique()
-            # Set italic and oblique bits
-            if mode == 2:
-                self.set_italic()
-                self.set_oblique()
-            # Set oblique bit only
-            if mode == 3:
-                self.set_oblique()
-                self.unset_italic()
-        else:
-            self.unset_italic()
-            self.unset_oblique()
-
     def set_upright(self):
         """
         Clears the italic and oblique bits
@@ -210,6 +187,33 @@ class Font(TTFont):
         Clears the oblique bit in the OS/2 table
         """
         self.os_2_table.clear_oblique_bit()
+
+    def calculate_italic_bits(self, mode: click.IntRange(1, 3) = 1):
+        """
+        If the italic angle is not 0, set the italic and/or oblique bits
+
+        :param mode: click.IntRange(1, 3) = 1, defaults to 1
+        :type mode: click.IntRange(1, 3) (optional)
+        """
+
+        italic_angle = self.post_table.italicAngle
+
+        if round(italic_angle) != 0:
+            # Set italic bits only
+            if mode == 1:
+                self.set_italic()
+                self.unset_oblique()
+            # Set italic and oblique bits
+            if mode == 2:
+                self.set_italic()
+                self.set_oblique()
+            # Set oblique bit only
+            if mode == 3:
+                self.set_oblique()
+                self.unset_italic()
+        else:
+            self.unset_italic()
+            self.unset_oblique()
 
     def calculate_italic_angle(self) -> float:
         """
@@ -294,12 +298,92 @@ class Font(TTFont):
     def calculate_run_rise_angle(self) -> float:
         rise = self.hhea_table.caretSlopeRise
         run = self.hhea_table.caretSlopeRun
-        italic_angle = math.degrees(math.atan(-run / rise))
-        return italic_angle
+        run_rise_angle = math.degrees(math.atan(-run / rise))
+        return run_rise_angle
+
+    def calculate_codepage_ranges(self) -> (int, int):
+        """
+        Recalculates OS/2 table ulCodePageRange1 and ulCodPageRange1 values
+
+        :return: ul_code_page_range1, ul_code_page_range2
+        """
+        unicodes = set()
+        for table in self["cmap"].tables:
+            if table.isUnicode():
+                unicodes.update(table.cmap.keys())
+
+        code_page_ranges = calcCodePageRanges(unicodes)
+        codepage_range1 = intListToNum(code_page_ranges, 0, 32)
+        codepage_range2 = intListToNum(code_page_ranges, 32, 32)
+
+        return codepage_range1, codepage_range2
+
+    def calculate_x_height(self) -> int:
+        """
+        If the OS/2 table version is 2 or higher, get the yMax value of the 'x' glyph and set the sxHeight value to that
+        """
+        if self.os_2_table.version >= 2:
+            bounds = get_glyph_bounds(self.getGlyphSet(), "x")
+            return bounds["yMax"]
+
+    def calculate_cap_height(self) -> int:
+        if self.os_2_table.version >= 2:
+            bounds = get_glyph_bounds(self.getGlyphSet(), "H")
+            return bounds["yMax"]
+
+    def calculate_max_context(self) -> int:
+        if self.os_2_table.version >= 2:
+            max_context = maxCtxFont(self)
+            return max_context
+
+    def upgrade_os2_version(self, target_version: int) -> None:
+        """
+        Upgrades `OS/2` table version to `target_version`
+
+        :param target_version: integer between 1 and 5
+        :return: None
+        """
+
+        # Get the current version
+        current_version = getattr(self.os_2_table, "version")
+
+        # Target version must be greater than current version.
+        if not target_version > current_version:
+            return
+
+        # Set the target version as first to suppress FontTools warnings
+        setattr(self.os_2_table, "version", target_version)
+
+        # When upgrading from version 0, ulCodePageRanges are to be recalculated.
+        if current_version < 1:
+            codepage_ranges = self.calculate_codepage_ranges()
+            self.os_2_table.set_codepage_ranges(codepage_ranges)
+            # Return if upgrading from version 0 to version 1.
+            if target_version == 1:
+                return
+
+        # Upgrading from version 1 requires creating sxHeight, sCapHeight, usDefaultChar, usBreakChar and usMaxContext
+        # entries.
+        if current_version < 2:
+            self.calculate_x_height()
+            self.calculate_cap_height()
+            setattr(self.os_2_table, "usDefaultChar", 0)
+            setattr(self.os_2_table, "usBreakChar", 32)
+            self.calculate_max_context()
+
+        # Write default values if target_version == 5.
+        if target_version > 4:
+            setattr(self, "usLowerOpticalPointSize", 0)
+            setattr(self, "usUpperOpticalPointSize", 65535 / 20)
+
+        # Finally, make sure to clear bits 7, 8 and 9 in ['OS/2'].fsSelection when target version is lower than 4.
+        if target_version < 4:
+            for b in (7, 8, 9):
+                setattr(self, "fsSelection", unset_nth_bit(self.os_2_table.fsSelection, b))
 
     def get_file_name(self, source) -> str:
         """
-        Returns the font's file name according to the passed source id.
+        Returns the font's file name according to the passed source.
 
         1: FamilyName-StyleName
 

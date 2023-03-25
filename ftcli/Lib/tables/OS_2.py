@@ -1,10 +1,6 @@
 from fontTools.misc.textTools import num2binary
-from fontTools.otlLib.maxContextCalc import maxCtxFont
 from fontTools.ttLib.tables.O_S_2f_2 import table_O_S_2f_2
-from ufo2ft.fontInfoData import intListToNum
-from ufo2ft.util import calcCodePageRanges
 
-from ftCLI.Lib.utils.glyphs import get_glyph_bounds
 from ftCLI.Lib.utils.misc import is_nth_bit_set, set_nth_bit, unset_nth_bit
 
 
@@ -261,26 +257,32 @@ class TableOS2(table_O_S_2f_2):
         """
         setattr(self, "fsType", unset_nth_bit(self.fsType, 9))
 
-    # Recalc codepage ranges
-
-    @staticmethod
-    def recalc_codepage_ranges(font) -> (int, int):
+    def set_cap_height(self, cap_height: int) -> None:
         """
-        Recalculates OS/2 table ulCodePageRange1 and ulCodPageRange1 values
+        Sets the sCapHeight value
 
-        :param font: The Font object
-        :return: ul_code_page_range1, ul_code_page_range2
+        :param cap_height: Integer
         """
-        unicodes = set()
-        for table in font["cmap"].tables:
-            if table.isUnicode():
-                unicodes.update(table.cmap.keys())
+        if self.version >= 2:
+            setattr(self, "sCapHeight", cap_height)
 
-        code_page_ranges = calcCodePageRanges(unicodes)
-        codepage_range1 = intListToNum(code_page_ranges, 0, 32)
-        codepage_range2 = intListToNum(code_page_ranges, 32, 32)
+    def set_x_height(self, x_height: int) -> None:
+        """
+        Sets the sxHeight value
 
-        return codepage_range1, codepage_range2
+        :param x_height: Integer
+        """
+        if self.version >= 2:
+            setattr(self, "sxHeight", x_height)
+
+    def set_max_context(self, max_context: int) -> None:
+        """
+        Sets the usMaxContext value
+
+        :param max_context: Integer
+        """
+        if self.version >= 2:
+            setattr(self, "usMaxContext", max_context)
 
     def set_codepage_ranges(self, codepage_ranges) -> None:
         """
@@ -291,88 +293,6 @@ class TableOS2(table_O_S_2f_2):
         if self.version >= 1:
             setattr(self, "ulCodePageRange1", codepage_ranges[0])
             setattr(self, "ulCodePageRange2", codepage_ranges[1])
-        else:
-            print(
-                f"WARNING: ulCodePageRange1 and ulCodePageRange2 are only defined in OS/2 version 1 and up. Current "
-                f"version is {self.version}."
-            )
-
-    # sxHeight
-    def recalc_x_height(self, font):
-        """
-        If the OS/2 table version is 2 or higher, get the yMax value of the 'x' glyph and set the sxHeight value to that
-
-        :param font: The Font object
-        """
-        if self.version >= 2:
-            x_height = get_glyph_bounds(font.getGlyphSet(), "x")
-            setattr(self, "sxHeight", x_height["yMax"])
-        else:
-            print(f"WARNING: sxHeight is only defined in OS/2 version 2 and up. Current version is {self.version}")
-
-    # sCapHeight
-    def recalc_cap_height(self, font):
-        if self.version >= 2:
-            cap_height = get_glyph_bounds(font.getGlyphSet(), "H")
-            setattr(self, "sCapHeight", cap_height["yMax"])
-        else:
-            print(f"WARNING: sCapHeight is only defined in OS/2 version 2 and up. Current version is {self.version}")
-
-    # usMaxContext
-    def recalc_max_context(self, font):
-        if self.version >= 2:
-            setattr(self, "usMaxContext", maxCtxFont(font))
-        else:
-            print(f"WARNING: usMaxContext is only defined in OS/2 version 2 and up. Current version is {self.version}")
-
-    # OS/2 table version
-
-    def upgrade_version(self, font, target_version: int) -> None:
-        """
-        Upgrades `OS/2` table version to `target_version`
-
-        :param font: TTFont object
-        :param target_version: integer between 1 and 5
-        :return: None
-        """
-
-        # Get the current version
-        current_version = getattr(self, "version")
-
-        # Target version must be greater than current version.
-        if not target_version > current_version:
-            print(f"WARNING: OS/2 version is {current_version}. Target version must be greater than current version.")
-            return
-
-        # Set the target version as first to suppress FontTools warnings
-        setattr(self, "version", target_version)
-
-        # When upgrading from version 0, ulCodePageRanges are to be recalculated.
-        if current_version < 1:
-            codepage_ranges = self.recalc_codepage_ranges(font)
-            self.set_codepage_ranges(codepage_ranges)
-            # Return if upgrading from version 0 to version 1.
-            if target_version == 1:
-                return
-
-        # Upgrading from version 1 requires creating sxHeight, sCapHeight, usDefaultChar, usBreakChar and usMaxContext
-        # entries.
-        if current_version < 2:
-            self.recalc_x_height(font)
-            self.recalc_cap_height(font)
-            setattr(self, "usDefaultChar", 0)
-            setattr(self, "usBreakChar", 32)
-            self.recalc_max_context(font)
-
-        # Write default values if target_version == 5.
-        if target_version > 4:
-            setattr(self, "usLowerOpticalPointSize", 0)
-            setattr(self, "usUpperOpticalPointSize", 65535 / 20)
-
-        # Finally, make sure to clear bits 7, 8 and 9 in ['OS/2'].fsSelection when target version is lower than 4.
-        if target_version < 4:
-            for b in (7, 8, 9):
-                setattr(self, "fsSelection", unset_nth_bit(self.fsSelection, b))
 
     def to_dict(self) -> dict:
         """

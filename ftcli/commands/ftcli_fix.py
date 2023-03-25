@@ -377,7 +377,7 @@ def italic_angle(input_path, mode, recalcTimestamp=False, outputDir=None, overWr
             # Set or clear italic/oblique bits according to post.italicAngle
             is_italic = font.is_italic
             is_oblique = font.is_oblique
-            font.recalc_italic_bits(mode=mode)
+            font.calculate_italic_bits(mode=mode)
 
             if font.is_italic == is_italic:
                 italic_bits_ok = True

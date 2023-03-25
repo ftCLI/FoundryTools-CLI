@@ -13,6 +13,7 @@ from ftCLI.Lib.utils.click_tools import (
     file_saved_message,
     file_not_changed_message,
     generic_error_message,
+    generic_warning_message,
 )
 
 
@@ -166,7 +167,7 @@ embedding restrictions specified in bits 0-3 and 8 also apply.
               """,
 )
 @click.option(
-    "--recalc-us-max-context",
+    "--recalc-max-context",
     is_flag=True,
     default=None,
     help="Recalculates `usMaxContext` value.",
@@ -200,144 +201,173 @@ def cli(input_path, recalcTimestamp, outputDir, overWrite, **kwargs):
         return
 
     for file in files:
-        # try:
-        font = Font(file, recalcTimestamp=recalcTimestamp)
-        output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
+        try:
+            font = Font(file, recalcTimestamp=recalcTimestamp)
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
 
-        # Using copy instead of deepcopy and avoiding to compile OS/2 tables is faster
+            # Using copy instead of deepcopy and avoiding to compile OS/2 tables is faster
+            os_2_table_copy = copy(font.os_2_table)
 
-        # Make a copy of the `OS/2` table to check later if it has been modified
-        os_2_table_copy = copy(font.os_2_table)
+            # Changing bold and italic bits involves `head` table too
+            head_table_copy = copy(font.head_table)
 
-        # Changing bold and italic bits involves `head` table too
-        head_table_copy = copy(font.head_table)
+            # Upgrade version as first to avoid warning messages from fontTools
+            if "version" in params.keys():
+                if not font.os_2_table.version < params.get("version"):
+                    generic_warning_message(
+                        f"OS/2 target version ({font.os_2_table.version}) must be greater than current version ("
+                        f"{font.os_2_table.version})."
+                    )
+                else:
+                    font.upgrade_os2_version(target_version=params.get("version"))
 
-        # Process the arguments
+            if "use_typo_metrics" in params.keys():
+                if font.os_2_table.version < 4:
+                    generic_warning_message(
+                        "fsSelection bit 7 (USE_TYPO_METRICS) is only defined in OS/2 version 4 and up."
+                    )
+                else:
+                    use_typo_metrics = params.get("use_typo_metrics")
+                    if use_typo_metrics is True:
+                        font.os_2_table.set_use_typo_metrics_bit()
+                    else:
+                        font.os_2_table.clear_use_typo_metrics_bit()
 
-        if "weight" in params.keys():
-            font.os_2_table.set_weight_class(params.get("weight"))
+            if "wws_consistent" in params.keys():
+                if font.os_2_table.version < 4:
+                    generic_warning_message("fsSelection bit 8 (WWS) is only defined in OS/2 version 4 and up.")
+                else:
+                    wws_consistent = params.get("wws_consistent")
+                    if wws_consistent is True:
+                        font.os_2_table.set_wws_bit()
+                    else:
+                        font.os_2_table.clear_wws_bit()
 
-        if "width" in params.keys():
-            font.os_2_table.set_width_class(params.get("width"))
+            if "recalc_codepage_ranges" in params.keys():
+                if font.os_2_table.version == 0:
+                    generic_warning_message("codepage ranges are only defined in OS/2 version 1 and up.")
+                else:
+                    codepage_ranges = font.calculate_codepage_ranges()
+                    font.os_2_table.set_codepage_ranges(codepage_ranges)
 
-        if "ach_vend_id" in params.keys():
-            ach_vend_id = params.get("ach_vend_id")
-            font.os_2_table.set_ach_vend_id(ach_vend_id)
+            if "recalc_x_height" in params.keys():
+                if font.os_2_table.version < 2:
+                    generic_warning_message("sxHeight is only defined in OS/2 version 2 and up.")
+                else:
+                    x_height = font.calculate_x_height()
+                    font.os_2_table.set_x_height(x_height)
 
-        # fsSelection
+            if "recalc_cap_height" in params.keys():
+                if font.os_2_table.version < 2:
+                    generic_warning_message("sCapHeight is only defined in OS/2 version 2 and up.")
+                else:
+                    cap_height = font.calculate_cap_height()
+                    font.os_2_table.set_cap_height(cap_height)
 
-        if "bold" in params.keys():
-            bold = params.get("bold")
-            if bold is True:
-                font.set_bold()
+            if "recalc_max_context" in params.keys():
+                if font.os_2_table.version < 2:
+                    generic_warning_message("usMaxContext is only defined in OS/2 version 2 and up.")
+                else:
+                    max_context = font.calculate_max_context()
+                    font.os_2_table.set_max_context(max_context)
+
+            if "weight" in params.keys():
+                font.os_2_table.set_weight_class(params.get("weight"))
+
+            if "width" in params.keys():
+                font.os_2_table.set_width_class(params.get("width"))
+
+            if "ach_vend_id" in params.keys():
+                ach_vend_id = params.get("ach_vend_id")
+                font.os_2_table.set_ach_vend_id(ach_vend_id)
+
+            # fsSelection
+
+            if "bold" in params.keys():
+                bold = params.get("bold")
+                if bold is True:
+                    font.set_bold()
+                else:
+                    font.unset_bold()
+
+            if "italic" in params.keys():
+                italic = params.get("italic")
+                if italic is True:
+                    font.set_italic()
+                else:
+                    font.unset_italic()
+
+            if "regular" in params.keys():
+                font.set_regular()
+
+            if "oblique" in params.keys():
+                oblique = params.get("oblique")
+                if oblique is True:
+                    font.set_oblique()
+                else:
+                    font.unset_oblique()
+
+            # fsType
+
+            if "embed_level" in params.keys():
+                embed_level = int(params.get("embed_level"))
+                font.os_2_table.set_embed_level(embed_level)
+
+            if "no_subsetting" in params.keys():
+                no_subsetting = params.get("no_subsetting")
+                if no_subsetting is True:
+                    font.os_2_table.set_no_subsetting_bit()
+                else:
+                    font.os_2_table.clear_no_subsetting_bit()
+
+            if "bitmap_embedding_only" in params.keys():
+                bitmap_embedding_only = params.get("bitmap_embedding_only")
+                if bitmap_embedding_only is True:
+                    font.os_2_table.set_bitmap_embed_only_bit()
+                else:
+                    font.os_2_table.clear_bitmap_embed_only_bit()
+
+            if "recalc_unicode_ranges" in params.keys():
+                # fontTools way, too permissive
+                # unicode_ranges = font.os_2_table.recalcUnicodeRanges(font)
+
+                temp_t1_file = makeOutputFileName(output_file, outputDir=output_dir, extension=".t1", overWrite=True)
+                command = ["tx", "-t1", file, temp_t1_file]
+                run_shell_command(command, suppress_output=True)
+
+                temp_otf_file = makeOutputFileName(output_file, outputDir=output_dir, suffix="_tmp", overWrite=True)
+                command = ["makeotf", "-f", temp_t1_file, "-o", temp_otf_file]
+                run_shell_command(command, suppress_output=True)
+
+                temp_font = Font(temp_otf_file)
+                unicode_ranges = temp_font.os_2_table.getUnicodeRanges()
+                temp_font.close()
+                os.remove(temp_t1_file)
+                os.remove(temp_otf_file)
+
+                font.os_2_table.setUnicodeRanges(unicode_ranges)
+
+            if "recalc_italic_bits" in params.keys():
+                font.calculate_italic_bits()
+
+            if "unicodes_source_font" in params.keys():
+                try:
+                    source_font = Font(params.get("unicodes_source_font"))
+                    source_unicode_ranges = source_font.os_2_table.getUnicodeRanges()
+                    font.os_2_table.setUnicodeRanges(source_unicode_ranges)
+                except Exception as e:
+                    click.secho(
+                        f"An error occurred while importing unicode ranges from file "
+                        f"{params.get('unicodes_source_font')}: {e}",
+                        fg="red",
+                    )
+
+            # Check if tables have changed before saving the font. No need to compile here.
+            if (font.os_2_table != os_2_table_copy) or (font.head_table != head_table_copy):
+                font.save(output_file)
+                file_saved_message(output_file)
             else:
-                font.unset_bold()
+                file_not_changed_message(file)
 
-        if "italic" in params.keys():
-            italic = params.get("italic")
-            if italic is True:
-                font.set_italic()
-            else:
-                font.unset_italic()
-
-        if "regular" in params.keys():
-            font.set_regular()
-
-        if "oblique" in params.keys():
-            oblique = params.get("oblique")
-            if oblique is True:
-                font.set_oblique()
-            else:
-                font.unset_oblique()
-
-        if "use_typo_metrics" in params.keys():
-            use_typo_metrics = params.get("use_typo_metrics")
-            if use_typo_metrics is True:
-                font.os_2_table.set_use_typo_metrics_bit()
-            else:
-                font.os_2_table.clear_use_typo_metrics_bit()
-
-        if "wws_consistent" in params.keys():
-            wws_consistent = params.get("wws_consistent")
-            if wws_consistent is True:
-                font.os_2_table.set_wws_bit()
-            else:
-                font.os_2_table.clear_wws_bit()
-
-        # fsType
-
-        if "embed_level" in params.keys():
-            embed_level = int(params.get("embed_level"))
-            font.os_2_table.set_embed_level(embed_level)
-
-        if "no_subsetting" in params.keys():
-            no_subsetting = params.get("no_subsetting")
-            if no_subsetting is True:
-                font.os_2_table.set_no_subsetting_bit()
-            else:
-                font.os_2_table.clear_no_subsetting_bit()
-
-        if "bitmap_embedding_only" in params.keys():
-            bitmap_embedding_only = params.get("bitmap_embedding_only")
-            if bitmap_embedding_only is True:
-                font.os_2_table.set_bitmap_embed_only_bit()
-            else:
-                font.os_2_table.clear_bitmap_embed_only_bit()
-
-        if "recalc_unicode_ranges" in params.keys():
-            # fontTools way, too permissive
-            # unicode_ranges = font.os_2_table.recalcUnicodeRanges(font)
-
-            temp_t1_file = makeOutputFileName(output_file, outputDir=output_dir, extension=".t1", overWrite=True)
-            command = ["tx", "-t1", file, temp_t1_file]
-            run_shell_command(command, suppress_output=True)
-
-            temp_otf_file = makeOutputFileName(output_file, outputDir=output_dir, suffix="_tmp", overWrite=True)
-            command = ["makeotf", "-f", temp_t1_file, "-o", temp_otf_file]
-            run_shell_command(command, suppress_output=True)
-
-            temp_font = Font(temp_otf_file)
-            unicode_ranges = temp_font.os_2_table.getUnicodeRanges()
-            temp_font.close()
-            os.remove(temp_t1_file)
-            os.remove(temp_otf_file)
-
-            font.os_2_table.setUnicodeRanges(unicode_ranges)
-
-        if "recalc_codepage_ranges" in params.keys():
-            codepage_ranges = font.os_2_table.recalc_codepage_ranges(font)
-            font.os_2_table.set_codepage_ranges(codepage_ranges)
-
-        if "recalc_x_height" in params.keys():
-            font.os_2_table.recalc_cap_height(font)
-
-        if "recalc_cap_height" in params.keys():
-            font.os_2_table.recalc_cap_height(font)
-
-        if "recalc_italic_bits" in params.keys():
-            font.recalc_italic_bits()
-
-        if "version" in params.keys():
-            font.os_2_table.upgrade_version(font, params.get("version"))
-
-        if "unicodes_source_font" in params.keys():
-            try:
-                source_font = Font(params.get("unicodes_source_font"))
-                source_unicode_ranges = source_font.os_2_table.getUnicodeRanges()
-                font.os_2_table.setUnicodeRanges(source_unicode_ranges)
-            except Exception as e:
-                click.secho(
-                    f"An error occurred while importing unicode ranges from file "
-                    f"{params.get('unicodes_source_font')}: {e}",
-                    fg="red",
-                )
-
-        # Check if tables have changed before saving the font. No need to compile here.
-        if (font.os_2_table != os_2_table_copy) or (font.head_table != head_table_copy):
-            font.save(output_file)
-            file_saved_message(output_file)
-        else:
-            file_not_changed_message(file)
-
-        # except Exception as e:
-        #     generic_error_message(e)
+        except Exception as e:
+            generic_error_message(e)
