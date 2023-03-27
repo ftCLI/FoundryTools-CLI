@@ -46,8 +46,6 @@ def del_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True,
         generic_error_message("Please, pass at least a valid parameter.")
         return
 
-    print(params)
-
     files = get_fonts_list(input_path, allow_ttf=False)
     if len(files) == 0:
         generic_error_message(f"No valid font files found in {input_path}.")
@@ -66,9 +64,9 @@ def del_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True,
             cff_table_copy = deepcopy(cff_table)
             top_dict = cff_table.cff.topDictIndex[0]
 
-            for attr_name, attr_value in params.items():
+            for k in params.keys():
                 try:
-                    del top_dict.rawDict[attr_name]
+                    del top_dict.rawDict[k]
                 except KeyError:
                     pass
 
