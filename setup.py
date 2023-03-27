@@ -16,7 +16,7 @@ setuptools.setup(
     url="https://github.com/ftCLI/ftCLI",
     packages=setuptools.find_packages(),
     include_package_data=True,
-    entry_points={"console_scripts": ["ftcli=ftCLI.ftcli:main"]},
+    entry_points={"console_scripts": ["ftcli=ftCLI.ftCLI:main"]},
     install_requires=[
         "fonttools==4.39.2",
         "afdko==3.9.3",
