@@ -36,11 +36,11 @@ def ttf_to_otf():
 @click.option(
     "-t",
     "--tolerance",
-    type=click.FloatRange(0, 10),
+    type=click.FloatRange(0, 2.5),
     default=1,
     help="""
-              Conversion tolerance (0-10, default 1). This is only used when the charstrings are obtained using
-              Qu2CuPen
+              Conversion tolerance (0-2.5, default 1). Low tolerance adds more points but keeps shapes. High tolerance
+              adds few points but may change shape.
               """,
 )
 @click.option(
@@ -117,6 +117,9 @@ def ttf2otf(
             generic_info_message(f"Converting file {os.path.basename(file)}: {counter} of {len(files)}")
 
             source_font = Font(file, recalcTimestamp=recalcTimestamp)
+
+            # Set tolerance as a ratio of unitsPerEm
+            tolerance = tolerance / 1000 * source_font.head_table.unitsPerEm
 
             ext = ".otf" if source_font.flavor is None else source_font.get_real_extension()
             suffix = "" if source_font.flavor is None else ".otf"
