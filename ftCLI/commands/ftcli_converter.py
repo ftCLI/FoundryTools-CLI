@@ -124,18 +124,30 @@ def ttf2otf(
             ext = ".otf" if source_font.flavor is None else source_font.get_real_extension()
             suffix = "" if source_font.flavor is None else ".otf"
             output_file = makeOutputFileName(
-                file, suffix=suffix, extension=ext, outputDir=output_dir, overWrite=overWrite
+                file,
+                suffix=suffix,
+                extension=ext,
+                outputDir=output_dir,
+                overWrite=overWrite,
             )
 
             if safe:
                 # Create a temporary OTF file with T2CharStringPen...
                 temp_otf_file = makeOutputFileName(output_file, suffix="_tmp", overWrite=True)
                 ttf2otf_converter_temp = TrueTypeToCFF(source_font, output_file=temp_otf_file)
-                ttf2otf_converter_temp.run(charstrings_source="t2", purge_glyphs=purge_glyphs, subroutinize=False)
+                ttf2otf_converter_temp.run(
+                    charstrings_source="t2",
+                    purge_glyphs=purge_glyphs,
+                    subroutinize=False,
+                )
 
                 # ... and convert it back to a temporary TTF file that will be used for conversion
                 temp_ttf_file = makeOutputFileName(temp_otf_file, extension=".ttf", overWrite=True)
-                otf_to_ttf.run(input_file=temp_otf_file, output_file=temp_ttf_file, recalc_timestamp=recalcTimestamp)
+                otf_to_ttf.run(
+                    input_file=temp_otf_file,
+                    output_file=temp_ttf_file,
+                    recalc_timestamp=recalcTimestamp,
+                )
                 os.remove(temp_otf_file)
                 input_font = Font(temp_ttf_file, recalcTimestamp=recalcTimestamp)
             else:
@@ -143,7 +155,10 @@ def ttf2otf(
 
             ttf2otf_converter = TrueTypeToCFF(font=input_font, output_file=output_file)
             ttf2otf_converter.run(
-                charstrings_source="qu2cu", tolerance=tolerance, subroutinize=subroutinize, purge_glyphs=purge_glyphs
+                charstrings_source="qu2cu",
+                tolerance=tolerance,
+                subroutinize=subroutinize,
+                purge_glyphs=purge_glyphs,
             )
 
             if safe:

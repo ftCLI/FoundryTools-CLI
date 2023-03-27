@@ -21,8 +21,18 @@ def del_cff_names():
 
 @del_cff_names.command()
 @add_file_or_path_argument()
-@click.option("--full-name", "FullName", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] FullName")
-@click.option("--family-name", "FamilyName", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] FamilyName")
+@click.option(
+    "--full-name",
+    "FullName",
+    is_flag=True,
+    help="Deletes CFF.cff.topDictIndex[0] FullName",
+)
+@click.option(
+    "--family-name",
+    "FamilyName",
+    is_flag=True,
+    help="Deletes CFF.cff.topDictIndex[0] FamilyName",
+)
 @click.option("--weight", "Weight", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Weight")
 @click.option("--version", "version", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] version")
 @add_common_options()
@@ -81,8 +91,18 @@ def set_cff_names():
 @set_cff_names.command()
 @add_file_or_path_argument()
 @click.option("--font-names", "fontNames", type=str, help="Sets CFF.cff.fontNames value")
-@click.option("--full-name", "FullName", type=str, help="Sets CFF.cff.topDictIndex[0] FullName value")
-@click.option("--family-name", "FamilyName", type=str, help="Sets CFF.cff.topDictIndex[0] FamilyName value")
+@click.option(
+    "--full-name",
+    "FullName",
+    type=str,
+    help="Sets CFF.cff.topDictIndex[0] FullName value",
+)
+@click.option(
+    "--family-name",
+    "FamilyName",
+    type=str,
+    help="Sets CFF.cff.topDictIndex[0] FamilyName value",
+)
 @click.option("--weight", "Weight", type=str, help="Sets CFF.cff.topDictIndex[0] Weight value")
 @click.option("--version", "version", type=str, help="Sets CFF.cff.topDictIndex[0] version value")
 @add_common_options()
@@ -253,7 +273,12 @@ def fix_version(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tru
 
 
 cli = click.CommandCollection(
-    sources=[fix_cff_version_string, set_cff_names, del_cff_names, cff_find_and_replace],
+    sources=[
+        fix_cff_version_string,
+        set_cff_names,
+        del_cff_names,
+        cff_find_and_replace,
+    ],
     help="""
 Command line CFF table editor.
 """,

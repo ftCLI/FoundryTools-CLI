@@ -14,7 +14,13 @@ class TrueTypeToCFF(object):
         self.font = font
         self.output_file = output_file
 
-    def run(self, charstrings_source="qu2cu", tolerance=1, purge_glyphs=True, subroutinize=True):
+    def run(
+        self,
+        charstrings_source="qu2cu",
+        tolerance=1,
+        purge_glyphs=True,
+        subroutinize=True,
+    ):
         if purge_glyphs:
             self.purge_glyphs()
 
@@ -126,7 +132,6 @@ class TrueTypeToCFF(object):
             Subsetter.subset(subsetter, self.font)
 
     def get_qu2u_charstrings(self, tolerance: float = 1, all_cubic: bool = True):
-
         charstrings = {}
         glyph_set = self.font.getGlyphSet()
 
