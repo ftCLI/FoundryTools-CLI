@@ -40,7 +40,7 @@ def ttf_to_otf():
     default=1,
     help="""
               Conversion tolerance (0-2.5, default 1). Low tolerance adds more points but keeps shapes. High tolerance
-              adds few points but may change shape.
+              adds few points but may change shapes.
               """,
 )
 @click.option(

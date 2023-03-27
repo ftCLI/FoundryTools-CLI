@@ -624,9 +624,10 @@ Converts TTF fonts (or TrueType flavored woff/woff2 web fonts) to OTF fonts (or 
 
 **Options**:
 
-    -t, --tolerance FLOAT RANGE   Conversion tolerance (0-10, default 1). This
-                                  is only used when the charstrings are obtained
-                                  using Qu2CuPen  [0<=x<=10]
+    -t, --tolerance FLOAT RANGE   Conversion tolerance (0-2.5, default 1). Low
+                                  tolerance adds more points but keeps shapes.
+                                  High tolerance adds few points but may change
+                                  shapes.
     --safe                        Sometimes Qu2CuPen may fail or produce
                                   distorted outlines. Most of times, use of '--
                                   safe' will prevent errors by converting the
