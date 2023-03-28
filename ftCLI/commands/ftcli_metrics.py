@@ -1,5 +1,6 @@
 import os
 import sys
+from copy import copy
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
@@ -10,7 +11,7 @@ from ftCLI.Lib.utils.click_tools import (
     add_common_options,
     file_saved_message,
     generic_error_message,
-    add_file_or_path_argument,
+    add_file_or_path_argument, file_not_changed_message,
 )
 
 
@@ -49,10 +50,22 @@ def set_linegap(input_path, percent, outputDir=None, recalcTimestamp=False, over
     for file in files:
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
+
+            hhea_table_copy = copy(font.hhea_table)
+            os2_table_copy = copy(font.os_2_table)
+
             font.modify_linegap_percent(percent=percent)
-            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
-            font.save(output_file)
-            file_saved_message(file)
+
+            hhea_modified = hhea_table_copy != font.hhea_table
+            os2_modified = os2_table_copy != font.os_2_table
+
+            if hhea_modified or os2_modified:
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
+                font.save(output_file)
+                file_saved_message(file)
+            else:
+                file_not_changed_message(file)
+
         except Exception as e:
             generic_error_message(e)
 
@@ -65,13 +78,19 @@ def align_vertical_metrics():
 @align_vertical_metrics.command()
 @add_file_or_path_argument()
 @click.option(
-    "-sil",
-    "--sil-method",
+    "--with-linegap",
     is_flag=True,
-    help="Use SIL method: https://silnrsi.github.io/FDBP/en-US/Line_Metrics.html",
+    help="""
+            By default, SIL method (https://silnrsi.github.io/FDBP/en-US/Line_Metrics.html) is used. This means that,
+            in OS/2 table, sTypoAscender and sTypoDescender values are set, respectively, equal to maximum real ascender
+            and minimum real descender, and the sTypoLineGap is set to zero. Use '--with-linegap' to set sTypoAscender
+            value to the maximum ideal ascender (calculated from letters b, f, f, h, k, l and t) and the sTypoDescender
+            value to the minimum ideal descender (calculated from letters g, j, p, q and y). The sTypoLineGap will be
+            calculated as follows: (real ascender + abs(real descender)) - (ideal ascender + abs(ideal descender)).
+    """,
 )
 @add_common_options()
-def align(input_path, sil_method=False, outputDir=None, recalcTimestamp=False, overWrite=True):
+def align(input_path, with_linegap=False, outputDir=None, recalcTimestamp=False, overWrite=True):
     """
     Aligns all fonts stored in INPUT_PATH folder to the same baseline.
 
@@ -80,10 +99,13 @@ def align(input_path, sil_method=False, outputDir=None, recalcTimestamp=False, o
 
     This can produce undesired effects (an exaggerated line height) when one or more fonts contain swashes, for example.
     In such cases, it's better to copy the vertical metrics from a template font to one or more destination fonts using
-    the 'ftcli metrics copy' command.
+    the 'ftcli metrics copy-metrics' command.
 
     See https://kltf.de/download/FontMetrics-kltf.pdf for more information.
     """
+
+    import math
+    from ftCLI.Lib.utils.glyphs import get_glyphs_bounds_all, get_glyph_bounds
 
     files = get_fonts_list(input_path)
     if len(files) == 0:
@@ -96,6 +118,7 @@ def align(input_path, sil_method=False, outputDir=None, recalcTimestamp=False, o
         generic_error_message(error_message)
         return
 
+    fonts = []
     ideal_ascenders = []
     ideal_descenders = []
     real_ascenders = []
@@ -104,56 +127,65 @@ def align(input_path, sil_method=False, outputDir=None, recalcTimestamp=False, o
     for file in files:
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
+            fonts.append(font)
 
-            y_max = font["head"].yMax
-            y_min = font["head"].yMin
+            font_y_min, font_y_max = font.get_bounding_box()
+            real_ascenders.append(math.ceil(font_y_max))
+            real_descenders.append(math.floor(font_y_min))
 
-            ascender = font["hhea"].ascender
-            descender = font["hhea"].descender
+            if with_linegap:
+                glyph_set = font.getGlyphSet()
 
-            typo_ascender = font["OS/2"].sTypoAscender
-            typo_descender = font["OS/2"].sTypoDescender
-            win_ascent = font["OS/2"].usWinAscent
-            win_descent = font["OS/2"].usWinDescent
+                for glyph_name in ['b', 'd', 'f', 'h', 'k', 'l', 't']:
+                    ideal_ascenders.append(math.ceil(get_glyph_bounds(glyph_set, glyph_name)['yMax']))
 
-            ideal_ascenders.extend([typo_ascender])
-            ideal_descenders.extend([abs(typo_descender)])
-
-            real_ascenders.extend([y_max])
-            real_descenders.extend([abs(y_min)])
+                for glyph_name in ['g', 'j', 'p', 'q', 'y']:
+                    ideal_descenders.append(math.floor(get_glyph_bounds(glyph_set, glyph_name)['yMin']))
+            else:
+                ideal_ascenders = real_ascenders
+                ideal_ascenders = real_descenders
 
         except Exception as e:
             generic_error_message(e)
-            files.remove(file)
 
     max_real_ascender = max(real_ascenders)
-    max_real_descender = max(real_descenders)
-    max_ideal_ascender = max(ideal_ascenders)
-    max_ideal_descender = max(ideal_descenders)
-    typo_line_gap = (max_real_ascender + max_real_descender) - (max_ideal_ascender + max_ideal_descender)
+    min_real_descender = min(real_descenders)
+    max_ideal_ascender = max(ideal_ascenders) if ideal_descenders != [] else max_real_ascender
+    min_ideal_descender = min(ideal_descenders) if ideal_descenders != [] else min_real_descender
+    typo_line_gap = (max_real_ascender + abs(min_real_descender)) - (max_ideal_ascender + abs(min_ideal_descender))
 
-    for file in files:
+    for font in fonts:
+
+        hhea_table_copy = copy(font.hhea_table)
+        os2_table_copy = copy(font.os_2_table)
+
         try:
-            font = Font(file, recalcTimestamp=recalcTimestamp)
-
             font.hhea_table.ascender = max_real_ascender
-            font.hhea_table.descender = -max_real_descender
+            font.hhea_table.descender = min_real_descender
             font.hhea_table.lineGap = 0
 
             font.os_2_table.usWinAscent = max_real_ascender
-            font.os_2_table.usWinDescent = max_real_descender
-            font.os_2_table.sTypoAscender = max_ideal_ascender
-            font.os_2_table.sTypoDescender = -max_ideal_descender
-            font.os_2_table.sTypoLineGap = typo_line_gap
+            font.os_2_table.usWinDescent = abs(min_real_descender)
+            font.os_2_table.sTypoAscender = max_real_ascender
+            font.os_2_table.sTypoDescender = min_real_descender
+            font.os_2_table.sTypoLineGap = 0
 
-            if sil_method:
-                font.os_2_table.sTypoAscender = max_real_ascender
-                font.os_2_table.sTypoDescender = -max_real_descender
-                font.os_2_table.sTypoLineGap = 0
+            if with_linegap:
+                font.os_2_table.sTypoAscender = max_ideal_ascender
+                font.os_2_table.sTypoDescender = min_ideal_descender
+                font.os_2_table.sTypoLineGap = typo_line_gap
 
-            output_file = makeOutputFileName(file, outputDir=outputDir, overWrite=overWrite)
-            font.save(output_file)
-            file_saved_message(file)
+            hhea_modified = hhea_table_copy != font.hhea_table
+            os2_modified = os2_table_copy != font.os_2_table
+
+            if hhea_modified or os2_modified:
+                output_file = makeOutputFileName(font.file, outputDir=outputDir, overWrite=overWrite)
+                font.save(output_file)
+                file_saved_message(font.file)
+
+            else:
+                file_not_changed_message(font.file)
+
         except Exception as e:
             generic_error_message(e)
 
@@ -207,7 +239,7 @@ By default, modified files are overwritten. Use this switch to save them to a ne
 of file name).
 """,
 )
-def copy(source_file, destination, outputDir, recalcTimestamp, overWrite):
+def copy_metrics(source_file, destination, outputDir, recalcTimestamp, overWrite):
     """
     Copies vertical metrics from a source font to one or more destination fonts.
     """
@@ -231,25 +263,34 @@ def copy(source_file, destination, outputDir, recalcTimestamp, overWrite):
 
     files = get_fonts_list(destination)
 
-    for f in files:
+    for file in files:
         try:
-            font = Font(f, recalcTimestamp=recalcTimestamp)
+            font = Font(file, recalcTimestamp=recalcTimestamp)
+            hhea_table_copy = copy(font.hhea_table)
+            os2_table_copy = copy(font.os_2_table)
 
-            font["hhea"].ascender = ascender
-            font["hhea"].descender = descender
-            font["hhea"].lineGap = lineGap
+            font.hhea_table.ascender = ascender
+            font.hhea_table.descender = descender
+            font.hhea_table.lineGap = lineGap
 
-            font["OS/2"].usWinAscent = usWinAscent
-            font["OS/2"].usWinDescent = usWinDescent
-            font["OS/2"].sTypoAscender = sTypoAscender
-            font["OS/2"].sTypoDescender = sTypoDescender
-            font["OS/2"].sTypoLineGap = sTypoLineGap
+            font.os_2_table.usWinAscent = usWinAscent
+            font.os_2_table.usWinDescent = usWinDescent
+            font.os_2_table.sTypoAscender = sTypoAscender
+            font.os_2_table.sTypoDescender = sTypoDescender
+            font.os_2_table.sTypoLineGap = sTypoLineGap
 
-            output_file = makeOutputFileName(f, outputDir=outputDir, overWrite=overWrite)
-            font.save(output_file)
-            click.secho(f"{os.path.basename(output_file)} --> saved", fg="green")
+            hhea_modified = hhea_table_copy != font.hhea_table
+            os2_modified = os2_table_copy != font.os_2_table
+
+            if hhea_modified or os2_modified:
+                output_file = makeOutputFileName(file, outputDir=outputDir, overWrite=overWrite)
+                font.save(output_file)
+                file_saved_message(output_file)
+            else:
+                file_not_changed_message(file)
+
         except Exception as e:
-            click.secho(f"ERROR: {e}", fg="red")
+            generic_error_message(e)
 
 
 cli = click.CommandCollection(

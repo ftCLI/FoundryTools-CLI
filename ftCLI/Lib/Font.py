@@ -726,13 +726,13 @@ class Font(TTFont):
         os2_typo_ascender = self.os_2_table.sTypoAscender
         os2_typo_descender = self.os_2_table.sTypoDescender
         os2_typo_linegap = self.os_2_table.sTypoLineGap
-        hhea_ascent = self["hhea"].ascent
-        hhea_descent = self["hhea"].descent
+        hhea_ascent = self.hhea_table.ascent
+        hhea_descent = self.hhea_table.descent
         units_per_em = self.head_table.unitsPerEm
 
         # calculate necessary delta values
-        os2_typo_ascdesc_delta = os2_typo_ascender + -(os2_typo_descender)
-        hhea_ascdesc_delta = hhea_ascent + -(hhea_descent)
+        os2_typo_ascdesc_delta = os2_typo_ascender + -os2_typo_descender
+        hhea_ascdesc_delta = hhea_ascent + -hhea_descent
 
         # define percent UPM from command line request
         factor = 1.0 * int(percent) / 100
@@ -774,14 +774,14 @@ class Font(TTFont):
             os2_win_descent = -hhea_descent
 
         # define updated values from above calculations
-        self["hhea"].lineGap = hhea_linegap
+        self.hhea_table.lineGap = hhea_linegap
         self.os_2_table.sTypoAscender = os2_typo_ascender
         self.os_2_table.sTypoDescender = os2_typo_descender
         self.os_2_table.sTypoLineGap = os2_typo_linegap
         self.os_2_table.usWinAscent = os2_win_ascent
         self.os_2_table.usWinDescent = os2_win_descent
-        self["hhea"].ascent = hhea_ascent
-        self["hhea"].descent = hhea_descent
+        self.hhea_table.ascent = hhea_ascent
+        self.hhea_table.descent = hhea_descent
 
     def decomponentize(self):
         if not self.is_true_type:
