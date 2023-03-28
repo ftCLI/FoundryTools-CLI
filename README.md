@@ -97,7 +97,7 @@ Or, to install in editable mode:
   * [font-info](#ftcli-print-font-info)
   * [font-names](#ftcli-print-font-names)
   * [font-fonts-list](#ftcli-print-fonts-list)
-  * [font-os2-table](#ftcli-print-os2-table)
+  * [os2-table](#ftcli-print-os2-table)
     
 * [**utils**](#ftcli-utils)
   * [add-dsig](#ftcli-utils-add-dsig)
