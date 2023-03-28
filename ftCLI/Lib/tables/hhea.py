@@ -1,5 +1,3 @@
-import math
-
 from fontTools.ttLib.tables._h_h_e_a import table__h_h_e_a
 
 
