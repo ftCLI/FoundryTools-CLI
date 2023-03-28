@@ -30,8 +30,8 @@ registerCustomTableClass("hhea", "ftCLI.Lib.tables.hhea", "TableHhea")
 
 
 class Font(TTFont):
-    def __init__(self, file, recalcTimestamp=False):
-        super().__init__(file=file, recalcTimestamp=recalcTimestamp)
+    def __init__(self, file, recalcBBoxes=True, recalcTimestamp=False):
+        super().__init__(file=file, recalcBBoxes=recalcBBoxes, recalcTimestamp=recalcTimestamp)
 
         self.file = file
         self.name_table: TableName = self["name"]
