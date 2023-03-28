@@ -378,6 +378,22 @@ class Font(TTFont):
             for b in (7, 8, 9):
                 setattr(self, "fsSelection", unset_nth_bit(self.os_2_table.fsSelection, b))
 
+    def get_bounding_box(self):
+        """ Returns max and min bbox of the font """
+        y_min = 0
+        y_max = 0
+        if self.is_cff:
+            y_min = self.head_table.yMin
+            y_max = self.head_table.yMax
+        else:
+            for g in self['glyf'].glyphs:
+                char = self['glyf'][g]
+                if hasattr(char, 'yMin') and y_min > char.yMin:
+                    y_min = char.yMin
+                if hasattr(char, 'yMax') and y_max < char.yMax:
+                    y_max = char.yMax
+        return y_min, y_max
+
     def get_file_name(self, source) -> str:
         """
         Returns the font's file name according to the passed source.
