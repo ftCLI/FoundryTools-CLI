@@ -59,17 +59,17 @@ def ttf_to_otf():
     is_flag=True,
     default=True,
     help="""
-              Keeps NULL and CR glyphs from the output font
-              """,
+                Keeps NULL and CR glyphs from the output font
+    """,
 )
 @click.option(
     "--no-subr",
     "subroutinize",
     is_flag=True,
     default=True,
-    help=""" 
-              Do not subroutinize converted fonts
-              """,
+    help="""
+                Do not subroutinize converted fonts
+    """,
 )
 @click.option(
     "--check-outlines",
