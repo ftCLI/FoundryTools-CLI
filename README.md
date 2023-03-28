@@ -79,7 +79,7 @@ Or, to install in editable mode:
 
 * [**metrics**](#ftcli-metrics)
   * [align](#ftcli-metrics-align)
-  * [copy](#ftcli-metrics-copy)
+  * [copy-metrics](#ftcli-metrics-copy-metrics)
   * [set-linegap](#ftcli-metrics-set-linegap)
 
 * [**name**](#ftcli-name)
@@ -1022,7 +1022,7 @@ INPUT_PATH folder and applies those values to all fonts.
 
 This can produce undesired effects (an exaggerated line height) when one or more fonts contain swashes, for example. In
 such cases, it's better to copy the vertical metrics from a template font to one or more destination fonts using the
-[`ftcli metrics copy`](#ftcli-metrics-copy) command.
+[`ftcli metrics copy`](#ftcli-metrics-copy-metrics) command.
 
 See https://kltf.de/download/FontMetrics-kltf.pdf for more information.
 
@@ -1032,7 +1032,24 @@ See https://kltf.de/download/FontMetrics-kltf.pdf for more information.
 
 **Options**:
 
-    -sil, --sil-method            Use SIL method: https://silnrsi.github.io/FDBP/en-US/Line_Metrics.html
+Options:
+
+    --with-linegap                By default, SIL method
+                                  (https://silnrsi.github.io/FDBP/en-
+                                  US/Line_Metrics.html) is used. This means
+                                  that, in OS/2 table, sTypoAscender and
+                                  sTypoDescender values are set, respectively,
+                                  equal to maximum real ascender and minimum
+                                  real descender, and the sTypoLineGap is set to
+                                  zero. Use '--with-linegap' to set
+                                  sTypoAscender value to the maximum ideal
+                                  ascender (calculated from letters b, f, f, h,
+                                  k, l and t) and the sTypoDescender value to
+                                  the minimum ideal descender (calculated from
+                                  letters g, j, p, q and y). The sTypoLineGap
+                                  will be calculated as follows: (real ascender
+                                  + abs(real descender)) - (ideal ascender +
+                                  abs(ideal descender)).
     -out, --output-dir DIRECTORY  Specify the directory where output files are
                                   to be saved. If output_dir doesn't exist, will
                                   be created. If not specified, files are saved
@@ -1046,7 +1063,7 @@ See https://kltf.de/download/FontMetrics-kltf.pdf for more information.
                                   overwritten.
     --help                        Show this message and exit.
 
-### ftcli metrics copy
+### ftcli metrics copy-metrics
 Copies vertical metrics from a source font to one or more destination fonts.
 
 **Usage**:
