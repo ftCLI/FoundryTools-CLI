@@ -7,19 +7,19 @@ Python >=3.7 <3.11 is required to install ftCLI.
 
 The following packages will be installed during setup:
 
-  * fonttools
-  * afdko
-  * beziers
-  * brotli
-  * click
-  * dehinter
-  * pathvalidate
-  * rich
-  * skia-pathops
-  * ttfautohint-py
-  * ufo2ft
-  * zopfli
- 
+- fonttools
+- afdko
+- beziers
+- brotli
+- click
+- dehinter
+- pathvalidate
+- rich
+- skia-pathops
+- ttfautohint-py
+- ufo2ft
+- zopfli
+
 ## Installation
 
     pip install font-cli
@@ -27,90 +27,94 @@ The following packages will be installed during setup:
 Or, to install in editable mode:
 
     git clone https://github.com/ftCLI/ftCLI.git
-    
-    cd ftCLI
-    
-    pip install -e .
 
+    cd ftCLI
+
+    pip install -e .
 
 ## Arguments
 
-* [INPUT_PATH](#inputpath)
+- [INPUT_PATH](#inputpath)
 
 ## Common options
 
-  * [-out, --output-dir](#-out---output-dir)
-  * [--recalc-timestamp](#--recalc-timestamp)
-  * [--no-overwrite](#--no-overwrite)
+- [-out, --output-dir](#-out---output-dir)
+- [--recalc-timestamp](#--recalc-timestamp)
+- [--no-overwrite](#--no-overwrite)
 
 ## Commands list
 
-  * [**assistant**](#ftcli-assistant)
-    * [ui](#ftcli-assistant-ui)
-    * [commit](#ftcli-assistant-commit)
-    * [init-config](#ftcli-assistant-init-config)
-    * [init-data](#ftcli-assistant-init-data)
+- [**assistant**](#ftcli-assistant)
 
-  * [**cff**](#ftcli-cff)
-      * [del-names](#ftcli-cff-del-names)
-      * [find-replace](#ftcli-cff-find-replace)
-      * [fix-version](#ftcli-cff-fix-version)
-      * [set-names](#ftcli-cff-set-names)
-  
-  * [**converter**](#ftcli-converter)
-      * [otf2ttf](#ftcli-converter-otf2ttf)
-      * [ttf2otf](#ftcli-converter-ttf2otf)
-      * [ft2wf](#ftcli-converter-ft2wf)
-      * [wf2ft](#ftcli-converter-wf2ft)
-      * [var2static](#ftcli-converter-var2static)
-      * [ttc2sfnt](#ftcli-converter-ttc2sfnt)
+  - [ui](#ftcli-assistant-ui)
+  - [commit](#ftcli-assistant-commit)
+  - [init-config](#ftcli-assistant-init-config)
+  - [init-data](#ftcli-assistant-init-data)
 
-  * [**fix**](#ftcli-fix)
-    * [caret-offset](#ftcli-fix-caret-offset)
-    * [decompose-transformed](#ftcli-fix-decompose-transformed)
-    * [duplicate-components](#ftcli-fix-duplicate-components)
-    * [italic-angle](#ftcli-fix-italic-angle)
-    * [kern-table](#ftcli-fix-kern-table)
-    * [monospace](#ftcli-fix-monospace)
-    * [nbsp-missing](#ftcli-fix-nbsp-missing)
-    * [nbsp-width](#ftcli-fix-nbsp-width)
-    * [os2-ranges](#ftcli-fix-os2-ranges)
-    * [strip-names](#ftcli-fix-strip-names)
+- [**cff**](#ftcli-cff)
 
-  * [**metrics**](#ftcli-metrics)
-    * [align](#ftcli-metrics-align)
-    * [copy-metrics](#ftcli-metrics-copy-metrics)
-    * [set-linegap](#ftcli-metrics-set-linegap)
+  - [del-names](#ftcli-cff-del-names)
+  - [find-replace](#ftcli-cff-find-replace)
+  - [fix-version](#ftcli-cff-fix-version)
+  - [set-names](#ftcli-cff-set-names)
 
-  * [**name**](#ftcli-name)
-      * [append](#ftcli-name-append)
-      * [del-mac-names](#ftcli-name-del-mac-names)
-      * [del-names](#ftcli-name-del-names)
-      * [find-replace](#ftcli-name-find-replace)
-      * [find-set-name](#ftcli-name-set-name)
+- [**converter**](#ftcli-converter)
 
-  * [**os2**](#ftcli-os2)
+  - [otf2ttf](#ftcli-converter-otf2ttf)
+  - [ttf2otf](#ftcli-converter-ttf2otf)
+  - [ft2wf](#ftcli-converter-ft2wf)
+  - [wf2ft](#ftcli-converter-wf2ft)
+  - [var2static](#ftcli-converter-var2static)
+  - [ttc2sfnt](#ftcli-converter-ttc2sfnt)
 
-  * [**post**](#ftcli-post)
+- [**fix**](#ftcli-fix)
 
-  * [**print**](#ftcli-print)
-    * [font-info](#ftcli-print-font-info)
-    * [font-names](#ftcli-print-font-names)
-    * [font-fonts-list](#ftcli-print-fonts-list)
-    * [os2-table](#ftcli-print-os2-table)
-    
-  * [**utils**](#ftcli-utils)
-    * [add-dsig](#ftcli-utils-add-dsig)
-    * [cff-autohint](#ftcli-utils-cff-autohint)
-    * [cff-check-outlines](#ftcli-utils-cff-check-outlines)
-    * [cff-dehint](#ftcli-utils-cff-dehint)
-    * [cff-desubr](#ftcli-utils-cff-desubr)
-    * [cff-subr](#ftcli-utils-cff-subr)
-    * [font-organizer](#ftcli-utils-font-organizer)
-    * [font-renamer](#ftcli-utils-font-renamer)
-    * [ttf-autohint](#ftcli-utils-ttf-autohint)
-    * [ttf-dehint](#ftcli-utils-ttf-dehint)
-    * [remove-overlaps](#ftcli-utils-ttf-remove-overlaps)
+  - [caret-offset](#ftcli-fix-caret-offset)
+  - [decompose-transformed](#ftcli-fix-decompose-transformed)
+  - [duplicate-components](#ftcli-fix-duplicate-components)
+  - [italic-angle](#ftcli-fix-italic-angle)
+  - [kern-table](#ftcli-fix-kern-table)
+  - [monospace](#ftcli-fix-monospace)
+  - [nbsp-missing](#ftcli-fix-nbsp-missing)
+  - [nbsp-width](#ftcli-fix-nbsp-width)
+  - [os2-ranges](#ftcli-fix-os2-ranges)
+  - [strip-names](#ftcli-fix-strip-names)
+
+- [**metrics**](#ftcli-metrics)
+
+  - [align](#ftcli-metrics-align)
+  - [copy-metrics](#ftcli-metrics-copy-metrics)
+  - [set-linegap](#ftcli-metrics-set-linegap)
+
+- [**name**](#ftcli-name)
+
+  - [append](#ftcli-name-append)
+  - [del-mac-names](#ftcli-name-del-mac-names)
+  - [del-names](#ftcli-name-del-names)
+  - [find-replace](#ftcli-name-find-replace)
+  - [find-set-name](#ftcli-name-set-name)
+
+- [**os2**](#ftcli-os2)
+
+- [**post**](#ftcli-post)
+
+- [**print**](#ftcli-print)
+  - [font-info](#ftcli-print-font-info)
+  - [font-names](#ftcli-print-font-names)
+  - [font-fonts-list](#ftcli-print-fonts-list)
+  - [os2-table](#ftcli-print-os2-table)
+- [**utils**](#ftcli-utils)
+  - [add-dsig](#ftcli-utils-add-dsig)
+  - [cff-autohint](#ftcli-utils-cff-autohint)
+  - [cff-check-outlines](#ftcli-utils-cff-check-outlines)
+  - [cff-dehint](#ftcli-utils-cff-dehint)
+  - [cff-desubr](#ftcli-utils-cff-desubr)
+  - [cff-subr](#ftcli-utils-cff-subr)
+  - [font-organizer](#ftcli-utils-font-organizer)
+  - [font-renamer](#ftcli-utils-font-renamer)
+  - [ttf-autohint](#ftcli-utils-ttf-autohint)
+  - [ttf-dehint](#ftcli-utils-ttf-dehint)
+  - [remove-overlaps](#ftcli-utils-ttf-remove-overlaps)
 
 ## Arguments
 
@@ -128,7 +132,7 @@ otherwise specified.
 ### -out, --output-dir
 
 The directory where the output files are to be saved. If `output_dir` is not specified, files are saved to the same
-folder. If the user passes a directory that doesn't exist, it will be automatically created. 
+folder. If the user passes a directory that doesn't exist, it will be automatically created.
 
 ### --recalc-timestamp
 
@@ -167,19 +171,20 @@ and Oblique bits.
 The logical steps are the following:
 
 1. Create a CSV file containing, for each font in the source path, the following data:
-   * File path
-   * Family name
-   * usWidthClass
-   * usWeightClass
-   * Slope classes (Italic and/or Oblique) and Bold flag
-   * Weight, Width and Slope style names
+   - File path
+   - Family name
+   - usWidthClass
+   - usWeightClass
+   - Slope classes (Italic and/or Oblique) and Bold flag
+   - Weight, Width and Slope style names
 2. Review the CSV file
 3. Write data from the CSV file to the target fonts: this will compile the name table and set the proper
-usWidthClass, usWeightClass Slope class and Bold values.
+   usWidthClass, usWeightClass Slope class and Bold values.
 
 **Step 1** can be executed with one of the following commands:
-* `ftcli assistant init-data INPUT_PATH`
-* `ftcli assistant ui INPUT_PATH`
+
+- `ftcli assistant init-data INPUT_PATH`
+- `ftcli assistant ui INPUT_PATH`
 
 The first command will create a directory named `ftCLI_files` containing two files: `fonts_data.csv` and
 `styles_mapping.json`. The second one will open the command line user interface that allows to edit both.
@@ -223,27 +228,28 @@ retrieved values and the JSON data, trying to determine the proper style names. 
 `fonts_data.csv` file.
 
 The `fonts_data.csv` contains the following columns:
-* `file_name`: path to the font file
-* `family_name`: the font's family name, retrieved reading the name table
-* `is_bold`: True if ths bold bits are set, False if they are not set. This column is present only for completeness,
-but it's value will be ignored. A font will be set as bold only and only if, while running the `ftcli assistant commit`
-command, the user will choose to use linked styles.
-(-ls / --linked styles) option while writing data from CSV to fonts
-* `is_italic`: True if ths italic bits are set, False if they are not set
-* `is_oblique`: True if ths oblique bit is set, False if it's not set
-* `us_width_class`: usWidthClass value
-* `us_weight_class`: usWeightClass value
-* `wdt`: short literal for the Width style name
-* `width`: long literal for the Width style name
-* `wgt`: short literal for the Weight style name
-* `weight`: long literal for the Weight style name
-* `slp`: short literal for the Slope style name
-* `slope`: long literal for the Slope style name
-* `selected`: 0 to exclude the file while writing data from CSV to fonts, 1 to include the file
+
+- `file_name`: path to the font file
+- `family_name`: the font's family name, retrieved reading the name table
+- `is_bold`: True if ths bold bits are set, False if they are not set. This column is present only for completeness,
+  but it's value will be ignored. A font will be set as bold only and only if, while running the `ftcli assistant commit`
+  command, the user will choose to use linked styles.
+  (-ls / --linked styles) option while writing data from CSV to fonts
+- `is_italic`: True if ths italic bits are set, False if they are not set
+- `is_oblique`: True if ths oblique bit is set, False if it's not set
+- `us_width_class`: usWidthClass value
+- `us_weight_class`: usWeightClass value
+- `wdt`: short literal for the Width style name
+- `width`: long literal for the Width style name
+- `wgt`: short literal for the Weight style name
+- `weight`: long literal for the Weight style name
+- `slp`: short literal for the Slope style name
+- `slope`: long literal for the Slope style name
+- `selected`: 0 to exclude the file while writing data from CSV to fonts, 1 to include the file
 
 Both files can be edited manually or using the character interface.
 
-**Step 2** can be executed, after reviewing `fonts_data.csv`, running the `ftcli assistant commit` command. 
+**Step 2** can be executed, after reviewing `fonts_data.csv`, running the `ftcli assistant commit` command.
 
 ### ftcli assistant ui
 
@@ -379,7 +385,7 @@ command will serve the purpose. Not needed if `ftcli assistant ui` is used.
 
 ### ftcli assistant init-data
 
-Creates the CSV database file `fonts_data.csv` in the `ftCLI_files` subdirectory.  Not needed if `ftcli assistant ui`
+Creates the CSV database file `fonts_data.csv` in the `ftCLI_files` subdirectory. Not needed if `ftcli assistant ui`
 is used.
 
 **Usage**:
@@ -440,7 +446,7 @@ Deletes CFF names.
 
 ### ftcli cff find-replace
 
-Finds a string in the following items of CFF table topDict and replaces it with a new string: `version`, `FullName`, 
+Finds a string in the following items of CFF table topDict and replaces it with a new string: `version`, `FullName`,
 `FamilyName`, `Weight`, `Copyright`, `Notice`.
 
 **Usage**:
@@ -464,7 +470,6 @@ Finds a string in the following items of CFF table topDict and replaces it with 
                                   of file name). By default, files are
                                   overwritten.
     --help                        Show this message and exit.
-
 
 ### ftcli cff fix-version
 
@@ -528,7 +533,7 @@ Font converter.
     ftcli converter [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
-  --help  Show this message and exit.
+--help Show this message and exit.
 
 **Commands**:
 
@@ -566,7 +571,6 @@ Converts SFNT fonts (TTF or OTF) to web fonts (WOFF and/or WOFF2)
                                   of file name). By default, files are
                                   overwritten.
     --help                        Show this message and exit.
-
 
 ### ftcli converter otf2ttf
 
@@ -872,9 +876,9 @@ fontbakery check id: com.google.fonts/check/kern_table
 
 If the family is monospaced:
 
-* post.isFixedPitch must be set to a non-zero value
-* OS/2.panose.bProportion must be set to 9
-* CFF.cff.TopDictIndex[0].isFixedPitch must be set to True
+- post.isFixedPitch must be set to a non-zero value
+- OS/2.panose.bProportion must be set to 9
+- CFF.cff.TopDictIndex[0].isFixedPitch must be set to True
 
 fontbakery check id: com.google.fonts/check/monospace
 
@@ -1013,8 +1017,8 @@ Vertical metrics tools.
     copy
     set-linegap
 
-
 ### ftcli metrics align
+
 Aligns all fonts stored in INPUT_PATH folder to the same baseline.
 
 To achieve this, the script finds the maximum ascender and the minimum descender values of the fonts stored in the
@@ -1064,6 +1068,7 @@ Options:
     --help                        Show this message and exit.
 
 ### ftcli metrics copy-metrics
+
 Copies vertical metrics from a source font to one or more destination fonts.
 
 **Usage**:
@@ -1089,6 +1094,7 @@ Copies vertical metrics from a source font to one or more destination fonts.
     --help                      Show this message and exit.
 
 ### ftcli metrics set-linegap
+
 Modifies the line spacing metrics in one or more fonts.
 
 This is a fork of font-line by Source Foundry: https://github.com/source-foundry/font-line
@@ -1154,14 +1160,14 @@ Appends a prefix, or a suffix to the specified namerecords
     -p, --platform-id [0|1|3]     Use this option to add the prefix/suffix only
                                   to the namerecords matching the provided
                                   platformID.
-  
+
                                   0: Unicode
                                   1: Macintosh
                                   3: Windows
     -l, --language-string TEXT    Use this option to append the prefix/suffix
                                   only to the namerecords matching the provided
                                   language string.
-  
+
                                   See epilog for a list of valid language
                                   strings.
     --prefix TEXT                 The string to be prepended to the namerecords
@@ -1219,16 +1225,16 @@ Deletes one or more namerecords.
 **Options**:
 
     -n, --name-id INTEGER         NameID(s) to delete.
-  
+
                                   This option can be repeated to delete multiple
                                   namerecords at once. For example: -n 1 -n 2 -n
                                   6  [required]
     -p, --platform-id [0|1|3]     PlatformID of the namerecords to delete:
-  
+
                                   0: Unicode
                                   1: Macintosh
                                   3: Windows
-  
+
                                   If no platform is specified, namerecords will
                                   be deleted from all tables.
     -l, --language-string TEXT    Use this option to filter the namerecords to
@@ -1302,16 +1308,16 @@ If the namerecord is already present, it will be overwritten.
     -s, --string TEXT             String to write in the namerecord.  [required]
     -p, --platform-id [1|3]       Use this option to write the namerecord only
                                   in the specified table:
-  
+
                                   1: Macintosh
                                   3: Windows
-  
+
                                   If not specified, namerecord will be written
                                   in both tables.
     -l, --language-string TEXT    Use this option to write the namerecord in a
                                   language different than 'en' (e.g.: 'it',
                                   'nl', 'de').
-  
+
                                   See epilog for a list of valid language
                                   strings  [default: en]
     -out, --output-dir DIRECTORY  Specify the directory where output files are
@@ -1360,26 +1366,26 @@ Command line `OS/2` table editor.
     -utm, --use-typo-metrics / -no-utm, --no-use-typo-metrics
                                     Sets or clears the USE_TYPO_METRICS bit
                                     (`fsSelection` bit 7).
-  
+
                                     If set, it is strongly recommended that
                                     applications use `OS/2.sTypoAscender` -
                                     `OS/2.sTypoDescender` +  `OS/2.sTypoLineGap`
                                     as the default line spacing for the font.
-  
+
                                     See: https://docs.microsoft.com/en-
                                     us/typography/opentype/spec/os2#fsselection
     -wws, --wws-consistent / -no-wws, --no-wws-consistent
                                     Sets or clears the WWS bit (`fsSelection`
                                     bit 8).
-  
+
                                     If the `OS/2.fsSelection` bit is set, the
                                     font has `name` table strings consistent
                                     with a weight/width/slope family without
                                     requiring use of name IDs 21 and 22.
-  
+
                                     See: https://docs.microsoft.com/en-
                                     us/typography/opentype/spec/os2#fsselection
-  
+
                                     Also: https://typedrawers.com/discussion/385
                                     7/fontlab-7-windows-reads-exported-font-
                                     name-differently
@@ -1387,18 +1393,18 @@ Command line `OS/2` table editor.
                                     character identifier).
     -el, --embed-level [0|2|4|8]    Sets/clears `fsType` bits 0-3
                                     (EMBEDDING_LEVEL).
-  
+
                                     0: Installable embedding
                                     2: Restricted License embedding
                                     4: Preview & Print embedding
                                     8: Editable embedding
-  
+
                                     See: https://docs.microsoft.com/en-
                                     us/typography/opentype/spec/os2#fstype
     -ns, --no-subsetting / -as, --allow-subsetting
                                     Sets or clears `fsType` bit 8
                                     (NO_SUBSETTING).
-  
+
                                     When this bit is set, the font may not be
                                     subsetted prior to embedding. Other
                                     embedding restrictions specified in bits 0-3
@@ -1406,7 +1412,7 @@ Command line `OS/2` table editor.
     -beo, --bitmap-embedding-only / -no-beo, --no-bitmap-embedding-only
                                     Sets or clears `fsType` bit 9
                                     (BITMAP_EMBEDDING_ONLY).
-  
+
                                     When this bit is set, only bitmaps contained
                                     in the font may be embedded. No outline data
                                     may be embedded. If there are no bitmaps
@@ -1473,10 +1479,11 @@ Command line `post` table editor.
     --help                          Show this message and exit.
 
 ## ftcli print
+
 Prints various font's information.
 
 **Usage**:
-    ftcli print [OPTIONS] COMMAND [ARGS]...
+ftcli print [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
 
@@ -1743,7 +1750,7 @@ extension.
                               file name. Default is 1 (FamilyName-StyleName),
                               used also as fallback name when 4 or 5 are passed
                               but the font is TrueType
-    
+
                               1: FamilyName-StyleName
                               2: PostScript Name
                               3: Full Font Name
