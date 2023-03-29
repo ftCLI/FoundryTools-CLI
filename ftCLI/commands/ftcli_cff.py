@@ -35,6 +35,7 @@ def del_cff_names():
 )
 @click.option("--weight", "Weight", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Weight")
 @click.option("--version", "version", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] version")
+@click.option("--copyright", "Copyright", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Copyright")
 @add_common_options()
 def del_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True, **kwargs):
     """
