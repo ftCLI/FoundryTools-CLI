@@ -238,10 +238,10 @@ class Font(TTFont):
             "uni007C",  # VERTICAL LINE
             "bracketleft",
             "uni005B",  # LEFT SQUARE BRACKET
-            "H",
-            "uni0048",  # LATIN CAPITAL LETTER H
-            "I",
-            "uni0049",
+            # "H",
+            # "uni0048",  # LATIN CAPITAL LETTER H
+            # "I",
+            # "uni0049",
         ):  # LATIN CAPITAL LETTER I
             try:
                 paths = BezierPath.fromFonttoolsGlyph(self, glyph_name)
