@@ -7,18 +7,18 @@ Python >=3.7 <3.11 is required to install ftCLI.
 
 The following packages will be installed during setup:
 
-* fonttools
-* afdko
-* beziers
-* brotli
-* click
-* dehinter
-* pathvalidate
-* rich
-* skia-pathops
-* ttfautohint-py
-* ufo2ft
-* zopfli
+  * fonttools
+  * afdko
+  * beziers
+  * brotli
+  * click
+  * dehinter
+  * pathvalidate
+  * rich
+  * skia-pathops
+  * ttfautohint-py
+  * ufo2ft
+  * zopfli
  
 ## Installation
 
@@ -39,78 +39,78 @@ Or, to install in editable mode:
 
 ## Common options
 
-* [-out, --output-dir](#-out---output-dir)
-* [--recalc-timestamp](#--recalc-timestamp)
-* [--no-overwrite](#--no-overwrite)
+  * [-out, --output-dir](#-out---output-dir)
+  * [--recalc-timestamp](#--recalc-timestamp)
+  * [--no-overwrite](#--no-overwrite)
 
 ## Commands list
 
-* [**assistant**](#ftcli-assistant)
-  * [ui](#ftcli-assistant-ui)
-  * [commit](#ftcli-assistant-commit)
-  * [init-config](#ftcli-assistant-init-config)
-  * [init-data](#ftcli-assistant-init-data)
+  * [**assistant**](#ftcli-assistant)
+    * [ui](#ftcli-assistant-ui)
+    * [commit](#ftcli-assistant-commit)
+    * [init-config](#ftcli-assistant-init-config)
+    * [init-data](#ftcli-assistant-init-data)
 
-* [**cff**](#ftcli-cff)
-    * [del-names](#ftcli-cff-del-names)
-    * [find-replace](#ftcli-cff-find-replace)
-    * [fix-version](#ftcli-cff-fix-version)
-    * [set-names](#ftcli-cff-set-names)
+  * [**cff**](#ftcli-cff)
+      * [del-names](#ftcli-cff-del-names)
+      * [find-replace](#ftcli-cff-find-replace)
+      * [fix-version](#ftcli-cff-fix-version)
+      * [set-names](#ftcli-cff-set-names)
   
-* [**converter**](#ftcli-converter)
-    * [otf2ttf](#ftcli-converter-otf2ttf)
-    * [ttf2otf](#ftcli-converter-ttf2otf)
-    * [ft2wf](#ftcli-converter-ft2wf)
-    * [wf2ft](#ftcli-converter-wf2ft)
-    * [var2static](#ftcli-converter-var2static)
-    * [ttc2sfnt](#ftcli-converter-ttc2sfnt)
+  * [**converter**](#ftcli-converter)
+      * [otf2ttf](#ftcli-converter-otf2ttf)
+      * [ttf2otf](#ftcli-converter-ttf2otf)
+      * [ft2wf](#ftcli-converter-ft2wf)
+      * [wf2ft](#ftcli-converter-wf2ft)
+      * [var2static](#ftcli-converter-var2static)
+      * [ttc2sfnt](#ftcli-converter-ttc2sfnt)
 
-* [**fix**](#ftcli-fix)
-  * [caret-offset](#ftcli-fix-caret-offset)
-  * [decompose-transformed](#ftcli-fix-decompose-transformed)
-  * [duplicate-components](#ftcli-fix-duplicate-components)
-  * [italic-angle](#ftcli-fix-italic-angle)
-  * [kern-table](#ftcli-fix-kern-table)
-  * [monospace](#ftcli-fix-monospace)
-  * [nbsp-missing](#ftcli-fix-nbsp-missing)
-  * [nbsp-width](#ftcli-fix-nbsp-width)
-  * [os2-ranges](#ftcli-fix-os2-ranges)
-  * [strip-names](#ftcli-fix-strip-names)
+  * [**fix**](#ftcli-fix)
+    * [caret-offset](#ftcli-fix-caret-offset)
+    * [decompose-transformed](#ftcli-fix-decompose-transformed)
+    * [duplicate-components](#ftcli-fix-duplicate-components)
+    * [italic-angle](#ftcli-fix-italic-angle)
+    * [kern-table](#ftcli-fix-kern-table)
+    * [monospace](#ftcli-fix-monospace)
+    * [nbsp-missing](#ftcli-fix-nbsp-missing)
+    * [nbsp-width](#ftcli-fix-nbsp-width)
+    * [os2-ranges](#ftcli-fix-os2-ranges)
+    * [strip-names](#ftcli-fix-strip-names)
 
-* [**metrics**](#ftcli-metrics)
-  * [align](#ftcli-metrics-align)
-  * [copy-metrics](#ftcli-metrics-copy-metrics)
-  * [set-linegap](#ftcli-metrics-set-linegap)
+  * [**metrics**](#ftcli-metrics)
+    * [align](#ftcli-metrics-align)
+    * [copy-metrics](#ftcli-metrics-copy-metrics)
+    * [set-linegap](#ftcli-metrics-set-linegap)
 
-* [**name**](#ftcli-name)
-    * [append](#ftcli-name-append)
-    * [del-mac-names](#ftcli-name-del-mac-names)
-    * [del-names](#ftcli-name-del-names)
-    * [find-replace](#ftcli-name-find-replace)
-    * [find-set-name](#ftcli-name-set-name)
+  * [**name**](#ftcli-name)
+      * [append](#ftcli-name-append)
+      * [del-mac-names](#ftcli-name-del-mac-names)
+      * [del-names](#ftcli-name-del-names)
+      * [find-replace](#ftcli-name-find-replace)
+      * [find-set-name](#ftcli-name-set-name)
 
-* [**os2**](#ftcli-os2)
+  * [**os2**](#ftcli-os2)
 
-* [**post**](#ftcli-post)
+  * [**post**](#ftcli-post)
 
-* [**print**](#ftcli-print)
-  * [font-info](#ftcli-print-font-info)
-  * [font-names](#ftcli-print-font-names)
-  * [font-fonts-list](#ftcli-print-fonts-list)
-  * [os2-table](#ftcli-print-os2-table)
+  * [**print**](#ftcli-print)
+    * [font-info](#ftcli-print-font-info)
+    * [font-names](#ftcli-print-font-names)
+    * [font-fonts-list](#ftcli-print-fonts-list)
+    * [os2-table](#ftcli-print-os2-table)
     
-* [**utils**](#ftcli-utils)
-  * [add-dsig](#ftcli-utils-add-dsig)
-  * [cff-autohint](#ftcli-utils-cff-autohint)
-  * [cff-check-outlines](#ftcli-utils-cff-check-outlines)
-  * [cff-dehint](#ftcli-utils-cff-dehint)
-  * [cff-desubr](#ftcli-utils-cff-desubr)
-  * [cff-subr](#ftcli-utils-cff-subr)
-  * [font-organizer](#ftcli-utils-font-organizer)
-  * [font-renamer](#ftcli-utils-font-renamer)
-  * [ttf-autohint](#ftcli-utils-ttf-autohint)
-  * [ttf-dehint](#ftcli-utils-ttf-dehint)
-  * [remove-overlaps](#ftcli-utils-ttf-remove-overlaps)
+  * [**utils**](#ftcli-utils)
+    * [add-dsig](#ftcli-utils-add-dsig)
+    * [cff-autohint](#ftcli-utils-cff-autohint)
+    * [cff-check-outlines](#ftcli-utils-cff-check-outlines)
+    * [cff-dehint](#ftcli-utils-cff-dehint)
+    * [cff-desubr](#ftcli-utils-cff-desubr)
+    * [cff-subr](#ftcli-utils-cff-subr)
+    * [font-organizer](#ftcli-utils-font-organizer)
+    * [font-renamer](#ftcli-utils-font-renamer)
+    * [ttf-autohint](#ftcli-utils-ttf-autohint)
+    * [ttf-dehint](#ftcli-utils-ttf-dehint)
+    * [remove-overlaps](#ftcli-utils-ttf-remove-overlaps)
 
 ## Arguments
 
