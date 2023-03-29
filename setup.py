@@ -25,7 +25,7 @@ setuptools.setup(
         "click==8.1.3",
         "dehinter==4.0.0",
         "pathvalidate==2.5.2",
-        "rich==13.3.2",
+        "rich>=13.3.2",
         "skia-pathops==0.7.4",
         "ttfautohint-py==0.5.1",
         "ufo2ft==2.31.0",
