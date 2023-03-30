@@ -1,6 +1,3 @@
-import os
-from pprint import pprint
-
 import click
 
 from ftCLI.Lib.Font import Font
