@@ -22,7 +22,7 @@ from ftCLI.Lib.utils.cli_tools import (
     get_fonts_data_file_path,
     get_fonts_list,
 )
-from ftCLI.Lib.utils.click_tools import generic_error_message, OptionalParamType
+from ftCLI.Lib.utils.click_tools import generic_error_message, no_valid_fonts_message, OptionalParamType
 from ftCLI.Lib.utils.misc import wrap_string
 
 
@@ -31,7 +31,7 @@ class AssistantUI(object):
         self.input_path = input_path
 
         if len(self.files_list) == 0:
-            generic_error_message("No valid font files found.")
+            no_valid_fonts_message(input_path)
             sys.exit()
 
         self.styles_mapping_file = StylesMappingFile(get_style_mapping_file_path(self.input_path))
