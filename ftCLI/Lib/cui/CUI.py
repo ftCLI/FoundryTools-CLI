@@ -734,7 +734,7 @@ def print_font_names(font: Font, max_lines=None, minimal=False):
     terminal_width = min(90, get_terminal_size()[0] - 1)
 
     table = Table(
-        title=f"\nftCLI - Name Table Viewer",
+        title="\nftCLI - Name Table Viewer",
         show_header=False,
         title_style="bold green",
     )
