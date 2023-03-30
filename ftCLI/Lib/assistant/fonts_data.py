@@ -521,7 +521,7 @@ class FontsDataFile(object):
                 font_row["selected"] = 1
                 rows.append(font_row)
             except Exception as e:
-                click.secho(f"ERROR: {e}")
+                generic_error_message(e)
         self.save(rows)
 
     @staticmethod

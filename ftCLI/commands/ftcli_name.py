@@ -242,7 +242,7 @@ def del_names(
 
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        click.secho(f"No valid font files found in {input_path}.", fg="red")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
