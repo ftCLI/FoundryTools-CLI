@@ -496,7 +496,7 @@ class AssistantUI(object):
         choices = [k for k in commands.keys()]
         # command = click.prompt(f"\nSelect command [{click.style(', '.join(choices), bold=True, fg='cyan')}]",
         command = click.prompt(
-            f"\nSelect command",
+            "\nSelect command",
             type=click.Choice(choices=choices, case_sensitive=False),
             show_choices=False,
             show_default=False,
