@@ -1,10 +1,8 @@
-import logging
 import os
 
-from ftCLI.Lib.Font import Font
+from fontTools.ttLib import TTLibError
 
-log = logging.getLogger(__name__)
-logging.basicConfig(level=40)
+from ftCLI.Lib.Font import Font
 
 
 def get_fonts_list(
@@ -44,6 +42,7 @@ def get_fonts_list(
     for file in files:
         try:
             font = Font(file)
+
             if allow_extensions is not None:
                 if font.get_real_extension() not in allow_extensions:
                     files_to_remove.append(file)
@@ -71,8 +70,7 @@ def get_fonts_list(
 
             del font
 
-        except Exception as e:
-            log.debug(e)
+        except TTLibError:
             files_to_remove.append(file)
 
     files = [f for f in files if f not in files_to_remove]
@@ -136,10 +134,3 @@ def get_fonts_data_file_path(input_path: str) -> str:
     fonts_data_file = os.path.join(project_files_dir, "fonts_data.csv")
 
     return fonts_data_file
-
-
-def get_options_file_path(input_path: str) -> str:
-    project_files_dir = get_project_files_path(input_path)
-    options_file = os.path.join(project_files_dir, "options.json")
-
-    return options_file
