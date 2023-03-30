@@ -13,7 +13,7 @@ from ftCLI.Lib.utils.click_tools import (
     file_saved_message,
     file_not_changed_message,
     generic_error_message,
-    generic_warning_message,
+    generic_warning_message, no_valid_fonts_message,
 )
 
 
@@ -191,7 +191,7 @@ def cli(input_path, recalcTimestamp, outputDir, overWrite, **kwargs):
 
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)

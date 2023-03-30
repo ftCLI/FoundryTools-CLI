@@ -144,7 +144,7 @@ def del_mac_names(input_path, del_all=False, recalcTimestamp=False, outputDir=No
 
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -345,7 +345,7 @@ def append(
 
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -446,7 +446,7 @@ def find_replace(
     """
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)

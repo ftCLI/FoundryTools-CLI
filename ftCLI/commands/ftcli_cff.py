@@ -10,7 +10,7 @@ from ftCLI.Lib.utils.click_tools import (
     add_common_options,
     generic_error_message,
     file_saved_message,
-    file_not_changed_message,
+    file_not_changed_message, no_valid_fonts_message,
 )
 
 
@@ -40,7 +40,7 @@ def del_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True,
 
     files = get_fonts_list(input_path, allow_ttf=False)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -108,7 +108,7 @@ def set_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True,
 
     files = get_fonts_list(input_path, allow_ttf=False)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -173,7 +173,7 @@ def find_replace(
 
     files = get_fonts_list(input_path, allow_ttf=False)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -236,7 +236,7 @@ def fix_version(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tru
 
     files = get_fonts_list(input_path, allow_ttf=False)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)

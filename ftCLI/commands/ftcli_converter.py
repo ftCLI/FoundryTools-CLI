@@ -196,7 +196,7 @@ def otf2ttf(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
 
     files = get_fonts_list(input_path, allow_ttf=False, allow_variable=False)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -271,7 +271,7 @@ def wf2ft(
 
     files = get_fonts_list(input_path, allow_extensions=[".woff", ".woff2"])
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -323,7 +323,7 @@ def ft2wf(input_path, flavor=None, outputDir=None, recalcTimestamp=False, overWr
 
     files = get_fonts_list(input_path, allow_extensions=[".otf", ".ttf"])
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)

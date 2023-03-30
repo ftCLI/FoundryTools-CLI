@@ -42,7 +42,7 @@ def monospace(input_path, outputDir=None, recalcTimestamp=False, overWrite=True)
 
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -112,7 +112,7 @@ def os2_ranges(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
     """
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -175,7 +175,7 @@ def nbsp_width(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
     """
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -440,7 +440,7 @@ def nbsp_missing(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tr
 
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -571,7 +571,7 @@ def duplicate_components(input_path, recalcTimestamp=False, outputDir=None, over
 
     files = get_fonts_list(input_path, allow_cff=False, allow_variable=False)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -637,7 +637,7 @@ def kern_table(input_path, recalcTimestamp=False, outputDir=None, overWrite=True
     """
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -701,7 +701,7 @@ def strip_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tru
     """
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)

@@ -3,7 +3,7 @@ import click
 from ftCLI.Lib.Font import Font
 from ftCLI.Lib.cui import CUI
 from ftCLI.Lib.utils.cli_tools import get_fonts_list
-from ftCLI.Lib.utils.click_tools import generic_error_message, add_file_or_path_argument
+from ftCLI.Lib.utils.click_tools import generic_error_message, add_file_or_path_argument, no_valid_fonts_message
 
 
 @click.group()
@@ -19,7 +19,7 @@ def fonts_list(input_path):
     """
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
     CUI.print_fonts_list(files)
 

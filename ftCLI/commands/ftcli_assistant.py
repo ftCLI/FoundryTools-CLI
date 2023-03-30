@@ -23,7 +23,7 @@ from ftCLI.Lib.utils.click_tools import (
     file_not_changed_message,
     generic_warning_message,
     file_not_selected_message,
-    add_path_argument,
+    add_path_argument, no_valid_fonts_message,
 )
 
 
@@ -91,7 +91,7 @@ def init_data(input_path, styles_mapping_file=None, quiet=False):
 
     files = get_fonts_list(input_path, allow_variable=False)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     if not styles_mapping_file:

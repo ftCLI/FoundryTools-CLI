@@ -21,7 +21,7 @@ from ftCLI.Lib.utils.click_tools import (
     generic_error_message,
     file_saved_message,
     file_not_changed_message,
-    generic_info_message,
+    generic_info_message, no_valid_fonts_message,
 )
 
 
@@ -41,7 +41,7 @@ def add_dsig(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
     files = get_fonts_list(input_path, allow_extensions=[".otf", ".ttf", ".woff"])
 
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -95,7 +95,7 @@ def font_organizer(input_path, rename_source=None, sort_by_extension=False, sort
 
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     for file in files:
@@ -532,7 +532,7 @@ def cff_subr(input_path, recalcTimestamp=False, outputDir=None, overWrite=True):
 
     files = get_fonts_list(input_path, allow_extensions=[".otf"])
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -566,7 +566,7 @@ def cff_desubr(input_path, recalcTimestamp=False, outputDir=None, overWrite=True
     """
     files = get_fonts_list(input_path, allow_extensions=[".otf"])
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
