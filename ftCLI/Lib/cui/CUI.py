@@ -568,7 +568,7 @@ def get_commands_tree(commands: dict) -> Tree:
     """
     Takes a dictionary of commands and returns a Tree object
 
-    :param commands: dict
+    :param commands: the dictionary of commands
     :type commands: dict
     :return: A Tree object with the label "COMMANDS" and the style "green"
     """
