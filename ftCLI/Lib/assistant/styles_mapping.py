@@ -6,16 +6,6 @@ class StylesMappingFile(object):
     def __init__(self, styles_mapping_file):
         self.file = styles_mapping_file
 
-    @property
-    def is_valid(self) -> bool:
-        try:
-            data = self.get_data()
-            for k in ["widths", "weights", "obliques", "italics"]:
-                _ = data[k]
-            return True
-        except:
-            return False
-
     def get_data(self) -> dict:
         """
         Opens the styles mapping file and returns its data as a dictionary
