@@ -493,7 +493,7 @@ def decompose_transformed(input_path, recalcTimestamp=False, outputDir=None, ove
 
     files = get_fonts_list(input_path, allow_cff=False, allow_variable=False)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)

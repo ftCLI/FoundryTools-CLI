@@ -10,7 +10,9 @@ from ftCLI.Lib.utils.click_tools import (
     add_common_options,
     file_saved_message,
     generic_error_message,
-    add_file_or_path_argument, file_not_changed_message,
+    add_file_or_path_argument,
+    file_not_changed_message,
+    no_valid_fonts_message
 )
 
 
@@ -37,7 +39,7 @@ def set_linegap(input_path, percent, outputDir=None, recalcTimestamp=False, over
 
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
@@ -108,7 +110,7 @@ def align(input_path, with_linegap=False, outputDir=None, recalcTimestamp=False,
 
     files = get_fonts_list(input_path)
     if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}")
+        no_valid_fonts_message(input_path)
         return
 
     output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
