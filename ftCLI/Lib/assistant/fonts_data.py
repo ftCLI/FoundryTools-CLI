@@ -326,8 +326,6 @@ class FontsDataFile(object):
         full_font_name = font.name_table.getDebugName(4)
 
         if 4 not in exclude_namerecords:
-            full_font_name_family_name = family_name_ot
-            full_font_name_subfamily_name = subfamily_name_ot
             full_font_name = f"{family_name_ot} {subfamily_name_ot}"
 
             # Apply the explicitly passed shortenings
