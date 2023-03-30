@@ -70,7 +70,7 @@ def get_fonts_list(
 
             del font
 
-        except TTLibError:
+        except (TTLibError, PermissionError, Exception):
             files_to_remove.append(file)
 
     files = [f for f in files if f not in files_to_remove]
