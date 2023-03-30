@@ -853,7 +853,7 @@ def print_os2_table(font: Font):
     terminal_width = min(90, get_terminal_size()[0] - 1)
 
     table = Table(
-        title=f"\nftCLI - OS/2 Table Viewer",
+        title="\nftCLI - OS/2 Table Viewer",
         show_header=False,
         title_style="bold green",
         caption=font.file,
