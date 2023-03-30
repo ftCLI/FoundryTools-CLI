@@ -517,7 +517,7 @@ def decompose_transformed(input_path, recalcTimestamp=False, outputDir=None, ove
                 if not glyf.isComposite():
                     continue
                 for component in glyf.components:
-                    comp_name, transform = component.getComponentInfo()
+                    _, transform = component.getComponentInfo()
 
                     # Font is hinted, decompose glyphs with *any* transformations
                     if font.is_hinted_ttf:
