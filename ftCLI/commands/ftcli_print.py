@@ -43,7 +43,7 @@ def font_info(input_path):
             except Exception as e:
                 generic_error_message(e)
     else:
-        click.secho("\nNo valid fonts found in {}".format(input_path), fg="red")
+        no_valid_fonts_message(input_path)
 
 
 @click.group()
@@ -65,7 +65,7 @@ def os2_table(input_path):
             except Exception as e:
                 generic_error_message(e)
     else:
-        generic_error_message("No valid font files found")
+        no_valid_fonts_message(input_path)
 
 
 @click.group()
@@ -103,7 +103,7 @@ def font_names(input_path, max_lines, minimal=False):
             except Exception as e:
                 generic_error_message(e)
     else:
-        generic_error_message("No valid font files found.")
+        no_valid_fonts_message(input_path)
 
 
 cli = click.CommandCollection(
