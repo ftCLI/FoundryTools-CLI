@@ -1,7 +1,6 @@
 import csv
 import os.path
 
-import click
 from fontTools.misc.timeTools import timestampToString
 
 from ftCLI.Lib.Font import Font
