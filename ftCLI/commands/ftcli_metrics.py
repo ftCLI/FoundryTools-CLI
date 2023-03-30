@@ -1,4 +1,3 @@
-import os
 import sys
 from copy import copy
 
@@ -105,7 +104,7 @@ def align(input_path, with_linegap=False, outputDir=None, recalcTimestamp=False,
     """
 
     import math
-    from ftCLI.Lib.utils.glyphs import get_glyphs_bounds_all, get_glyph_bounds
+    from ftCLI.Lib.utils.glyphs import get_glyph_bounds
 
     files = get_fonts_list(input_path)
     if len(files) == 0:
