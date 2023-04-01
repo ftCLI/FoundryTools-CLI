@@ -43,7 +43,7 @@ def del_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True,
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)
@@ -111,7 +111,7 @@ def set_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True,
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)
@@ -176,7 +176,7 @@ def find_replace(
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)
@@ -239,7 +239,7 @@ def fix_version(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tru
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)

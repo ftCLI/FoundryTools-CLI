@@ -45,7 +45,7 @@ def monospace(input_path, outputDir=None, recalcTimestamp=False, overWrite=True)
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)
@@ -115,7 +115,7 @@ def os2_ranges(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)
@@ -178,7 +178,7 @@ def nbsp_width(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)
@@ -224,7 +224,7 @@ def caret_offset(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tr
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)
@@ -302,7 +302,7 @@ def italic_angle(input_path, mode, recalcTimestamp=False, outputDir=None, overWr
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)
@@ -443,7 +443,7 @@ def nbsp_missing(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tr
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)
@@ -496,7 +496,7 @@ def decompose_transformed(input_path, recalcTimestamp=False, outputDir=None, ove
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)
@@ -574,7 +574,7 @@ def duplicate_components(input_path, recalcTimestamp=False, outputDir=None, over
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)
@@ -640,7 +640,7 @@ def kern_table(input_path, recalcTimestamp=False, outputDir=None, overWrite=True
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)
@@ -704,7 +704,7 @@ def strip_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tru
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)

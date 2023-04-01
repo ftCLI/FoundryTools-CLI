@@ -78,24 +78,24 @@ def get_fonts_list(
     return files
 
 
-def get_output_dir(fallback_path: str, path: str = None) -> str:
+def get_output_dir(input_path: str, output_dir: str = None) -> str:
     """
     If the output directory is not specified, then the output directory is the directory of the input file if the input
     is a file, or the input directory if the input is a directory
 
-    :param fallback_path: The path to the input file or directory
-    :type fallback_path: str
-    :param path: The output directory, if specified
-    :type path: str
+    :param input_path: The path to the input file or directory
+    :type input_path: str
+    :param output_dir: The output directory, if specified
+    :type output_dir: str
     :return: The output directory.
     """
-    if path is not None:
-        return path
+    if output_dir is not None:
+        return output_dir
     else:
-        if os.path.isfile(fallback_path):
-            return os.path.dirname(fallback_path)
+        if os.path.isfile(input_path):
+            return os.path.dirname(input_path)
         else:
-            return fallback_path
+            return input_path
 
 
 def check_output_dir(outputDir: str) -> (bool, Exception):
