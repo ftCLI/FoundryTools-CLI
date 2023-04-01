@@ -59,7 +59,7 @@ def cli(input_path, recalcTimestamp, outputDir, overWrite, **kwargs):
         no_valid_fonts_message(input_path)
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
+    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
     dir_ok, error_message = check_output_dir(output_dir)
     if dir_ok is False:
         generic_error_message(error_message)
