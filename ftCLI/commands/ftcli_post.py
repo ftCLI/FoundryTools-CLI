@@ -10,7 +10,8 @@ from ftCLI.Lib.utils.click_tools import (
     add_common_options,
     file_saved_message,
     file_not_changed_message,
-    generic_error_message, no_valid_fonts_message,
+    generic_error_message,
+    no_valid_fonts_message,
 )
 
 

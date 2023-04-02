@@ -8,20 +8,20 @@ from ftCLI.Lib.utils.click_tools import no_valid_fonts_message, generic_error_me
 
 
 def check_input_path(
-        input_path: str,
-        allow_extensions: list = None,
-        allow_ttf=True,
-        allow_cff=True,
-        allow_static=True,
-        allow_variable=True):
-
+    input_path: str,
+    allow_extensions: list = None,
+    allow_ttf=True,
+    allow_cff=True,
+    allow_static=True,
+    allow_variable=True,
+):
     files = get_fonts_list(
         input_path,
         allow_extensions=allow_extensions,
         allow_ttf=allow_ttf,
         allow_cff=allow_cff,
         allow_static=allow_static,
-        allow_variable=allow_variable
+        allow_variable=allow_variable,
     )
 
     if not len(files) > 0:
@@ -43,7 +43,7 @@ def check_output_dir(input_path, output_path: None):
 
     try:
         os.makedirs(output_dir, exist_ok=True)
-        with open(os.path.join(output_dir, "0.0"), 'w'):
+        with open(os.path.join(output_dir, "0.0"), "w"):
             pass
         os.remove(os.path.join(output_dir, "0.0"))
     except PermissionError:

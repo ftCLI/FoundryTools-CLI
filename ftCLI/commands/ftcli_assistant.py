@@ -11,7 +11,8 @@ from ftCLI.Lib.cui.CUI import AssistantUI
 from ftCLI.Lib.utils.cli_tools import (
     get_style_mapping_file_path,
     get_fonts_data_file_path,
-    check_output_dir, check_input_path,
+    check_output_dir,
+    check_input_path,
 )
 from ftCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
@@ -22,7 +23,8 @@ from ftCLI.Lib.utils.click_tools import (
     file_not_changed_message,
     generic_warning_message,
     file_not_selected_message,
-    add_path_argument, )
+    add_path_argument,
+)
 
 
 @click.group()
@@ -151,7 +153,6 @@ def recalc_fonts_data():
               """,
 )
 def recalc_data(input_path, input_string, quiet=False):
-
     _ = check_input_path(input_path, allow_ttf=False, allow_variable=False)
 
     styles_mapping_file = get_style_mapping_file_path(input_path)

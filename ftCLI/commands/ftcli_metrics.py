@@ -11,7 +11,7 @@ from ftCLI.Lib.utils.click_tools import (
     file_saved_message,
     generic_error_message,
     add_file_or_path_argument,
-    file_not_changed_message
+    file_not_changed_message,
 )
 
 
@@ -120,11 +120,11 @@ def align(input_path, with_linegap=False, outputDir=None, recalcTimestamp=False,
             if with_linegap:
                 glyph_set = font.getGlyphSet()
 
-                for glyph_name in ['b', 'd', 'f', 'h', 'k', 'l', 't']:
-                    ideal_ascenders.append(math.ceil(get_glyph_bounds(glyph_set, glyph_name)['yMax']))
+                for glyph_name in ["b", "d", "f", "h", "k", "l", "t"]:
+                    ideal_ascenders.append(math.ceil(get_glyph_bounds(glyph_set, glyph_name)["yMax"]))
 
-                for glyph_name in ['g', 'j', 'p', 'q', 'y']:
-                    ideal_descenders.append(math.floor(get_glyph_bounds(glyph_set, glyph_name)['yMin']))
+                for glyph_name in ["g", "j", "p", "q", "y"]:
+                    ideal_descenders.append(math.floor(get_glyph_bounds(glyph_set, glyph_name)["yMin"]))
             else:
                 ideal_ascenders = real_ascenders
                 ideal_ascenders = real_descenders
@@ -139,7 +139,6 @@ def align(input_path, with_linegap=False, outputDir=None, recalcTimestamp=False,
     typo_line_gap = (max_real_ascender + abs(min_real_descender)) - (max_ideal_ascender + abs(min_ideal_descender))
 
     for font in fonts:
-
         hhea_table_copy = copy(font.hhea_table)
         os2_table_copy = copy(font.os_2_table)
 

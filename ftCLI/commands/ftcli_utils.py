@@ -21,7 +21,8 @@ from ftCLI.Lib.utils.click_tools import (
     generic_error_message,
     file_saved_message,
     file_not_changed_message,
-    generic_info_message, no_valid_fonts_message,
+    generic_info_message,
+    no_valid_fonts_message,
 )
 
 
