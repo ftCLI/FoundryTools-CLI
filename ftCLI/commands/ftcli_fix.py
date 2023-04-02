@@ -652,6 +652,74 @@ def strip_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tru
             generic_error_message(e)
 
 
+@click.group()
+def fix_uprights_values():
+    pass
+
+
+@fix_uprights_values.command()
+@add_file_or_path_argument()
+@add_common_options()
+def uprights(input_path, recalcTimestamp=False, outputDir=None, overWrite=True):
+    """
+    Assuming that the font is correctly set as upright (i.e.: italic oblique bits are all clear), the script sets the
+    following values:
+
+    \b
+    post.italicAngle = 0.0
+    hhea.caretSlopeRise = 1
+    hhea.caretSlopeRun = 0
+    hhea.caretOffset = 0
+    CFF.cff.topDictIndex[0].ItalicAngle = 0 (only if the font has a CFF table)
+
+    The font is saved only if at least one table has changed.
+    """
+
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
+
+    for file in files:
+        try:
+            font = Font(file, recalcTimestamp=recalcTimestamp)
+            post_table_copy = deepcopy(font.post_table)
+            hhea_table = font.hhea_table
+            hhea_table_copy = deepcopy(hhea_table)
+
+            font_has_changed = False
+
+            if not font.is_italic:
+                font.post_table.set_italic_angle(0)
+                if font.is_cff:
+                    cff_table = font["CFF "]
+                    cff_table_copy = deepcopy(font["CFF "])
+                    font["CFF "].cff.topDictIndex[0].ItalicAngle = 0
+                else:
+                    cff_table = None
+                    cff_table_copy = None
+
+                hhea_table.caretSlopeRise = 1
+                hhea_table.caretSlopeRun = 0
+                hhea_table.caretOffset = 0
+
+                if cff_table and cff_table_copy:
+                    if cff_table_copy.compile(font) != cff_table.compile(font):
+                        font_has_changed = True
+                if post_table_copy.compile(font) != font.post_table.compile(font):
+                    font_has_changed = True
+                if hhea_table_copy.compile(font) != hhea_table.compile(font):
+                    font_has_changed = True
+
+            if font_has_changed:
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
+                font.save(output_file)
+                file_saved_message(output_file)
+            else:
+                file_not_changed_message(file)
+
+        except Exception as e:
+            generic_error_message(e)
+
+
 cli = click.CommandCollection(
     sources=[
         fix_os2_table_unicode_codepage,
@@ -664,6 +732,7 @@ cli = click.CommandCollection(
         remove_glyf_duplicate_components,
         fix_unmapped_glyphs_kern_table,
         remove_leading_and_trailing_spaces,
+        fix_uprights_values,
     ],
     help="""
     A set of commands to detect and automatically fix font errors.
