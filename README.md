@@ -1821,6 +1821,37 @@ extension.
                               5: CFF TopDict FullName (CFF fonts only)
     --help                    Show this message and exit.
 
+
+### ftcli utils scale-upm
+
+Change the units-per-EM of fonts.
+
+Hinting is removed from scaled TrueType fonts to avoid bad results. You may
+consider to use `ftcli utils ttf-autohint` to hint the scaled fonts. In
+addition, CFF scaled fonts are not subroutinized. Subroutines can be applied
+using the `ftcli utils cff-subr` command.
+
+**Usage**:
+
+    ftcli utils scale-upm [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -upm INTEGER                  New UPM value  [default: 1000]
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
+
+
 ### ftcli utils ttf-autohint
 
 Autohints TrueType fonts using ttfautohint-py.

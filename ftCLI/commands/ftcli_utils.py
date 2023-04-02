@@ -230,7 +230,6 @@ def del_table(input_path, table_tag, recalcTimestamp=False, outputDir=None, over
             generic_error_message(e)
 
 
-
 @click.group()
 def ttf_autohinter():
     pass
@@ -561,6 +560,57 @@ def cff_desubr(input_path, recalcTimestamp=False, outputDir=None, overWrite=True
             generic_error_message(e)
 
 
+@click.group()
+def scale_units_per_em():
+    pass
+
+
+@scale_units_per_em.command()
+@add_file_or_path_argument()
+@click.option(
+    "-upm",
+    type=int,
+    default=1000,
+    show_default=True,
+    help="""
+    New UPM value
+    """
+)
+@add_common_options()
+def scale_upm(input_path, upm=1000, recalcTimestamp=False, outputDir=None, overWrite=True):
+    """
+    Change the units-per-EM of fonts.
+
+    Hinting is removed from scaled TrueType fonts to avoid bad results. You may consider to use 'ftcli utils
+    ttf-autohint' to hint the scaled fonts. In addition, CFF scaled fonts are not subroutinized. Subroutines can be
+    applied using the 'ftcli utils cff-subr' command.
+    """
+    from fontTools.ttLib.scaleUpem import scale_upem
+    from fontTools.ttLib.ttFont import TTFont
+
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
+
+    for file in files:
+        try:
+            font = TTFont(file, recalcTimestamp=recalcTimestamp)
+            if font["head"].unitsPerEm == upm:
+                file_not_changed_message(file)
+                continue
+
+            # Remove overlaps and hinting from TrueType fonts.
+            if font.sfntVersion != "OTTO" and "fpgm" in font:
+                removeOverlaps(font, removeHinting=True)
+
+            scale_upem(font=font, new_upem=upm)
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
+            font.save(output_file)
+            file_saved_message(output_file)
+
+        except Exception as e:
+            generic_error_message(e)
+
+
 cli = click.CommandCollection(
     sources=[
         add_dummy_dsig,
@@ -575,6 +625,7 @@ cli = click.CommandCollection(
         cff_dehinter,
         cff_subroutinize,
         cff_desubroutinize,
+        scale_units_per_em,
     ],
     help="""Miscellaneous utilities.""",
 )
