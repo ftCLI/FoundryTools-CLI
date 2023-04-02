@@ -6,7 +6,7 @@ from afdko.fdkutils import run_shell_command
 from fontTools.misc.cliTools import makeOutputFileName
 
 from ftCLI.Lib.Font import Font
-from ftCLI.Lib.utils.cli_tools import get_fonts_list, get_output_dir, check_output_dir, check_input_path
+from ftCLI.Lib.utils.cli_tools import check_output_dir, check_input_path
 from ftCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
@@ -14,7 +14,6 @@ from ftCLI.Lib.utils.click_tools import (
     file_not_changed_message,
     generic_error_message,
     generic_warning_message,
-    no_valid_fonts_message,
 )
 
 
