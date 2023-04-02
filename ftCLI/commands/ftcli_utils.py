@@ -14,14 +14,14 @@ from fontTools.ttLib.removeOverlaps import removeOverlaps
 from pathvalidate import sanitize_filepath, sanitize_filename
 
 from ftCLI.Lib.Font import Font
-from ftCLI.Lib.utils.cli_tools import get_fonts_list, check_output_dir, get_output_dir
+from ftCLI.Lib.utils.cli_tools import check_output_dir, check_input_path
 from ftCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
     generic_error_message,
     file_saved_message,
     file_not_changed_message,
-    generic_info_message, no_valid_fonts_message,
+    generic_info_message,
 )
 
 
@@ -38,17 +38,8 @@ def add_dsig(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
     Adds a dummy DSIG table to fonts, unless the table is already present. WOFF2 flavored fonts are ignored, since
     encoders must remove the DSIG table from woff2 font data.
     """
-    files = get_fonts_list(input_path, allow_extensions=[".otf", ".ttf", ".woff"])
-
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_extensions=[".otf", ".ttf", ".woff"])
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -93,10 +84,7 @@ def font_organizer(input_path, rename_source=None, sort_by_extension=False, sort
     named after the font's extension and version.
     """
 
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
+    files = check_input_path(input_path)
 
     for file in files:
         try:
@@ -156,7 +144,7 @@ def font_renamer(input_path, source):
     extension.
     """
 
-    files = get_fonts_list(input_path=input_path)
+    files = check_input_path(input_path)
 
     # Conversion to integer is needed because click.Choice() only accepts strings
     source = int(source)
@@ -207,16 +195,8 @@ def ttf_autohint(input_path, outputDir=None, recalcTimestamp=False, overWrite=Tr
 
     from ttfautohint import ttfautohint
 
-    files = get_fonts_list(input_path, allow_cff=False, allow_variable=False)
-    if len(files) == 0:
-        generic_error_message(f"No valid TrueType font files found in {input_path}.")
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_cff=False, allow_variable=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -279,17 +259,8 @@ def ttf_dehint(
     This is a CLI for dehinter by Source Foundry: https://github.com/source-foundry/dehinter
     """
 
-    files = get_fonts_list(input_path, allow_cff=False)
-
-    if len(files) == 0:
-        generic_error_message(f"No valid TrueType font files found in {input_path}.")
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_cff=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -337,16 +308,8 @@ def ttf_remove_overlaps(input_path, ignore_errors, outputDir=None, recalcTimesta
     Simplify glyphs in TrueType fonts by merging overlapping contours.
     """
 
-    files = get_fonts_list(input_path, allow_cff=False, allow_variable=False)
-    if len(files) == 0:
-        generic_error_message(f"No valid TrueType font files found in {input_path}.")
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_cff=False, allow_variable=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -373,16 +336,8 @@ def cff_check_outlines(input_path, outputDir=None, recalcTimestamp=False, overWr
     Performs afdko.checkoutlinesufo outline quality checks and overlaps removal. Supports CFF fonts only.
     """
 
-    files = get_fonts_list(input_path, allow_ttf=False, allow_variable=False)
-    if len(files) == 0:
-        generic_error_message(f"No valid CFF font files found in {input_path}.")
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_ttf=False, allow_variable=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         print()
@@ -418,16 +373,8 @@ def cff_autohint(input_path, optimize=True, outputDir=None, recalcTimestamp=Fals
     Autohints CFF fonts with psautohint.
     """
 
-    files = get_fonts_list(input_path, allow_extensions=[".otf"])
-    if len(files) == 0:
-        generic_error_message(f"No valid CFF font files found in {input_path}.")
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_extensions=[".otf"])
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     start_time = time.time()
     counter = 0
@@ -483,16 +430,8 @@ def cff_dehint(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
     """
     Drops hinting from CFF fonts.
     """
-    files = get_fonts_list(input_path, allow_ttf=False, allow_variable=False)
-    if len(files) == 0:
-        generic_error_message(f"No valid CFF font files found in {input_path}.")
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_ttf=False, allow_variable=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -530,16 +469,8 @@ def cff_subr(input_path, recalcTimestamp=False, outputDir=None, overWrite=True):
     Subroutinize CFF fonts.
     """
 
-    files = get_fonts_list(input_path, allow_extensions=[".otf"])
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_extensions=[".otf"])
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -564,16 +495,8 @@ def cff_desubr(input_path, recalcTimestamp=False, outputDir=None, overWrite=True
     """
     Desoubroutinize CFF fonts.
     """
-    files = get_fonts_list(input_path, allow_extensions=[".otf"])
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_extensions=[".otf"])
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:

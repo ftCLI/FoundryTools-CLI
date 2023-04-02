@@ -12,7 +12,6 @@ def get_glyph_bounds(glyph_set, glyph_name: str) -> dict:
 
 
 def get_glyphs_bounds_all(glyph_set) -> dict:
-
     metrics = {}
     for glyph_name in glyph_set.keys():
         bounds = T2CharString.calcBounds(glyph_set[glyph_name], glyph_set)

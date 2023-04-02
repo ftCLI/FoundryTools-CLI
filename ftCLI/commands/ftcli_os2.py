@@ -6,14 +6,14 @@ from afdko.fdkutils import run_shell_command
 from fontTools.misc.cliTools import makeOutputFileName
 
 from ftCLI.Lib.Font import Font
-from ftCLI.Lib.utils.cli_tools import get_fonts_list, get_output_dir, check_output_dir
+from ftCLI.Lib.utils.cli_tools import check_output_dir, check_input_path
 from ftCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
     file_saved_message,
     file_not_changed_message,
     generic_error_message,
-    generic_warning_message, no_valid_fonts_message,
+    generic_warning_message,
 )
 
 
@@ -189,16 +189,8 @@ def cli(input_path, recalcTimestamp, outputDir, overWrite, **kwargs):
         generic_error_message("Please, pass at least a valid parameter.")
         return
 
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:

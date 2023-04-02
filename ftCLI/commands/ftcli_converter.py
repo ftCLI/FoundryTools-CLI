@@ -13,7 +13,7 @@ from pathvalidate import sanitize_filename
 from ftCLI.Lib.Font import Font
 from ftCLI.Lib.converter import otf_to_ttf
 from ftCLI.Lib.converter.ttf_to_otf import TrueTypeToCFF
-from ftCLI.Lib.utils.cli_tools import check_output_dir, get_output_dir, get_fonts_list
+from ftCLI.Lib.utils.cli_tools import check_output_dir, check_input_path
 from ftCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
@@ -22,7 +22,6 @@ from ftCLI.Lib.utils.click_tools import (
     generic_info_message,
     file_saved_message,
     select_instance_coordinates,
-    no_valid_fonts_message,
 )
 
 
@@ -40,7 +39,7 @@ def ttf_to_otf():
     default=1,
     help="""
               Conversion tolerance (0-2.5, default 1). Low tolerance adds more points but keeps shapes. High tolerance
-              adds few points but may change shapes.
+              adds few points but may change shape.
               """,
 )
 @click.option(
@@ -59,8 +58,8 @@ def ttf_to_otf():
     is_flag=True,
     default=True,
     help="""
-                Keeps NULL and CR glyphs from the output font
-    """,
+              Keeps NULL and CR glyphs from the output font
+              """,
 )
 @click.option(
     "--no-subr",
@@ -68,8 +67,8 @@ def ttf_to_otf():
     is_flag=True,
     default=True,
     help="""
-                Do not subroutinize converted fonts
-    """,
+              Do not subroutinize converted fonts
+              """,
 )
 @click.option(
     "--check-outlines",
@@ -94,15 +93,8 @@ def ttf2otf(
     Converts TTF fonts (or TrueType flavored woff/woff2 web fonts) to OTF fonts (or CFF flavored woff/woff2 web fonts).
     """
 
-    files = get_fonts_list(input_path, allow_variable=False, allow_cff=False)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
+    files = check_input_path(input_path, allow_variable=False, allow_cff=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     start_time = time.time()
     converted_files_counter = 0
@@ -124,30 +116,18 @@ def ttf2otf(
             ext = ".otf" if source_font.flavor is None else source_font.get_real_extension()
             suffix = "" if source_font.flavor is None else ".otf"
             output_file = makeOutputFileName(
-                file,
-                suffix=suffix,
-                extension=ext,
-                outputDir=output_dir,
-                overWrite=overWrite,
+                file, suffix=suffix, extension=ext, outputDir=output_dir, overWrite=overWrite
             )
 
             if safe:
                 # Create a temporary OTF file with T2CharStringPen...
                 temp_otf_file = makeOutputFileName(output_file, suffix="_tmp", overWrite=True)
                 ttf2otf_converter_temp = TrueTypeToCFF(source_font, output_file=temp_otf_file)
-                ttf2otf_converter_temp.run(
-                    charstrings_source="t2",
-                    purge_glyphs=purge_glyphs,
-                    subroutinize=False,
-                )
+                ttf2otf_converter_temp.run(charstrings_source="t2", purge_glyphs=purge_glyphs, subroutinize=False)
 
                 # ... and convert it back to a temporary TTF file that will be used for conversion
                 temp_ttf_file = makeOutputFileName(temp_otf_file, extension=".ttf", overWrite=True)
-                otf_to_ttf.run(
-                    input_file=temp_otf_file,
-                    output_file=temp_ttf_file,
-                    recalc_timestamp=recalcTimestamp,
-                )
+                otf_to_ttf.run(input_file=temp_otf_file, output_file=temp_ttf_file, recalc_timestamp=recalcTimestamp)
                 os.remove(temp_otf_file)
                 input_font = Font(temp_ttf_file, recalcTimestamp=recalcTimestamp)
             else:
@@ -155,10 +135,7 @@ def ttf2otf(
 
             ttf2otf_converter = TrueTypeToCFF(font=input_font, output_file=output_file)
             ttf2otf_converter.run(
-                charstrings_source="qu2cu",
-                tolerance=tolerance,
-                subroutinize=subroutinize,
-                purge_glyphs=purge_glyphs,
+                charstrings_source="qu2cu", tolerance=tolerance, subroutinize=subroutinize, purge_glyphs=purge_glyphs
             )
 
             if safe:
@@ -194,16 +171,8 @@ def otf2ttf(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
     Converts fonts from OTF to TTF format.
     """
 
-    files = get_fonts_list(input_path, allow_ttf=False, allow_variable=False)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_variable=False, allow_ttf=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     start_time = time.time()
     counter = 0
@@ -269,16 +238,8 @@ def wf2ft(
     Converts web fonts (WOFF and WOFF2) to SFNT fonts (TTF or OTF)
     """
 
-    files = get_fonts_list(input_path, allow_extensions=[".woff", ".woff2"])
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_extensions=[".woff", ".woff2"])
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -321,16 +282,8 @@ def ft2wf(input_path, flavor=None, outputDir=None, recalcTimestamp=False, overWr
     Converts SFNT fonts (TTF or OTF) to web fonts (WOFF and/or WOFF2)
     """
 
-    files = get_fonts_list(input_path, allow_extensions=[".otf", ".ttf"])
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_extensions=[".otf", ".ttf"])
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     output_flavors = ["woff", "woff2"]
     if flavor is not None:
@@ -385,11 +338,7 @@ def ttc2sfnt(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
         generic_error_message(f"No valid .ttc font files found in {input_path}.")
         return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for ttc_file in ttc_files:
         try:
@@ -460,16 +409,8 @@ def var2static(
 
     from ftCLI.Lib.VFont import VariableFont
 
-    files = get_fonts_list(input_path, allow_static=False, allow_cff=False)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_static=False, allow_cff=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     start_time = time.time()
     for file in files:

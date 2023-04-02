@@ -2,8 +2,8 @@ import click
 
 from ftCLI.Lib.Font import Font
 from ftCLI.Lib.cui import CUI
-from ftCLI.Lib.utils.cli_tools import get_fonts_list
-from ftCLI.Lib.utils.click_tools import generic_error_message, add_file_or_path_argument, no_valid_fonts_message
+from ftCLI.Lib.utils.cli_tools import check_input_path
+from ftCLI.Lib.utils.click_tools import generic_error_message, add_file_or_path_argument
 
 
 @click.group()
@@ -17,10 +17,7 @@ def fonts_list(input_path):
     """
     Prints a list of fonts with basic information.
     """
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
+    files = check_input_path(input_path)
     CUI.print_fonts_list(files)
 
 
@@ -35,15 +32,13 @@ def font_info(input_path):
     """
     Prints detailed font info.
     """
-    if len(get_fonts_list(input_path)) > 0:
-        for file in get_fonts_list(input_path):
-            try:
-                font = Font(file)
-                CUI.print_font_info(font)
-            except Exception as e:
-                generic_error_message(e)
-    else:
-        no_valid_fonts_message(input_path)
+    files = check_input_path(input_path)
+    for file in files:
+        try:
+            font = Font(file)
+            CUI.print_font_info(font)
+        except Exception as e:
+            generic_error_message(e)
 
 
 @click.group()
@@ -57,15 +52,13 @@ def os2_table(input_path):
     """
     Prints the OS/2 table.
     """
-    if len(get_fonts_list(input_path)) > 0:
-        for file in get_fonts_list(input_path):
-            try:
-                font = Font(file)
-                CUI.print_os2_table(font)
-            except Exception as e:
-                generic_error_message(e)
-    else:
-        no_valid_fonts_message(input_path)
+    files = check_input_path(input_path)
+    for file in files:
+        try:
+            font = Font(file)
+            CUI.print_os2_table(font)
+        except Exception as e:
+            generic_error_message(e)
 
 
 @click.group()
@@ -95,15 +88,13 @@ def font_names(input_path, max_lines, minimal=False):
     """
     Prints the `name` table and, if the font is CFF, the names in the `CFF` table topDict.
     """
-    if len(get_fonts_list(input_path)) > 0:
-        for file in get_fonts_list(input_path):
-            try:
-                font = Font(file)
-                CUI.print_font_names(font, max_lines=max_lines, minimal=minimal)
-            except Exception as e:
-                generic_error_message(e)
-    else:
-        no_valid_fonts_message(input_path)
+    files = check_input_path(input_path)
+    for file in files:
+        try:
+            font = Font(file)
+            CUI.print_font_names(font, max_lines=max_lines, minimal=minimal)
+        except Exception as e:
+            generic_error_message(e)
 
 
 cli = click.CommandCollection(

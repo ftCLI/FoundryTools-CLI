@@ -5,14 +5,13 @@ from fontTools.misc.cliTools import makeOutputFileName
 
 from ftCLI.Lib import constants
 from ftCLI.Lib.Font import Font
-from ftCLI.Lib.utils.cli_tools import get_fonts_list, check_output_dir, get_output_dir
+from ftCLI.Lib.utils.cli_tools import check_input_path, check_output_dir
 from ftCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
     file_saved_message,
     file_not_changed_message,
     generic_error_message,
-    no_valid_fonts_message
 )
 
 
@@ -75,16 +74,8 @@ def set_name(
     If the namerecord is already present, it will be overwritten.
     """
 
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     # platform_id must be converted to integer because click.Choice() doesn't accept integers (only strings)
     if platform_id is not None:
@@ -142,16 +133,8 @@ def del_mac_names(input_path, del_all=False, recalcTimestamp=False, outputDir=No
     platformID 1, platformSpecificID 0".
     """
 
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -240,16 +223,8 @@ def del_names(
     be processed.
     """
 
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     if platform_id is not None:
         platform_id = int(platform_id)
@@ -343,16 +318,8 @@ def append(
         generic_error_message("Please, insert at least a prefix or a suffix to append")
         return
 
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     # Convert to integer because click.Choice() doesn't accept integers
     if platform_id is not None:
@@ -444,16 +411,9 @@ def find_replace(
     """
     Finds a string in the specified namerecords and replaces it with a new string
     """
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
 
-    output_dir = get_output_dir(fallback_path=input_path, path=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     if platform_id is not None:
         platform_id = int(platform_id)
