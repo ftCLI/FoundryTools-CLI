@@ -1,5 +1,7 @@
 # ftCLI
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4c677b6727c7454b92aff3cfd3c88117)](https://app.codacy.com/gh/ftCLI/ftCLI?utm_source=github.com&utm_medium=referral&utm_content=ftCLI/ftCLI&utm_campaign=Badge_Grade)
+
 ftCLI is a command line interface built with [click](https://click.palletsprojects.com/en/8.0.x/) to edit fonts using
 [FontTools](https://github.com/fonttools/fonttools).
 
