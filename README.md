@@ -1003,6 +1003,39 @@ fontbakery check id: com.google.fonts/check/name/trailing_spaces
                                   overwritten.
     --help                        Show this message and exit.
 
+
+### ftcli fix uprights
+
+Assuming that the font is correctly set as upright (i.e.: italic oblique
+bits are all clear), the script sets the following values:
+
+- post.italicAngle = 0.0
+- hhea.caretSlopeRise = 1
+- hhea.caretSlopeRun = 0
+- hhea.caretOffset = 0
+- CFF.cff.topDictIndex[0].ItalicAngle = 0 (only if the font has a CFF table)
+
+The font is saved only if at least one table has changed.
+
+**Usage**:
+
+    ftcli fix uprights [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
+
 ## ftcli metrics
 
 Vertical metrics tools.
