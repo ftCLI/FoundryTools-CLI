@@ -1,8 +1,59 @@
 import os
+import sys
 
 from fontTools.ttLib import TTLibError
 
 from ftCLI.Lib.Font import Font
+from ftCLI.Lib.utils.click_tools import no_valid_fonts_message, generic_error_message
+
+
+def check_input_path(
+        input_path: str,
+        allow_extensions: list = None,
+        allow_ttf=True,
+        allow_cff=True,
+        allow_static=True,
+        allow_variable=True):
+
+    files = get_fonts_list(
+        input_path,
+        allow_extensions=allow_extensions,
+        allow_ttf=allow_ttf,
+        allow_cff=allow_cff,
+        allow_static=allow_static,
+        allow_variable=allow_variable
+    )
+
+    if not len(files) > 0:
+        no_valid_fonts_message(input_path)
+        sys.exit()
+
+    return files
+
+
+def check_output_dir(input_path, output_path: None):
+    """
+    > Checks if the output directory is writable and returns its path. If not, exit
+    :param input_path: the directory to check if output_path is None
+    :param output_path: the directory to check
+    :return: the output dir
+    """
+    # Check the output dir
+    output_dir = get_output_dir(input_path, output_path)
+
+    try:
+        os.makedirs(output_dir, exist_ok=True)
+        with open(os.path.join(output_dir, "0.0"), 'w'):
+            pass
+        os.remove(os.path.join(output_dir, "0.0"))
+    except PermissionError:
+        generic_error_message(f"Permission denied {output_dir}")
+        sys.exit()
+    except Exception as e:
+        generic_error_message(f"Error: {e}")
+        sys.exit()
+
+    return output_dir
 
 
 def get_fonts_list(
@@ -96,21 +147,6 @@ def get_output_dir(input_path: str, output_dir: str = None) -> str:
             return os.path.dirname(input_path)
         else:
             return input_path
-
-
-def check_output_dir(outputDir: str) -> (bool, Exception):
-    """
-    > Checks if the output directory is writable and returns True. If not, returns False and an error message
-
-    :param outputDir: The directory to check
-    :type outputDir: str
-    :return: A tuple of two values, the first is a boolean, and the second is an exception.
-    """
-    try:
-        os.makedirs(outputDir, exist_ok=True)
-        return True, None
-    except Exception as e:
-        return False, e
 
 
 def get_project_files_path(input_path: str) -> str:

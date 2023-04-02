@@ -11,8 +11,7 @@ from ftCLI.Lib.cui.CUI import AssistantUI
 from ftCLI.Lib.utils.cli_tools import (
     get_style_mapping_file_path,
     get_fonts_data_file_path,
-    get_fonts_list,
-    check_output_dir,
+    check_output_dir, check_input_path,
 )
 from ftCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
@@ -23,8 +22,7 @@ from ftCLI.Lib.utils.click_tools import (
     file_not_changed_message,
     generic_warning_message,
     file_not_selected_message,
-    add_path_argument, no_valid_fonts_message,
-)
+    add_path_argument, )
 
 
 @click.group()
@@ -89,10 +87,7 @@ def init_data(input_path, styles_mapping_file=None, quiet=False):
     It can be edited manually or using the 'ftCLI assistant ui INPUT_PATH' command.
     """
 
-    files = get_fonts_list(input_path, allow_variable=False)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
+    _ = check_input_path(input_path, allow_variable=False)
 
     if not styles_mapping_file:
         styles_mapping_file = get_style_mapping_file_path(input_path)
@@ -156,10 +151,8 @@ def recalc_fonts_data():
               """,
 )
 def recalc_data(input_path, input_string, quiet=False):
-    files = get_fonts_list(input_path, allow_ttf=False, allow_variable=False)
-    if len(files) == 0:
-        generic_error_message(f"No valid CFF font files found in {input_path}.")
-        return
+
+    _ = check_input_path(input_path, allow_ttf=False, allow_variable=False)
 
     styles_mapping_file = get_style_mapping_file_path(input_path)
 
@@ -342,11 +335,7 @@ def commit(
     Writes data from CSV to fonts.
     """
 
-    if outputDir is not None:
-        output_dir_check, error_message = check_output_dir(outputDir)
-        if output_dir_check is False:
-            generic_error_message(error_message)
-            return
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     if linked_styles:
         linked_styles = sorted(linked_styles)
@@ -423,7 +412,7 @@ def commit(
                     font_has_changed = True
 
             if font_has_changed:
-                output_file = makeOutputFileName(file, outputDir=outputDir, overWrite=overWrite)
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
             else:

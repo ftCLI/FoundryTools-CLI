@@ -6,7 +6,7 @@ from afdko.fdkutils import run_shell_command
 from fontTools.misc.cliTools import makeOutputFileName
 
 from ftCLI.Lib.Font import Font
-from ftCLI.Lib.utils.cli_tools import check_output_dir, get_output_dir, get_fonts_list
+from ftCLI.Lib.utils.cli_tools import check_output_dir, check_input_path
 from ftCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
@@ -16,7 +16,6 @@ from ftCLI.Lib.utils.click_tools import (
     generic_warning_message,
     generic_success_message,
     generic_info_message,
-    no_valid_fonts_message,
 )
 
 
@@ -40,16 +39,8 @@ def monospace(input_path, outputDir=None, recalcTimestamp=False, overWrite=True)
     fontbakery check id: com.google.fonts/check/monospace
     """
 
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -110,16 +101,9 @@ def os2_ranges(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
     Unicode ranges and codepage ranges from the temporary OpenType font file, and then writes those ranges to the
     original font's OS/2 table.
     """
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
 
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -173,16 +157,9 @@ def nbsp_width(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
 
     fontbakery check id: com.google.fonts/check/whitespace_widths
     """
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
 
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -219,16 +196,9 @@ def caret_offset(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tr
     """
     Recalculates hhea.caretOffset value.
     """
-    files = get_fonts_list(input_path, allow_variable=False, allow_extensions=[".ttf", ".otf"])
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
 
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_variable=False, allow_extensions=[".ttf", ".otf"])
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         print()
@@ -297,16 +267,8 @@ def italic_angle(input_path, mode, recalcTimestamp=False, outputDir=None, overWr
     Recalculates post.italicAngle, hhea.caretSlopeRise, hhea.caretSlopeRun and sets/clears the italic/oblique bits
     according to the calculated values. In CFF fonts, also CFF.topDictIndex[0].ItalicAngle is recalculated.
     """
-    files = get_fonts_list(input_path, allow_variable=False)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_variable=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         print()
@@ -438,16 +400,8 @@ def nbsp_missing(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tr
     Checks if the font has a non-breaking space character, and if it doesn't, it adds one by double mapping 'space'
     """
 
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -491,16 +445,8 @@ def decompose_transformed(input_path, recalcTimestamp=False, outputDir=None, ove
     from fontTools.pens.ttGlyphPen import TTGlyphPen
     import pathops
 
-    files = get_fonts_list(input_path, allow_cff=False, allow_variable=False)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_cff=False, allow_variable=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -569,16 +515,8 @@ def duplicate_components(input_path, recalcTimestamp=False, outputDir=None, over
     fontbakery check id: com.google.fonts/check/glyf_non_transformed_duplicate_components
     """
 
-    files = get_fonts_list(input_path, allow_cff=False, allow_variable=False)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_cff=False, allow_variable=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -635,16 +573,8 @@ def kern_table(input_path, recalcTimestamp=False, outputDir=None, overWrite=True
 
     fontbakery check id: com.google.fonts/check/kern_table
     """
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -699,16 +629,8 @@ def strip_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tru
 
     fontbakery check id: com.google.fonts/check/name/trailing_spaces
     """
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:

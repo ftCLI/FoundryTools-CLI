@@ -13,7 +13,7 @@ from pathvalidate import sanitize_filename
 from ftCLI.Lib.Font import Font
 from ftCLI.Lib.converter import otf_to_ttf
 from ftCLI.Lib.converter.ttf_to_otf import TrueTypeToCFF
-from ftCLI.Lib.utils.cli_tools import check_output_dir, get_output_dir, get_fonts_list
+from ftCLI.Lib.utils.cli_tools import check_output_dir, check_input_path
 from ftCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
@@ -22,7 +22,6 @@ from ftCLI.Lib.utils.click_tools import (
     generic_info_message,
     file_saved_message,
     select_instance_coordinates,
-    no_valid_fonts_message,
 )
 
 
@@ -94,15 +93,8 @@ def ttf2otf(
     Converts TTF fonts (or TrueType flavored woff/woff2 web fonts) to OTF fonts (or CFF flavored woff/woff2 web fonts).
     """
 
-    files = get_fonts_list(input_path, allow_variable=False, allow_cff=False)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
+    files = check_input_path(input_path, allow_variable=False, allow_cff=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     start_time = time.time()
     converted_files_counter = 0
@@ -179,16 +171,8 @@ def otf2ttf(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
     Converts fonts from OTF to TTF format.
     """
 
-    files = get_fonts_list(input_path, allow_ttf=False, allow_variable=False)
-    if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_variable=False, allow_ttf=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     start_time = time.time()
     counter = 0
@@ -254,16 +238,8 @@ def wf2ft(
     Converts web fonts (WOFF and WOFF2) to SFNT fonts (TTF or OTF)
     """
 
-    files = get_fonts_list(input_path, allow_extensions=[".woff", ".woff2"])
-    if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_extensions=[".woff", ".woff2"])
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -306,16 +282,8 @@ def ft2wf(input_path, flavor=None, outputDir=None, recalcTimestamp=False, overWr
     Converts SFNT fonts (TTF or OTF) to web fonts (WOFF and/or WOFF2)
     """
 
-    files = get_fonts_list(input_path, allow_extensions=[".otf", ".ttf"])
-    if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}.")
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_extensions=[".otf", ".ttf"])
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     output_flavors = ["woff", "woff2"]
     if flavor is not None:
@@ -370,11 +338,7 @@ def ttc2sfnt(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
         generic_error_message(f"No valid .ttc font files found in {input_path}.")
         return
 
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for ttc_file in ttc_files:
         try:
@@ -445,16 +409,8 @@ def var2static(
 
     from ftCLI.Lib.VFont import VariableFont
 
-    files = get_fonts_list(input_path, allow_static=False, allow_cff=False)
-    if len(files) == 0:
-        generic_error_message(f"No valid font files found in {input_path}")
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_static=False, allow_cff=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     start_time = time.time()
     for file in files:

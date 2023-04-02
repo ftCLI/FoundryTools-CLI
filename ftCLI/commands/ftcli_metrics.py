@@ -5,14 +5,13 @@ import click
 from fontTools.misc.cliTools import makeOutputFileName
 
 from ftCLI.Lib.Font import Font
-from ftCLI.Lib.utils.cli_tools import get_fonts_list, get_output_dir, check_output_dir
+from ftCLI.Lib.utils.cli_tools import check_output_dir, check_input_path
 from ftCLI.Lib.utils.click_tools import (
     add_common_options,
     file_saved_message,
     generic_error_message,
     add_file_or_path_argument,
-    file_not_changed_message,
-    no_valid_fonts_message
+    file_not_changed_message
 )
 
 
@@ -37,16 +36,8 @@ def set_linegap(input_path, percent, outputDir=None, recalcTimestamp=False, over
     This is a fork of font-line by Source Foundry: https://github.com/source-foundry/font-line
     """
 
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -108,16 +99,8 @@ def align(input_path, with_linegap=False, outputDir=None, recalcTimestamp=False,
     import math
     from ftCLI.Lib.utils.glyphs import get_glyph_bounds
 
-    files = get_fonts_list(input_path)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     fonts = []
     ideal_ascenders = []
@@ -180,7 +163,7 @@ def align(input_path, with_linegap=False, outputDir=None, recalcTimestamp=False,
             os2_modified = os2_table_copy != font.os_2_table
 
             if hhea_modified or os2_modified:
-                output_file = makeOutputFileName(font.file, outputDir=outputDir, overWrite=overWrite)
+                output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(font.file)
 
@@ -240,29 +223,30 @@ By default, modified files are overwritten. Use this switch to save them to a ne
 of file name).
 """,
 )
-def copy_metrics(source_file, destination, outputDir, recalcTimestamp, overWrite):
+def copy_metrics(source_file, destination, outputDir=None, recalcTimestamp=False, overWrite=True):
     """
     Copies vertical metrics from a source font to one or more destination fonts.
     """
 
+    files = check_input_path(destination)
+    output_dir = check_output_dir(input_path=destination, output_path=outputDir)
+
     try:
         source_font = Font(source_file)
 
-        ascender = source_font["hhea"].ascender
-        descender = source_font["hhea"].descender
-        lineGap = source_font["hhea"].lineGap
+        ascender = source_font.hhea_table.ascender
+        descender = source_font.hhea_table.descender
+        lineGap = source_font.hhea_table.lineGap
 
-        usWinAscent = source_font["OS/2"].usWinAscent
-        usWinDescent = source_font["OS/2"].usWinDescent
-        sTypoAscender = source_font["OS/2"].sTypoAscender
-        sTypoDescender = source_font["OS/2"].sTypoDescender
-        sTypoLineGap = source_font["OS/2"].sTypoLineGap
+        usWinAscent = source_font.os_2_table.usWinAscent
+        usWinDescent = source_font.os_2_table.usWinDescent
+        sTypoAscender = source_font.os_2_table.sTypoAscender
+        sTypoDescender = source_font.os_2_table.sTypoDescender
+        sTypoLineGap = source_font.os_2_table.sTypoLineGap
 
     except Exception as e:
         click.secho("ERROR: {}".format(e), fg="red")
         sys.exit()
-
-    files = get_fonts_list(destination)
 
     for file in files:
         try:
@@ -284,7 +268,7 @@ def copy_metrics(source_file, destination, outputDir, recalcTimestamp, overWrite
             os2_modified = os2_table_copy != font.os_2_table
 
             if hhea_modified or os2_modified:
-                output_file = makeOutputFileName(file, outputDir=outputDir, overWrite=overWrite)
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
                 file_saved_message(output_file)
             else:

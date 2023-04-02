@@ -4,14 +4,13 @@ import click
 from fontTools.misc.cliTools import makeOutputFileName
 
 from ftCLI.Lib.Font import Font
-from ftCLI.Lib.utils.cli_tools import check_output_dir, get_output_dir, get_fonts_list
+from ftCLI.Lib.utils.cli_tools import check_input_path, check_output_dir
 from ftCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
     generic_error_message,
     file_saved_message,
-    file_not_changed_message, no_valid_fonts_message,
-)
+    file_not_changed_message, )
 
 
 @click.group()
@@ -38,16 +37,8 @@ def del_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True,
         generic_error_message("Please, pass at least a valid parameter.")
         return
 
-    files = get_fonts_list(input_path, allow_ttf=False)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_ttf=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -106,16 +97,8 @@ def set_names(input_path, recalcTimestamp=False, outputDir=None, overWrite=True,
         generic_error_message("Please, pass at least a valid parameter.")
         return
 
-    files = get_fonts_list(input_path, allow_ttf=False)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_ttf=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -171,16 +154,8 @@ def find_replace(
     `FamilyName`, `Weight`, `Copyright`, `Notice`.
     """
 
-    files = get_fonts_list(input_path, allow_ttf=False)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_ttf=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
@@ -234,16 +209,8 @@ def fix_version(input_path, recalcTimestamp=False, outputDir=None, overWrite=Tru
     For example, if head.fontRevision value is 2.001, CFF topDict version value will be 2.1.
     """
 
-    files = get_fonts_list(input_path, allow_ttf=False)
-    if len(files) == 0:
-        no_valid_fonts_message(input_path)
-        return
-
-    output_dir = get_output_dir(input_path=input_path, output_dir=outputDir)
-    dir_ok, error_message = check_output_dir(output_dir)
-    if dir_ok is False:
-        generic_error_message(error_message)
-        return
+    files = check_input_path(input_path, allow_ttf=False)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
