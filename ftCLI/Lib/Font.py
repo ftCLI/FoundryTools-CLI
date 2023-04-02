@@ -465,24 +465,6 @@ class Font(TTFont):
 
         return subfamily_name
 
-    def subset(self, glyph_ids: list):
-        """
-        Returns a subsetted font with only the glyph_ids passed
-
-        :param glyph_ids: a list of glyphIDs
-        :type glyph_ids: list
-        """
-        subsetter = Subsetter()
-        subsetter.options.drop_tables = []
-        subsetter.options.passthrough_tables = True
-        subsetter.options.name_IDs = "*"
-        subsetter.options.name_legacy = True
-        subsetter.options.name_languages = "*"
-        subsetter.options.layout_features = "*"
-        subsetter.options.hinting = False
-        subsetter.glyph_ids_requested = glyph_ids
-        Subsetter.subset(subsetter, self)
-
     def fix_cff_top_dict_version(self):
         if not self.is_cff:
             return
