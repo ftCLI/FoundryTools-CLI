@@ -8,7 +8,6 @@ from fontTools.otlLib.maxContextCalc import maxCtxFont
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.recordingPen import DecomposingRecordingPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
-from fontTools.subset import Subsetter
 from fontTools.ttLib import TTFont, registerCustomTableClass, newTable
 from ufo2ft.fontInfoData import intListToNum
 from ufo2ft.util import calcCodePageRanges

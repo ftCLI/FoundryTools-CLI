@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setuptools.setup(
     name="font-CLI",
-    version="0.9.4.dev0",
+    version="0.9.4",
     description="A set of command line tools to edit fonts with FontTools",
     long_description=long_description,
     long_description_content_type="text/markdown",
