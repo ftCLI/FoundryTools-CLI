@@ -233,15 +233,15 @@ class Font(TTFont):
 
         calculated_italic_angle = None
         for glyph_name in (
-            "bar",
-            "uni007C",  # VERTICAL LINE
+            "H",
+            "uni0048",  # LATIN CAPITAL LETTER H
+            "I",
+            "uni0049", # LATIN CAPITAL LETTER I
             "bracketleft",
             "uni005B",  # LEFT SQUARE BRACKET
-            # "H",
-            # "uni0048",  # LATIN CAPITAL LETTER H
-            # "I",
-            # "uni0049",
-        ):  # LATIN CAPITAL LETTER I
+            "bar",
+            "uni007C",  # VERTICAL LINE
+        ):
             try:
                 paths = BezierPath.fromFonttoolsGlyph(self, glyph_name)
             except KeyError:
