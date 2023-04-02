@@ -66,7 +66,7 @@ def ttf_to_otf():
     "subroutinize",
     is_flag=True,
     default=True,
-    help=""" 
+    help="""
               Do not subroutinize converted fonts
               """,
 )
