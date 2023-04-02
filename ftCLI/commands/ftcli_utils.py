@@ -181,6 +181,57 @@ def font_renamer(input_path, source):
 
 
 @click.group()
+def delete_font_tables():
+    pass
+
+
+@delete_font_tables.command()
+@add_file_or_path_argument()
+@click.option(
+    "-t",
+    "--table-tag",
+    multiple=True,
+    required=True,
+    help=""" TableTag of the table(s) to delete. Can be repeated to delete multiple tables at once""",
+)
+@add_common_options()
+def del_table(input_path, table_tag, recalcTimestamp=False, outputDir=None, overWrite=True):
+    """
+    Deletes the tables specified in the table_tag argument(s).
+    """
+
+    # Use TTFont instead of Font to avoid exceptions when subclassed tables are not present
+    from fontTools.ttLib.ttFont import TTFont
+
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
+
+    table_tag = [tag.ljust(4, " ") for tag in table_tag]
+
+    for file in files:
+        try:
+            font = TTFont(file, recalcTimestamp=recalcTimestamp)
+            count = 0
+            for tag in table_tag:
+                if tag in font.keys():
+                    del font[tag]
+                    count += 1
+                else:
+                    continue
+
+            if count > 0:
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
+                font.save(output_file)
+                file_saved_message(output_file)
+            else:
+                file_not_changed_message(file)
+
+        except Exception as e:
+            generic_error_message(e)
+
+
+
+@click.group()
 def ttf_autohinter():
     pass
 
@@ -515,6 +566,7 @@ cli = click.CommandCollection(
         add_dummy_dsig,
         organizer,
         renamer,
+        delete_font_tables,
         ttf_overlaps_remover,
         ttf_dehinter,
         ttf_autohinter,

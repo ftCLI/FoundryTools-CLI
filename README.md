@@ -103,6 +103,7 @@ Or, to install in editable mode:
   - [font-names](#ftcli-print-font-names)
   - [font-fonts-list](#ftcli-print-fonts-list)
   - [os2-table](#ftcli-print-os2-table)
+
 - [**utils**](#ftcli-utils)
   - [add-dsig](#ftcli-utils-add-dsig)
   - [cff-autohint](#ftcli-utils-cff-autohint)
@@ -110,6 +111,7 @@ Or, to install in editable mode:
   - [cff-dehint](#ftcli-utils-cff-dehint)
   - [cff-desubr](#ftcli-utils-cff-desubr)
   - [cff-subr](#ftcli-utils-cff-subr)
+  - [del-table](#ftcli-utils-del-table)
   - [font-organizer](#ftcli-utils-font-organizer)
   - [font-renamer](#ftcli-utils-font-renamer)
   - [ttf-autohint](#ftcli-utils-ttf-autohint)
@@ -1703,6 +1705,32 @@ Subroutinize CFF fonts.
 
 **Options**:
 
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
+
+### ftcli utils del-table
+
+Deletes the tables specified in the table_tag argument(s).
+
+**Usage**:
+
+    ftcli utils del-table [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -t, --table-tag TEXT          TableTag of the table(s) to delete. Can be
+                                  repeated to delete multiple tables at once
+                                  [required]
     -out, --output-dir DIRECTORY  Specify the directory where output files are
                                   to be saved. If output_dir doesn't exist, will
                                   be created. If not specified, files are saved
