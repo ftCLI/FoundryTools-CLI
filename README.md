@@ -38,75 +38,16 @@ Or, to install in editable mode:
 
 To start using ftCLI, just install, open a shell and type `ftcli --help` to list all commands.
 
-    ftcli
+![image](https://user-images.githubusercontent.com/83063506/229529687-c711e860-c93b-49c8-a137-1e9e37c6a0af.png)
 
-    Usage: ftcli [OPTIONS] COMMAND [ARGS]...
-    
-      A command line font editor.
-    
-    Options:
-      --help  Show this message and exit.
-    
-    Commands:
-      assistant  Helps to correctly fill name table, as well as other values...
-      cff        Command line CFF table editor.
-      converter  Font converter.
-      fix        A set of commands to detect and automatically fix font errors.
-      metrics    Vertical metrics tools.
-      name       Command line name table editor.
-      os2        Command line OS/2 table editor.
-      post       Command line post table editor.
-      print      Prints various fonts information and tables.
-      utils      Miscellaneous utilities.
 
 Each level 1 command has its own help...
 
-    ftcli fix --help
-    Usage: ftcli fix [OPTIONS] COMMAND [ARGS]...
-    
-      A set of commands to detect and automatically fix font errors.
-    
-    Options:
-      --help  Show this message and exit.
-    
-    Commands:
-      caret-offset           Recalculates hhea.caretOffset value.
-      decompose-transformed  Decomposes composite glyphs that have...
-      duplicate-components   Removes duplicate components which have the same...
-      italic-angle           Recalculates post.italicAngle,...
-      kern-table             Some applications such as MS PowerPoint require...
-      monospace              If the family is monospaced:
-      nbsp-missing           Checks if the font has a non-breaking space...
-      nbsp-width             Checks if 'nbspace' and 'space' glyphs have the...
-      os2-ranges             Generates a temporary Type 1 from the font file...
-      strip-names            Removes leading and trailing spaces from all...
-      uprights               Assuming that the font is correctly set as...
+![image](https://user-images.githubusercontent.com/83063506/229529823-851b257d-69c3-4daa-a72c-42be96db209f.png)
 
 ... as well as each level 2 command.
 
-    ftcli fix italic-angle --help
-    Usage: ftcli fix italic-angle [OPTIONS] INPUT_PATH
-    
-      Recalculates post.italicAngle, hhea.caretSlopeRise, hhea.caretSlopeRun and
-      sets/clears the italic/oblique bits according to the calculated values. In
-      CFF fonts, also CFF.topDictIndex[0].ItalicAngle is recalculated.
-    
-    Options:
-      -m, --mode INTEGER RANGE      1: sets only the italic bits and clears the oblique bit
-                                    2: sets italic and oblique bits
-                                    3: sets only the oblique bit and clears italic bits  [1<=x<=3]
-      -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                    to be saved. If output_dir doesn't exist, will
-                                    be created. If not specified, files are saved
-                                    to the same folder.
-      --recalc-timestamp            Keep the original font 'modified' timestamp
-                                    (head.modified) or set it to current time. By
-                                    default, original timestamp is kept.
-      --no-overwrite                Overwrite existing output files or save them
-                                    to a new file (numbers are appended at the end
-                                    of file name). By default, files are
-                                    overwritten.
-      --help                        Show this message and exit.
+![image](https://user-images.githubusercontent.com/83063506/229529954-cedc0e1d-9d15-4c6c-81be-d8923f8dc7d7.png)
 
 Remember to use `--no-overwrite` or `-out` to avoid overwriting your fonts when experimenting.
 
