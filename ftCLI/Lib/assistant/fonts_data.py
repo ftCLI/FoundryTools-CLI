@@ -352,7 +352,7 @@ class FontsDataFile(object):
             generic_warning_message(f"Full Font Name is longer than {MAX_FULL_NAME_LEN} characters.")
 
         # Build Unique Identifier
-        ach_vend_id = str(font.os_2_table.achVendID).replace(" ", "").rstrip("\x00")
+        ach_vend_id = str(font.os_2_table.achVendID).replace(" ", "").strip("\x00")
         font_revision = str(round(font.head_table.fontRevision, 3)).ljust(5, "0")
         unique_id = f"{font_revision};{ach_vend_id};{postscript_name}"
 
