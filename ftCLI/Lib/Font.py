@@ -236,7 +236,7 @@ class Font(TTFont):
             "H",
             "uni0048",  # LATIN CAPITAL LETTER H
             "I",
-            "uni0049", # LATIN CAPITAL LETTER I
+            "uni0049",  # LATIN CAPITAL LETTER I
             "bracketleft",
             "uni005B",  # LEFT SQUARE BRACKET
             "bar",
