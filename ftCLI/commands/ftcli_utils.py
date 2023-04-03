@@ -5,7 +5,6 @@ from io import BytesIO
 import cffsubr
 import click
 from afdko import checkoutlinesufo
-from afdko.fdkutils import run_shell_command
 from dehinter.font import dehint
 from fontTools.cffLib.specializer import specializeProgram
 from fontTools.misc.cliTools import makeOutputFileName
@@ -417,8 +416,62 @@ def cff_autohinter():
               Optimize the hinted font by specializing the charstrings and applying subroutines.
               """,
 )
+@click.option(
+    "-c",
+    "--allow-changes",
+    is_flag=True,
+    help="""
+    Allow changes to the glyph outlines.
+    
+    Paths are reordered to reduce hint substitution, and nearly straight curves
+    are flattened.
+    """,
+)
+@click.option(
+    "-d",
+    "--decimal",
+    is_flag=True,
+    help="""
+    Use decimal coordinates.
+    """,
+)
+@click.option(
+    "-nf",
+    "--no-flex",
+    is_flag=True,
+    help="""
+    Suppress generation of flex commands.
+    """,
+)
+@click.option(
+    "-ns",
+    "--no-hint-sub",
+    is_flag=True,
+    help="""
+    Suppress hint substitution.
+    """,
+)
+@click.option(
+    "-nz",
+    "--no-zones-stems",
+    is_flag=True,
+    help="""
+    Allow the font to have no alignment zones nor stem widths.
+    """,
+)
 @add_common_options()
-def cff_autohint(input_path, optimize=True, outputDir=None, recalcTimestamp=False, overWrite=True):
+def cff_autohint(
+    input_path,
+    allow_changes=False,
+    decimal=False,
+    no_flex=False,
+    no_hint_sub=False,
+    no_zones_stems=False,
+    optimize=True,
+    outputDir=None,
+    recalcTimestamp=False,
+    overWrite=True,
+):
     """
     Autohints CFF fonts with psautohint.
     """
@@ -436,10 +489,25 @@ def cff_autohint(input_path, optimize=True, outputDir=None, recalcTimestamp=Fals
             generic_info_message(f"Autohinting file {os.path.basename(file)}: {counter} of {len(files)}")
             font = Font(file, recalcTimestamp=recalcTimestamp)
             original_timestamp = font.head_table.modified
-            output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
-            font.save(output_file)
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
             font.close()
-            run_shell_command(["psautohint", output_file, "--no-zones-stems"], suppress_output=False)
+
+            from psautohint.autohint import ACOptions, hintFiles
+
+            options = ACOptions()
+            options.inputPaths = [file]
+            options.outputPaths = [output_file]
+            options.allowChanges = allow_changes
+            options.round_coords = decimal
+            options.noFlex = no_flex
+            options.noHintSub = no_hint_sub
+            options.allow_no_blues = no_zones_stems
+
+            try:
+                hintFiles(options=options)
+            except Exception as e:
+                generic_error_message(e)
+                continue
 
             if not recalcTimestamp:
                 tmp_font = Font(output_file, recalcTimestamp=False)
@@ -574,7 +642,7 @@ def scale_units_per_em():
     show_default=True,
     help="""
     New UPM value
-    """
+    """,
 )
 @add_common_options()
 def scale_upm(input_path, upm=1000, recalcTimestamp=False, outputDir=None, overWrite=True):
