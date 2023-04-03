@@ -417,6 +417,16 @@ def cff_autohinter():
               """,
 )
 @click.option(
+    "-r",
+    "--reference-font",
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+    help="""
+    Reference font.
+    
+    Font to be used as reference, when hinting multiple fonts compatibility.
+    """
+)
+@click.option(
     "-c",
     "--allow-changes",
     is_flag=True,
@@ -462,6 +472,7 @@ def cff_autohinter():
 @add_common_options()
 def cff_autohint(
     input_path,
+    reference_font=None,
     allow_changes=False,
     decimal=False,
     no_flex=False,
@@ -497,6 +508,7 @@ def cff_autohint(
             options = ACOptions()
             options.inputPaths = [file]
             options.outputPaths = [output_file]
+            options.reference_font = reference_font
             options.allowChanges = allow_changes
             options.round_coords = decimal
             options.noFlex = no_flex
