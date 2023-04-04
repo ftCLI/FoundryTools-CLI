@@ -43,7 +43,7 @@ def add_dsig(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
     for file in files:
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
-            if "DSIG" not in font.keys():
+            if "DSIG" not in font:
                 font.add_dummy_dsig()
                 output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
@@ -70,17 +70,33 @@ def organizer():
     """,
 )
 @click.option(
-    "-ext",
+    "-m",
+    "--manufacturer",
+    "sort_by_manufacturer",
+    is_flag=True,
+    help="Sorts fonts by manufacturer.",
+)
+@click.option(
+    "-e",
     "--extension",
     "sort_by_extension",
     is_flag=True,
     help="Sorts fonts by extension.",
 )
-@click.option("-ver", "--version", "sort_by_version", is_flag=True, help="Sorts fonts by version.")
-def font_organizer(input_path, rename_source=None, sort_by_extension=False, sort_by_version=False):
+@click.option(
+    "-v",
+    "--version",
+    "sort_by_version",
+    is_flag=True,
+    help="Sorts fonts by version.",
+)
+def font_organizer(
+    input_path, sort_by_manufacturer=False, rename_source=None, sort_by_extension=False, sort_by_version=False
+):
     """
-    Organizes fonts by moving them into a subdirectory named after the font's family name, and eventually a subdirectory
-    named after the font's extension and version.
+    Organizes fonts by moving them into a subdirectory named after Manufacturer name (optional: -m, --manufacturer),
+    Family name + Version (optional: -v, --version), and a subdirectory named after the font's extension (optional: -e,
+    --extension).
     """
 
     files = check_input_path(input_path)
@@ -96,7 +112,17 @@ def font_organizer(input_path, rename_source=None, sort_by_extension=False, sort
 
             version_string = font.name_table.getDebugName(5).replace("Version ", "v").split(";")[0]
 
-            output_dir = os.path.join(os.path.dirname(file), family_name)
+            output_dir = os.path.join(os.path.dirname(file))
+
+            if sort_by_manufacturer:
+                manufacturer = font.name_table.getDebugName(8).strip()
+                if manufacturer == "":
+                    manufacturer = font.os_2_table.achVendID.strip().strip("\x00")
+                if manufacturer != "":
+                    output_dir = os.path.join(output_dir, manufacturer)
+
+            output_dir = os.path.join(output_dir, family_name)
+
             if sort_by_version:
                 output_dir = f"{output_dir} {version_string}"
 
@@ -424,7 +450,7 @@ def cff_autohinter():
     Reference font.
     
     Font to be used as reference, when hinting multiple fonts compatibility.
-    """
+    """,
 )
 @click.option(
     "-c",
