@@ -135,7 +135,7 @@ Remember to use `--no-overwrite` or `-out` to avoid overwriting your fonts when 
   - [font-renamer](#ftcli-utils-font-renamer)
   - [ttf-autohint](#ftcli-utils-ttf-autohint)
   - [ttf-dehint](#ftcli-utils-ttf-dehint)
-  - [remove-overlaps](#ftcli-utils-ttf-remove-overlaps)
+  - [ttf-remove-overlaps](#ftcli-utils-ttf-remove-overlaps)
 
 ## Arguments
 
@@ -1040,6 +1040,35 @@ The font is saved only if at least one table has changed.
 
 **Options**:
 
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
+
+## ftcli hhea
+
+Command line hhea table editor.
+
+**Usage**:
+
+    ftcli hhea [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    --rise INTEGER                Sets the `caretSlopeRise` value.
+    --run INTEGER                 Sets the `caretSlopeRun` value.
+    --offset INTEGER              Sets the `caretOffset` value.
+    --ascent INTEGER              Sets the `ascent` value.
+    --descent INTEGER             Sets the `descent` value.
+    --linegap INTEGER             Sets the `lineGap` value.
     -out, --output-dir DIRECTORY  Specify the directory where output files are
                                   to be saved. If output_dir doesn't exist, will
                                   be created. If not specified, files are saved

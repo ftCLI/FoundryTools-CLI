@@ -393,6 +393,12 @@ class Font(TTFont):
                     y_max = char.yMax
         return y_min, y_max
 
+    def get_modified_timestamp(self):
+        return self.head_table.modified
+
+    def get_created_timestamp(self):
+        return self.head_table.created
+
     def get_file_name(self, source) -> str:
         """
         Returns the font's file name according to the passed source.
@@ -518,11 +524,11 @@ class Font(TTFont):
             },
             date_created={
                 "label": "Date created",
-                "value": timestampToString(self.head_table.created),
+                "value": timestampToString(self.get_created_timestamp()),
             },
             date_modified={
                 "label": "Date modified",
-                "value": timestampToString(self.head_table.modified),
+                "value": timestampToString(self.get_modified_timestamp()),
             },
             us_width_class={
                 "label": "usWidthClass",

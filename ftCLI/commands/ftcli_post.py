@@ -62,7 +62,7 @@ def cli(input_path, recalcTimestamp, outputDir, overWrite, **kwargs):
             font = Font(file, recalcTimestamp=recalcTimestamp)
             output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
 
-            # Using copy instead of deepcopy and avoiding to compile `post` tables is faster
+            # Using copy instead of deepcopy and avoid compiling `post` table is faster
 
             # Make a copy of the `post` table to check later if it has been modified
             post_table_copy = copy(font.post_table)
