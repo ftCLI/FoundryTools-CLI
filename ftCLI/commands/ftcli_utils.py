@@ -513,6 +513,8 @@ def cff_autohint(
     Autohints CFF fonts with psautohint.
     """
 
+    from psautohint.autohint import ACOptions, hintFiles
+
     files = check_input_path(input_path, allow_extensions=[".otf"])
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
@@ -528,8 +530,6 @@ def cff_autohint(
             original_timestamp = font.head_table.modified
             output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
             font.close()
-
-            from psautohint.autohint import ACOptions, hintFiles
 
             options = ACOptions()
             options.inputPaths = [file]
