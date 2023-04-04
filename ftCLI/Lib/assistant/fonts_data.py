@@ -357,7 +357,7 @@ class FontsDataFile(object):
         unique_id = f"{font_revision};{ach_vend_id};{postscript_name}"
 
         if alt_uid:
-            year_created = timestampToString(font.head_table.created).split(" ")[-1]
+            year_created = timestampToString(font.get_created_timestamp()).split(" ")[-1]
             manufacturer = font.name_table.getDebugName(8)
             unique_id = f"{manufacturer}: {family_name_ot}-{subfamily_name_ot}: {year_created}"
 

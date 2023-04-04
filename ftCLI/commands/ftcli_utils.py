@@ -281,7 +281,7 @@ def ttf_autohint(input_path, outputDir=None, recalcTimestamp=False, overWrite=Tr
             data = ttfautohint(in_buffer=buf.getvalue(), no_info=True)
             hinted_font = Font(BytesIO(data))
             if recalcTimestamp is False:
-                hinted_font.head_table.modified = font.head_table.modified
+                hinted_font.head_table.modified = font.get_modified_timestamp()
             output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
             hinted_font.save(output_file)
             file_saved_message(output_file)
@@ -527,7 +527,7 @@ def cff_autohint(
             print()
             generic_info_message(f"Autohinting file {os.path.basename(file)}: {counter} of {len(files)}")
             font = Font(file, recalcTimestamp=recalcTimestamp)
-            original_timestamp = font.head_table.modified
+            original_timestamp = font.get_modified_timestamp()
             output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
             font.close()
 
