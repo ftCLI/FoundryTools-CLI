@@ -14,9 +14,9 @@ class FtCLI(click.MultiCommand):
         rv.sort()
         return rv
 
-    def get_command(self, ctx, name):
+    def get_command(self, ctx, cmd_name):
         try:
-            mod = __import__(f"ftCLI.commands.ftcli_{name}", None, None, ["cli"])
+            mod = __import__(f"ftCLI.commands.ftcli_{cmd_name}", None, None, ["cli"])
         except ImportError as e:
             print(e)
             return
