@@ -18,7 +18,7 @@ class FtCLI(click.MultiCommand):
         try:
             mod = __import__(f"ftCLI.commands.ftcli_{cmd_name}", None, None, ["cli"])
         except ImportError as e:
-            print(e)
+            click.secho(f"ERROR: {click.style(e, fg='red')}")
             return
 
         return mod.cli
