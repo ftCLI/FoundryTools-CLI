@@ -29,11 +29,11 @@ class TrueTypeToCFF(object):
         if charstrings_source == "qu2cu":
             self.font.decomponentize()
             try:
-                charstrings = self.get_qu2u_charstrings(tolerance=tolerance, all_cubic=True)
+                charstrings = self.get_qu2cu_charstrings(tolerance=tolerance, all_cubic=True)
             except NotImplementedError:
                 generic_warning_message("all_cubic set to False")
                 try:
-                    charstrings = self.get_qu2u_charstrings(tolerance=tolerance, all_cubic=False)
+                    charstrings = self.get_qu2cu_charstrings(tolerance=tolerance, all_cubic=False)
                 except Exception as e:
                     generic_error_message(f"Failed to get charstring with Qu2CuPen ({e})")
                     return
@@ -131,7 +131,7 @@ class TrueTypeToCFF(object):
             subsetter.glyph_ids_requested = glyph_ids
             Subsetter.subset(subsetter, self.font)
 
-    def get_qu2u_charstrings(self, tolerance: float = 1, all_cubic: bool = True):
+    def get_qu2cu_charstrings(self, tolerance: float = 1, all_cubic: bool = True):
         charstrings = {}
         glyph_set = self.font.getGlyphSet()
 
