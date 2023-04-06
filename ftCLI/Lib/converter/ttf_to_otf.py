@@ -10,7 +10,7 @@ from ftCLI.Lib.utils.click_tools import generic_error_message, generic_warning_m
 
 
 class TrueTypeToCFF(object):
-    def __init__(self, font: Font, output_file: str):
+    def __init__(self, font: Font, output_file):
         self.font = font
         self.output_file = output_file
 
