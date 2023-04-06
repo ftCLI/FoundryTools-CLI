@@ -1,5 +1,6 @@
 import os
 import time
+from io import BytesIO
 
 import click
 import fontTools.ttLib
@@ -121,15 +122,15 @@ def ttf2otf(
 
             if safe:
                 # Create a temporary OTF file with T2CharStringPen...
-                temp_otf_file = makeOutputFileName(output_file, suffix="_tmp", overWrite=True)
-                ttf2otf_converter_temp = TrueTypeToCFF(source_font, output_file=temp_otf_file)
+                buf = BytesIO()
+                ttf2otf_converter_temp = TrueTypeToCFF(source_font, output_file=buf)
                 ttf2otf_converter_temp.run(charstrings_source="t2", purge_glyphs=purge_glyphs, subroutinize=False)
 
                 # ... and convert it back to a temporary TTF file that will be used for conversion
-                temp_ttf_file = makeOutputFileName(temp_otf_file, extension=".ttf", overWrite=True)
-                otf_to_ttf.run(input_file=temp_otf_file, output_file=temp_ttf_file, recalc_timestamp=recalcTimestamp)
-                os.remove(temp_otf_file)
-                input_font = Font(temp_ttf_file, recalcTimestamp=recalcTimestamp)
+                data = buf.getvalue()
+                temp_otf = Font(BytesIO(data), recalcTimestamp=recalcTimestamp)
+                otf_to_ttf.convert_font(temp_otf, post_format=2.0, max_err=1.0, reverse_direction=True)
+                input_font = Font(BytesIO(buf.getvalue()), recalcTimestamp=recalcTimestamp)
             else:
                 input_font = source_font
 
@@ -137,9 +138,6 @@ def ttf2otf(
             ttf2otf_converter.run(
                 charstrings_source="qu2cu", tolerance=tolerance, subroutinize=subroutinize, purge_glyphs=purge_glyphs
             )
-
-            if safe:
-                os.remove(input_font.file)
 
             if check_outlines:
                 generic_info_message("Checking outlines...")

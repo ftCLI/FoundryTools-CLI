@@ -39,7 +39,7 @@ def update_hmtx(ttFont, glyf):
             hmtx[glyphName] = (hmtx[glyphName][0], glyph.xMin)
 
 
-def otf_to_ttf(ttFont: Font, post_format=POST_FORMAT, **kwargs):
+def convert_font(ttFont: Font, post_format=POST_FORMAT, **kwargs):
     if ttFont.sfntVersion != "OTTO":
         raise TTLibError("Not a OpenType font (bad sfntVersion)")
     assert "CFF " in ttFont
@@ -84,5 +84,5 @@ def otf_to_ttf(ttFont: Font, post_format=POST_FORMAT, **kwargs):
 
 def run(input_file, output_file, recalc_timestamp=False):
     font = Font(input_file, recalcTimestamp=recalc_timestamp)
-    otf_to_ttf(font, post_format=2.0, max_err=1.0, reverse_direction=True)
+    convert_font(font, post_format=2.0, max_err=1.0, reverse_direction=True)
     font.save(output_file)
