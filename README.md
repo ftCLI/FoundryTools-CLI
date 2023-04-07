@@ -252,12 +252,12 @@ The `fonts_data.csv` contains the following columns:
 
 - `file_name`: path to the font file
 - `family_name`: the font's family name, retrieved reading the name table
-- `is_bold`: True if ths bold bits are set, False if they are not set. This column is present only for completeness,
+- `is_bold`: True if the bold bits are set, False if they are not set. This column is present only for completeness,
   but it's value will be ignored. A font will be set as bold only and only if, while running the `ftcli assistant commit`
   command, the user will choose to use linked styles.
   (-ls / --linked styles) option while writing data from CSV to fonts
-- `is_italic`: True if ths italic bits are set, False if they are not set
-- `is_oblique`: True if ths oblique bit is set, False if it's not set
+- `is_italic`: True if the italic bits are set, False if they are not set
+- `is_oblique`: True if the oblique bit is set, False if it's not set
 - `us_width_class`: usWidthClass value
 - `us_weight_class`: usWeightClass value
 - `wdt`: short literal for the Width style name
