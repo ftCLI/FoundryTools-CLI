@@ -247,9 +247,16 @@ def wf2ft(
             if flavor is not None:
                 if web_font.flavor != flavor:
                     continue
+            old_extension=web_font.get_real_extension()
             web_font.flavor = None
-            extension = web_font.get_real_extension()
-            desktop_font_file = makeOutputFileName(file, extension=extension, outputDir=output_dir, overWrite=overWrite)
+            new_extension = web_font.get_real_extension()
+            desktop_font_file = makeOutputFileName(
+                file,
+                extension=new_extension,
+                suffix=old_extension,
+                outputDir=output_dir,
+                overWrite=overWrite
+            )
             web_font.save(desktop_font_file, reorderTables=False)
             if delete_source_file:
                 os.remove(file)
