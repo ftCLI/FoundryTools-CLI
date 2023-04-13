@@ -80,15 +80,15 @@ def ttf_to_otf():
 )
 @add_common_options()
 def ttf2otf(
-    input_path,
-    tolerance=1,
-    safe=False,
-    purge_glyphs=False,
-    subroutinize=True,
-    check_outlines=False,
-    outputDir=None,
-    recalcTimestamp=False,
-    overWrite=True,
+        input_path,
+        tolerance=1,
+        safe=False,
+        purge_glyphs=False,
+        subroutinize=True,
+        check_outlines=False,
+        outputDir=None,
+        recalcTimestamp=False,
+        overWrite=True,
 ):
     """
     Converts TTF fonts (or TrueType flavored woff/woff2 web fonts) to OTF fonts (or CFF flavored woff/woff2 web fonts).
@@ -225,12 +225,12 @@ def web_to_sfnt():
 )
 @add_common_options()
 def wf2ft(
-    input_path,
-    flavor=None,
-    delete_source_file=False,
-    outputDir=None,
-    recalcTimestamp=False,
-    overWrite=True,
+        input_path,
+        flavor=None,
+        delete_source_file=False,
+        outputDir=None,
+        recalcTimestamp=False,
+        overWrite=True,
 ):
     """
     Converts web fonts (WOFF and WOFF2) to SFNT fonts (TTF or OTF)
@@ -247,7 +247,7 @@ def wf2ft(
             if flavor is not None:
                 if web_font.flavor != flavor:
                     continue
-            old_extension=web_font.get_real_extension()
+            old_extension = web_font.get_real_extension()
             web_font.flavor = None
             new_extension = web_font.get_real_extension()
             desktop_font_file = makeOutputFileName(
@@ -400,13 +400,13 @@ def variable_to_static():
 )
 @add_common_options()
 def var2static(
-    input_path,
-    select_instance=False,
-    cleanup=True,
-    update_name_table=False,
-    outputDir=None,
-    recalcTimestamp=False,
-    overWrite=True,
+        input_path,
+        select_instance=False,
+        cleanup=True,
+        update_name_table=False,
+        outputDir=None,
+        recalcTimestamp=False,
+        overWrite=True,
 ):
     """
     Exports static instances from variable fonts.
