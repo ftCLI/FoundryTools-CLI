@@ -9,36 +9,38 @@ from ftCLI.Lib.Font import Font
 from ftCLI.Lib.utils.click_tools import generic_error_message, generic_warning_message
 
 
-class TrueTypeToCFF(object):
-    def __init__(self, font: Font, output_file):
-        self.font = font
-        self.output_file = output_file
+class Options(object):
+    def __init__(self):
+        self.tolerance: float = 1.0
+        self.charstring_source = "qu2cu"
+        self.purge_glyphs = True
+        self.subroutinize = True
 
-    def run(
-        self,
-        charstrings_source="qu2cu",
-        tolerance=1,
-        purge_glyphs=True,
-        subroutinize=True,
-    ):
-        if purge_glyphs:
+
+class TrueTypeToCFF(object):
+    def __init__(self, font: Font):
+        self.font = font
+        self.options = Options()
+
+    def run(self):
+        if self.options.purge_glyphs:
             self.purge_glyphs()
 
         charstrings = {}
 
-        if charstrings_source == "qu2cu":
+        if self.options.charstring_source == "qu2cu":
             self.font.decomponentize()
             try:
-                charstrings = self.get_qu2cu_charstrings(tolerance=tolerance, all_cubic=True)
+                charstrings = self.get_qu2cu_charstrings(tolerance=self.options.tolerance, all_cubic=True)
             except NotImplementedError:
                 generic_warning_message("all_cubic set to False")
                 try:
-                    charstrings = self.get_qu2cu_charstrings(tolerance=tolerance, all_cubic=False)
+                    charstrings = self.get_qu2cu_charstrings(tolerance=self.options.tolerance, all_cubic=False)
                 except Exception as e:
                     generic_error_message(f"Failed to get charstring with Qu2CuPen ({e})")
                     return
 
-        if charstrings_source == "t2":
+        if self.options.charstring_source == "t2":
             try:
                 charstrings = self.get_t2_charstrings()
             except Exception as e:
@@ -64,7 +66,7 @@ class TrueTypeToCFF(object):
         fb.setupMaxp()
         fb.setupPost(**post_values)
 
-        if subroutinize:
+        if self.options.subroutinize:
             # cffsubr doesn't work with woff/woff2 fonts
             flavor = fb.font.flavor
             if flavor is not None:
@@ -72,7 +74,7 @@ class TrueTypeToCFF(object):
             cffsubr.subroutinize(fb.font)
             fb.font.flavor = flavor
 
-        fb.save(self.output_file)
+        return fb.font
 
     def get_cff_font_info(self) -> dict:
         """
