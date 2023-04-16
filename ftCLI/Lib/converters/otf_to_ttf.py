@@ -93,15 +93,3 @@ class CFFToTrueType(object):
             glyph.draw(cu2quPen)
             quadGlyphs[gname] = ttPen.glyph()
         return quadGlyphs
-
-
-def glyphs_to_quadratic(glyphs, max_err=MAX_ERR, reverse_direction=REVERSE_DIRECTION):
-    quadGlyphs = {}
-    for gname in glyphs.keys():
-        glyph = glyphs[gname]
-        ttPen = TTGlyphPen(glyphs)
-        cu2quPen = Cu2QuPen(ttPen, max_err, reverse_direction=reverse_direction)
-        glyph.draw(cu2quPen)
-        quadGlyphs[gname] = ttPen.glyph()
-    return quadGlyphs
-
