@@ -1,25 +1,16 @@
 import os
 import time
-from io import BytesIO
 
 import click
 import fontTools.ttLib
-from afdko import checkoutlinesufo
 from fontTools.misc.cliTools import makeOutputFileName
-from fontTools.ttLib import TTCollection
-from fontTools.ttLib.tables._f_v_a_r import NamedInstance
-from fontTools.varLib.instancer import instantiateVariableFont, OverlapMode
-from pathvalidate import sanitize_filename
 
 from ftCLI.Lib.Font import Font
-from ftCLI.Lib.converter import otf_to_ttf
-from ftCLI.Lib.converter.ttf_to_otf import TrueTypeToCFF
 from ftCLI.Lib.utils.cli_tools import check_output_dir, check_input_path
 from ftCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
     generic_error_message,
-    generic_warning_message,
     generic_info_message,
     file_saved_message,
     select_instance_coordinates,
@@ -80,19 +71,21 @@ def ttf_to_otf():
 )
 @add_common_options()
 def ttf2otf(
-    input_path,
-    tolerance=1,
-    safe=False,
-    purge_glyphs=False,
-    subroutinize=True,
-    check_outlines=False,
-    outputDir=None,
-    recalcTimestamp=False,
-    overWrite=True,
+        input_path,
+        tolerance=1,
+        safe=False,
+        purge_glyphs=False,
+        subroutinize=True,
+        check_outlines=False,
+        outputDir=None,
+        recalcTimestamp=False,
+        overWrite=True,
 ):
     """
     Converts TTF fonts (or TrueType flavored woff/woff2 web fonts) to OTF fonts (or CFF flavored woff/woff2 web fonts).
     """
+
+    from ftCLI.Lib.converters.ttf_to_otf import TrueTypeToCFF
 
     files = check_input_path(input_path, allow_variable=False, allow_cff=False)
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
@@ -122,30 +115,38 @@ def ttf2otf(
 
             if safe:
                 # Create a temporary OTF file with T2CharStringPen...
-                buf = BytesIO()
-                ttf2otf_converter_temp = TrueTypeToCFF(source_font, output_file=buf)
-                ttf2otf_converter_temp.run(charstrings_source="t2", purge_glyphs=purge_glyphs, subroutinize=False)
+                from ftCLI.Lib.converters.otf_to_ttf import CFFToTrueType
+                ttf2otf_converter_temp = TrueTypeToCFF(source_font)
+                ttf2otf_converter_temp.options.charstring_source = "t2"
+                ttf2otf_converter_temp.options.subroutinize = False
+                ttf2otf_converter_temp.options.purge_glyphs = purge_glyphs
+                temp_cff_font = ttf2otf_converter_temp.run()
 
                 # ... and convert it back to a temporary TTF file that will be used for conversion
-                data = buf.getvalue()
-                temp_otf = Font(BytesIO(data), recalcTimestamp=recalcTimestamp)
-                otf_to_ttf.convert_font(temp_otf, post_format=2.0, max_err=1.0, reverse_direction=True)
-                input_font = Font(BytesIO(buf.getvalue()), recalcTimestamp=recalcTimestamp)
+                otf_to_ttf_converter = CFFToTrueType(temp_cff_font)
+                # since the temp CFF font has many more points than needed, increase max_err from 1.0 to 2.0
+                otf_to_ttf_converter.options.max_err = 2.0
+                input_font = otf_to_ttf_converter.run()
+
             else:
                 input_font = source_font
 
-            ttf2otf_converter = TrueTypeToCFF(font=input_font, output_file=output_file)
-            ttf2otf_converter.run(
-                charstrings_source="qu2cu", tolerance=tolerance, subroutinize=subroutinize, purge_glyphs=purge_glyphs
-            )
+            ttf2otf_converter = TrueTypeToCFF(font=input_font)
+            ttf2otf_converter.options.charstring_source = "qu2cu"
+            ttf2otf_converter.options.tolerance = tolerance
+            ttf2otf_converter.options.subroutinize = subroutinize
+            ttf2otf_converter.options.purge_glyphs = purge_glyphs
+            cff_font = ttf2otf_converter.run()
+            cff_font.save(output_file)
 
             if check_outlines:
+                from afdko import checkoutlinesufo
                 generic_info_message("Checking outlines...")
                 checkoutlinesufo.run(args=[output_file, "--error-correction-mode", "--quiet-mode"])
 
             converted_files_counter += 1
             generic_info_message(f"Done in {round(time.time() - t, 3)} seconds")
-            file_saved_message(ttf2otf_converter.output_file)
+            file_saved_message(output_file)
 
         except Exception as e:
             generic_error_message(e)
@@ -163,11 +164,18 @@ def otf_2_ttf():
 
 @otf_2_ttf.command()
 @add_file_or_path_argument()
+@click.option(
+    "--max-err",
+    type=click.FloatRange(0.0, 3.0),
+    default=1.0,
+    help="""Approximation error, measured in UPEM"""
+)
 @add_common_options()
-def otf2ttf(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
+def otf2ttf(input_path, max_err, outputDir=None, recalcTimestamp=False, overWrite=True):
     """
     Converts fonts from OTF to TTF format.
     """
+    from ftCLI.Lib.converters.otf_to_ttf import CFFToTrueType
 
     files = check_input_path(input_path, allow_variable=False, allow_ttf=False)
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
@@ -181,13 +189,16 @@ def otf2ttf(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
         counter += 1
         generic_info_message(f"Converting file {counter} of {len(files)}")
         try:
+            font = Font(file, recalcTimestamp=recalcTimestamp)
+
+            converter = CFFToTrueType(font=font)
+            converter.options.max_err = max_err
+            ttf_font = converter.run()
+
             output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite, extension=".ttf")
-            otf_to_ttf.run(
-                input_file=file,
-                output_file=output_file,
-                recalc_timestamp=recalcTimestamp,
-            )
+            ttf_font.save(output_file)
             converted_files += 1
+
             generic_info_message(f"Done in {round(time.time() - t, 3)}")
             file_saved_message(output_file)
         except Exception as e:
@@ -225,42 +236,46 @@ def web_to_sfnt():
 )
 @add_common_options()
 def wf2ft(
-    input_path,
-    flavor=None,
-    delete_source_file=False,
-    outputDir=None,
-    recalcTimestamp=False,
-    overWrite=True,
+        input_path,
+        flavor=None,
+        delete_source_file=False,
+        outputDir=None,
+        recalcTimestamp=False,
+        overWrite=True,
 ):
     """
     Converts web fonts (WOFF and WOFF2) to SFNT fonts (TTF or OTF)
     """
+    from ftCLI.Lib.converters.web_to_sfnt import WebToSFNT
 
-    files = check_input_path(input_path, allow_extensions=[".woff", ".woff2"])
+    if not flavor:
+        allowed_extensions = [".woff", ".woff2"]
+    else:
+        allowed_extensions = [f".{flavor}"]
+
+    files = check_input_path(input_path, allow_extensions=allowed_extensions)
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     for file in files:
         try:
             web_font = Font(file, recalcTimestamp=recalcTimestamp)
-            if web_font.flavor is None:
-                continue
-            if flavor is not None:
-                if web_font.flavor != flavor:
-                    continue
-            old_extension=web_font.get_real_extension()
-            web_font.flavor = None
-            new_extension = web_font.get_real_extension()
-            desktop_font_file = makeOutputFileName(
+            suffix = web_font.get_real_extension()
+
+            converter = WebToSFNT(font=web_font)
+            desktop_font = converter.run()
+
+            new_extension = desktop_font.get_real_extension()
+            output_file = makeOutputFileName(
                 file,
                 extension=new_extension,
-                suffix=old_extension,
+                suffix=suffix,
                 outputDir=output_dir,
                 overWrite=overWrite
             )
-            web_font.save(desktop_font_file, reorderTables=False)
+            desktop_font.save(output_file, reorderTables=False)
             if delete_source_file:
                 os.remove(file)
-            file_saved_message(desktop_font_file)
+            file_saved_message(output_file)
         except Exception as e:
             generic_error_message(e)
 
@@ -286,6 +301,7 @@ def ft2wf(input_path, flavor=None, outputDir=None, recalcTimestamp=False, overWr
     """
     Converts SFNT fonts (TTF or OTF) to web fonts (WOFF and/or WOFF2)
     """
+    from ftCLI.Lib.converters.sfnt_to_web import SFNTToWeb
 
     files = check_input_path(input_path, allow_extensions=[".otf", ".ttf"])
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
@@ -301,10 +317,12 @@ def ft2wf(input_path, flavor=None, outputDir=None, recalcTimestamp=False, overWr
                 continue
             for flavor in output_flavors:
                 font.flavor = flavor
-                extension = font.get_real_extension()
-                web_font_file = makeOutputFileName(file, extension=extension, outputDir=output_dir, overWrite=overWrite)
-                font.save(web_font_file, reorderTables=False)
-                file_saved_message(web_font_file)
+                converter = SFNTToWeb(font=font, flavor=flavor)
+                web_font = converter.run()
+                extension = web_font.get_real_extension()
+                output_file = makeOutputFileName(file, extension=extension, outputDir=output_dir, overWrite=overWrite)
+                web_font.save(output_file, reorderTables=False)
+                file_saved_message(output_file)
         except Exception as e:
             generic_error_message(e)
 
@@ -321,6 +339,7 @@ def ttc2sfnt(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
     """
     Extracts each font from a TTC file, and saves it as a TTF or OTF file.
     """
+    from fontTools.ttLib import TTCollection
 
     if os.path.isfile(input_path):
         files = [input_path]
@@ -400,19 +419,21 @@ def variable_to_static():
 )
 @add_common_options()
 def var2static(
-    input_path,
-    select_instance=False,
-    cleanup=True,
-    update_name_table=False,
-    outputDir=None,
-    recalcTimestamp=False,
-    overWrite=True,
+        input_path,
+        select_instance=False,
+        cleanup=True,
+        update_name_table=False,
+        outputDir=None,
+        recalcTimestamp=False,
+        overWrite=True,
 ):
     """
     Exports static instances from variable fonts.
     """
 
     from ftCLI.Lib.VFont import VariableFont
+    from ftCLI.Lib.converters.variable_to_static import VariableToStatic
+    from fontTools.ttLib.tables._f_v_a_r import NamedInstance
 
     files = check_input_path(input_path, allow_static=False, allow_cff=False)
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
@@ -423,17 +444,21 @@ def var2static(
         generic_info_message(f"Converting file {os.path.basename(file)}")
         try:
             variable_font = VariableFont(file, recalcTimestamp=recalcTimestamp)
-            axes = variable_font.get_axes()
+
+            converter = VariableToStatic()
+            converter.options.cleanup = cleanup
+            converter.options.update_name_table = update_name_table
+            converter.options.output_dir = output_dir
+            converter.options.overwrite = overWrite
+
             instances = variable_font.get_instances()
-
-            update_this_font_name_table = update_name_table
-
             if select_instance:
+                axes = variable_font.get_axes()
                 selected_coordinates = select_instance_coordinates(axes)
                 is_named_instance = selected_coordinates in [i.coordinates for i in instances]
                 if not is_named_instance:
                     # Set update_name_table value to False because we won't find this Axis Value in the STAT table.
-                    update_this_font_name_table = False
+                    converter.options.update_name_table = False
                     selected_instance = NamedInstance()
                     selected_instance.coordinates = selected_coordinates
                 else:
@@ -448,67 +473,13 @@ def var2static(
 
                 instances = [selected_instance]
 
-            if len(instances) == 0:
-                generic_error_message("No instances found")
-                return
-
-            name_ids_to_delete = []
-            if cleanup:
-                name_ids_to_delete = variable_font.get_var_name_ids_to_delete()
-
-            instance_count = 0
-
-            # Cannot update name table if there is no STAT table.
-            if "STAT" not in variable_font:
-                update_this_font_name_table = False
-                generic_warning_message("Cannot update name table if there is no STAT table.")
-
-            # Cannot update name table if there are no STAT Axis Values.
-            if update_this_font_name_table:
-                if not hasattr(variable_font["STAT"], "AxisValueArray"):
-                    update_this_font_name_table = False
-                    generic_warning_message("Cannot update name table if there are no STAT Axis Values.")
-
-            for instance in instances:
-                t = time.time()
-                instance_count += 1
-
-                print()
-                generic_info_message(f"Exporting instance {instance_count} of {len(instances)}")
-                static_font: Font = instantiateVariableFont(
-                    varfont=variable_font,
-                    axisLimits=instance.coordinates,
-                    inplace=False,
-                    optimize=True,
-                    overlap=OverlapMode.REMOVE_AND_IGNORE_ERRORS,
-                    updateFontNames=update_this_font_name_table,
-                )
-
-                if cleanup:
-                    static_font.name_table.del_names(name_ids=name_ids_to_delete)
-                    if "STAT" in static_font:
-                        del static_font["STAT"]
-                    static_font.reorder_ui_name_ids()
-
-                static_font_file_name = sanitize_filename(variable_font.get_static_instance_file_name(instance))
-                static_font_ext = static_font.get_real_extension()
-                output_file = makeOutputFileName(
-                    static_font_file_name,
-                    outputDir=output_dir,
-                    extension=static_font_ext,
-                    overWrite=overWrite,
-                )
-
-                static_font.save(output_file)
-                generic_info_message(f"Done in {round(time.time() - t, 3)} seconds")
-                file_saved_message(output_file)
-
-            print()
-            generic_info_message(f"Total instances : {len(instances)}")
-            generic_info_message(f"Elapsed time    : {round(time.time() - start_time)} seconds")
+            converter.run(variable_font=variable_font, instances=instances)
 
         except Exception as e:
             generic_error_message(e)
+
+        generic_info_message(f"Total files : {len(files)}")
+        generic_info_message(f"Elapsed time    : {round(time.time() - start_time)} seconds")
 
 
 cli = click.CommandCollection(

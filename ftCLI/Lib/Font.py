@@ -659,12 +659,12 @@ class Font(TTFont):
 
         :return: A list of integers.
         """
-        ui_name_ids = []
-        if "GSUB" not in self.keys():
+        if "GSUB" not in self:
             return []
         else:
+            ui_name_ids = []
             for record in self["GSUB"].table.FeatureList.FeatureRecord:
-                if record.Feature.FeatureParams is not None:
+                if record.Feature.FeatureParams:
                     ui_name_ids.append(record.Feature.FeatureParams.UINameID)
         return sorted(set(ui_name_ids))
 
