@@ -1,24 +1,9 @@
-import logging
-
-from fontTools import configLogger
 from fontTools.pens.cu2quPen import Cu2QuPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib import TTLibError, newTable
 
 from ftCLI.Lib.Font import Font
-
-log = logging.getLogger()
-configLogger(logger=log)
-
-# default approximation error, measured in UPEM
-MAX_ERR = 1.0
-
-# default 'post' table format
-POST_FORMAT = 2.0
-
-# assuming the input contours' direction is correctly set (counter-clockwise),
-# we just flip it to clockwise
-REVERSE_DIRECTION = True
+from ftCLI.Lib.utils.click_tools import generic_warning_message
 
 
 class Options(object):
@@ -73,7 +58,7 @@ class CFFToTrueType(object):
             post.compile(self.font)
         except OverflowError:
             post.formatType = 3
-            log.warning("Dropping glyph names, they do not fit in 'post' table.")
+            generic_warning_message("Dropping glyph names, they do not fit in 'post' table.")
 
         self.font.sfntVersion = "\000\001\000\000"
         return self.font
