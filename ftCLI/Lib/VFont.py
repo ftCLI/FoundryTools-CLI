@@ -41,7 +41,7 @@ class VariableFont(Font):
 
         return name_ids_to_delete
 
-    def get_static_instance_file_name(self, instance: NamedInstance) -> str:
+    def get_instance_file_name(self, instance: NamedInstance) -> str:
         if hasattr(instance, "postscriptNameID") and instance.postscriptNameID < 65535:
             instance_file_name = self.name_table.getDebugName(instance.postscriptNameID)
 
