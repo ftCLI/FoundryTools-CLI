@@ -130,6 +130,8 @@ class TrueTypeToCFF(object):
             subsetter.options.name_languages = "*"
             subsetter.options.layout_features = "*"
             subsetter.options.hinting = False
+            subsetter.options.notdef_glyph = True
+            subsetter.options.notdef_outline = True
             subsetter.glyph_ids_requested = glyph_ids
             Subsetter.subset(subsetter, self.font)
 
