@@ -3,7 +3,7 @@ import pathops
 from fontTools.fontBuilder import FontBuilder
 from fontTools.pens.qu2cuPen import Qu2CuPen
 from fontTools.pens.t2CharStringPen import T2CharStringPen
-from fontTools.subset import Subsetter
+from ftCLI.Lib.utils.subsetter import BaseSubsetter
 
 from ftCLI.Lib.Font import Font
 from ftCLI.Lib.utils.click_tools import generic_error_message, generic_warning_message
@@ -114,7 +114,7 @@ class TrueTypeToCFF(object):
 
     def purge_glyphs(self):
         glyph_ids_to_remove = []
-        for g in [".null", "NULL", "uni0000", "CR", "nonmarkingreturn", "uni000D"]:
+        for g in [".null", "NUL", "NULL", "uni0000", "CR", "nonmarkingreturn", "uni000D"]:
             try:
                 glyph_ids_to_remove.append(self.font.getGlyphID(g))
             except KeyError:
@@ -122,18 +122,8 @@ class TrueTypeToCFF(object):
 
         glyph_ids = [i for i in self.font.getReverseGlyphMap().values() if i not in glyph_ids_to_remove]
         if len(glyph_ids_to_remove) > 0:
-            subsetter = Subsetter()
-            subsetter.options.drop_tables = []
-            subsetter.options.passthrough_tables = True
-            subsetter.options.name_IDs = "*"
-            subsetter.options.name_legacy = True
-            subsetter.options.name_languages = "*"
-            subsetter.options.layout_features = "*"
-            subsetter.options.hinting = False
-            subsetter.options.notdef_glyph = True
-            subsetter.options.notdef_outline = True
-            subsetter.glyph_ids_requested = glyph_ids
-            Subsetter.subset(subsetter, self.font)
+            subsetter = BaseSubsetter(glyph_ids=glyph_ids)
+            subsetter.subset(self.font)
 
     def get_qu2cu_charstrings(self, tolerance: float = 1, all_cubic: bool = True):
         charstrings = {}

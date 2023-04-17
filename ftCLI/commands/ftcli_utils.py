@@ -8,7 +8,6 @@ from afdko import checkoutlinesufo
 from dehinter.font import dehint
 from fontTools.cffLib.specializer import specializeProgram
 from fontTools.misc.cliTools import makeOutputFileName
-from fontTools.subset import Subsetter
 from fontTools.ttLib.removeOverlaps import removeOverlaps
 from pathvalidate import sanitize_filepath, sanitize_filename
 
@@ -22,6 +21,7 @@ from ftCLI.Lib.utils.click_tools import (
     file_not_changed_message,
     generic_info_message,
 )
+from ftCLI.Lib.utils.subsetter import BaseSubsetter
 
 
 @click.group()
@@ -592,20 +592,9 @@ def cff_dehint(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
     for file in files:
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
-
-            subsetter = Subsetter()
-            subsetter.options.drop_tables = []
-            subsetter.options.passthrough_tables = True
-            subsetter.options.name_IDs = "*"
-            subsetter.options.name_legacy = True
-            subsetter.options.name_languages = "*"
-            subsetter.options.layout_features = "*"
-            subsetter.options.hinting = False
-            subsetter.options.notdef_glyph = True
-            subsetter.options.notdef_outline = True
-            subsetter.glyph_ids_requested = [i for i in font.getReverseGlyphMap().values()]
-            Subsetter.subset(subsetter, font)
-
+            glyph_ids = [i for i in font.getReverseGlyphMap().values()]
+            subsetter = BaseSubsetter(glyph_ids=glyph_ids)
+            subsetter.subset(font)
             output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
             font.save(output_file)
             file_saved_message(output_file)
