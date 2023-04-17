@@ -601,6 +601,8 @@ def cff_dehint(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
             subsetter.options.name_languages = "*"
             subsetter.options.layout_features = "*"
             subsetter.options.hinting = False
+            subsetter.options.notdef_glyph = True
+            subsetter.options.notdef_outline = True
             subsetter.glyph_ids_requested = [i for i in font.getReverseGlyphMap().values()]
             Subsetter.subset(subsetter, font)
 
