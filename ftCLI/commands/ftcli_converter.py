@@ -71,15 +71,15 @@ def ttf_to_otf():
 )
 @add_common_options()
 def ttf2otf(
-        input_path,
-        tolerance=1,
-        safe=False,
-        purge_glyphs=False,
-        subroutinize=True,
-        check_outlines=False,
-        outputDir=None,
-        recalcTimestamp=False,
-        overWrite=True,
+    input_path,
+    tolerance=1,
+    safe=False,
+    purge_glyphs=False,
+    subroutinize=True,
+    check_outlines=False,
+    outputDir=None,
+    recalcTimestamp=False,
+    overWrite=True,
 ):
     """
     Converts TTF fonts (or TrueType flavored woff/woff2 web fonts) to OTF fonts (or CFF flavored woff/woff2 web fonts).
@@ -116,6 +116,7 @@ def ttf2otf(
             if safe:
                 # Create a temporary OTF file with T2CharStringPen...
                 from ftCLI.Lib.converters.otf_to_ttf import CFFToTrueType
+
                 ttf2otf_converter_temp = TrueTypeToCFF(source_font)
                 ttf2otf_converter_temp.options.charstring_source = "t2"
                 ttf2otf_converter_temp.options.subroutinize = False
@@ -141,6 +142,7 @@ def ttf2otf(
 
             if check_outlines:
                 from afdko import checkoutlinesufo
+
                 generic_info_message("Checking outlines...")
                 checkoutlinesufo.run(args=[output_file, "--error-correction-mode", "--quiet-mode"])
 
@@ -165,10 +167,7 @@ def otf_2_ttf():
 @otf_2_ttf.command()
 @add_file_or_path_argument()
 @click.option(
-    "--max-err",
-    type=click.FloatRange(0.0, 3.0),
-    default=1.0,
-    help="""Approximation error, measured in UPEM"""
+    "--max-err", type=click.FloatRange(0.0, 3.0), default=1.0, help="""Approximation error, measured in UPEM"""
 )
 @add_common_options()
 def otf2ttf(input_path, max_err, outputDir=None, recalcTimestamp=False, overWrite=True):
@@ -236,12 +235,12 @@ def web_to_sfnt():
 )
 @add_common_options()
 def wf2ft(
-        input_path,
-        flavor=None,
-        delete_source_file=False,
-        outputDir=None,
-        recalcTimestamp=False,
-        overWrite=True,
+    input_path,
+    flavor=None,
+    delete_source_file=False,
+    outputDir=None,
+    recalcTimestamp=False,
+    overWrite=True,
 ):
     """
     Converts web fonts (WOFF and WOFF2) to SFNT fonts (TTF or OTF)
@@ -266,11 +265,7 @@ def wf2ft(
 
             new_extension = desktop_font.get_real_extension()
             output_file = makeOutputFileName(
-                file,
-                extension=new_extension,
-                suffix=suffix,
-                outputDir=output_dir,
-                overWrite=overWrite
+                file, extension=new_extension, suffix=suffix, outputDir=output_dir, overWrite=overWrite
             )
             desktop_font.save(output_file, reorderTables=False)
             if delete_source_file:
@@ -313,6 +308,7 @@ def ft2wf(input_path, flavor=None, outputDir=None, recalcTimestamp=False, overWr
     for file in files:
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
+            suffix = font.get_real_extension()
             if font.flavor is not None:
                 continue
             for flavor in output_flavors:
@@ -320,7 +316,9 @@ def ft2wf(input_path, flavor=None, outputDir=None, recalcTimestamp=False, overWr
                 converter = SFNTToWeb(font=font, flavor=flavor)
                 web_font = converter.run()
                 extension = web_font.get_real_extension()
-                output_file = makeOutputFileName(file, extension=extension, outputDir=output_dir, overWrite=overWrite)
+                output_file = makeOutputFileName(
+                    file, suffix=suffix, extension=extension, outputDir=output_dir, overWrite=overWrite
+                )
                 web_font.save(output_file, reorderTables=False)
                 file_saved_message(output_file)
         except Exception as e:
@@ -419,13 +417,13 @@ def variable_to_static():
 )
 @add_common_options()
 def var2static(
-        input_path,
-        select_instance=False,
-        cleanup=True,
-        update_name_table=False,
-        outputDir=None,
-        recalcTimestamp=False,
-        overWrite=True,
+    input_path,
+    select_instance=False,
+    cleanup=True,
+    update_name_table=False,
+    outputDir=None,
+    recalcTimestamp=False,
+    overWrite=True,
 ):
     """
     Exports static instances from variable fonts.
