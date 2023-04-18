@@ -476,7 +476,7 @@ def var2static(
         except Exception as e:
             generic_error_message(e)
 
-        generic_info_message(f"Total files : {len(files)}")
+        generic_info_message(f"Total files     : {len(files)}")
         generic_info_message(f"Elapsed time    : {round(time.time() - start_time)} seconds")
 
 
