@@ -60,6 +60,9 @@ class VariableToStatic(object):
                 updateFontNames=self.options.update_name_table,
             )
 
+            if "cvar" in static_instance:
+                del static_instance["cvar"]
+
             if self.options.cleanup:
                 name_ids_to_delete = variable_font.get_var_name_ids_to_delete() if self.options.cleanup else []
                 static_instance.name_table.del_names(name_ids=name_ids_to_delete)
