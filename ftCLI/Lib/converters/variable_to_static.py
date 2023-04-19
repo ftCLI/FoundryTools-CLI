@@ -15,8 +15,8 @@ from ftCLI.Lib.utils.click_tools import (
 
 class Options(object):
     def __init__(self):
-        self.cleanup = (True,)
-        self.update_name_table = (True,)
+        self.cleanup = True
+        self.update_name_table = True
         self.output_dir = None
         self.overwrite = True
 
