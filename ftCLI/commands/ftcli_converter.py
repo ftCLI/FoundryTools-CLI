@@ -108,10 +108,7 @@ def ttf2otf(
             tolerance = tolerance / 1000 * source_font.head_table.unitsPerEm
 
             ext = ".otf" if source_font.flavor is None else source_font.get_real_extension()
-            suffix = "" if source_font.flavor is None else ".otf"
-            output_file = makeOutputFileName(
-                file, suffix=suffix, extension=ext, outputDir=output_dir, overWrite=overWrite
-            )
+            output_file = makeOutputFileName(file, extension=ext, outputDir=output_dir, overWrite=overWrite)
 
             if safe:
                 # Create a temporary OTF file with T2CharStringPen...
@@ -258,14 +255,13 @@ def wf2ft(
     for file in files:
         try:
             web_font = Font(file, recalcTimestamp=recalcTimestamp)
-            suffix = web_font.get_real_extension()
 
             converter = WebToSFNT(font=web_font)
             desktop_font = converter.run()
 
             new_extension = desktop_font.get_real_extension()
             output_file = makeOutputFileName(
-                file, extension=new_extension, suffix=suffix, outputDir=output_dir, overWrite=overWrite
+                file, extension=new_extension, outputDir=output_dir, overWrite=overWrite
             )
             desktop_font.save(output_file, reorderTables=False)
             if delete_source_file:
@@ -308,7 +304,6 @@ def ft2wf(input_path, flavor=None, outputDir=None, recalcTimestamp=False, overWr
     for file in files:
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
-            suffix = font.get_real_extension()
             if font.flavor is not None:
                 continue
             for flavor in output_flavors:
@@ -316,9 +311,7 @@ def ft2wf(input_path, flavor=None, outputDir=None, recalcTimestamp=False, overWr
                 converter = SFNTToWeb(font=font, flavor=flavor)
                 web_font = converter.run()
                 extension = web_font.get_real_extension()
-                output_file = makeOutputFileName(
-                    file, suffix=suffix, extension=extension, outputDir=output_dir, overWrite=overWrite
-                )
+                output_file = makeOutputFileName(file, extension=extension, outputDir=output_dir, overWrite=overWrite)
                 web_font.save(output_file, reorderTables=False)
                 file_saved_message(output_file)
         except Exception as e:
