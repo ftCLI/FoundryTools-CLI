@@ -164,7 +164,7 @@ def otf_2_ttf():
 @otf_2_ttf.command()
 @add_file_or_path_argument()
 @click.option(
-    "--max-err", type=click.FloatRange(0.0, 3.0), default=1.0, help="""Approximation error, measured in UPEM"""
+    "--max-err", type=click.FloatRange(0.1, 3.0), default=1.0, help="""Approximation error, measured in UPEM"""
 )
 @add_common_options()
 def otf2ttf(input_path, max_err, outputDir=None, recalcTimestamp=False, overWrite=True):
