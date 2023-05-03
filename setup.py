@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setuptools.setup(
     name="font-CLI",
-    version="0.9.10.dev0",
+    version="0.9.10",
     description="A set of command line tools to edit fonts with FontTools",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -18,17 +18,17 @@ setuptools.setup(
     include_package_data=True,
     entry_points={"console_scripts": ["ftcli=ftCLI.ftCLI:main"]},
     install_requires=[
-        "fonttools>=4.39.2",
-        "afdko==3.9.3",
+        "fonttools>=4.39.3",
+        "afdko==3.9.5",
         "beziers==0.5.0",
         "brotli==1.0.9",
         "click==8.1.3",
         "dehinter==4.0.0",
         "pathvalidate==2.5.2",
-        "rich>=13.3.3",
+        "rich>=13.3.5",
         "skia-pathops==0.7.4",
         "ttfautohint-py==0.5.1",
-        "ufo2ft==2.31.0",
+        "ufo2ft==2.31.1",
         "zopfli==0.2.2",
     ],
     classifiers=[
