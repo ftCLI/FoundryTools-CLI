@@ -403,7 +403,7 @@ def variable_to_static():
 @click.option(
     "--update-name-table",
     is_flag=True,
-    default=False,
+    default=True,
     help="""
               Update the instantiated font's `name` table. Input font must have a STAT table with Axis Value Tables
               """,
