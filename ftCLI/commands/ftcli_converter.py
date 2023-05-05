@@ -36,6 +36,7 @@ def ttf_to_otf():
 )
 @click.option(
     "--safe",
+    "safe_mode",
     is_flag=True,
     help="""
               Sometimes Qu2CuPen may fail or produce distorted outlines. Most of times, use of '--safe' will prevent
@@ -43,6 +44,13 @@ def ttf_to_otf():
               reconverting it to a temporary TTF font. This last one will be used for TTF to OTF conversion instead of
               the source TTF file. This is slower, but safest.
     """,
+)
+@click.option(
+    "--scale-upm",
+    is_flag=True,
+    help="""
+              Scale units-per-em to 1000
+    """
 )
 @click.option(
     "--keep-glyphs",
@@ -73,7 +81,8 @@ def ttf_to_otf():
 def ttf2otf(
     input_path,
     tolerance=1,
-    safe=False,
+    safe_mode=False,
+    scale_upm=False,
     purge_glyphs=False,
     subroutinize=True,
     check_outlines=False,
@@ -90,70 +99,18 @@ def ttf2otf(
     files = check_input_path(input_path, allow_variable=False, allow_cff=False)
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
-    start_time = time.time()
-    converted_files_counter = 0
-    counter = 0
-
-    for file in files:
-        t = time.time()
-        counter += 1
-
-        try:
-            print()
-            generic_info_message(f"Converting file {os.path.basename(file)}: {counter} of {len(files)}")
-
-            source_font = Font(file, recalcTimestamp=recalcTimestamp)
-
-            # Set tolerance as a ratio of unitsPerEm
-            tolerance = tolerance / 1000 * source_font.head_table.unitsPerEm
-
-            ext = ".otf" if source_font.flavor is None else source_font.get_real_extension()
-            output_file = makeOutputFileName(file, extension=ext, outputDir=output_dir, overWrite=overWrite)
-
-            if safe:
-                # Create a temporary OTF file with T2CharStringPen...
-                from ftCLI.Lib.converters.otf_to_ttf import CFFToTrueType
-
-                ttf2otf_converter_temp = TrueTypeToCFF(source_font)
-                ttf2otf_converter_temp.options.charstring_source = "t2"
-                ttf2otf_converter_temp.options.subroutinize = False
-                ttf2otf_converter_temp.options.purge_glyphs = purge_glyphs
-                temp_cff_font = ttf2otf_converter_temp.run()
-
-                # ... and convert it back to a temporary TTF file that will be used for conversion
-                otf_to_ttf_converter = CFFToTrueType(temp_cff_font)
-                # since the temp CFF font has many more points than needed, increase max_err from 1.0 to 2.0
-                otf_to_ttf_converter.options.max_err = 2.0
-                input_font = otf_to_ttf_converter.run()
-
-            else:
-                input_font = source_font
-
-            ttf2otf_converter = TrueTypeToCFF(font=input_font)
-            ttf2otf_converter.options.charstring_source = "qu2cu"
-            ttf2otf_converter.options.tolerance = tolerance
-            ttf2otf_converter.options.subroutinize = subroutinize
-            ttf2otf_converter.options.purge_glyphs = purge_glyphs
-            cff_font = ttf2otf_converter.run()
-            cff_font.save(output_file)
-
-            if check_outlines:
-                from afdko import checkoutlinesufo
-
-                generic_info_message("Checking outlines...")
-                checkoutlinesufo.run(args=[output_file, "--error-correction-mode", "--quiet-mode"])
-
-            converted_files_counter += 1
-            generic_info_message(f"Done in {round(time.time() - t, 3)} seconds")
-            file_saved_message(output_file)
-
-        except Exception as e:
-            generic_error_message(e)
-
-    print()
-    generic_info_message(f"Total files       : {len(files)}")
-    generic_info_message(f"Converted files   : {converted_files_counter}")
-    generic_info_message(f"Elapsed time      : {round(time.time() - start_time, 3)} seconds")
+    from ftCLI.Lib.converters.ttf_to_otf import JobRunner_ttf2otf
+    converter = JobRunner_ttf2otf(files=files)
+    converter.options.tolerance = tolerance
+    converter.options.output_dir = output_dir
+    converter.options.overwrite = overWrite
+    converter.options.subroutinize = subroutinize
+    converter.options.check_outlines = check_outlines
+    converter.options.safe_mode = safe_mode
+    converter.options.remove_glyphs = purge_glyphs
+    converter.options.scale_upm = scale_upm
+    converter.options.recalc_timestamp = recalcTimestamp
+    converter.run()
 
 
 @click.group()
