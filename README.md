@@ -661,7 +661,7 @@ Converts TTF fonts (or TrueType flavored woff/woff2 web fonts) to OTF fonts (or 
                                   a temporary TTF font. This last one will be
                                   used for TTF to OTF conversion instead of the
                                   source TTF file. This is slower, but safest.
-    --scale-upm                   Scale units-per-em of converter fonts to 1000
+    --scale-upm                   Scale units-per-em of converted fonts to 1000
     --keep-glyphs                 Keeps NULL and CR glyphs from the output font
     --no-subr                     Do not subroutinize converted fonts
     --check-outlines              Performs optional outline quality checks and
