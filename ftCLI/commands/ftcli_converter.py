@@ -54,7 +54,7 @@ def ttf_to_otf():
 )
 @click.option(
     "--keep-glyphs",
-    "purge_glyphs",
+    "remove_glyphs",
     is_flag=True,
     default=True,
     help="""
@@ -83,7 +83,7 @@ def ttf2otf(
     tolerance=1,
     safe_mode=False,
     scale_upm=False,
-    purge_glyphs=False,
+    remove_glyphs=False,
     subroutinize=True,
     check_outlines=False,
     outputDir=None,
@@ -107,7 +107,7 @@ def ttf2otf(
     converter.options.subroutinize = subroutinize
     converter.options.check_outlines = check_outlines
     converter.options.safe_mode = safe_mode
-    converter.options.remove_glyphs = purge_glyphs
+    converter.options.remove_glyphs = remove_glyphs
     converter.options.scale_upm = scale_upm
     converter.options.recalc_timestamp = recalcTimestamp
     converter.run()
