@@ -2,7 +2,7 @@ import time
 from io import BytesIO
 
 import pathops
-from afdko import checkoutlinesufo
+from afdko.fdkutils import run_shell_command
 from cffsubr import subroutinize
 from fontTools.fontBuilder import FontBuilder
 from fontTools.misc.cliTools import makeOutputFileName
@@ -54,6 +54,7 @@ class JobRunner_ttf2otf(object):
                 # Temporary workaround, waiting to understand the reason why, if we scale the UPM of a Font object
                 # instead of a TTFont object, the new UPM values is wrong
                 if self.options.scale_upm:
+                    generic_info_message("Scaling source font to 1000 units-per-em")
                     tmp_font = TTFont(file, recalcTimestamp=self.options.recalc_timestamp)
                     scale_upem(tmp_font, 1000)
                     buf = BytesIO()
@@ -65,7 +66,7 @@ class JobRunner_ttf2otf(object):
                     source_font = Font(file, recalcBBoxes=False, recalcTimestamp=self.options.recalc_timestamp)
 
                 # Set tolerance as a ratio of unitsPerEm
-                tolerance = self.options.tolerance / 1000 * source_font["head"].unitsPerEm
+                tolerance = self.options.tolerance / 1000 * source_font.head_table.unitsPerEm
 
                 ext = ".otf" if source_font.flavor is None else '.' + str(source_font.flavor)
                 suffix = "" if source_font.flavor is None else ".otf"
@@ -102,12 +103,17 @@ class JobRunner_ttf2otf(object):
                 ttf2otf_converter.options.subroutinize = self.options.subroutinize
                 ttf2otf_converter.options.purge_glyphs = self.options.remove_glyphs
                 ttf2otf_converter.options.check_outlines = self.options.check_outlines
+                generic_info_message("Converting outlines")
                 cff_font = ttf2otf_converter.run()
 
                 cff_font.save(output_file)
 
                 if self.options.check_outlines:
-                    checkoutlinesufo.run(args=[output_file, "--error-correction-mode", "--quiet-mode"])
+                    generic_info_message("Checking outlines with checkoutlinesufo")
+                    run_shell_command(
+                        args=["checkoutlinesufo", output_file, "--error-correction-mode", "--quiet-mode"],
+                        suppress_output=True
+                    )
 
                 generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
                 file_saved_message(output_file)
