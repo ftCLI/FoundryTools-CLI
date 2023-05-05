@@ -9,8 +9,8 @@ from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.recordingPen import DecomposingRecordingPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib import TTFont, registerCustomTableClass, newTable
-from ufo2ft.fontInfoData import intListToNum
-from ufo2ft.util import calcCodePageRanges
+from ftCLI.Lib.utils.misc import intListToNum
+from ftCLI.Lib.utils.misc import calcCodePageRanges
 
 from ftCLI.Lib import constants
 from ftCLI.Lib.tables.OS_2 import TableOS2
