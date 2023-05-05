@@ -361,11 +361,11 @@ class Font(TTFont):
         # Upgrading from version 1 requires creating sxHeight, sCapHeight, usDefaultChar, usBreakChar and usMaxContext
         # entries.
         if current_version < 2:
-            self.calculate_x_height()
-            self.calculate_cap_height()
+            self.os_2_table.set_x_height(self.calculate_x_height())
+            self.os_2_table.set_cap_height(self.calculate_cap_height())
             setattr(self.os_2_table, "usDefaultChar", 0)
             setattr(self.os_2_table, "usBreakChar", 32)
-            self.calculate_max_context()
+            self.os_2_table.set_max_context(self.calculate_max_context())
 
         # Write default values if target_version == 5.
         if target_version > 4:
