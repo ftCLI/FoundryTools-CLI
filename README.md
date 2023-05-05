@@ -14,12 +14,12 @@ The following packages will be installed during setup:
 - beziers
 - brotli
 - click
+- cffsubr
 - dehinter
 - pathvalidate
 - rich
 - skia-pathops
 - ttfautohint-py
-- ufo2ft
 - zopfli
 
 ## Installation
