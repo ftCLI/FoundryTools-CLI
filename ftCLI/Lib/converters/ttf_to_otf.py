@@ -140,13 +140,15 @@ class TrueTypeToCFF(object):
             except NotImplementedError:
                 try:
                     charstrings = self.get_qu2cu_charstrings(tolerance=self.options.tolerance, all_cubic=False)
-                except:
+                except Exception as e:
+                    generic_error_message(f"An error occurred while getting qu2cu charstrings {e}")
                     return
 
         if self.options.charstring_source == "t2":
             try:
                 charstrings = self.get_t2_charstrings()
-            except:
+            except Exception as e:
+                generic_error_message(f"An error occurred while getting t2 charstrings {e}")
                 return
 
         cff_font_info = self.get_cff_font_info()
