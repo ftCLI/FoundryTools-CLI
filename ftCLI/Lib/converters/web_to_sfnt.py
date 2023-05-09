@@ -36,17 +36,11 @@ class JobRunner_wf2ft(object):
                     if font.flavor == "woff2":
                         continue
 
-                old_extension = font.get_real_extension()
-                if self.options.woff and self.options.woff2:
-                    suffix = old_extension
-                else:
-                    suffix = ""
                 font.flavor = None
                 new_extension = font.get_real_extension()
                 output_file = makeOutputFileName(
                     file,
                     extension=new_extension,
-                    suffix=suffix,
                     outputDir=self.options.output_dir,
                     overWrite=self.options.overwrite,
                 )
