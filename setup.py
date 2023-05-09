@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setuptools.setup(
     name="font-CLI",
-    version="0.9.12",
+    version="0.9.13.dev0",
     description="A set of command line tools to edit fonts with FontTools",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -29,7 +29,6 @@ setuptools.setup(
         "rich>=13.3.5",
         "skia-pathops==0.7.4",
         "ttfautohint-py==0.5.1",
-        # "ufo2ft==2.31.1",
         "zopfli==0.2.2",
     ],
     classifiers=[
