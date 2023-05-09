@@ -9,8 +9,8 @@ from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.recordingPen import DecomposingRecordingPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib import TTFont, registerCustomTableClass, newTable
-from ftCLI.Lib.utils.misc import intListToNum
-from ftCLI.Lib.utils.misc import calcCodePageRanges
+from ftCLI.Lib.utils.misc import int_list_to_num
+from ftCLI.Lib.utils.misc import calc_code_page_ranges
 
 from ftCLI.Lib import constants
 from ftCLI.Lib.tables.OS_2 import TableOS2
@@ -308,9 +308,9 @@ class Font(TTFont):
             if table.isUnicode():
                 unicodes.update(table.cmap.keys())
 
-        code_page_ranges = calcCodePageRanges(unicodes)
-        codepage_range1 = intListToNum(code_page_ranges, 0, 32)
-        codepage_range2 = intListToNum(code_page_ranges, 32, 32)
+        code_page_ranges = calc_code_page_ranges(unicodes)
+        codepage_range1 = int_list_to_num(code_page_ranges, 0, 32)
+        codepage_range2 = int_list_to_num(code_page_ranges, 32, 32)
 
         return codepage_range1, codepage_range2
 
