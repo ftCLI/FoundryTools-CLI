@@ -696,9 +696,9 @@ Exports static instances from variable fonts.
                                   nameIDs are deleted from name table. Use --no-
                                   cleanup to keep STAT table and prevent axis
                                   nameIDs to be deleted from name table.
-    --update-name-table           Update the instantiated font's `name` table.
-                                  Input font must have a STAT table with Axis
-                                  Value Tables
+    --no-update-name-table        Prevent updating instantiated fonts `name`
+                                  table. Input fonts must have a STAT table with
+                                  Axis Value Tables.
     -out, --output-dir DIRECTORY  Specify the directory where output files are
                                   to be saved. If output_dir doesn't exist, will
                                   be created. If not specified, files are saved

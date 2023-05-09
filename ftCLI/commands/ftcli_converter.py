@@ -296,14 +296,17 @@ def variable_to_static():
     default=True,
     help="""
               By default, STAT table is dropped and axis nameIDs are deleted from name table. Use --no-cleanup to keep
-              STAT table and prevent axis nameIDs to be deleted from name table.""",
+              STAT table and prevent axis nameIDs to be deleted from name table.
+              """,
 )
 @click.option(
-    "--update-name-table",
+    "--no-update-name-table",
+    "update_name_table",
     is_flag=True,
     default=True,
     help="""
-              Update the instantiated font's `name` table. Input font must have a STAT table with Axis Value Tables
+              Prevent updating instantiated fonts `name` table. Input fonts must have a STAT table with Axis Value
+              Tables.
               """,
 )
 @add_common_options()
@@ -311,7 +314,7 @@ def var2static(
     input_path,
     select_instance=False,
     cleanup=True,
-    update_name_table=False,
+    update_name_table=True,
     outputDir=None,
     recalcTimestamp=False,
     overWrite=True,
@@ -367,8 +370,9 @@ def var2static(
         except Exception as e:
             generic_error_message(e)
 
-        generic_info_message(f"Total files     : {len(files)}")
-        generic_info_message(f"Elapsed time    : {round(time.time() - start_time)} seconds")
+    print()
+    generic_info_message(f"Total files  : {len(files)}")
+    generic_info_message(f"Elapsed time : {round(time.time() - start_time, 3)} seconds")
 
 
 cli = click.CommandCollection(
