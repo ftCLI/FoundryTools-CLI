@@ -726,7 +726,6 @@ Converts web fonts (WOFF and WOFF2) to SFNT fonts (TTF or OTF).
                                   woff2 flavored web fonts to SFNT fonts
                                   (TrueType or OpenType). Use this option to
                                   convert only woff or woff2 flavored web fonts.
-    -d, --delete-source-file      Deletes the source files after conversion.
     -out, --output-dir DIRECTORY  Specify the directory where output files are
                                   to be saved. If output_dir doesn't exist, will
                                   be created. If not specified, files are saved
