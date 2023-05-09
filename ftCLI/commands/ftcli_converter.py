@@ -3,16 +3,13 @@ import time
 
 import click
 import fontTools.ttLib
-from fontTools.misc.cliTools import makeOutputFileName
 
-from ftCLI.Lib.Font import Font
 from ftCLI.Lib.utils.cli_tools import check_output_dir, check_input_path
 from ftCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
     generic_error_message,
     generic_info_message,
-    file_saved_message,
     select_instance_coordinates,
 )
 
@@ -211,7 +208,6 @@ def ft2wf(input_path, flavor=None, outputDir=None, recalcTimestamp=False, overWr
     """
     Converts SFNT fonts (TTF or OTF) to web fonts (WOFF and/or WOFF2)
     """
-    from ftCLI.Lib.converters.sfnt_to_web import SFNTToWeb
 
     files = check_input_path(input_path, allow_extensions=[".otf", ".ttf"])
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
