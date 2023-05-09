@@ -12,44 +12,28 @@ from fontTools.ttLib import TTFont
 from fontTools.ttLib.scaleUpem import scale_upem
 
 from ftCLI.Lib.Font import Font
+from ftCLI.Lib.converters.options import TrueTypeToCFFOptions
 from ftCLI.Lib.utils.click_tools import file_saved_message, generic_info_message, generic_error_message
 from ftCLI.Lib.utils.subsetter import BaseSubsetter
 
 
-class TrueTypeToCFFOptions(object):
-    def __init__(self):
-        self.tolerance: float = 1.0
-        self.charstring_source = "qu2cu"
-        self.subroutinize = True
-        self.check_outlines = False
-        self.safe_mode = False
-        self.remove_glyphs = True
-        self.scale_upm = False
-
-        self.recalc_timestamp = False
-        self.output_dir = None
-        self.overwrite = True
-
-
 class JobRunner_ttf2otf(object):
-    def __init__(self, files):
+    def __init__(self):
         super().__init__()
-        self.files = files
         self.options = TrueTypeToCFFOptions()
-        self.is_killed = False
 
-    def run(self) -> None:
+    def run(self, files) -> None:
         count = 0
         converted_files_count = 0
         start_time = time.time()
 
-        for file in self.files:
+        for file in files:
             t = time.time()
             count += 1
 
             try:
                 print()
-                generic_info_message(f"Converting file {count} of {len(self.files)}: {file}")
+                generic_info_message(f"Converting file {count} of {len(files)}: {file}")
 
                 # Temporary workaround, waiting to understand the reason why, if we scale the UPM of a Font object
                 # instead of a TTFont object, the new UPM values is wrong
@@ -123,7 +107,7 @@ class JobRunner_ttf2otf(object):
                 generic_error_message(e)
 
         print()
-        generic_info_message(f"Total files       : {len(self.files)}")
+        generic_info_message(f"Total files       : {len(files)}")
         generic_info_message(f"Converted files   : {converted_files_count}")
         generic_info_message(f"Elapsed time      : {round(time.time() - start_time, 3)} seconds")
 
@@ -135,7 +119,7 @@ class TrueTypeToCFF(object):
 
     def run(self):
         if self.options.remove_glyphs:
-            self.purge_glyphs()
+            self.remove_glyphs()
 
         charstrings = {}
 
@@ -222,7 +206,7 @@ class TrueTypeToCFF(object):
         )
         return post_info
 
-    def purge_glyphs(self):
+    def remove_glyphs(self):
         glyph_ids_to_remove = []
         for g in [".null", "NUL", "NULL", "uni0000", "CR", "nonmarkingreturn", "uni000D"]:
             try:

@@ -1,22 +1,62 @@
+import os
+import time
+
+from fontTools.misc.cliTools import makeOutputFileName
 from fontTools.pens.cu2quPen import Cu2QuPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib import TTLibError, newTable
 
 from ftCLI.Lib.Font import Font
-from ftCLI.Lib.utils.click_tools import generic_warning_message
+from ftCLI.Lib.converters.options import CFFToTrueTypeOptions
+from ftCLI.Lib.utils.click_tools import generic_info_message, file_saved_message, generic_error_message
 
 
-class Options(object):
+class JobRunner_otf2ttf(object):
     def __init__(self):
-        self.max_err = 1.0
-        self.reverse_direction = True
-        self.post_format = 2.0
+        super().__init__()
+        self.options = CFFToTrueTypeOptions()
+
+    def run(self, files) -> None:
+        count = 0
+        converted_files_count = 0
+        start_time = time.time()
+
+        for file in files:
+            t = time.time()
+            count += 1
+
+            try:
+                print()
+                generic_info_message(f"Converting file {count} of {len(files)}: {os.path.basename(file)}")
+
+                font = Font(file, recalcTimestamp=self.options.recalc_timestamp)
+
+                converter = CFFToTrueType(font=font)
+                converter.options.max_err = self.options.max_err
+                ttf_font = converter.run()
+
+                output_file = makeOutputFileName(
+                    file, outputDir=self.options.output_dir, overWrite=self.options.overwrite, extension=".ttf"
+                )
+                ttf_font.save(output_file)
+
+                generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
+                file_saved_message(output_file)
+                converted_files_count += 1
+
+            except Exception as e:
+                generic_error_message(e)
+
+        print()
+        generic_info_message(f"Total files       : {len(files)}")
+        generic_info_message(f"Converted files   : {converted_files_count}")
+        generic_info_message(f"Elapsed time      : {round(time.time() - start_time, 3)} seconds")
 
 
 class CFFToTrueType(object):
     def __init__(self, font: Font):
         self.font = font
-        self.options = Options()
+        self.options = CFFToTrueTypeOptions()
 
     def run(self):
         if self.font.sfntVersion != "OTTO":
@@ -58,7 +98,6 @@ class CFFToTrueType(object):
             post.compile(self.font)
         except OverflowError:
             post.formatType = 3
-            generic_warning_message("Dropping glyph names, they do not fit in 'post' table.")
 
         self.font.sfntVersion = "\000\001\000\000"
         return self.font

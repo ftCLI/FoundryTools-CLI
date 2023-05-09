@@ -5,6 +5,7 @@ from fontTools.varLib.instancer import instantiateVariableFont, OverlapMode
 from pathvalidate import sanitize_filename
 
 from ftCLI.Lib.VFont import VariableFont
+from ftCLI.Lib.converters.options import Var2StaticOptions
 from ftCLI.Lib.utils.click_tools import (
     generic_warning_message,
     generic_info_message,
@@ -13,17 +14,9 @@ from ftCLI.Lib.utils.click_tools import (
 )
 
 
-class Options(object):
-    def __init__(self):
-        self.cleanup = True
-        self.update_name_table = True
-        self.output_dir = None
-        self.overwrite = True
-
-
 class VariableToStatic(object):
     def __init__(self):
-        self.options = Options()
+        self.options = Var2StaticOptions()
 
     def run(self, variable_font: VariableFont, instances: list = None):
         start_time = time.time()

@@ -94,13 +94,11 @@ def ttf2otf(
     Converts TTF fonts (or TrueType flavored woff/woff2 web fonts) to OTF fonts (or CFF flavored woff/woff2 web fonts).
     """
 
-    from ftCLI.Lib.converters.ttf_to_otf import TrueTypeToCFF
-
     files = check_input_path(input_path, allow_variable=False, allow_cff=False)
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     from ftCLI.Lib.converters.ttf_to_otf import JobRunner_ttf2otf
-    converter = JobRunner_ttf2otf(files=files)
+    converter = JobRunner_ttf2otf()
     converter.options.tolerance = tolerance
     converter.options.output_dir = output_dir
     converter.options.overwrite = overWrite
@@ -110,7 +108,7 @@ def ttf2otf(
     converter.options.remove_glyphs = remove_glyphs
     converter.options.scale_upm = scale_upm
     converter.options.recalc_timestamp = recalcTimestamp
-    converter.run()
+    converter.run(files=files)
 
 
 @click.group()
@@ -128,39 +126,17 @@ def otf2ttf(input_path, max_err, outputDir=None, recalcTimestamp=False, overWrit
     """
     Converts fonts from OTF to TTF format.
     """
-    from ftCLI.Lib.converters.otf_to_ttf import CFFToTrueType
 
     files = check_input_path(input_path, allow_variable=False, allow_ttf=False)
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
-    start_time = time.time()
-    counter = 0
-    converted_files = 0
-
-    for file in files:
-        t = time.time()
-        counter += 1
-        generic_info_message(f"Converting file {counter} of {len(files)}")
-        try:
-            font = Font(file, recalcTimestamp=recalcTimestamp)
-
-            converter = CFFToTrueType(font=font)
-            converter.options.max_err = max_err
-            ttf_font = converter.run()
-
-            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite, extension=".ttf")
-            ttf_font.save(output_file)
-            converted_files += 1
-
-            generic_info_message(f"Done in {round(time.time() - t, 3)}")
-            file_saved_message(output_file)
-        except Exception as e:
-            generic_error_message(e)
-
-    print()
-    generic_info_message(f"Total files       : {len(files)}")
-    generic_info_message(f"Converted files   : {converted_files}")
-    generic_info_message(f"Elapsed time      : {round(time.time() - start_time, 3)} seconds")
+    from ftCLI.Lib.converters.otf_to_ttf import JobRunner_otf2ttf
+    converter = JobRunner_otf2ttf()
+    converter.options.max_err = max_err
+    converter.options.recalc_timestamp = recalcTimestamp
+    converter.options.output_dir = output_dir
+    converter.options.overwrite = overWrite
+    converter.run(files=files)
 
 
 @click.group()
@@ -179,19 +155,10 @@ def web_to_sfnt():
               OpenType). Use this option to convert only woff or woff2 flavored web fonts.
               """,
 )
-@click.option(
-    "-d",
-    "--delete-source-file",
-    is_flag=True,
-    help="""
-              Deletes the source files after conversion.
-              """,
-)
 @add_common_options()
 def wf2ft(
     input_path,
     flavor=None,
-    delete_source_file=False,
     outputDir=None,
     recalcTimestamp=False,
     overWrite=True,
@@ -199,7 +166,6 @@ def wf2ft(
     """
     Converts web fonts (WOFF and WOFF2) to SFNT fonts (TTF or OTF)
     """
-    from ftCLI.Lib.converters.web_to_sfnt import WebToSFNT
 
     if not flavor:
         allowed_extensions = [".woff", ".woff2"]
@@ -209,23 +175,19 @@ def wf2ft(
     files = check_input_path(input_path, allow_extensions=allowed_extensions)
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
-    for file in files:
-        try:
-            web_font = Font(file, recalcTimestamp=recalcTimestamp)
+    from ftCLI.Lib.converters.web_to_sfnt import JobRunner_wf2ft
+    converter = JobRunner_wf2ft()
 
-            converter = WebToSFNT(font=web_font)
-            desktop_font = converter.run()
+    input_flavors = ["woff", "woff2"]
+    if flavor is not None:
+        input_flavors = [flavor]
 
-            new_extension = desktop_font.get_real_extension()
-            output_file = makeOutputFileName(
-                file, extension=new_extension, outputDir=output_dir, overWrite=overWrite
-            )
-            desktop_font.save(output_file, reorderTables=False)
-            if delete_source_file:
-                os.remove(file)
-            file_saved_message(output_file)
-        except Exception as e:
-            generic_error_message(e)
+    converter.options.woff = True if 'woff' in input_flavors else False
+    converter.options.woff2 = True if 'woff2' in input_flavors else False
+    converter.options.recalc_timestamp = recalcTimestamp
+    converter.options.output_dir = output_dir
+    converter.options.overwrite = overWrite
+    converter.run(files=files)
 
 
 @click.group()
@@ -254,25 +216,19 @@ def ft2wf(input_path, flavor=None, outputDir=None, recalcTimestamp=False, overWr
     files = check_input_path(input_path, allow_extensions=[".otf", ".ttf"])
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
+    from ftCLI.Lib.converters.sfnt_to_web import JobRunner_ft2wf
+    converter = JobRunner_ft2wf()
+
     output_flavors = ["woff", "woff2"]
     if flavor is not None:
         output_flavors = [flavor]
 
-    for file in files:
-        try:
-            font = Font(file, recalcTimestamp=recalcTimestamp)
-            if font.flavor is not None:
-                continue
-            for flavor in output_flavors:
-                font.flavor = flavor
-                converter = SFNTToWeb(font=font, flavor=flavor)
-                web_font = converter.run()
-                extension = web_font.get_real_extension()
-                output_file = makeOutputFileName(file, extension=extension, outputDir=output_dir, overWrite=overWrite)
-                web_font.save(output_file, reorderTables=False)
-                file_saved_message(output_file)
-        except Exception as e:
-            generic_error_message(e)
+    converter.options.woff = True if 'woff' in output_flavors else False
+    converter.options.woff2 = True if 'woff2' in output_flavors else False
+    converter.options.recalc_timestamp = recalcTimestamp
+    converter.options.output_dir = output_dir
+    converter.options.overwrite = overWrite
+    converter.run(files=files)
 
 
 @click.group()
@@ -303,7 +259,7 @@ def ttc2sfnt(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
             ttc_font = TTCollection(file)
             ttc_files.append(file)
             ttc_font.close()
-        except fontTools.ttLib.TTLibError:
+        except (fontTools.ttLib.TTLibError, Exception):
             pass
 
     if len(ttc_files) == 0:
@@ -312,23 +268,12 @@ def ttc2sfnt(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
 
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
-    for ttc_file in ttc_files:
-        try:
-            ttc_font = TTCollection(ttc_file)
-            for font in ttc_font.fonts:
-                font.recalcTimestamp = recalcTimestamp
-                file_name = font["name"].getDebugName(6)
-                extension = ".otf" if font.sfntVersion == "OTTO" else ".ttf"
-                output_file = makeOutputFileName(
-                    file_name,
-                    extension=extension,
-                    outputDir=output_dir,
-                    overWrite=overWrite,
-                )
-                font.save(output_file)
-                file_saved_message(output_file)
-        except Exception as e:
-            generic_error_message(e)
+    from ftCLI.Lib.converters.ttc_to_sfnt import JobRunner_ttc2sfnt
+    converter = JobRunner_ttc2sfnt()
+    converter.options.recalc_timestamp = recalcTimestamp
+    converter.options.output_dir = output_dir
+    converter.options.overwrite = overWrite
+    converter.run(files=ttc_files)
 
 
 @click.group()
