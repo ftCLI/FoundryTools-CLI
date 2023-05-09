@@ -696,9 +696,9 @@ Exports static instances from variable fonts.
                                   nameIDs are deleted from name table. Use --no-
                                   cleanup to keep STAT table and prevent axis
                                   nameIDs to be deleted from name table.
-    --update-name-table           Update the instantiated font's `name` table.
-                                  Input font must have a STAT table with Axis
-                                  Value Tables
+    --no-update-name-table        Prevent updating instantiated fonts `name`
+                                  table. Input fonts must have a STAT table with
+                                  Axis Value Tables.
     -out, --output-dir DIRECTORY  Specify the directory where output files are
                                   to be saved. If output_dir doesn't exist, will
                                   be created. If not specified, files are saved
@@ -726,7 +726,6 @@ Converts web fonts (WOFF and WOFF2) to SFNT fonts (TTF or OTF).
                                   woff2 flavored web fonts to SFNT fonts
                                   (TrueType or OpenType). Use this option to
                                   convert only woff or woff2 flavored web fonts.
-    -d, --delete-source-file      Deletes the source files after conversion.
     -out, --output-dir DIRECTORY  Specify the directory where output files are
                                   to be saved. If output_dir doesn't exist, will
                                   be created. If not specified, files are saved

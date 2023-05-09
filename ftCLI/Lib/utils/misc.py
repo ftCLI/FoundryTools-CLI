@@ -71,33 +71,33 @@ def wrap_string(string: str, width: int, initial_indent: int, indent: int, max_l
 
 # Functions copied from ufo2ft 2.31.1
 
-def intListToNum(intList, start, length):
-    all = []
-    bin = ""
+def int_list_to_num(intList, start, length):
+    all_integers = []
+    binary = ""
     for i in range(start, start + length):
         if i in intList:
             b = "1"
         else:
             b = "0"
-        bin = b + bin
+        binary = b + binary
         if not (i + 1) % 8:
-            all.append(bin)
-            bin = ""
-    if bin:
-        all.append(bin)
-    all.reverse()
-    all = " ".join(all)
-    return binary2num(all)
+            all_integers.append(binary)
+            binary = ""
+    if binary:
+        all_integers.append(binary)
+    all_integers.reverse()
+    all_integers = " ".join(all_integers)
+    return binary2num(all_integers)
 
 
-def binary2num(bin):
-    bin = strjoin(bin.split())
-    l = 0
-    for digit in bin:
-        l = l << 1
+def binary2num(binary):
+    binary = strjoin(binary.split())
+    num = 0
+    for digit in binary:
+        num = num << 1
         if digit != "0":
-            l = l | 0x1
-    return l
+            num = num | 0x1
+    return num
 
 
 def strjoin(iterable, joiner=""):
@@ -111,7 +111,7 @@ def tostr(s, encoding="ascii", errors="strict"):
         return s
 
 
-def calcCodePageRanges(unicodes):
+def calc_code_page_ranges(unicodes):
     """Given a set of Unicode codepoints (integers), calculate the
     corresponding OS/2 CodePage range bits.
     This is a direct translation of FontForge implementation:

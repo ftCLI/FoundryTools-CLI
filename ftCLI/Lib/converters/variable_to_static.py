@@ -80,4 +80,4 @@ class VariableToStatic(object):
 
         print()
         generic_info_message(f"Total instances : {len(instances)}")
-        generic_info_message(f"Elapsed time    : {round(time.time() - start_time)} seconds")
+        generic_info_message(f"Elapsed time    : {round(time.time() - start_time, 3)} seconds")
