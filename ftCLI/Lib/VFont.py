@@ -1,6 +1,6 @@
 import os
 
-from fontTools.ttLib.tables._f_v_a_r import NamedInstance
+from fontTools.ttLib.tables._f_v_a_r import NamedInstance, Axis
 
 from ftCLI.Lib.Font import Font
 
@@ -10,10 +10,10 @@ class VariableFont(Font):
         super().__init__(file=file, recalcTimestamp=recalcTimestamp)
         self.fvar_table = self["fvar"]
 
-    def get_axes(self) -> list:
+    def get_axes(self) -> list[Axis]:
         return [axis for axis in self["fvar"].axes if axis.flags == 0]
 
-    def get_instances(self) -> list:
+    def get_instances(self) -> list[NamedInstance]:
         return [instance for instance in self["fvar"].instances]
 
     def get_var_name_ids_to_delete(self) -> list:

@@ -1,17 +1,38 @@
 import click
 
 from ftCLI.Lib.Font import Font
+from ftCLI.Lib.VFont import VariableFont
 from ftCLI.Lib.cui import CUI
 from ftCLI.Lib.utils.cli_tools import check_input_path
 from ftCLI.Lib.utils.click_tools import generic_error_message, add_file_or_path_argument
 
 
 @click.group()
-def print_font_list():
+def print_variable_instances():
     pass
 
 
-@print_font_list.command()
+@print_variable_instances.command()
+@add_file_or_path_argument()
+def instances(input_path):
+    """
+    Prints a table of the named instances of a variable font.
+    """
+    files = check_input_path(input_path, allow_static=False)
+    for file in files:
+        try:
+            variable_font = VariableFont(file)
+            CUI.print_instances(variable_font)
+        except Exception as e:
+            generic_error_message(e)
+
+
+@click.group()
+def print_fonts_list():
+    pass
+
+
+@print_fonts_list.command()
 @add_file_or_path_argument()
 def fonts_list(input_path):
     """
@@ -42,11 +63,11 @@ def font_info(input_path):
 
 
 @click.group()
-def print_font_os2_table():
+def print_os2_table():
     pass
 
 
-@print_font_os2_table.command()
+@print_os2_table.command()
 @add_file_or_path_argument()
 def os2_table(input_path):
     """
@@ -98,7 +119,7 @@ def font_names(input_path, max_lines, minimal=False):
 
 
 cli = click.CommandCollection(
-    sources=[print_font_list, print_font_info, print_font_names, print_font_os2_table],
+    sources=[print_fonts_list, print_variable_instances, print_font_info, print_font_names, print_os2_table],
     help="""
 Prints various fonts information and tables.
 """,

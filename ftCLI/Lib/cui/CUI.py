@@ -11,6 +11,7 @@ from rich.tree import Tree
 
 from ftCLI.Lib import constants
 from ftCLI.Lib.Font import Font
+from ftCLI.Lib.VFont import VariableFont
 from ftCLI.Lib.assistant.fonts_data import FontsDataFile
 from ftCLI.Lib.assistant.styles_mapping import (
     StylesMappingFile,
@@ -48,7 +49,7 @@ class AssistantUI(object):
         click.clear()
         self.console.set_window_title("ftCLI assistant UI")
 
-        rows = get_fonts_list_rows(files=get_fonts_list(self.input_path))
+        rows = get_fonts_rows(files=get_fonts_list(self.input_path))
         table = get_fonts_list_table(rows=rows)
         table.title = "ftCLI Assistant - Main"
         table.title_style = "bold green"
@@ -578,7 +579,7 @@ def get_commands_tree(commands: dict) -> Tree:
     return commands_tree
 
 
-def get_fonts_list_rows(files) -> list:
+def get_fonts_rows(files) -> list:
     rows = []
     for file in files:
         try:
@@ -634,11 +635,52 @@ def print_fonts_list(files: list):
     Bold value, Italic value, Oblique value
     """
 
-    rows = get_fonts_list_rows(files)
+    rows = get_fonts_rows(files)
     table = get_fonts_list_table(rows)
     table.header_style = "bold cyan"
     console = Console()
     console.print(table, highlight=True)
+
+
+def print_instances(variable_font: VariableFont):
+    """
+    Prints the named instances of a variable font
+
+    :param variable_font: The VFont object
+    :type variable_font: VariableFont
+    """
+    table = Table(
+        title="ftCLI - Variable Font Instances Viewer",
+        title_style="bold green",
+        header_style="bold cyan",
+        caption=f"{variable_font.file}",
+    )
+    instances = variable_font.get_instances()
+    table.add_section()
+    axes = variable_font.get_axes()
+    for axis in axes:
+        table.add_column(axis.axisTag)
+    table.add_column("subfamilyNameID")
+    table.add_column("postscriptNameID")
+
+    for i, instance in enumerate(instances):
+
+        subfamily_name = f"{instance.subfamilyNameID}: " \
+                         f"{variable_font.name_table.getDebugName(instance.subfamilyNameID)}"
+
+        postscript_name = f"{instance.postscriptNameID}: " \
+                          f"{variable_font.name_table.getDebugName(instance.postscriptNameID)}"
+        table.add_row(
+            *[str(v)
+              for k, v in instance.coordinates.items()
+              if k in [a.axisTag for a in axes]
+              ],
+            subfamily_name,
+            postscript_name,
+        )
+
+    console = Console()
+    console.print(table)
 
 
 def print_font_info(font: Font):
