@@ -1,6 +1,7 @@
 import csv
 import os.path
 
+import click
 from fontTools.misc.timeTools import timestampToString
 
 from ftCLI.Lib.Font import Font
@@ -24,7 +25,7 @@ class FontsDataFile(object):
 
     def get_data(self) -> list:
         with open(self.file, "r") as f:
-            data = [row for row in csv.DictReader(f, delimiter=";")]
+            data = [row for row in csv.DictReader(f, delimiter=",")]
         return data
 
     def recalc_data(self, source_type: int, styles_mapping_file):
@@ -599,9 +600,13 @@ class FontsDataFile(object):
             "selected",
         )
         with open(self.file, "w", newline="") as csv_file:
-            writer = csv.DictWriter(csv_file, delimiter=";", fieldnames=header)
-            writer.writeheader()
-            writer.writerows(rows)
+            writer = csv.DictWriter(csv_file, delimiter=",", fieldnames=header)
+            try:
+                writer.writeheader()
+                writer.writerows(rows)
+            except Exception as e:
+                generic_error_message(e)
+                click.pause()
 
     @staticmethod
     def __normalize_string(string: str) -> str:
