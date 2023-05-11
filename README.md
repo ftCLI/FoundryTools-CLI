@@ -120,7 +120,8 @@ Remember to use `--no-overwrite` or `-out` to avoid overwriting your fonts when 
 - [**print**](#ftcli-print)
   - [font-info](#ftcli-print-font-info)
   - [font-names](#ftcli-print-font-names)
-  - [font-fonts-list](#ftcli-print-fonts-list)
+  - [fonts-list](#ftcli-print-fonts-list)
+  - [instances](#ftcli-print-instances)
   - [os2-table](#ftcli-print-os2-table)
 
 - [**utils**](#ftcli-utils)
@@ -1577,6 +1578,7 @@ ftcli print [OPTIONS] COMMAND [ARGS]...
     font-info
     font-names
     fonts-list
+    instances
     os2-table
 
 ### ftcli print font-info
@@ -1615,6 +1617,18 @@ Prints a list of fonts with basic information.
 **Usage**:
 
     ftcli print fonts-list [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    --help  Show this message and exit.
+
+### ftcli print instances
+
+Prints a table of the named instances of a variable font.
+
+**Usage**:
+
+    ftcli print instances [OPTIONS] INPUT_PATH
 
 **Options**:
 
