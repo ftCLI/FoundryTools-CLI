@@ -663,7 +663,7 @@ def print_instances(variable_font: VariableFont):
     table.add_column("subfamilyNameID")
     table.add_column("postscriptNameID")
 
-    for i, instance in enumerate(instances):
+    for instance in instances:
 
         subfamily_name = f"{instance.subfamilyNameID}: " \
                          f"{variable_font.name_table.getDebugName(instance.subfamilyNameID)}"
