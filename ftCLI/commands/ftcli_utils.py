@@ -115,11 +115,13 @@ def font_organizer(
             output_dir = os.path.join(os.path.dirname(file))
 
             if sort_by_manufacturer:
-                manufacturer = font.name_table.getDebugName(8).strip()
-                if manufacturer == "":
-                    manufacturer = font.os_2_table.achVendID.strip().strip("\x00")
-                if manufacturer != "":
-                    output_dir = os.path.join(output_dir, manufacturer)
+                manufacturer = font.name_table.getDebugName(8)  # Manufacturer Nane
+                if not manufacturer:
+                    manufacturer = font.name_table.getDebugName(9)  # Designer
+                if not manufacturer:
+                    manufacturer = font.os_2_table.achVendID  # achVendID
+                if manufacturer:
+                    output_dir = os.path.join(output_dir, manufacturer.strip().strip("\x00"))
 
             output_dir = os.path.join(output_dir, family_name)
 
