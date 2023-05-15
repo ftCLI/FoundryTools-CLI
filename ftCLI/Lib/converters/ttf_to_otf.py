@@ -69,7 +69,7 @@ class JobRunner_ttf2otf(object):
                     ttf2otf_converter_temp = TrueTypeToCFF(source_font)
                     ttf2otf_converter_temp.options.charstring_source = "t2"
                     ttf2otf_converter_temp.options.subroutinize = False
-                    ttf2otf_converter_temp.options.purge_glyphs = self.options.remove_glyphs
+                    ttf2otf_converter_temp.options.remove_glyphs = self.options.remove_glyphs
                     temp_cff_font = ttf2otf_converter_temp.run()
 
                     # ... and convert it back to a temporary TTF file that will be used for conversion
@@ -85,7 +85,7 @@ class JobRunner_ttf2otf(object):
                 ttf2otf_converter.options.charstring_source = "qu2cu"
                 ttf2otf_converter.options.tolerance = tolerance
                 ttf2otf_converter.options.subroutinize = self.options.subroutinize
-                ttf2otf_converter.options.purge_glyphs = self.options.remove_glyphs
+                ttf2otf_converter.options.remove_glyphs = self.options.remove_glyphs
                 ttf2otf_converter.options.check_outlines = self.options.check_outlines
                 generic_info_message("Converting outlines")
                 cff_font = ttf2otf_converter.run()
