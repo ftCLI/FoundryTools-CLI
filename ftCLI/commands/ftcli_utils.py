@@ -5,6 +5,7 @@ from io import BytesIO
 import cffsubr
 import click
 from afdko import checkoutlinesufo
+from afdko.fdkutils import run_shell_command
 from dehinter.font import dehint
 from fontTools.cffLib.specializer import specializeProgram
 from fontTools.misc.cliTools import makeOutputFileName
@@ -21,7 +22,6 @@ from ftCLI.Lib.utils.click_tools import (
     file_not_changed_message,
     generic_info_message,
 )
-from ftCLI.Lib.utils.subsetter import BaseSubsetter
 
 
 @click.group()
@@ -593,13 +593,26 @@ def cff_dehint(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
 
     for file in files:
         try:
-            font = Font(file, recalcTimestamp=recalcTimestamp)
-            glyph_ids = [i for i in font.getReverseGlyphMap().values()]
-            subsetter = BaseSubsetter(glyph_ids=glyph_ids)
-            subsetter.subset(font)
-            output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
-            font.save(output_file)
+
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
+            temp_cff_file = makeOutputFileName(file, extension=".cff", overWrite=True)
+
+            tx_command = ["tx", "-cff", "-n", "+b", "+S", file, temp_cff_file]
+
+            run_shell_command(tx_command, suppress_output=True)
+
+            sfntedit_command = ["sfntedit", "-a", f"CFF={temp_cff_file}", file]
+            if output_file != file:
+                sfntedit_command.append(output_file)
+            run_shell_command(sfntedit_command, suppress_output=True)
+
             file_saved_message(output_file)
+
+            if recalcTimestamp:
+                font = Font(output_file, recalcTimestamp=True)
+                font.save(output_file)
+
+            os.remove(temp_cff_file)
 
         except Exception as e:
             generic_error_message(e)
