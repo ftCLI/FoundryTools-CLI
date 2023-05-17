@@ -162,12 +162,12 @@ def align(input_path, with_linegap=False, outputDir=None, recalcTimestamp=False,
             os2_modified = os2_table_copy != font.os_2_table
 
             if hhea_modified or os2_modified:
-                output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
+                output_file = makeOutputFileName(font.reader.file.name, outputDir=output_dir, overWrite=overWrite)
                 font.save(output_file)
-                file_saved_message(font.file)
+                file_saved_message(output_file)
 
             else:
-                file_not_changed_message(font.file)
+                file_not_changed_message(font.reader.file.name)
 
         except Exception as e:
             generic_error_message(e)
