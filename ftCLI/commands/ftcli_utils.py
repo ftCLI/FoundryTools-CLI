@@ -185,7 +185,7 @@ def font_renamer(input_path, source):
                 if source in (4, 5):
                     source = 1
 
-            old_file_name, old_extension = os.path.splitext(os.path.basename(font.file))
+            old_file_name, old_extension = os.path.splitext(os.path.basename(file))
 
             new_file_name = sanitize_filename(font.get_file_name(source=source), platform="auto")
             new_extension = font.get_real_extension()
@@ -284,7 +284,7 @@ def ttf_autohint(input_path, outputDir=None, recalcTimestamp=False, overWrite=Tr
             hinted_font = Font(BytesIO(data))
             if recalcTimestamp is False:
                 hinted_font.head_table.modified = font.get_modified_timestamp()
-            output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
             hinted_font.save(output_file)
             file_saved_message(output_file)
         except Exception as e:
@@ -391,7 +391,7 @@ def ttf_remove_overlaps(input_path, ignore_errors, outputDir=None, recalcTimesta
     for file in files:
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
-            output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
             removeOverlaps(font, removeHinting=True, ignoreErrors=ignore_errors)
             font.save(output_file)
             file_saved_message(output_file)
@@ -421,7 +421,7 @@ def cff_check_outlines(input_path, outputDir=None, recalcTimestamp=False, overWr
         generic_info_message(f"Checking file {os.path.basename(file)}")
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
-            output_file = makeOutputFileName(font.file, outputDir=output_dir, overWrite=overWrite)
+            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
             font.save(output_file)
             checkoutlinesufo.run(args=[output_file, "--error-correction-mode", "--quiet-mode"])
             file_saved_message(output_file)
