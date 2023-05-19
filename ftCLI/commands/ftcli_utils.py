@@ -407,8 +407,14 @@ def cff_check_outlines_ufo():
 
 @cff_check_outlines_ufo.command()
 @add_file_or_path_argument()
+@click.option(
+    "-q",
+    "--quiet-mode",
+    is_flag=True,
+    help="Run in quiet mode."
+)
 @add_common_options()
-def cff_check_outlines(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
+def cff_check_outlines(input_path, quiet_mode=False, outputDir=None, recalcTimestamp=False, overWrite=True):
     """
     Performs afdko.checkoutlinesufo outline quality checks and overlaps removal. Supports CFF fonts only.
     """
@@ -422,8 +428,12 @@ def cff_check_outlines(input_path, outputDir=None, recalcTimestamp=False, overWr
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
             output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
-            font.save(output_file)
-            checkoutlinesufo.run(args=[output_file, "--error-correction-mode", "--quiet-mode"])
+            if not output_file == file:
+                font.save(output_file)
+            args = [output_file, "--error-correction-mode"]
+            if quiet_mode:
+                args.append("--quiet-mode")
+            checkoutlinesufo.run(args=args)
             file_saved_message(output_file)
 
         except Exception as e:

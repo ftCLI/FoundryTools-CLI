@@ -219,7 +219,7 @@ class TrueTypeToCFF(object):
             subsetter = BaseSubsetter(glyph_ids=glyph_ids)
             subsetter.subset(self.font)
 
-    def get_qu2cu_charstrings(self, tolerance: float = 1, all_cubic: bool = True):
+    def get_qu2cu_charstrings(self, tolerance: float = 1.0, all_cubic: bool = True):
         charstrings = {}
         glyph_set = self.font.getGlyphSet()
 
