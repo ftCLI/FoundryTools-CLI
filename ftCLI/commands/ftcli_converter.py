@@ -47,7 +47,7 @@ def ttf_to_otf():
     is_flag=True,
     help="""
               Scale units-per-em to 1000
-    """,
+    """
 )
 @click.option(
     "--keep-glyphs",
@@ -95,7 +95,6 @@ def ttf2otf(
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     from ftCLI.Lib.converters.ttf_to_otf import JobRunner_ttf2otf
-
     converter = JobRunner_ttf2otf()
     converter.options.tolerance = tolerance
     converter.options.output_dir = output_dir
@@ -129,7 +128,6 @@ def otf2ttf(input_path, max_err, outputDir=None, recalcTimestamp=False, overWrit
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     from ftCLI.Lib.converters.otf_to_ttf import JobRunner_otf2ttf
-
     converter = JobRunner_otf2ttf()
     converter.options.max_err = max_err
     converter.options.recalc_timestamp = recalcTimestamp
@@ -175,15 +173,14 @@ def wf2ft(
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     from ftCLI.Lib.converters.web_to_sfnt import JobRunner_wf2ft
-
     converter = JobRunner_wf2ft()
 
     input_flavors = ["woff", "woff2"]
     if flavor is not None:
         input_flavors = [flavor]
 
-    converter.options.woff = True if "woff" in input_flavors else False
-    converter.options.woff2 = True if "woff2" in input_flavors else False
+    converter.options.woff = True if 'woff' in input_flavors else False
+    converter.options.woff2 = True if 'woff2' in input_flavors else False
     converter.options.recalc_timestamp = recalcTimestamp
     converter.options.output_dir = output_dir
     converter.options.overwrite = overWrite
@@ -216,15 +213,14 @@ def ft2wf(input_path, flavor=None, outputDir=None, recalcTimestamp=False, overWr
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     from ftCLI.Lib.converters.sfnt_to_web import JobRunner_ft2wf
-
     converter = JobRunner_ft2wf()
 
     output_flavors = ["woff", "woff2"]
     if flavor is not None:
         output_flavors = [flavor]
 
-    converter.options.woff = True if "woff" in output_flavors else False
-    converter.options.woff2 = True if "woff2" in output_flavors else False
+    converter.options.woff = True if 'woff' in output_flavors else False
+    converter.options.woff2 = True if 'woff2' in output_flavors else False
     converter.options.recalc_timestamp = recalcTimestamp
     converter.options.output_dir = output_dir
     converter.options.overwrite = overWrite
@@ -269,7 +265,6 @@ def ttc2sfnt(input_path, outputDir=None, recalcTimestamp=False, overWrite=True):
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
 
     from ftCLI.Lib.converters.ttc_to_sfnt import JobRunner_ttc2sfnt
-
     converter = JobRunner_ttc2sfnt()
     converter.options.recalc_timestamp = recalcTimestamp
     converter.options.output_dir = output_dir

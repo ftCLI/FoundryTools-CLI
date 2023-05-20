@@ -52,7 +52,7 @@ class JobRunner_ttf2otf(object):
                 # Set tolerance as a ratio of unitsPerEm
                 tolerance = self.options.tolerance / 1000 * source_font.head_table.unitsPerEm
 
-                ext = ".otf" if source_font.flavor is None else "." + str(source_font.flavor)
+                ext = ".otf" if source_font.flavor is None else '.' + str(source_font.flavor)
                 suffix = "" if source_font.flavor is None else ".otf"
                 output_file = makeOutputFileName(
                     file,
@@ -96,7 +96,7 @@ class JobRunner_ttf2otf(object):
                     generic_info_message("Checking outlines with checkoutlinesufo")
                     run_shell_command(
                         args=["checkoutlinesufo", output_file, "--error-correction-mode", "--quiet-mode"],
-                        suppress_output=True,
+                        suppress_output=True
                     )
 
                 generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")

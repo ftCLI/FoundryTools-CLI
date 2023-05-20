@@ -71,7 +71,6 @@ def wrap_string(string: str, width: int, initial_indent: int, indent: int, max_l
 
 # Functions copied from ufo2ft 2.31.1
 
-
 def int_list_to_num(intList, start, length):
     all_integers = []
     binary = ""

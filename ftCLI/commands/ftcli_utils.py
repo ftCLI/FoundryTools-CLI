@@ -407,7 +407,12 @@ def cff_check_outlines_ufo():
 
 @cff_check_outlines_ufo.command()
 @add_file_or_path_argument()
-@click.option("-q", "--quiet-mode", is_flag=True, help="Run in quiet mode.")
+@click.option(
+    "-q",
+    "--quiet-mode",
+    is_flag=True,
+    help="Run in quiet mode."
+)
 @add_common_options()
 def cff_check_outlines(input_path, quiet_mode=False, outputDir=None, recalcTimestamp=False, overWrite=True):
     """
@@ -598,10 +603,12 @@ def cff_dehint(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
 
     for file in files:
         try:
+
             output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
             temp_cff_file = makeOutputFileName(file, extension=".cff", overWrite=True)
 
             tx_command = ["tx", "-cff", "-n", "+b", "+S", file, temp_cff_file]
+
             run_shell_command(tx_command, suppress_output=True)
 
             sfntedit_command = ["sfntedit", "-a", f"CFF={temp_cff_file}", file]

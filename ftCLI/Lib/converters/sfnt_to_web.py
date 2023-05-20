@@ -14,6 +14,7 @@ class JobRunner_ft2wf(object):
         self.options = SFNTToWebOptions()
 
     def run(self, files) -> None:
+
         count = 0
         for file in files:
             t = time.time()
