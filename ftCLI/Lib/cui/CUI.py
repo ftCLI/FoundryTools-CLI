@@ -664,17 +664,15 @@ def print_instances(variable_font: VariableFont):
     table.add_column("postscriptNameID")
 
     for instance in instances:
+        subfamily_name = (
+            f"{instance.subfamilyNameID}: " f"{variable_font.name_table.getDebugName(instance.subfamilyNameID)}"
+        )
 
-        subfamily_name = f"{instance.subfamilyNameID}: " \
-                         f"{variable_font.name_table.getDebugName(instance.subfamilyNameID)}"
-
-        postscript_name = f"{instance.postscriptNameID}: " \
-                          f"{variable_font.name_table.getDebugName(instance.postscriptNameID)}"
+        postscript_name = (
+            f"{instance.postscriptNameID}: " f"{variable_font.name_table.getDebugName(instance.postscriptNameID)}"
+        )
         table.add_row(
-            *[str(v)
-              for k, v in instance.coordinates.items()
-              if k in [a.axisTag for a in axes]
-              ],
+            *[str(v) for k, v in instance.coordinates.items() if k in [a.axisTag for a in axes]],
             subfamily_name,
             postscript_name,
         )
