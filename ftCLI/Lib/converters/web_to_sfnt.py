@@ -57,4 +57,3 @@ class JobRunner_wf2ft(object):
         generic_info_message(f"Total files       : {len(files)}")
         generic_info_message(f"Converted files   : {converted_files_count}")
         generic_info_message(f"Elapsed time      : {round(time.time() - start_time, 3)} seconds")
-
