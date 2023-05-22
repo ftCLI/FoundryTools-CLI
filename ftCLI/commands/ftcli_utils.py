@@ -1,5 +1,6 @@
 import os
 import time
+from copy import deepcopy
 from io import BytesIO
 
 import cffsubr
@@ -22,6 +23,86 @@ from ftCLI.Lib.utils.click_tools import (
     file_not_changed_message,
     generic_info_message,
 )
+
+
+@click.group()
+def set_font_revision():
+    pass
+
+
+@set_font_revision.command()
+@add_file_or_path_argument()
+@click.option("-major", type=click.IntRange(0, 999), help="Major version")
+@click.option("-minor", type=click.IntRange(0, 999), help="Minor version")
+@click.option("-ui", "--unique-identifier", is_flag=True, help="Recalculates nameID 3 (Unique identifier)")
+@click.option("-vs", "--version-string", is_flag=True, help="Recalculates nameID 5 (version string)")
+@add_common_options()
+def set_revision(
+    input_path,
+    major: int = None,
+    minor: int = None,
+    unique_identifier=False,
+    version_string=False,
+    outputDir=None,
+    recalcTimestamp=False,
+    overWrite=True,
+):
+    """
+    Sets [head].fontRevision and CFF.cff.topDictIndex[0].version values.
+
+    Optionally, also nameID 3 (Unique identifier) and nameID 5 (Version string) can be recalculated by using
+    --unique-identifier and --version-string options. Even if Unique identifier and Version string should be changed
+    according to the new version, they are optional to leave control to the user, who could choose to set those names
+    manually with ftcli name set-name or ftcli name find replace commands.
+    """
+    files = check_input_path(input_path)
+    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
+
+    for file in files:
+        try:
+            font = Font(file, recalcTimestamp=recalcTimestamp)
+            has_changed = False
+
+            old_font_revision = round(font.head_table.fontRevision, 3)
+            old_major_version = str(old_font_revision).split(".")[0]
+            old_minor_version = str(old_font_revision).split(".")[1]
+
+            new_major_version = str(major) if major else old_major_version
+            new_minor_version = str(minor).rjust(3, "0") if minor else old_minor_version
+            new_font_revision = float(f"{new_major_version}.{new_minor_version}")
+
+            if old_font_revision != new_font_revision:
+                font.head_table.fontRevision = new_font_revision
+                has_changed = True
+
+            if font.is_cff:
+                if str(font["CFF "].cff.topDictIndex[0].version) != f"{str(major)}.{str(minor)}":
+                    font["CFF "].cff.topDictIndex[0].version = f"{str(major)}.{str(minor)}"
+                    has_changed = True
+
+            if unique_identifier or version_string:
+                name_table_copy = deepcopy(font.name_table)
+
+                if unique_identifier:
+                    vend_id = font.os_2_table.achVendID
+                    ps_name = font.name_table.getDebugName(6)
+                    font.name_table.add_name(font, string=f"{new_font_revision};{vend_id};{ps_name}", name_id=3)
+
+                if version_string:
+                    font.name_table.add_name(font, string=f"Version {new_font_revision}", name_id=5)
+
+                if name_table_copy.compile(font) != font.name_table.compile(font):
+                    has_changed = True
+
+            if has_changed:
+                output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
+                font.save(output_file)
+                file_saved_message(output_file)
+            else:
+                file_not_changed_message(file)
+
+        except Exception as e:
+            generic_error_message(e)
 
 
 @click.group()
@@ -407,12 +488,7 @@ def cff_check_outlines_ufo():
 
 @cff_check_outlines_ufo.command()
 @add_file_or_path_argument()
-@click.option(
-    "-q",
-    "--quiet-mode",
-    is_flag=True,
-    help="Run in quiet mode."
-)
+@click.option("-q", "--quiet-mode", is_flag=True, help="Run in quiet mode.")
 @add_common_options()
 def cff_check_outlines(input_path, quiet_mode=False, outputDir=None, recalcTimestamp=False, overWrite=True):
     """
@@ -603,7 +679,6 @@ def cff_dehint(input_path, outputDir=None, recalcTimestamp=False, overWrite=True
 
     for file in files:
         try:
-
             output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
             temp_cff_file = makeOutputFileName(file, extension=".cff", overWrite=True)
 
@@ -748,6 +823,7 @@ cli = click.CommandCollection(
         cff_subroutinize,
         cff_desubroutinize,
         scale_units_per_em,
+        set_font_revision,
     ],
     help="""Miscellaneous utilities.""",
 )

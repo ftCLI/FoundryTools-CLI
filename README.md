@@ -98,6 +98,9 @@ Remember to use `--no-overwrite` or `-out` to avoid overwriting your fonts when 
   - [nbsp-width](#ftcli-fix-nbsp-width)
   - [os2-ranges](#ftcli-fix-os2-ranges)
   - [strip-names](#ftcli-fix-strip-names)
+  - [uprights](#ftcli-fix-uprights)
+
+- [**hhea**](#ftcli-hhea)
 
 - [**metrics**](#ftcli-metrics)
 
@@ -134,6 +137,8 @@ Remember to use `--no-overwrite` or `-out` to avoid overwriting your fonts when 
   - [del-table](#ftcli-utils-del-table)
   - [font-organizer](#ftcli-utils-font-organizer)
   - [font-renamer](#ftcli-utils-font-renamer)
+  - [scale-upm](#ftcli-utils-scale-upm)
+  - [set-revision](#ftcli-utils-set-revision)
   - [ttf-autohint](#ftcli-utils-ttf-autohint)
   - [ttf-dehint](#ftcli-utils-ttf-dehint)
   - [ttf-remove-overlaps](#ftcli-utils-ttf-remove-overlaps)
@@ -763,6 +768,7 @@ A set of commands to detect and automatically fix font errors.
     nbsp-width
     os2-ranges
     strip-names
+    uprights
 
 ### ftcli fix caret-offset
 
@@ -1668,6 +1674,8 @@ Miscellaneous utilities.
     cff-subr
     font-organizer
     font-renamer
+    scale-upm
+    set-revision
     ttf-autohint
     ttf-dehint
     ttf-remove-overlaps
@@ -1898,6 +1906,40 @@ using the `ftcli utils cff-subr` command.
 **Options**:
 
     -upm INTEGER                  New UPM value  [default: 1000]
+    -out, --output-dir DIRECTORY  Specify the directory where output files are
+                                  to be saved. If output_dir doesn't exist, will
+                                  be created. If not specified, files are saved
+                                  to the same folder.
+    --recalc-timestamp            Keep the original font 'modified' timestamp
+                                  (head.modified) or set it to current time. By
+                                  default, original timestamp is kept.
+    --no-overwrite                Overwrite existing output files or save them
+                                  to a new file (numbers are appended at the end
+                                  of file name). By default, files are
+                                  overwritten.
+    --help                        Show this message and exit.
+
+### ftcli utils set-revision
+
+Sets `[head].fontRevision` and `CFF.cff.topDictIndex[0]`.version values.
+
+Optionally, also nameID 3 (Unique identifier) and nameID 5 (Version string)
+can be recalculated by using --unique-identifier and --version-string
+options. Even if Unique identifier and Version string should be changed
+according to the new version, they are optional to leave control to the
+user, who could choose to set those names manually with `ftcli name set-name`
+or `ftcli name find replace` commands.
+
+**Usage**:
+
+    ftcli utils set-revision [OPTIONS] INPUT_PATH
+
+**Options**:
+
+    -major INTEGER RANGE          Major version  [0<=x<=999]
+    -minor INTEGER RANGE          Minor version  [0<=x<=999]
+    -ui, --unique-identifier      Recalculates nameID 3 (Unique identifier)
+    -vs, --version-string         Recalculates nameID 5 (version string)
     -out, --output-dir DIRECTORY  Specify the directory where output files are
                                   to be saved. If output_dir doesn't exist, will
                                   be created. If not specified, files are saved
