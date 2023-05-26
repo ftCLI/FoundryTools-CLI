@@ -47,7 +47,7 @@ class JobRunner_ttf2otf(object):
                     source_font = Font(BytesIO(data), recalcTimestamp=self.options.recalc_timestamp)
 
                 else:
-                    source_font = Font(file, recalcBBoxes=False, recalcTimestamp=self.options.recalc_timestamp)
+                    source_font = Font(file, recalcTimestamp=self.options.recalc_timestamp)
 
                 # Set tolerance as a ratio of unitsPerEm
                 tolerance = self.options.tolerance / 1000 * source_font.head_table.unitsPerEm
