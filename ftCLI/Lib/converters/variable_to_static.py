@@ -66,6 +66,8 @@ class VariableToStatic(object):
                 static_instance.reorder_ui_name_ids()
 
             static_instance_name = sanitize_filename(variable_font.get_instance_file_name(instance))
+            # Replace dots with underscores to prevent makeOutputFileName truncating names
+            static_instance_name = static_instance_name.replace(".", "_")
             static_instance_extension = static_instance.get_real_extension()
             output_file = makeOutputFileName(
                 static_instance_name,
@@ -73,6 +75,7 @@ class VariableToStatic(object):
                 outputDir=self.options.output_dir,
                 overWrite=self.options.overwrite,
             )
+            # print(output_file)
             static_instance.save(output_file)
 
             generic_info_message(f"Done in {round(time.time() - t, 3)} seconds")
