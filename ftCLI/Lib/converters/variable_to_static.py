@@ -75,7 +75,6 @@ class VariableToStatic(object):
                 outputDir=self.options.output_dir,
                 overWrite=self.options.overwrite,
             )
-            # print(output_file)
             static_instance.save(output_file)
 
             generic_info_message(f"Done in {round(time.time() - t, 3)} seconds")
