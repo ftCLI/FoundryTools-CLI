@@ -657,13 +657,14 @@ def print_instances(variable_font: VariableFont):
     )
     instances = variable_font.get_instances()
     table.add_section()
+    table.add_column("#")
     axes = variable_font.get_axes()
     for axis in axes:
         table.add_column(axis.axisTag)
     table.add_column("subfamilyNameID")
     table.add_column("postscriptNameID")
 
-    for instance in instances:
+    for count, instance in enumerate(instances, start=1):
         subfamily_name = (
             f"{instance.subfamilyNameID}: " f"{variable_font.name_table.getDebugName(instance.subfamilyNameID)}"
         )
@@ -672,6 +673,7 @@ def print_instances(variable_font: VariableFont):
             f"{instance.postscriptNameID}: " f"{variable_font.name_table.getDebugName(instance.postscriptNameID)}"
         )
         table.add_row(
+            str(count),
             *[str(v) for k, v in instance.coordinates.items() if k in [a.axisTag for a in axes]],
             subfamily_name,
             postscript_name,
