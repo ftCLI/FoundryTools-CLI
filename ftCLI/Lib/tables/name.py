@@ -15,7 +15,7 @@ class TableName(table__n_a_m_e):
         language_string: str = "en",
     ):
         """
-        Adds a namerecords to the `name` table
+        Adds a namerecord to the `name` table
 
         :param font: the font object
         :param string: The string to be written to the namerecord
