@@ -593,6 +593,7 @@ def get_fonts_rows(files) -> list:
                 is_bold=str(int(font.is_bold)),
                 is_italic=str(int(font.is_italic)),
                 is_oblique=str(int(font.is_oblique)),
+                is_regular=str(int(font.is_regular))
             )
             rows.append(row)
         except Exception as e:
@@ -609,8 +610,9 @@ def get_fonts_list_table(rows: list) -> Table:
     table.add_column("Style name")
     table.add_column("Width", justify="right")
     table.add_column("Weight", justify="right")
-    table.add_column("Bold", justify="right")
+    table.add_column("Regular", justify="right")
     table.add_column("Italic", justify="right")
+    table.add_column("Bold", justify="right")
     table.add_column("Oblique", justify="right")
 
     for i, row in enumerate(rows, start=1):
@@ -621,8 +623,9 @@ def get_fonts_list_table(rows: list) -> Table:
             row["subfamily_name"],
             row["us_width_class"],
             row["us_weight_class"],
-            row["is_bold"],
+            row["is_regular"],
             row["is_italic"],
+            row["is_bold"],
             row["is_oblique"],
         )
 
