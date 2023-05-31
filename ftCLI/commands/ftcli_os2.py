@@ -197,13 +197,13 @@ def cli(input_path, recalcTimestamp, outputDir, overWrite, **kwargs):
             font = Font(file, recalcTimestamp=recalcTimestamp)
             output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
 
-            # Using copy instead of deepcopy and avoiding to compile OS/2 tables is faster
+            # Using copy instead of deepcopy and avoid compiling OS/2 tables is faster
             os_2_table_copy = copy(font.os_2_table)
 
             # Changing bold and italic bits involves `head` table too
             head_table_copy = copy(font.head_table)
 
-            # Upgrade version as first to avoid warning messages from fontTools
+            # Upgrade version as first to avoid errors when setting data
             if "version" in params.keys():
                 if not font.os_2_table.version < params.get("version"):
                     generic_warning_message(
