@@ -13,7 +13,8 @@ from fontTools.ttLib.scaleUpem import scale_upem
 
 from ftCLI.Lib.Font import Font
 from ftCLI.Lib.converters.options import TrueTypeToCFFOptions
-from ftCLI.Lib.utils.click_tools import file_saved_message, generic_info_message, generic_error_message
+from ftCLI.Lib.utils.click_tools import file_saved_message, generic_info_message, generic_error_message, \
+    generic_warning_message
 from ftCLI.Lib.utils.subsetter import BaseSubsetter
 
 
@@ -121,18 +122,14 @@ class TrueTypeToCFF(object):
         if self.options.remove_glyphs:
             self.remove_glyphs()
 
-        charstrings = {}
+        self.font.decomponentize()
 
         if self.options.charstring_source == "qu2cu":
-            self.font.decomponentize()
             try:
-                charstrings = self.get_qu2cu_charstrings(tolerance=self.options.tolerance, all_cubic=True)
-            except NotImplementedError:
-                try:
-                    charstrings = self.get_qu2cu_charstrings(tolerance=self.options.tolerance, all_cubic=False)
-                except Exception as e:
-                    generic_error_message(f"An error occurred while getting qu2cu charstrings {e}")
-                    return
+                charstrings = self.get_qu2cu_charstrings(tolerance=self.options.tolerance)
+            except Exception as e:
+                generic_error_message(e)
+                return
 
         if self.options.charstring_source == "t2":
             try:
@@ -219,7 +216,7 @@ class TrueTypeToCFF(object):
             subsetter = BaseSubsetter(glyph_ids=glyph_ids)
             subsetter.subset(self.font)
 
-    def get_qu2cu_charstrings(self, tolerance: float = 1.0, all_cubic: bool = True):
+    def get_qu2cu_charstrings(self, tolerance: float = 1.0):
         charstrings = {}
         glyph_set = self.font.getGlyphSet()
 
@@ -230,12 +227,18 @@ class TrueTypeToCFF(object):
             try:
                 glyph_set[k].draw(pathops_pen)
                 pathops_path.simplify()
-            except TypeError:
+            except TypeError as e:
+                generic_warning_message(f"{k}: {e}")
                 pass
 
             t2_pen = T2CharStringPen(v.width, glyphSet=glyph_set)
-            qu2cu_pen = Qu2CuPen(t2_pen, max_err=tolerance, all_cubic=all_cubic, reverse_direction=False)
-            pathops_path.draw(qu2cu_pen)
+            qu2cu_pen = Qu2CuPen(t2_pen, max_err=tolerance, all_cubic=True, reverse_direction=False)
+            try:
+                pathops_path.draw(qu2cu_pen)
+            except NotImplementedError as e:
+                generic_warning_message(f"{k}: {e}")
+                qu2cu_pen.all_cubic = False
+                pathops_path.draw(qu2cu_pen)
 
             charstring = t2_pen.getCharString()
             charstrings[k] = charstring

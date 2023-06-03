@@ -39,7 +39,7 @@ def ttf_to_otf():
               Sometimes Qu2CuPen may fail or produce distorted outlines. Most of times, use of '--safe' will prevent
               errors by converting the source TTF font to a temporary OTF built using T2CharstringsPen, and then
               reconverting it to a temporary TTF font. This last one will be used for TTF to OTF conversion instead of
-              the source TTF file. This is slower, but safest.
+              the source TTF file. This is slower, but safer.
     """,
 )
 @click.option(
