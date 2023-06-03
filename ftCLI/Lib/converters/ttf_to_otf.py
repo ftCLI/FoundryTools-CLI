@@ -8,7 +8,6 @@ from fontTools.fontBuilder import FontBuilder
 from fontTools.misc.cliTools import makeOutputFileName
 from fontTools.pens.qu2cuPen import Qu2CuPen
 from fontTools.pens.t2CharStringPen import T2CharStringPen
-from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.scaleUpem import scale_upem
 
