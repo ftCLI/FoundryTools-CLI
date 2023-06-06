@@ -89,7 +89,6 @@ Remember to use `--no-overwrite` or `-out` to avoid overwriting your fonts when 
 - [**fix**](#ftcli-fix)
 
   - [caret-offset](#ftcli-fix-caret-offset)
-  - [contours](#ftcli-fix-contours)
   - [decompose-transformed](#ftcli-fix-decompose-transformed)
   - [duplicate-components](#ftcli-fix-duplicate-components)
   - [italic-angle](#ftcli-fix-italic-angle)
@@ -793,30 +792,6 @@ Recalculates `hhea.caretOffset` value.
                                   of file name). By default, files are
                                   overwritten.
     --help                        Show this message and exit.
-
-### ftcli fix contours
-
-Fix contours by removing overlaps and correcting direction.
-
-**Usage**:
-
-    ftcli fix contours [OPTIONS] INPUT_PATH
-
-**Options**:
-
-    -out, --output-dir DIRECTORY  Specify the directory where output files are
-                                  to be saved. If output_dir doesn't exist, will
-                                  be created. If not specified, files are saved
-                                  to the same folder.
-    --recalc-timestamp            Keep the original font 'modified' timestamp
-                                  (head.modified) or set it to current time. By
-                                  default, original timestamp is kept.
-    --no-overwrite                Overwrite existing output files or save them
-                                  to a new file (numbers are appended at the end
-                                  of file name). By default, files are
-                                  overwritten.
-    --help                        Show this message and exit.
-
 
 ### ftcli fix decompose-transformed
 

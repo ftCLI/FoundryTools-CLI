@@ -720,46 +720,6 @@ def uprights(input_path, recalcTimestamp=False, outputDir=None, overWrite=True):
             generic_error_message(e)
 
 
-@click.group()
-def fix_contours():
-    pass
-
-
-@fix_contours.command()
-@add_file_or_path_argument()
-@add_common_options()
-def contours(input_path, recalcTimestamp=False, outputDir=None, overWrite=True):
-    """
-    Fix contours by removing overlaps and correcting direction.
-    """
-
-    from cffsubr import subroutinize, desubroutinize
-    files = check_input_path(input_path, allow_variable=False)
-    output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
-    from ftCLI.Lib.utils.contours import fix_cff_charstrings
-    from ftCLI.Lib.utils.contours import fix_true_type_contours
-
-    for file in files:
-        try:
-            font = Font(file, recalcTimestamp=recalcTimestamp)
-
-            output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
-
-            if font.is_cff:
-                desubroutinize(font)
-                fix_cff_charstrings(font)
-                subroutinize(font)
-
-            if font.is_true_type:
-                fix_true_type_contours(font)
-
-            font.save(output_file)
-            file_saved_message(output_file)
-
-        except Exception as e:
-            generic_error_message(e)
-
-
 cli = click.CommandCollection(
     sources=[
         fix_os2_table_unicode_codepage,
@@ -773,7 +733,6 @@ cli = click.CommandCollection(
         fix_unmapped_glyphs_kern_table,
         remove_leading_and_trailing_spaces,
         fix_uprights_values,
-        fix_contours,
     ],
     help="""
     A set of commands to detect and automatically fix font errors.
