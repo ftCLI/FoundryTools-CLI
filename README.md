@@ -5,7 +5,7 @@
 ftCLI is a command line interface built with [click](https://click.palletsprojects.com/en/8.0.x/) to edit fonts using
 [FontTools](https://github.com/fonttools/fonttools).
 
-Python >=3.7 <3.11 is required to install ftCLI.
+Python >=3.7 is required to install ftCLI.
 
 The following packages will be installed during setup:
 
