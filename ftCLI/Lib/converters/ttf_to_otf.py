@@ -229,7 +229,6 @@ class TrueTypeToCFF(object):
                 pathops_path.simplify()
             except TypeError as e:
                 generic_warning_message(f"{k}: {e}")
-                pass
 
             t2_pen = T2CharStringPen(v.width, glyphSet=glyph_set)
             qu2cu_pen = Qu2CuPen(t2_pen, max_err=tolerance, all_cubic=True, reverse_direction=False)
