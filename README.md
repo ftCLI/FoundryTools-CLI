@@ -799,9 +799,8 @@ Recalculates `hhea.caretOffset` value.
 
 Fix contours by removing overlaps and correcting direction.
 
-This command will drop hints from both TTFs and OTFs. Hinting can be
-restored with ftcli utils ttf-autohint for TTF files, and ftcli utils cff-
-autohint OTF files.
+This command will drop hints from both TTFs and OTFs. Hinting can be restored with ftcli utils ttf-autohint for TTF
+files, and ftcli utils cff-autohint for OTF files.
 
 **Usage**:
 
