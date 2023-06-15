@@ -26,7 +26,7 @@ setuptools.setup(
         "cffsubr>=0.2.9.post1",
         "dehinter>=4.0.0",
         "pathvalidate>=3.0.0",
-        "rich>=13.3.5",
+        "rich>=13.4.2",
         "skia-pathops>=0.7.4",
         "ttfautohint-py>=0.5.1",
         "zopfli>=0.2.2",
