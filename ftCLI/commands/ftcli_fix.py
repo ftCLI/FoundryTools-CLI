@@ -727,10 +727,18 @@ def fix_contours():
 
 @fix_contours.command()
 @add_file_or_path_argument()
+@click.option(
+    "--min-area",
+    type=int, default = 25,
+    help="""
+    Minimum area for a tiny outline.
+    
+    Default is 25 square units. Subpaths with a bounding box less than this will be reported and deleted.
+    """)
 @add_common_options()
-def contours(input_path, recalcTimestamp=False, outputDir=None, overWrite=True):
+def contours(input_path, min_area=25, recalcTimestamp=False, outputDir=None, overWrite=True):
     """
-    Fix contours by removing overlaps and correcting direction.
+    Fix contours by removing overlaps, correcting direction and removing tiny paths.
 
     This command will drop hints from both TTFs and OTFs. Hinting can be restored with ftcli utils ttf-autohint for TTF
     files, and ftcli utils cff-autohint OTF files.
@@ -743,6 +751,8 @@ def contours(input_path, recalcTimestamp=False, outputDir=None, overWrite=True):
     from ftCLI.Lib.misc.fix_ttf_contours import fix_ttf_contours
 
     for file in files:
+        print()
+        generic_info_message(f"Processing file {os.path.basename(file)}")
         try:
             font = Font(file, recalcTimestamp=recalcTimestamp)
             output_file = makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite)
@@ -753,12 +763,12 @@ def contours(input_path, recalcTimestamp=False, outputDir=None, overWrite=True):
                 if flavor is not None:
                     font.flavor = None
                 desubroutinize(font)
-                fix_cff_contours(font)
+                fix_cff_contours(font, min_area=min_area)
                 subroutinize(font)
                 font.flavor = flavor
 
             if font.is_true_type:
-                fix_ttf_contours(font)
+                fix_ttf_contours(font, min_area=min_area)
 
             font.save(output_file)
             file_saved_message(output_file)
