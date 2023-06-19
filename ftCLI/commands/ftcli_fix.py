@@ -738,7 +738,7 @@ def fix_contours():
 @add_common_options()
 def contours(input_path, min_area=25, recalcTimestamp=False, outputDir=None, overWrite=True):
     """
-    Fix contours by removing overlaps and correcting direction.
+    Fix contours by removing overlaps, correcting direction and removing tiny paths.
 
     This command will drop hints from both TTFs and OTFs. Hinting can be restored with ftcli utils ttf-autohint for TTF
     files, and ftcli utils cff-autohint OTF files.
