@@ -12,7 +12,7 @@ from fontTools.ttLib import ttFont
 from fontTools.ttLib.tables import _g_l_y_f
 from fontTools.ttLib.tables import _h_m_t_x
 
-from ftCLI.Lib.utils.click_tools import generic_error_message, generic_warning_message
+from ftCLI.Lib.utils.click_tools import generic_error_message, generic_warning_message, generic_info_message
 
 __all__ = ["fix_ttf_contours"]
 
@@ -20,7 +20,21 @@ __all__ = ["fix_ttf_contours"]
 class FixTTFContoursError(Exception):
     pass
 
+
 _TTGlyphMapping = Mapping[str, ttFont._TTGlyph]
+
+
+def _remove_tiny_paths(path: pathops.Path, glyph_name, min_area: int = 25) -> pathops.Path:
+    """
+    Removes tiny paths
+    """
+    cleaned_path = pathops.Path()
+    for contour in path.contours:
+        if abs(contour.area) >= abs(min_area):
+            cleaned_path.addPath(contour)
+        else:
+            generic_info_message(f"tiny path removed from glyph {glyph_name}")
+    return cleaned_path
 
 
 def skPathFromGlyph(glyphName: str, glyphSet: _TTGlyphMapping) -> pathops.Path:
@@ -30,9 +44,7 @@ def skPathFromGlyph(glyphName: str, glyphSet: _TTGlyphMapping) -> pathops.Path:
     return path
 
 
-def skPathFromGlyphComponent(
-    component: _g_l_y_f.GlyphComponent, glyphSet: _TTGlyphMapping
-):
+def skPathFromGlyphComponent(component: _g_l_y_f.GlyphComponent, glyphSet: _TTGlyphMapping):
     baseGlyphName, transformation = component.getComponentInfo()
     path = skPathFromGlyph(baseGlyphName, glyphSet)
     return path.transform(*transformation)
@@ -77,9 +89,7 @@ def ttfGlyphFromSkPath(path: pathops.Path) -> _g_l_y_f.Glyph:
     return glyph
 
 
-def _round_path(
-    path: pathops.Path, round: Callable[[float], float] = otRound
-) -> pathops.Path:
+def _round_path(path: pathops.Path, round: Callable[[float], float] = otRound) -> pathops.Path:
     rounded_path = pathops.Path()
     for verb, points in path:
         rounded_path.add(verb, *((round(p[0]), round(p[1])) for p in points))
@@ -122,6 +132,7 @@ def removeTTGlyphOverlaps(
     glyfTable: _g_l_y_f.table__g_l_y_f,
     hmtxTable: _h_m_t_x.table__h_m_t_x,
     removeHinting: bool = True,
+    min_area: int = 25
 ) -> bool:
     glyph = glyfTable[glyphName]
     # decompose composite glyphs only if components overlap each other
@@ -134,6 +145,8 @@ def removeTTGlyphOverlaps(
 
         # remove overlaps
         path2 = _simplify(path, glyphName)
+
+        path2 = _remove_tiny_paths(path=path2, glyph_name=glyphName, min_area=min_area)
 
         # replace TTGlyph if simplified path is different (ignoring contour order)
         if {tuple(c) for c in path.contours} != {tuple(c) for c in path2.contours}:
@@ -156,8 +169,8 @@ def fix_ttf_contours(
     glyphNames: Optional[Iterable[str]] = None,
     removeHinting: bool = True,
     ignoreErrors=False,
+    min_area: int = 25
 ) -> None:
-
     try:
         glyfTable = font["glyf"]
     except KeyError:
@@ -186,7 +199,7 @@ def fix_ttf_contours(
     for glyphName in glyphNames:
         try:
             if removeTTGlyphOverlaps(
-                glyphName, glyphSet, glyfTable, hmtxTable, removeHinting
+                glyphName, glyphSet, glyfTable, hmtxTable, removeHinting, min_area=min_area
             ):
                 modified.add(glyphName)
         except FixTTFContoursError:
