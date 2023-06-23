@@ -196,7 +196,7 @@ def font_organizer(
             output_dir = os.path.join(os.path.dirname(file))
 
             if sort_by_manufacturer:
-                manufacturer = font.name_table.getDebugName(8)  # Manufacturer Nane
+                manufacturer = font.name_table.getDebugName(8)  # Manufacturer Name
                 if not manufacturer:
                     manufacturer = font.name_table.getDebugName(9)  # Designer
                 if not manufacturer:
