@@ -729,12 +729,14 @@ def fix_contours():
 @add_file_or_path_argument()
 @click.option(
     "--min-area",
-    type=int, default = 25,
+    type=int,
+    default=25,
     help="""
     Minimum area for a tiny outline.
     
     Default is 25 square units. Subpaths with a bounding box less than this will be reported and deleted.
-    """)
+    """,
+)
 @add_common_options()
 def contours(input_path, min_area=25, recalcTimestamp=False, outputDir=None, overWrite=True):
     """
@@ -745,6 +747,7 @@ def contours(input_path, min_area=25, recalcTimestamp=False, outputDir=None, ove
     """
 
     from cffsubr import subroutinize, desubroutinize
+
     files = check_input_path(input_path, allow_variable=False)
     output_dir = check_output_dir(input_path=input_path, output_path=outputDir)
     from ftCLI.Lib.misc.fix_cff_contours import fix_cff_contours

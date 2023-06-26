@@ -593,7 +593,7 @@ def get_fonts_rows(files) -> list:
                 is_bold=str(int(font.is_bold)),
                 is_italic=str(int(font.is_italic)),
                 is_oblique=str(int(font.is_oblique)),
-                is_regular=str(int(font.is_regular))
+                is_regular=str(int(font.is_regular)),
             )
             rows.append(row)
         except Exception as e:

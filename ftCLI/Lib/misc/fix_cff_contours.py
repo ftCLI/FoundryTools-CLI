@@ -8,7 +8,7 @@ from ftCLI.Lib.utils.click_tools import generic_error_message, generic_info_mess
 
 def fix_cff_contours(font: TTFont, min_area: int = 25):
     glyph_set = font.getGlyphSet()
-    cff = font['CFF '].cff
+    cff = font["CFF "].cff
     top_dict = cff.topDictIndex[0]
 
     charstrings = {}
@@ -38,18 +38,15 @@ def fix_cff_contours(font: TTFont, min_area: int = 25):
 
     ps_name = cff.fontNames[0]
     font_info = {
-        key: value for key, value in top_dict.rawDict.items()
+        key: value
+        for key, value in top_dict.rawDict.items()
         if key not in ("FontBBox", "charset", "Encoding", "Private", "CharStrings")
     }
     private_dict = {
-        key: value for key, value in top_dict.Private.rawDict.items()
+        key: value
+        for key, value in top_dict.Private.rawDict.items()
         if key not in ("Subrs", "defaultWidthX", "nominalWidthX")
     }
 
     fb = FontBuilder(font=font)
-    fb.setupCFF(
-        psName=ps_name,
-        fontInfo=font_info,
-        privateDict=private_dict,
-        charStringsDict=charstrings
-    )
+    fb.setupCFF(psName=ps_name, fontInfo=font_info, privateDict=private_dict, charStringsDict=charstrings)

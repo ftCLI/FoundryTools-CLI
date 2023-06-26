@@ -13,8 +13,12 @@ from fontTools.ttLib.scaleUpem import scale_upem
 
 from ftCLI.Lib.Font import Font
 from ftCLI.Lib.converters.options import TrueTypeToCFFOptions
-from ftCLI.Lib.utils.click_tools import file_saved_message, generic_info_message, generic_error_message, \
-    generic_warning_message
+from ftCLI.Lib.utils.click_tools import (
+    file_saved_message,
+    generic_info_message,
+    generic_error_message,
+    generic_warning_message,
+)
 from ftCLI.Lib.utils.subsetter import BaseSubsetter
 
 
@@ -222,22 +226,22 @@ class TrueTypeToCFF(object):
 
         for k, v in glyph_set.items():
             # Correct contours direction and remove overlaps with pathops
-            pathops_path = pathops.Path()
-            pathops_pen = pathops_path.getPen(glyphSet=glyph_set)
-            try:
-                glyph_set[k].draw(pathops_pen)
-                pathops_path.simplify()
-            except TypeError as e:
-                generic_warning_message(f"{k}: {e}")
+            # pathops_path = pathops.Path()
+            # pathops_pen = pathops_path.getPen(glyphSet=glyph_set)
+            # try:
+            #     glyph_set[k].draw(pathops_pen)
+            #     pathops_path.simplify()
+            # except TypeError as e:
+            #     generic_warning_message(f"{k}: {e}")
 
             t2_pen = T2CharStringPen(v.width, glyphSet=glyph_set)
-            qu2cu_pen = Qu2CuPen(t2_pen, max_err=tolerance, all_cubic=True, reverse_direction=False)
+            qu2cu_pen = Qu2CuPen(t2_pen, max_err=tolerance, all_cubic=True, reverse_direction=True)
             try:
-                pathops_path.draw(qu2cu_pen)
+                glyph_set[k].draw(qu2cu_pen)
             except NotImplementedError as e:
                 generic_warning_message(f"{k}: {e}")
                 qu2cu_pen.all_cubic = False
-                pathops_path.draw(qu2cu_pen)
+                glyph_set[k].draw(qu2cu_pen)
 
             charstring = t2_pen.getCharString()
             charstrings[k] = charstring

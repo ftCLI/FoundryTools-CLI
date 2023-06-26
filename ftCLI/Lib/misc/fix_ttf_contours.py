@@ -60,9 +60,7 @@ def componentsOverlap(glyph: _g_l_y_f.Glyph, glyphSet: _TTGlyphMapping) -> bool:
 
     def _get_nth_component_path(index: int) -> pathops.Path:
         if index not in component_paths:
-            component_paths[index] = skPathFromGlyphComponent(
-                glyph.components[index], glyphSet
-            )
+            component_paths[index] = skPathFromGlyphComponent(glyph.components[index], glyphSet)
         return component_paths[index]
 
     return any(
@@ -72,7 +70,7 @@ def componentsOverlap(glyph: _g_l_y_f.Glyph, glyphSet: _TTGlyphMapping) -> bool:
             pathops.PathOp.INTERSECTION,
             fix_winding=True,
             keep_starting_points=False,
-            clockwise=True
+            clockwise=True,
         )
         for i, j in itertools.combinations(range(len(glyph.components)), 2)
     )
@@ -119,9 +117,7 @@ def _simplify(path: pathops.Path, debugGlyphName: str) -> pathops.Path:
         )
         return path
     except pathops.PathOpsError as e:
-        raise FixTTFContoursError(
-            f"Failed to remove overlaps from glyph {debugGlyphName!r}"
-        ) from e
+        raise FixTTFContoursError(f"Failed to remove overlaps from glyph {debugGlyphName!r}") from e
 
     raise AssertionError("Unreachable")
 
@@ -132,15 +128,11 @@ def removeTTGlyphOverlaps(
     glyfTable: _g_l_y_f.table__g_l_y_f,
     hmtxTable: _h_m_t_x.table__h_m_t_x,
     removeHinting: bool = True,
-    min_area: int = 25
+    min_area: int = 25,
 ) -> bool:
     glyph = glyfTable[glyphName]
     # decompose composite glyphs only if components overlap each other
-    if (
-        glyph.numberOfContours > 0
-        or glyph.isComposite()
-        and componentsOverlap(glyph, glyphSet)
-    ):
+    if glyph.numberOfContours > 0 or glyph.isComposite() and componentsOverlap(glyph, glyphSet):
         path = skPathFromGlyph(glyphName, glyphSet)
 
         # remove overlaps
@@ -169,7 +161,7 @@ def fix_ttf_contours(
     glyphNames: Optional[Iterable[str]] = None,
     removeHinting: bool = True,
     ignoreErrors=False,
-    min_area: int = 25
+    min_area: int = 25,
 ) -> None:
     try:
         glyfTable = font["glyf"]
@@ -189,18 +181,14 @@ def fix_ttf_contours(
     glyphNames = sorted(
         glyphNames,
         key=lambda name: (
-            glyfTable[name].getCompositeMaxpValues(glyfTable).maxComponentDepth
-            if glyfTable[name].isComposite()
-            else 0,
+            glyfTable[name].getCompositeMaxpValues(glyfTable).maxComponentDepth if glyfTable[name].isComposite() else 0,
             name,
         ),
     )
     modified = set()
     for glyphName in glyphNames:
         try:
-            if removeTTGlyphOverlaps(
-                glyphName, glyphSet, glyfTable, hmtxTable, removeHinting, min_area=min_area
-            ):
+            if removeTTGlyphOverlaps(glyphName, glyphSet, glyfTable, hmtxTable, removeHinting, min_area=min_area):
                 modified.add(glyphName)
         except FixTTFContoursError:
             if not ignoreErrors:
