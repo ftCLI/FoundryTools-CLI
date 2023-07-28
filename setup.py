@@ -16,7 +16,7 @@ setuptools.setup(
     url="https://github.com/ftCLI/FoundryTools-CLI",
     packages=setuptools.find_packages(),
     include_package_data=True,
-    entry_points={"console_scripts": ["ft-cli = foundryToolsCLI.__main__:main"]},
+    entry_points={"console_scripts": ["ftcli = foundryToolsCLI.__main__:main"]},
     install_requires=[
         "afdko>=3.9.6",
         "fonttools>=4.41.1",
