@@ -53,7 +53,7 @@ If you would like to contribute to the development, you can clone the repository
 ## Documentation
 FoundryTools-CLI is a Terminal app where commands are logically organized into subcommands.
 
-Please refer to the [user documentation](https://ft-cli.github.io).
+Please refer to the [user documentation](https://ftcli.github.io/FoundryTools-CLI/).
 
 ## License
 FoundryTools-CLI is available under the [MIT license](LICENSE)
