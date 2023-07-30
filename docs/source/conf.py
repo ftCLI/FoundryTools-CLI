@@ -6,10 +6,10 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "ftCLI"
+project = "FoundryTools-CLI"
 copyright = "2023, ftCLI"
 author = "ftCLI"
-release = "1.0.0"
+# release = "1.0.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

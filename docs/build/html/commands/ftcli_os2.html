@@ -1,0 +1,735 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="ftcli otf" href="ftcli_otf.html" /><link rel="prev" title="ftcli name" href="ftcli_name.html" />
+
+    <!-- Generated with Sphinx 7.1.1 and Furo 2023.07.26 -->
+        <title>ftcli os2 - FoundryTools-CLI documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">FoundryTools-CLI  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">FoundryTools-CLI  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ftcli_assistant.html">ftcli assistant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ftcli_cff.html">ftcli cff</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ftcli_converter.html">ftcli converter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ftcli_fix.html">ftcli fix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ftcli_hhea.html">ftcli hhea</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ftcli_metrics.html">ftcli metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ftcli_name.html">ftcli name</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">ftcli os2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ftcli_otf.html">ftcli otf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ftcli_post.html">ftcli post</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ftcli_ttf.html">ftcli ttf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ftcli_utils.html">ftcli utils</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="ftcli-os2">
+<h1>ftcli os2<a class="headerlink" href="#ftcli-os2" title="Permalink to this heading">#</a></h1>
+<p>A set of tools to manipulate the ‘OS/2’ table.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ftcli<span class="w"> </span>os2<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="ftcli-os2-subcommands">
+<h2>subcommands<a class="headerlink" href="#ftcli-os2-subcommands" title="Permalink to this heading">#</a></h2>
+<section id="ftcli-os2-recalc-cap-height">
+<h3>recalc-cap-height<a class="headerlink" href="#ftcli-os2-recalc-cap-height" title="Permalink to this heading">#</a></h3>
+<p>Recalculates sCapHeight value.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ftcli<span class="w"> </span>os2<span class="w"> </span>recalc-cap-height<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>INPUT_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-cap-height-out">
+<span id="cmdoption-ftcli-os2-recalc-cap-height-output-dir"></span><span class="sig-name descname"><span class="pre">-out</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_dir&gt;</span></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-cap-height-out" title="Permalink to this definition">#</a></dt>
+<dd><p>Specify the directory where output files are to be saved. If the directory doesn’t exist, will be created.
+If output_dir is not specified, files will be saved to the same folder.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-cap-height-recalc-timestamp">
+<span class="sig-name descname"><span class="pre">--recalc-timestamp</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-cap-height-recalc-timestamp" title="Permalink to this definition">#</a></dt>
+<dd><p>Keep the original font ‘modified’ timestamp (head.modified) or set it to current time. By default,
+original timestamp is kept.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-cap-height-no-overwrite">
+<span class="sig-name descname"><span class="pre">--no-overwrite</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-cap-height-no-overwrite" title="Permalink to this definition">#</a></dt>
+<dd><p>Overwrite existing files or save them to a new file (numbers are appended at the end of file name). By
+default, files are overwritten.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-cap-height-arg-INPUT_PATH">
+<span class="sig-name descname"><span class="pre">INPUT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-cap-height-arg-INPUT_PATH" title="Permalink to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ftcli-os2-recalc-max-context">
+<h3>recalc-max-context<a class="headerlink" href="#ftcli-os2-recalc-max-context" title="Permalink to this heading">#</a></h3>
+<p>Recalculates usMaxContext value.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ftcli<span class="w"> </span>os2<span class="w"> </span>recalc-max-context<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>INPUT_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-max-context-out">
+<span id="cmdoption-ftcli-os2-recalc-max-context-output-dir"></span><span class="sig-name descname"><span class="pre">-out</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_dir&gt;</span></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-max-context-out" title="Permalink to this definition">#</a></dt>
+<dd><p>Specify the directory where output files are to be saved. If the directory doesn’t exist, will be created.
+If output_dir is not specified, files will be saved to the same folder.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-max-context-recalc-timestamp">
+<span class="sig-name descname"><span class="pre">--recalc-timestamp</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-max-context-recalc-timestamp" title="Permalink to this definition">#</a></dt>
+<dd><p>Keep the original font ‘modified’ timestamp (head.modified) or set it to current time. By default,
+original timestamp is kept.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-max-context-no-overwrite">
+<span class="sig-name descname"><span class="pre">--no-overwrite</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-max-context-no-overwrite" title="Permalink to this definition">#</a></dt>
+<dd><p>Overwrite existing files or save them to a new file (numbers are appended at the end of file name). By
+default, files are overwritten.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-max-context-arg-INPUT_PATH">
+<span class="sig-name descname"><span class="pre">INPUT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-max-context-arg-INPUT_PATH" title="Permalink to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ftcli-os2-recalc-ranges">
+<h3>recalc-ranges<a class="headerlink" href="#ftcli-os2-recalc-ranges" title="Permalink to this heading">#</a></h3>
+<p>Generates a temporary Type 1 from the font file using tx, converts that to an OpenType font using makeotf, reads the
+Unicode ranges and codepage ranges from the temporary OpenType font file, and then writes those ranges to the
+original font’s OS/2 table.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ftcli<span class="w"> </span>os2<span class="w"> </span>recalc-ranges<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>INPUT_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-ranges-out">
+<span id="cmdoption-ftcli-os2-recalc-ranges-output-dir"></span><span class="sig-name descname"><span class="pre">-out</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_dir&gt;</span></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-ranges-out" title="Permalink to this definition">#</a></dt>
+<dd><p>Specify the directory where output files are to be saved. If the directory doesn’t exist, will be created.
+If output_dir is not specified, files will be saved to the same folder.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-ranges-recalc-timestamp">
+<span class="sig-name descname"><span class="pre">--recalc-timestamp</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-ranges-recalc-timestamp" title="Permalink to this definition">#</a></dt>
+<dd><p>Keep the original font ‘modified’ timestamp (head.modified) or set it to current time. By default,
+original timestamp is kept.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-ranges-no-overwrite">
+<span class="sig-name descname"><span class="pre">--no-overwrite</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-ranges-no-overwrite" title="Permalink to this definition">#</a></dt>
+<dd><p>Overwrite existing files or save them to a new file (numbers are appended at the end of file name). By
+default, files are overwritten.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-ranges-arg-INPUT_PATH">
+<span class="sig-name descname"><span class="pre">INPUT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-ranges-arg-INPUT_PATH" title="Permalink to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ftcli-os2-recalc-x-height">
+<h3>recalc-x-height<a class="headerlink" href="#ftcli-os2-recalc-x-height" title="Permalink to this heading">#</a></h3>
+<p>Recalculates sxHeight value.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ftcli<span class="w"> </span>os2<span class="w"> </span>recalc-x-height<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>INPUT_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-x-height-out">
+<span id="cmdoption-ftcli-os2-recalc-x-height-output-dir"></span><span class="sig-name descname"><span class="pre">-out</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_dir&gt;</span></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-x-height-out" title="Permalink to this definition">#</a></dt>
+<dd><p>Specify the directory where output files are to be saved. If the directory doesn’t exist, will be created.
+If output_dir is not specified, files will be saved to the same folder.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-x-height-recalc-timestamp">
+<span class="sig-name descname"><span class="pre">--recalc-timestamp</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-x-height-recalc-timestamp" title="Permalink to this definition">#</a></dt>
+<dd><p>Keep the original font ‘modified’ timestamp (head.modified) or set it to current time. By default,
+original timestamp is kept.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-x-height-no-overwrite">
+<span class="sig-name descname"><span class="pre">--no-overwrite</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-x-height-no-overwrite" title="Permalink to this definition">#</a></dt>
+<dd><p>Overwrite existing files or save them to a new file (numbers are appended at the end of file name). By
+default, files are overwritten.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-recalc-x-height-arg-INPUT_PATH">
+<span class="sig-name descname"><span class="pre">INPUT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-recalc-x-height-arg-INPUT_PATH" title="Permalink to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ftcli-os2-set-flags">
+<h3>set-flags<a class="headerlink" href="#ftcli-os2-set-flags" title="Permalink to this heading">#</a></h3>
+<p>Sets/clears the following flags in OS/2.fsSelection and OS/2.fsType fields:</p>
+<p>fsSelection:</p>
+<div class="line-block">
+<div class="line">Bit 0: ITALIC</div>
+<div class="line">Bit 1: UNDERSCORE</div>
+<div class="line">Bit 2: NEGATIVE</div>
+<div class="line">Bit 3: OUTLINED</div>
+<div class="line">Bit 4: STRIKEOUT</div>
+<div class="line">Bit 5: BOLD</div>
+<div class="line">Bit 6: REGULAR</div>
+<div class="line">Bit 7: USE_TYPO_METRICS</div>
+<div class="line">Bit 8: WWS</div>
+<div class="line">Bit 9: OBLIQUE</div>
+</div>
+<p>fsType:</p>
+<div class="line-block">
+<div class="line">Bits 0-3: Usage permissions</div>
+<div class="line">Bit 8: No subsetting</div>
+<div class="line">Bit 9: Bitmap embedding only</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ftcli<span class="w"> </span>os2<span class="w"> </span>set-flags<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>INPUT_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-it">
+<span id="cmdoption-ftcli-os2-set-flags-italic"></span><span id="cmdoption-ftcli-os2-set-flags-no-it"></span><span id="cmdoption-ftcli-os2-set-flags-no-italic"></span><span class="sig-name descname"><span class="pre">-it</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--italic</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-no-it</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-italic</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-it" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets or clears the ITALIC bits (<cite>fsSelection</cite> bit 0 and <cite>head</cite> table <cite>macStyle</cite> bit 1).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-us">
+<span id="cmdoption-ftcli-os2-set-flags-underscore"></span><span id="cmdoption-ftcli-os2-set-flags-no-us"></span><span id="cmdoption-ftcli-os2-set-flags-no-underscore"></span><span class="sig-name descname"><span class="pre">-us</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--underscore</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-no-us</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-underscore</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-us" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets or clears <cite>fsType</cite> bit 1 (UNDERSCORE).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-ng">
+<span id="cmdoption-ftcli-os2-set-flags-negative"></span><span id="cmdoption-ftcli-os2-set-flags-no-ng"></span><span id="cmdoption-ftcli-os2-set-flags-no-negative"></span><span class="sig-name descname"><span class="pre">-ng</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--negative</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-no-ng</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-negative</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-ng" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets or clears <cite>fsType</cite> bit 2 (NEGATIVE).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-ol">
+<span id="cmdoption-ftcli-os2-set-flags-outlined"></span><span id="cmdoption-ftcli-os2-set-flags-no-ol"></span><span id="cmdoption-ftcli-os2-set-flags-no-outlined"></span><span class="sig-name descname"><span class="pre">-ol</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--outlined</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-no-ol</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-outlined</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-ol" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets or clears <cite>fsType</cite> bit 3 (OUTLINED).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-st">
+<span id="cmdoption-ftcli-os2-set-flags-strikeout"></span><span id="cmdoption-ftcli-os2-set-flags-no-st"></span><span id="cmdoption-ftcli-os2-set-flags-no-strikeout"></span><span class="sig-name descname"><span class="pre">-st</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--strikeout</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-no-st</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-strikeout</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-st" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets or clears <cite>fsType</cite> bit 4 (STRIKEOUT).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-bd">
+<span id="cmdoption-ftcli-os2-set-flags-bold"></span><span id="cmdoption-ftcli-os2-set-flags-no-bd"></span><span id="cmdoption-ftcli-os2-set-flags-no-bold"></span><span class="sig-name descname"><span class="pre">-bd</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--bold</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-no-bd</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-bold</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-bd" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets or clears the BOLD bits (<cite>OS/2.fsSelection</cite> bit 5 and <cite>head.macStyle</cite> bit 0).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-rg">
+<span id="cmdoption-ftcli-os2-set-flags-regular"></span><span class="sig-name descname"><span class="pre">-rg</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--regular</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-rg" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets REGULAR (<cite>fsSelection</cite> bit 6) and clears BOLD (<cite>fsSelection</cite> bit 5, <cite>head.macStyle</cite> bit 0) and ITALIC
+(<cite>fsSelection</cite> bit 0, <cite>head.macStyle</cite> bit 1) bits. This is equivalent to <cite>–no-bold –no-italic</cite>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-utm">
+<span id="cmdoption-ftcli-os2-set-flags-use-typo-metrics"></span><span id="cmdoption-ftcli-os2-set-flags-no-utm"></span><span id="cmdoption-ftcli-os2-set-flags-no-use-typo-metrics"></span><span class="sig-name descname"><span class="pre">-utm</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--use-typo-metrics</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-no-utm</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-use-typo-metrics</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-utm" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets or clears the USE_TYPO_METRICS bit (<cite>fsSelection</cite> bit 7).</p>
+<p>If set, it is strongly recommended that applications use <cite>OS/2.sTypoAscender</cite> - <cite>OS/2.sTypoDescender</cite> +
+<cite>OS/2.sTypoLineGap</cite> as the default line spacing for the font.</p>
+<p>See: <a class="reference external" href="https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection">https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection</a></p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-wws">
+<span id="cmdoption-ftcli-os2-set-flags-wws-consistent"></span><span id="cmdoption-ftcli-os2-set-flags-no-wws"></span><span id="cmdoption-ftcli-os2-set-flags-no-wws-consistent"></span><span class="sig-name descname"><span class="pre">-wws</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--wws-consistent</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-no-wws</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-wws-consistent</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-wws" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets or clears the WWS bit (<cite>fsSelection</cite> bit 8).</p>
+<p>If the <cite>OS/2.fsSelection</cite> bit is set, the font has <cite>name</cite> table strings consistent with a weight/width/slope family
+without requiring use of name IDs 21 and 22.</p>
+<p>See: <a class="reference external" href="https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection">https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fsselection</a></p>
+<p>Also: <a class="reference external" href="https://typedrawers.com/discussion/3857/fontlab-7-windows-reads-exported-font-name-differently">https://typedrawers.com/discussion/3857/fontlab-7-windows-reads-exported-font-name-differently</a></p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-obl">
+<span id="cmdoption-ftcli-os2-set-flags-oblique"></span><span id="cmdoption-ftcli-os2-set-flags-no-obl"></span><span id="cmdoption-ftcli-os2-set-flags-no-oblique"></span><span class="sig-name descname"><span class="pre">-obl</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--oblique</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-no-obl</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-oblique</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-obl" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets or clears the OBLIQUE bit (<cite>fsSelection</cite> bit 9).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-el">
+<span id="cmdoption-ftcli-os2-set-flags-embed-level"></span><span class="sig-name descname"><span class="pre">-el</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--embed-level</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;embed_level&gt;</span></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-el" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets/clears <cite>fsType</cite> bits 0-3 (EMBEDDING_LEVEL).</p>
+<p>Valid fonts must set at most one of bits 1, 2 or 3; bit 0 is permanently reserved and must be zero. Valid values for
+this sub-field are 0, 2, 4 or 8. The meaning of these values is as follows:</p>
+<div class="line-block">
+<div class="line">0: Installable embedding</div>
+<div class="line">2: Restricted License embedding</div>
+<div class="line">4: Preview &amp; Print embedding</div>
+<div class="line">8: Editable embedding</div>
+</div>
+<p>See: <a class="reference external" href="https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fstype">https://docs.microsoft.com/en-us/typography/opentype/spec/os2#fstype</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>0 | 2 | 4 | 8</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-ns">
+<span id="cmdoption-ftcli-os2-set-flags-no-subsetting"></span><span id="cmdoption-ftcli-os2-set-flags-as"></span><span id="cmdoption-ftcli-os2-set-flags-allow-subsetting"></span><span class="sig-name descname"><span class="pre">-ns</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-subsetting</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-as</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--allow-subsetting</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-ns" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets or clears <cite>fsType</cite> bit 8 (NO_SUBSETTING).</p>
+<p>When this bit is set, the font may not be subsetted prior to embedding. Other embedding restrictions specified in bits
+0-3 and 9 also apply.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-beo">
+<span id="cmdoption-ftcli-os2-set-flags-bitmap-embedding-only"></span><span id="cmdoption-ftcli-os2-set-flags-no-beo"></span><span id="cmdoption-ftcli-os2-set-flags-no-bitmap-embedding-only"></span><span class="sig-name descname"><span class="pre">-beo</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--bitmap-embedding-only</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-no-beo</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-bitmap-embedding-only</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-beo" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets or clears <cite>fsType</cite> bit 9 (BITMAP_EMBEDDING_ONLY).</p>
+<p>When this bit is set, only bitmaps contained in the font may be embedded. No outline data may be embedded. If there are
+no bitmaps available in the font, then the font is considered unembeddable and the embedding services will fail. Other
+embedding restrictions specified in bits 0-3 and 8 also apply.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-out">
+<span id="cmdoption-ftcli-os2-set-flags-output-dir"></span><span class="sig-name descname"><span class="pre">-out</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_dir&gt;</span></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-out" title="Permalink to this definition">#</a></dt>
+<dd><p>Specify the directory where output files are to be saved. If the directory doesn’t exist, will be created.
+If output_dir is not specified, files will be saved to the same folder.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-recalc-timestamp">
+<span class="sig-name descname"><span class="pre">--recalc-timestamp</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-recalc-timestamp" title="Permalink to this definition">#</a></dt>
+<dd><p>Keep the original font ‘modified’ timestamp (head.modified) or set it to current time. By default,
+original timestamp is kept.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-no-overwrite">
+<span class="sig-name descname"><span class="pre">--no-overwrite</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-no-overwrite" title="Permalink to this definition">#</a></dt>
+<dd><p>Overwrite existing files or save them to a new file (numbers are appended at the end of file name). By
+default, files are overwritten.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-flags-arg-INPUT_PATH">
+<span class="sig-name descname"><span class="pre">INPUT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-flags-arg-INPUT_PATH" title="Permalink to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ftcli-os2-set-version">
+<h3>set-version<a class="headerlink" href="#ftcli-os2-set-version" title="Permalink to this heading">#</a></h3>
+<p>Upgrades OS/2 table version.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ftcli<span class="w"> </span>os2<span class="w"> </span>set-version<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>INPUT_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-version-v">
+<span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;target_version&gt;</span></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-version-v" title="Permalink to this definition">#</a></dt>
+<dd><p><strong>Required</strong> Target version</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-version-out">
+<span id="cmdoption-ftcli-os2-set-version-output-dir"></span><span class="sig-name descname"><span class="pre">-out</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_dir&gt;</span></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-version-out" title="Permalink to this definition">#</a></dt>
+<dd><p>Specify the directory where output files are to be saved. If the directory doesn’t exist, will be created.
+If output_dir is not specified, files will be saved to the same folder.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-version-recalc-timestamp">
+<span class="sig-name descname"><span class="pre">--recalc-timestamp</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-version-recalc-timestamp" title="Permalink to this definition">#</a></dt>
+<dd><p>Keep the original font ‘modified’ timestamp (head.modified) or set it to current time. By default,
+original timestamp is kept.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-version-no-overwrite">
+<span class="sig-name descname"><span class="pre">--no-overwrite</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-version-no-overwrite" title="Permalink to this definition">#</a></dt>
+<dd><p>Overwrite existing files or save them to a new file (numbers are appended at the end of file name). By
+default, files are overwritten.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-version-arg-INPUT_PATH">
+<span class="sig-name descname"><span class="pre">INPUT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-version-arg-INPUT_PATH" title="Permalink to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ftcli-os2-set-weight">
+<h3>set-weight<a class="headerlink" href="#ftcli-os2-set-weight" title="Permalink to this heading">#</a></h3>
+<p>Sets the Weight class value.</p>
+<p>usWeightClass indicates the visual weight (degree of blackness or thickness of strokes) of the characters in the
+font. Values from 1 to 1000 are valid.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ftcli<span class="w"> </span>os2<span class="w"> </span>set-weight<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>INPUT_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-weight-w">
+<span id="cmdoption-ftcli-os2-set-weight-weight"></span><span class="sig-name descname"><span class="pre">-w</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--weight</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;weight&gt;</span></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-weight-w" title="Permalink to this definition">#</a></dt>
+<dd><p><strong>Required</strong> usWeightClass value.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-weight-out">
+<span id="cmdoption-ftcli-os2-set-weight-output-dir"></span><span class="sig-name descname"><span class="pre">-out</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_dir&gt;</span></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-weight-out" title="Permalink to this definition">#</a></dt>
+<dd><p>Specify the directory where output files are to be saved. If the directory doesn’t exist, will be created.
+If output_dir is not specified, files will be saved to the same folder.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-weight-recalc-timestamp">
+<span class="sig-name descname"><span class="pre">--recalc-timestamp</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-weight-recalc-timestamp" title="Permalink to this definition">#</a></dt>
+<dd><p>Keep the original font ‘modified’ timestamp (head.modified) or set it to current time. By default,
+original timestamp is kept.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-weight-no-overwrite">
+<span class="sig-name descname"><span class="pre">--no-overwrite</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-weight-no-overwrite" title="Permalink to this definition">#</a></dt>
+<dd><p>Overwrite existing files or save them to a new file (numbers are appended at the end of file name). By
+default, files are overwritten.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-weight-arg-INPUT_PATH">
+<span class="sig-name descname"><span class="pre">INPUT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-weight-arg-INPUT_PATH" title="Permalink to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ftcli-os2-set-width">
+<h3>set-width<a class="headerlink" href="#ftcli-os2-set-width" title="Permalink to this heading">#</a></h3>
+<p>Sets the Width class value.</p>
+<p>usWidthClass indicates a relative change from the normal aspect ratio (width to height ratio) as specified by a font
+designer for the glyphs in a font. Values from 1 to 9 are valid.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ftcli<span class="w"> </span>os2<span class="w"> </span>set-width<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>INPUT_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-width-w">
+<span id="cmdoption-ftcli-os2-set-width-width"></span><span class="sig-name descname"><span class="pre">-w</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--width</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;width&gt;</span></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-width-w" title="Permalink to this definition">#</a></dt>
+<dd><p><strong>Required</strong> usWidthClass value.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-width-out">
+<span id="cmdoption-ftcli-os2-set-width-output-dir"></span><span class="sig-name descname"><span class="pre">-out</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_dir&gt;</span></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-width-out" title="Permalink to this definition">#</a></dt>
+<dd><p>Specify the directory where output files are to be saved. If the directory doesn’t exist, will be created.
+If output_dir is not specified, files will be saved to the same folder.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-width-recalc-timestamp">
+<span class="sig-name descname"><span class="pre">--recalc-timestamp</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-width-recalc-timestamp" title="Permalink to this definition">#</a></dt>
+<dd><p>Keep the original font ‘modified’ timestamp (head.modified) or set it to current time. By default,
+original timestamp is kept.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-width-no-overwrite">
+<span class="sig-name descname"><span class="pre">--no-overwrite</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-width-no-overwrite" title="Permalink to this definition">#</a></dt>
+<dd><p>Overwrite existing files or save them to a new file (numbers are appended at the end of file name). By
+default, files are overwritten.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ftcli-os2-set-width-arg-INPUT_PATH">
+<span class="sig-name descname"><span class="pre">INPUT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ftcli-os2-set-width-arg-INPUT_PATH" title="Permalink to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="ftcli_otf.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">ftcli otf</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="ftcli_name.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">ftcli name</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, ftCLI
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">ftcli os2</a><ul>
+<li><a class="reference internal" href="#ftcli-os2-subcommands">subcommands</a><ul>
+<li><a class="reference internal" href="#ftcli-os2-recalc-cap-height">recalc-cap-height</a></li>
+<li><a class="reference internal" href="#ftcli-os2-recalc-max-context">recalc-max-context</a></li>
+<li><a class="reference internal" href="#ftcli-os2-recalc-ranges">recalc-ranges</a></li>
+<li><a class="reference internal" href="#ftcli-os2-recalc-x-height">recalc-x-height</a></li>
+<li><a class="reference internal" href="#ftcli-os2-set-flags">set-flags</a></li>
+<li><a class="reference internal" href="#ftcli-os2-set-version">set-version</a></li>
+<li><a class="reference internal" href="#ftcli-os2-set-weight">set-weight</a></li>
+<li><a class="reference internal" href="#ftcli-os2-set-width">set-width</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/scripts/furo.js?v=32e29ea5"></script>
+    </body>
+</html>
