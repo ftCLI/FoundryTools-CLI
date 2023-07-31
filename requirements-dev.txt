@@ -1,3 +1,4 @@
 black>=23.7.00
 sphinx-click>=4.4.0
 furo>=2023.5.20
+-e .
