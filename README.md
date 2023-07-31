@@ -58,5 +58,8 @@ Please refer to the [user documentation](https://ftcli.github.io/FoundryTools-CL
 ## License
 FoundryTools-CLI is available under the [MIT license](LICENSE)
 
+## Credits
+To Sergiev. May You rest in peace.
+
 
 
