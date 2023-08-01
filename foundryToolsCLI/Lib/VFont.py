@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from fontTools.ttLib.tables._f_v_a_r import NamedInstance, Axis
