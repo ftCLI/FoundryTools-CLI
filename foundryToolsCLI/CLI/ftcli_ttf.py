@@ -5,7 +5,11 @@ import click
 from fontTools.misc.cliTools import makeOutputFileName
 
 from foundryToolsCLI.Lib.Font import Font
-from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
+from foundryToolsCLI.Lib.utils.cli_tools import (
+    get_fonts_in_path,
+    get_output_dir,
+    initial_check_pass,
+)
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
@@ -22,14 +26,24 @@ ttf_tools = click.Group("subcommands")
 @ttf_tools.command()
 @add_file_or_path_argument()
 @add_common_options()
-def autohint(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def autohint(
+    input_path: Path,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
     """
     Autohint TrueType fonts using ttfautohint-py.
     """
 
     from ttfautohint import ttfautohint
 
-    fonts = get_fonts_in_path(input_path, recalc_timestamp=recalc_timestamp, allow_cff=False, allow_variable=False)
+    fonts = get_fonts_in_path(
+        input_path,
+        recalc_timestamp=recalc_timestamp,
+        allow_cff=False,
+        allow_variable=False,
+    )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -43,7 +57,9 @@ def autohint(input_path: Path, output_dir: Path = None, recalc_timestamp: bool =
             file = Path(font.reader.file.name)
             if not recalc_timestamp:
                 hinted_font.set_modified_timestamp(font.modified_timestamp)
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            output_file = Path(
+                makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite)
+            )
             hinted_font.save(output_file)
             file_saved_message(output_file.relative_to(CWD))
         except Exception as e:
@@ -55,11 +71,18 @@ def autohint(input_path: Path, output_dir: Path = None, recalc_timestamp: bool =
 @ttf_tools.command()
 @add_file_or_path_argument()
 @add_common_options()
-def decompose(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def decompose(
+    input_path: Path,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
     """
     Decompose composite glyphs of a TrueType font.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp, allow_cff=False)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recalc_timestamp=recalc_timestamp, allow_cff=False
+    )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -68,7 +91,9 @@ def decompose(input_path: Path, output_dir: Path = None, recalc_timestamp: bool 
         try:
             font.ttf_decomponentize()
             file = Path(font.reader.file.name)
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            output_file = Path(
+                makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite)
+            )
             font.save(output_file)
             file_saved_message(output_file.relative_to(CWD))
         except Exception as e:
@@ -80,13 +105,20 @@ def decompose(input_path: Path, output_dir: Path = None, recalc_timestamp: bool 
 @ttf_tools.command()
 @add_file_or_path_argument()
 @add_common_options()
-def dehint(input_path: Path, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = True):
+def dehint(
+    input_path: Path,
+    recalc_timestamp: bool = False,
+    output_dir: Path = None,
+    overwrite: bool = True,
+):
     """
     Drops hinting from TrueType fonts.
 
     This is a CLI for dehinter by Source Foundry: https://github.com/source-foundry/dehinter
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp, allow_cff=False)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recalc_timestamp=recalc_timestamp, allow_cff=False
+    )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -95,7 +127,9 @@ def dehint(input_path: Path, recalc_timestamp: bool = False, output_dir: Path = 
         try:
             font.ttf_dehint()
             file = Path(font.reader.file.name)
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            output_file = Path(
+                makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite)
+            )
             font.save(output_file)
             file_saved_message(output_file.relative_to(CWD))
         except Exception as e:
@@ -116,8 +150,16 @@ def dehint(input_path: Path, recalc_timestamp: bool = False, output_dir: Path = 
         Default is 25 square units. Subpaths with a bounding box less than this will be reported and deleted.
     """,
 )
-@click.option("--keep-hinting", "remove_hinting", is_flag=True, default=True, help="""Do not remove hinting.""")
-@click.option("--silent", "verbose", is_flag=True, default=True, help="Run in silent mode")
+@click.option(
+    "--keep-hinting",
+    "remove_hinting",
+    is_flag=True,
+    default=True,
+    help="""Do not remove hinting.""",
+)
+@click.option(
+    "--silent", "verbose", is_flag=True, default=True, help="Run in silent mode"
+)
 @add_common_options()
 def fix_contours(
     input_path: Path,
@@ -132,7 +174,10 @@ def fix_contours(
     Fix winding and remove overlaps and tiny paths from contours.
     """
     fonts = get_fonts_in_path(
-        input_path=input_path, allow_variable=False, allow_cff=False, recalc_timestamp=recalc_timestamp
+        input_path=input_path,
+        allow_variable=False,
+        allow_cff=False,
+        recalc_timestamp=recalc_timestamp,
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -142,9 +187,13 @@ def fix_contours(
         print()
         try:
             file = Path(font.reader.file.name)
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            output_file = Path(
+                makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite)
+            )
             generic_info_message(f"Checking file {file.name}")
-            font.ttf_fix_contours(min_area=min_area, remove_hinting=remove_hinting, verbose=verbose)
+            font.ttf_fix_contours(
+                min_area=min_area, remove_hinting=remove_hinting, verbose=verbose
+            )
             font.save(output_file)
             file_saved_message(output_file.relative_to(CWD))
 
@@ -157,7 +206,11 @@ def fix_contours(
 @ttf_tools.command()
 @add_file_or_path_argument()
 @click.option(
-    "--keep-hinting", "remove_hinting", is_flag=True, default=True, help="""Keep hinting for unmodified glyphs"""
+    "--keep-hinting",
+    "remove_hinting",
+    is_flag=True,
+    default=True,
+    help="""Keep hinting for unmodified glyphs""",
 )
 @click.option(
     "--ignore-errors",
@@ -177,7 +230,12 @@ def remove_overlaps(
     Simplify glyphs in TrueType fonts by merging overlapping contours.
     """
 
-    fonts = get_fonts_in_path(input_path, recalc_timestamp=recalc_timestamp, allow_cff=False, allow_variable=False)
+    fonts = get_fonts_in_path(
+        input_path,
+        recalc_timestamp=recalc_timestamp,
+        allow_cff=False,
+        allow_variable=False,
+    )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -185,8 +243,12 @@ def remove_overlaps(
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-            font.ttf_remove_overlaps(remove_hinting=remove_hinting, ignore_errors=ignore_errors)
+            output_file = Path(
+                makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite)
+            )
+            font.ttf_remove_overlaps(
+                remove_hinting=remove_hinting, ignore_errors=ignore_errors
+            )
             font.save(output_file)
             file_saved_message(output_file.relative_to(CWD))
         except Exception as e:
@@ -207,7 +269,11 @@ def remove_overlaps(
 )
 @add_common_options()
 def scale_upm(
-    input_path: Path, upm: int, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = True
+    input_path: Path,
+    upm: int,
+    recalc_timestamp: bool = False,
+    output_dir: Path = None,
+    overwrite: bool = True,
 ):
     """
     Change the units-per-EM of TrueType fonts.
@@ -216,7 +282,9 @@ def scale_upm(
     ttf-autohint' to hint the scaled fonts.
     """
 
-    fonts = get_fonts_in_path(input_path, allow_cff=False, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path, allow_cff=False, recalc_timestamp=recalc_timestamp
+    )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -231,7 +299,9 @@ def scale_upm(
 
             font.ttf_scale_upem(units_per_em=upm)
 
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            output_file = Path(
+                makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite)
+            )
             font.save(output_file)
             file_saved_message(output_file.relative_to(CWD))
 
@@ -267,7 +337,9 @@ def rename_glyph(
     """
     Renames a glyph.
     """
-    fonts = get_fonts_in_path(input_path=input_path, allow_cff=False, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, allow_cff=False, recalc_timestamp=recalc_timestamp
+    )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -275,13 +347,17 @@ def rename_glyph(
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            output_file = Path(
+                makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite)
+            )
             glyph_names = font.getGlyphOrder()
             modified = False
             for i in range(len(glyph_names)):
                 if glyph_names[i] == old_glyph_name:
                     glyph_names[i] = new_glyph_name
-                    generic_info_message(f"{old_glyph_name} renamed to {new_glyph_name}")
+                    generic_info_message(
+                        f"{old_glyph_name} renamed to {new_glyph_name}"
+                    )
                     modified = True
             if modified:
                 font.setGlyphOrder(glyph_names)
