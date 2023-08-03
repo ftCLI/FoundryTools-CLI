@@ -19,7 +19,7 @@ setuptools.setup(
     entry_points={"console_scripts": ["ftcli = foundryToolsCLI.__main__:main"]},
     install_requires=[
         "afdko>=3.9.6",
-        "fonttools>=4.41.1",
+        "fonttools>=4.42.0",
         "beziers>=0.5.0",
         "brotli>=1.0.9",
         "click>=8.1.6",
