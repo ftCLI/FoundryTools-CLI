@@ -78,6 +78,7 @@ class TTF2OTFRunner(object):
                             charstrings[c] = makeotf_charstrings[c]
                         except KeyError:
                             generic_error_message(c)
+                            errors.append(c)
                     if len(errors) == 0:
                         generic_info_message("Done")
                     else:
