@@ -69,21 +69,22 @@ class TTF2OTFRunner(object):
 
                 tolerance = self.options.tolerance / 1000 * source_font["head"].unitsPerEm
                 failed, charstrings = get_qu2cu_charstrings(font=source_font, tolerance=tolerance)
+                makeotf_fails = []
                 if len(failed) > 0:
                     generic_info_message(f"Getting {len(failed)} charstrings with makeotf...")
                     makeotf_charstrings = get_makeotf_charstrings(font=source_font)
-                    errors = []
+
                     for c in failed:
                         try:
                             charstrings[c] = makeotf_charstrings[c]
                         except KeyError:
                             generic_error_message(c)
-                            errors.append(c)
-                    if len(errors) == 0:
+                            makeotf_fails.append(c)
+                    if len(makeotf_fails) == 0:
                         generic_info_message("Done")
                     else:
                         generic_error_message(
-                            f"Failed to get the following charstrings with makeotf: {', '.join(errors)}"
+                            f"Failed to get the following charstrings with makeotf: {', '.join(makeotf_fails)}"
                         )
 
                 ttf2otf_converter = TrueTypeToCFF(font=source_font)
