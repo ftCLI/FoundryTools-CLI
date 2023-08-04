@@ -97,7 +97,7 @@ def monospace(input_path: Path, output_dir: Path = None, recalc_timestamp: bool 
 @fix_fonts.command()
 @add_file_or_path_argument()
 @add_common_options()
-def nbsp_width(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overWrite: bool = True):
+def nbsp_width(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
     """
     Checks if 'nbspace' and 'space' glyphs have the same width. If not, corrects 'nbspace' width to match 'space' width.
 
@@ -112,7 +112,7 @@ def nbsp_width(input_path: Path, output_dir: Path = None, recalc_timestamp: bool
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overWrite))
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
             hmtx_table = font["hmtx"]
             hmtx_table_copy = deepcopy(hmtx_table)
