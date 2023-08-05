@@ -87,6 +87,17 @@ class TTF2OTFRunner(object):
                             f"Failed to get the following charstrings with makeotf: {', '.join(makeotf_fails)}"
                         )
 
+                        from foundryToolsCLI.Lib.converters.otf_to_ttf import CFFToTrueType
+                        t2_ttf2otf_converter = TrueTypeToCFF(font=source_font)
+                        t2_charstrings = get_t2_charstrings(font=source_font)
+                        t2_otf_font: Font = t2_ttf2otf_converter.run(charstrings=t2_charstrings)
+                        t2_otf_2_ttf_converter = CFFToTrueType(font=t2_otf_font)
+                        t2_otf_2_ttf_font = t2_otf_2_ttf_converter.run()
+                        _, safe_charstrings = get_qu2cu_charstrings(t2_otf_2_ttf_font)
+
+                        for c in makeotf_fails:
+                            charstrings[c] = safe_charstrings[c]
+
                 ttf2otf_converter = TrueTypeToCFF(font=source_font)
                 cff_font: Font = ttf2otf_converter.run(charstrings=charstrings)
 
@@ -217,13 +228,13 @@ def get_t2_charstrings(font: Font) -> dict:
 
     :return: CFF charstrings.
     """
-    charstrings = {}
+    t2_charstrings = {}
     glyph_set = font.getGlyphSet()
 
     for k, v in glyph_set.items():
         t2_pen = T2CharStringPen(v.width, glyphSet=glyph_set)
         glyph_set[k].draw(t2_pen)
         charstring = t2_pen.getCharString()
-        charstrings[k] = charstring
+        t2_charstrings[k] = charstring
 
-    return charstrings
+    return t2_charstrings
