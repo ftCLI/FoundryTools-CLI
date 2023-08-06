@@ -16,6 +16,8 @@ from foundryToolsCLI.Lib.tables.name import TableName
 from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.tables.head import TableHead
 from foundryToolsCLI.Lib.tables.post import TablePost
+from foundryToolsCLI.Lib.utils.otf_tools import correct_otf_contours
+from foundryToolsCLI.Lib.utils.ttf_tools import correct_ttf_contours, decomponentize
 
 
 # The Font class is a subclass of the fontTools.ttLib.TTFont class.
@@ -382,8 +384,6 @@ class Font(TTFont):
         if not self.is_ttf:
             return
 
-        from foundryToolsCLI.Lib.utils.ttf_tools import decomponentize
-
         decomponentize(self)
 
     def ttf_dehint(self) -> None:
@@ -478,13 +478,9 @@ class Font(TTFont):
         self.flavor = flavor
 
     def otf_fix_contours(self, min_area: int = 25, verbose: bool = False) -> None:
-        from foundryToolsCLI.Lib.utils.otf_tools import correct_otf_contours
-
         correct_otf_contours(font=self, min_area=min_area, verbose=verbose)
 
     def ttf_fix_contours(self, min_area: int = 25, remove_hinting: bool = True, verbose: bool = False) -> None:
-        from foundryToolsCLI.Lib.utils.ttf_tools import correct_ttf_contours
-
         correct_ttf_contours(self, min_area=min_area, remove_hinting=remove_hinting, verbose=verbose)
 
     def add_dummy_dsig(self) -> None:
