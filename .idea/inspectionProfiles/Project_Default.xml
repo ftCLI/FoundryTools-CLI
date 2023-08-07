@@ -59,6 +59,7 @@
           <option value="foundryToolsCLI.Lib.tables.OS_2.TableOS2.achVendID" />
           <option value="foundryToolsCLI.Lib.tables.head.TableHead.fontRevision" />
           <option value="fontTools.ttLib" />
+          <option value="foundryToolsCLI.Lib.tables.head.TableHead.created" />
         </list>
       </option>
     </inspection_tool>
