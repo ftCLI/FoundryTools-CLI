@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="Black">
-    <option name="enabledOnReformat" value="true" />
-    <option name="pathToExecutable" value="" />
-    <option name="sdkUUID" value="95a10bac-4ded-43bb-b952-44a7cc6c2075" />
-  </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10 (FoundryTools-CLI)" project-jdk-type="Python SDK" />
-</project>
