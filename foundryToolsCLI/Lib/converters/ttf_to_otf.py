@@ -70,7 +70,7 @@ class TTF2OTFRunner(object):
                 failed, charstrings = get_qu2cu_charstrings(font=source_font, tolerance=tolerance)
 
                 if len(failed) > 0:
-                    generic_info_message(f"Getting {len(failed)} charstrings with makeotf...")
+                    generic_info_message(f"Getting {len(failed)} charstrings...")
                     t2_ttf2otf_converter = TrueTypeToCFF(font=source_font)
                     t2_charstrings = get_t2_charstrings(font=source_font)
                     t2_otf_font: Font = t2_ttf2otf_converter.run(charstrings=t2_charstrings)
