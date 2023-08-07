@@ -82,7 +82,7 @@ class TTF2OTFRunner(object):
                         try:
                             generic_info_message(f"Retrying to get charstring: {c}", nl=False)
                             charstrings[c] = fallback_charstrings[c]
-                            click.secho(f" -> OK", fg="green")
+                            click.secho(" -> OK", fg="green")
                         except Exception as e:
                             generic_error_message(f"Failed to get charstring: {c}")
                             generic_error_message(e)
