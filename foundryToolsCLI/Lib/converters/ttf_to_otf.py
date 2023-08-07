@@ -3,6 +3,7 @@ import tempfile
 import time
 from pathlib import Path
 
+import click
 from fontTools.fontBuilder import FontBuilder
 from fontTools.misc.cliTools import makeOutputFileName
 from fontTools.pens.qu2cuPen import Qu2CuPen
@@ -10,6 +11,7 @@ from fontTools.pens.t2CharStringPen import T2CharStringPen
 
 from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.converters.options import TrueTypeToCFFOptions
+from foundryToolsCLI.Lib.converters.otf_to_ttf import CFFToTrueType
 from foundryToolsCLI.Lib.utils.click_tools import (
     file_saved_message,
     generic_info_message,
@@ -63,43 +65,34 @@ class TTF2OTFRunner(object):
                     source_font.save(temp_source_file)
                     source_font = Font(temp_source_file, recalcTimestamp=self.options.recalc_timestamp)
 
-                # Prepare the source font
+                # Decomponentize the source font
                 source_font.ttf_decomponentize()
-                source_font.ttf_fix_contours(verbose=False)
 
                 tolerance = self.options.tolerance / 1000 * source_font["head"].unitsPerEm
                 failed, charstrings = get_qu2cu_charstrings(font=source_font, tolerance=tolerance)
-                makeotf_fails = []
+
                 if len(failed) > 0:
                     generic_info_message(f"Getting {len(failed)} charstrings with makeotf...")
-                    makeotf_charstrings = get_makeotf_charstrings(font=source_font)
+                    t2_ttf2otf_converter = TrueTypeToCFF(font=source_font)
+                    t2_charstrings = get_t2_charstrings(font=source_font)
+                    t2_otf_font: Font = t2_ttf2otf_converter.run(charstrings=t2_charstrings)
+                    t2_otf_2_ttf_converter = CFFToTrueType(font=t2_otf_font)
+                    t2_otf_2_ttf_font = t2_otf_2_ttf_converter.run()
+                    _, fallback_charstrings = get_qu2cu_charstrings(t2_otf_2_ttf_font)
 
                     for c in failed:
                         try:
-                            charstrings[c] = makeotf_charstrings[c]
-                        except KeyError:
-                            generic_error_message(c)
-                            makeotf_fails.append(c)
-                    if len(makeotf_fails) == 0:
-                        generic_info_message("Done")
-                    else:
-                        generic_error_message(
-                            f"Failed to get the following charstrings with makeotf: {', '.join(makeotf_fails)}"
-                        )
-
-                        from foundryToolsCLI.Lib.converters.otf_to_ttf import CFFToTrueType
-                        t2_ttf2otf_converter = TrueTypeToCFF(font=source_font)
-                        t2_charstrings = get_t2_charstrings(font=source_font)
-                        t2_otf_font: Font = t2_ttf2otf_converter.run(charstrings=t2_charstrings)
-                        t2_otf_2_ttf_converter = CFFToTrueType(font=t2_otf_font)
-                        t2_otf_2_ttf_font = t2_otf_2_ttf_converter.run()
-                        _, safe_charstrings = get_qu2cu_charstrings(t2_otf_2_ttf_font)
-
-                        for c in makeotf_fails:
-                            charstrings[c] = safe_charstrings[c]
+                            generic_info_message(f"Retrying to get charstring: {c}", nl=False)
+                            charstrings[c] = fallback_charstrings[c]
+                            click.secho(f" -> OK", fg="green")
+                        except Exception as e:
+                            generic_error_message(f"Failed to get charstring: {c}")
+                            generic_error_message(e)
 
                 ttf2otf_converter = TrueTypeToCFF(font=source_font)
                 cff_font: Font = ttf2otf_converter.run(charstrings=charstrings)
+
+                cff_font.otf_fix_contours(min_area=25, verbose=False)
 
                 if self.options.subroutinize:
                     cff_font.otf_subroutinize()
@@ -191,7 +184,7 @@ def get_post_values(font: Font) -> dict:
 
 
 def get_qu2cu_charstrings(font: Font, tolerance: float = 1.0):
-    charstrings = {}
+    qu2cu_charstrings = {}
     failed = []
     glyph_set = font.getGlyphSet()
 
@@ -200,15 +193,12 @@ def get_qu2cu_charstrings(font: Font, tolerance: float = 1.0):
         qu2cu_pen = Qu2CuPen(t2_pen, max_err=tolerance, all_cubic=True, reverse_direction=True)
         try:
             glyph_set[k].draw(qu2cu_pen)
-            charstrings[k] = t2_pen.getCharString()
+            qu2cu_charstrings[k] = t2_pen.getCharString()
         except NotImplementedError as e:
             generic_warning_message(f"{k}: {e}")
-            qu2cu_pen.all_cubic = False
-            glyph_set[k].draw(qu2cu_pen)
-            charstrings[k] = t2_pen.getCharString()
             failed.append(k)
 
-    return failed, charstrings
+    return failed, qu2cu_charstrings
 
 
 def get_makeotf_charstrings(font: Font) -> dict:
