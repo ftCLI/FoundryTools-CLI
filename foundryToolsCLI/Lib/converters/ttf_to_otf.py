@@ -70,7 +70,7 @@ class TTF2OTFRunner(object):
                 failed, charstrings = get_qu2cu_charstrings(font=source_font, tolerance=tolerance)
 
                 if len(failed) > 0:
-                    generic_info_message(f"Getting {len(failed)} charstrings...")
+                    generic_info_message(f"Retrying to get {len(failed)} charstrings...")
                     t2_ttf2otf_converter = TrueTypeToCFF(font=source_font)
                     t2_charstrings = get_t2_charstrings(font=source_font)
                     t2_otf_font: Font = t2_ttf2otf_converter.run(charstrings=t2_charstrings)
@@ -80,7 +80,7 @@ class TTF2OTFRunner(object):
 
                     for c in failed:
                         try:
-                            generic_info_message(f"Retrying to get charstring: {c}", nl=False)
+                            generic_info_message(f"{c}", nl=False)
                             charstrings[c] = fallback_charstrings[c]
                             click.secho(f" -> {click.style('OK', fg='green')}")
                         except Exception as e:
