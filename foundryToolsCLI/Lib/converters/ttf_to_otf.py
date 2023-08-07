@@ -82,9 +82,9 @@ class TTF2OTFRunner(object):
                         try:
                             generic_info_message(f"Retrying to get charstring: {c}", nl=False)
                             charstrings[c] = fallback_charstrings[c]
-                            click.secho(" -> OK", fg="green")
+                            click.secho(f" -> {click.style('OK', fg='green')}")
                         except Exception as e:
-                            generic_error_message(f"Failed to get charstring: {c}")
+                            click.secho(f" -> {click.style('FAIL', fg='red')} ({e})")
                             generic_error_message(e)
 
                 ttf2otf_converter = TrueTypeToCFF(font=source_font)
