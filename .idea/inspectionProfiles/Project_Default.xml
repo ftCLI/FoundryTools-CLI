@@ -1,0 +1,66 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPep8NamingInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="ignoredErrors">
+        <list>
+          <option value="N803" />
+          <option value="N806" />
+          <option value="N802" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="ftCLI.Lib.tables.OS_2.TableOS2.ulCodePageRange1" />
+          <option value="ftCLI.Lib.tables.OS_2.TableOS2.ulCodePageRange2" />
+          <option value="ftCLI.Lib.tables.hhea.TableHhea.caretOffset" />
+          <option value="ftCLI.Lib.tables.post.TablePost.italicAngle" />
+          <option value="ftcli.Lib.tables.OS_2.TableOS2.fsSelection" />
+          <option value="ftcli.Lib.tables.OS_2.TableOS2.fsType" />
+          <option value="ftcli.Lib.tables.OS_2.TableOS2.version" />
+          <option value="ftCLI.Lib.tables.OS_2.TableOS2.version" />
+          <option value="ftCLI.Lib.tables.OS_2.TableOS2.fsSelection" />
+          <option value="ftCLI.Lib.tables.OS_2.TableOS2.fsType" />
+          <option value="ftCLI.Lib.tables.head.TableHead.unitsPerEm" />
+          <option value="ftCLI.Lib.tables.hhea.TableHhea.caretSlopeRise" />
+          <option value="ftCLI.Lib.tables.hhea.TableHhea.caretSlopeRun" />
+          <option value="ftCLI.Lib.tables.head.TableHead.macStyle" />
+          <option value="ftCLI.Lib.tables.head.TableHead.fontRevision" />
+          <option value="ftCLI.Lib.tables.OS_2.TableOS2.achVendID" />
+          <option value="ftCLI.Lib.tables.head.TableHead.created" />
+          <option value="ftCLI.Lib.tables.OS_2.TableOS2.usWidthClass" />
+          <option value="ftCLI.Lib.tables.OS_2.TableOS2.usWeightClass" />
+          <option value="ftCLI.Lib.tables.post.TablePost.underlinePosition" />
+          <option value="ftCLI.Lib.tables.post.TablePost.underlineThickness" />
+          <option value="ftCLI.Lib.tables.OS_2.TableOS2.sTypoAscender" />
+          <option value="ftCLI.Lib.tables.OS_2.TableOS2.sTypoDescender" />
+          <option value="ftCLI.Lib.tables.OS_2.TableOS2.sTypoLineGap" />
+          <option value="ftCLI.Lib.tables.OS_2.TableOS2.usWinAscent" />
+          <option value="ftCLI.Lib.tables.OS_2.TableOS2.usWinDescent" />
+          <option value="ftCLI.Lib.tables.post.TablePost.isFixedPitch" />
+          <option value="ftCLI.Lib.tables.post.TablePost.minMemType42" />
+          <option value="ftCLI.Lib.tables.post.TablePost.maxMemType42" />
+          <option value="ftCLI.Lib.tables.post.TablePost.minMemType1" />
+          <option value="ftCLI.Lib.tables.post.TablePost.maxMemType1" />
+          <option value="ftCLI.Lib.tables.hhea.TableHhea.lineGap" />
+          <option value="foundryToolsCLI.Lib.tables.OS_2.TableOS2.fsSelection" />
+          <option value="foundryToolsCLI.Lib.tables.OS_2.TableOS2.version" />
+          <option value="foundryToolsCLI.Lib.tables.OS_2.TableOS2.fsType" />
+          <option value="foundryToolsCLI.Lib.tables.OS_2.TableOS2.sxHeight" />
+          <option value="foundryToolsCLI.Lib.tables.OS_2.TableOS2.sCapHeight" />
+          <option value="foundryToolsCLI.Lib.tables.post.TablePost.underlinePosition" />
+          <option value="foundryToolsCLI.Lib.tables.post.TablePost.underlineThickness" />
+          <option value="foundryToolsCLI.Lib.tables.post.TablePost.*" />
+          <option value="foundryToolsCLI.Lib.tables.hhea.TableHhea.caretOffset" />
+          <option value="foundryToolsCLI.Lib.tables.OS_2.TableOS2.ulCodePageRange1" />
+          <option value="foundryToolsCLI.Lib.tables.OS_2.TableOS2.ulCodePageRange2" />
+          <option value="foundryToolsCLI.Lib.tables.OS_2.TableOS2.achVendID" />
+          <option value="foundryToolsCLI.Lib.tables.head.TableHead.fontRevision" />
+          <option value="fontTools.ttLib" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
