@@ -34,6 +34,9 @@ FoundryTools-CLI releases are available on the Python Package Index (PyPI), so i
 If you would like to contribute to the development, you can clone the repository from GitHub, install the package in
 'editable' mode and modify the source code in place. We strongly recommend using a virtual environment.
 
+**IMPORTANT**: If you have Python 2.x installed in your system, you may have to use `python3` (instead of `python`) in
+the commands above.
+
     # clone the repository:
     git clone https://github.com/ftCLI/foundrytools-cli.git
     cd foundrytools-cli
@@ -49,6 +52,7 @@ If you would like to contribute to the development, you can clone the repository
     
     # install in 'editable' mode
     python -m pip install -e .
+
 
 ## Documentation
 FoundryTools-CLI is a Terminal app where commands are logically organized into subcommands.
