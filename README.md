@@ -35,7 +35,7 @@ If you would like to contribute to the development, you can clone the repository
 'editable' mode and modify the source code in place. We strongly recommend using a virtual environment.
 
 **IMPORTANT**: If you have Python 2.x installed in your system, you may have to use `python3` (instead of `python`) in
-the commands above.
+the commands below.
 
     # clone the repository:
     git clone https://github.com/ftCLI/foundrytools-cli.git
