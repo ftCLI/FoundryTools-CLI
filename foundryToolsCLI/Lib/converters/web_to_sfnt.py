@@ -19,11 +19,11 @@ class WF2FTRunner(object):
 
         for count, font in enumerate(fonts, start=1):
             t = time.time()
-            print()
-            generic_info_message(f"Converting file {count} of {len(fonts)}")
 
             try:
-                file = font.reader.file.name
+                file = Path(font.reader.file.name)
+                print()
+                generic_info_message(f"Converting file {count} of {len(fonts): {file.name}}")
 
                 if not font.flavor:
                     continue

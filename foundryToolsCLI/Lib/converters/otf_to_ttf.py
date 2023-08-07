@@ -25,9 +25,8 @@ class OTF2TTFRunner(object):
 
             try:
                 print()
-                generic_info_message(f"Converting file {count} of {len(source_fonts)}")
-
                 file = Path(source_font.reader.file.name)
+                generic_info_message(f"Converting file {count} of {len(source_fonts)}: {file.name}")
 
                 # If the source font is a WOFF or WOFF2, we add a suffix to avoid unwanted overwriting
                 if source_font.flavor is None:
