@@ -18,8 +18,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     file_not_changed_message,
 )
 
-CWD = Path.cwd()
-
 tbl_os2 = click.Group("subcommands")
 
 
@@ -48,13 +46,13 @@ def recalc_x_height(input_path: Path, recalc_timestamp: bool = False, output_dir
             current = os_2.sxHeight
             x_height = font.recalc_x_height()
             if current == x_height:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
                 continue
 
             os_2.set_x_height(x_height)
             output_file = Path(makeOutputFileName(input=file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
 
         except Exception as e:
             generic_error_message(e)
@@ -90,13 +88,13 @@ def recalc_cap_height(
             current = os_2.sCapHeight
             cap_height = font.recalc_cap_height()
             if current == cap_height:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
                 continue
 
             os_2.set_cap_height(cap_height)
             output_file = Path(makeOutputFileName(input=file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
 
         except Exception as e:
             generic_error_message(e)
@@ -133,13 +131,13 @@ def recalc_max_context(
             current = os_2.usMaxContex
             max_context = font.recalc_max_context()
             if current == max_context:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
                 continue
 
             os_2.usMaxContext = max_context
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
 
         except Exception as e:
             generic_error_message(e)
@@ -180,9 +178,9 @@ def recalc_ranges(input_path: Path, output_dir: Path = None, recalc_timestamp: b
                 os_2.setUnicodeRanges(bits=new_unicode_ranges)
                 os_2.set_codepage_ranges(codepage_ranges=new_codepage_ranges)
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
             temp_font.close()
             os.close(temp_otf_fd)
@@ -399,9 +397,9 @@ def set_flags(
 
             if head_copy.compile(font) != head.compile(font) or os2_copy.compile(font) != os2.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -438,7 +436,7 @@ def set_version(
 
             if target_version <= current_version:
                 generic_warning_message(f"Current OS/2 table version is already {current_version}")
-                file_not_changed_message(file=file.relative_to(CWD))
+                file_not_changed_message(file)
                 continue
 
             setattr(os_2, "version", target_version)
@@ -457,7 +455,7 @@ def set_version(
             # Return if upgrading from version 0 to version 1.
             if target_version == 1:
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
                 continue
 
             # Upgrading from version 1 requires creating sxHeight, sCapHeight, usDefaultChar, usBreakChar and
@@ -480,7 +478,7 @@ def set_version(
                     setattr(os_2, "fsSelection", unset_nth_bit(os_2.fsSelection, b))
 
             font.save(output_file)
-            file_saved_message(file=output_file.relative_to(CWD))
+            file_saved_message(output_file)
 
         except Exception as e:
             generic_error_message(e)
@@ -512,13 +510,13 @@ def set_weight(
             os_2: TableOS2 = font["OS/2"]
 
             if weight == os_2.get_weight_class():
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
                 continue
 
             os_2.set_weight_class(weight)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
 
         except Exception as e:
             generic_error_message(e)
@@ -550,13 +548,13 @@ def set_width(
             os_2: TableOS2 = font["OS/2"]
 
             if width == os_2.get_width_class():
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
                 continue
 
             os_2.set_width_class(width)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
 
         except Exception as e:
             generic_error_message(e)

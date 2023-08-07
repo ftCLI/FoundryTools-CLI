@@ -19,8 +19,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     generic_warning_message,
 )
 
-CWD = Path.cwd()
-
 
 class TTF2OTFRunner(object):
     def __init__(self):
@@ -104,7 +102,7 @@ class TTF2OTFRunner(object):
                     os.remove(temp_source_file)
 
                 generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
                 converted_files_count += 1
 
             except Exception as e:

@@ -26,7 +26,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_path_argument,
 )
 
-CWD = Path.cwd()
 assistant = click.Group("subcommands")
 
 
@@ -58,9 +57,9 @@ def init(input_path, quiet=False):
 
         if styles_mapping_overwrite is True:
             styles_mapping.reset_defaults()
-            file_saved_message(styles_mapping_file.relative_to(CWD))
+            file_saved_message(styles_mapping_file)
         else:
-            file_not_changed_message(styles_mapping_file.relative_to(CWD))
+            file_not_changed_message(styles_mapping_file)
 
         fonts_data_file = get_fonts_data_path(input_path)
         fonts_data = FontsData(fonts_data_file)
@@ -70,9 +69,9 @@ def init(input_path, quiet=False):
             fonts_data_overwrite = True
         if fonts_data_overwrite is True:
             fonts_data.reset_data(styles_mapping=styles_mapping)
-            file_saved_message(fonts_data_file.relative_to(CWD))
+            file_saved_message(fonts_data_file)
         else:
-            file_not_changed_message(fonts_data_file.relative_to(CWD))
+            file_not_changed_message(fonts_data_file)
     except Exception as e:
         generic_error_message(e)
 
@@ -312,7 +311,7 @@ def commit(
             if font_has_changed:
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
                 file_not_changed_message(file)
 

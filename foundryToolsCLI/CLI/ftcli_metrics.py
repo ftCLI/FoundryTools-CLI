@@ -14,7 +14,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     file_not_changed_message,
 )
 
-CWD = Path.cwd()
 vertical_metrics_tools = click.Group("subcommands")
 
 
@@ -58,9 +57,9 @@ def set_linegap(
             if hhea_modified or os2_modified:
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -169,10 +168,10 @@ def align(
             if hhea_modified or os2_modified:
                 output_file = Path(makeOutputFileName(font.reader.file.name, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
 
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -285,9 +284,9 @@ def copy_metrics(
             if hhea_modified or os2_modified:
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)

@@ -17,7 +17,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     generic_error_message,
 )
 
-CWD = Path.cwd()
 font_converter = click.Group("subcommands")
 
 

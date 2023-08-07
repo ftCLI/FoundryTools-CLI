@@ -16,8 +16,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     generic_error_message,
 )
 
-CWD = Path.cwd()
-
 
 @click.command()
 @add_file_or_path_argument()
@@ -105,9 +103,9 @@ def cli(input_path: Path, recalc_timestamp: bool = True, output_dir: Path = None
 
             if hhea_table_copy.compile(font) != hhea_table.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)

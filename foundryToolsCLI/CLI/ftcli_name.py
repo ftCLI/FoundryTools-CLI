@@ -15,7 +15,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     generic_error_message,
 )
 
-CWD = Path.cwd()
 tbl_name = click.Group("subcommands")
 
 
@@ -90,9 +89,9 @@ def set_name(
             if name_table_copy.compile(font) != name_table.compile(font):
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -173,9 +172,9 @@ def del_names(
             if name_table_copy.compile(font) != name_table.compile(font):
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -262,9 +261,9 @@ def find_replace(
             if name_table_copy.compile(font) != name_table.compile(font):
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -316,9 +315,9 @@ def del_mac_names(
             if name_table_copy.compile(font) != name_table.compile(font):
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -405,9 +404,9 @@ def append(
             if name_table.compile(font) != name_table_copy.compile(font):
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)

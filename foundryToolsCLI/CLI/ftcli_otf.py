@@ -16,7 +16,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     file_not_changed_message,
 )
 
-CWD = Path.cwd()
 otf_tools = click.Group("subcommands")
 
 
@@ -117,7 +116,7 @@ def autohint(
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             temp_otf_file = Path(makeOutputFileName(output_file, extension=".otf", suffix="_tmp", overWrite=True))
 
-            generic_info_message(f"Auto-hinting file {count} of {len(fonts)}: {file.relative_to(CWD)} ")
+            generic_info_message(f"Auto-hinting file {count} of {len(fonts)}: {file.name} ")
             original_timestamp = font.modified_timestamp
 
             flavor = font.flavor
@@ -168,7 +167,7 @@ def autohint(
             hinted_font.close()
             temp_otf_file.unlink(missing_ok=True)
             generic_info_message(f"Done in {round(time.time() - t, 3)}")
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
 
         except Exception as e:
             generic_error_message(e)
@@ -235,7 +234,7 @@ def dehint(
                 file = Path(font.reader.file.name)
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             except Exception as e:
                 generic_error_message(e)
             font.close()
@@ -278,7 +277,7 @@ def dehint(
                 font.save(output_file)
                 font.close()
 
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
             temp_cff_file.unlink()
             temp_otf_file.unlink(missing_ok=True)
 
@@ -330,7 +329,7 @@ def fix_contours(
             if subroutinize:
                 font.otf_subroutinize()
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
 
         except Exception as e:
             generic_error_message(e)
@@ -365,9 +364,9 @@ def fix_version(input_path: Path, recalc_timestamp: bool = False, output_dir: Pa
             if cff_table_copy.compile(font) != cff_table.compile(font):
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
         except Exception as e:
             generic_error_message(e)
         finally:
@@ -392,7 +391,7 @@ def subr(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = Fal
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
         except Exception as e:
             generic_error_message(e)
         finally:
@@ -417,7 +416,7 @@ def desubr(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = F
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
         except Exception as e:
             generic_error_message(e)
         finally:
@@ -474,7 +473,7 @@ def check_outlines(
                 font.flavor = flavor
                 font.save(output_file)
 
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
 
         except Exception as e:
             generic_error_message(e)

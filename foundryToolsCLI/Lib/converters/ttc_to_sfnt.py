@@ -7,8 +7,6 @@ from fontTools.ttLib import TTCollection
 from foundryToolsCLI.Lib.converters.options import TTCollectionToSFNTOptions
 from foundryToolsCLI.Lib.utils.click_tools import generic_info_message, file_saved_message, generic_error_message
 
-CWD = Path.cwd()
-
 
 class TTC2SFNTRunner(object):
     def __init__(self):
@@ -41,7 +39,7 @@ class TTC2SFNTRunner(object):
                     font.save(output_file)
                     font.close()
                     generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
-                    file_saved_message(output_file.relative_to(CWD))
+                    file_saved_message(output_file)
                     extracted_files += 1
 
             except Exception as e:

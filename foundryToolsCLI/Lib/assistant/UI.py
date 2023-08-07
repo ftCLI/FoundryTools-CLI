@@ -22,15 +22,13 @@ from foundryToolsCLI.Lib.utils.cli_tools import (
 )
 from foundryToolsCLI.Lib.utils.click_tools import generic_error_message, no_valid_fonts_message, OptionalParamType
 
-CWD = Path.cwd()
-
 
 class AssistantUI(object):
     def __init__(self, input_path: Path):
         self.input_path = input_path
 
         if len(self.fonts_list) == 0:
-            no_valid_fonts_message(input_path.relative_to(CWD))
+            no_valid_fonts_message(input_path)
             sys.exit()
 
         self.styles_mapping = StylesMapping(get_style_mapping_path(self.input_path))

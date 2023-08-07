@@ -15,8 +15,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     generic_error_message,
 )
 
-CWD = Path.cwd()
-
 
 class VariableToStatic(object):
     def __init__(self):
@@ -86,7 +84,7 @@ class VariableToStatic(object):
             static_instance.close()
 
             generic_info_message(f"Done in {round(time.time() - t, 3)} seconds")
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
 
         variable_font.close()
 

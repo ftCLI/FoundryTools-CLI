@@ -18,7 +18,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     generic_info_message,
 )
 
-CWD = Path.cwd()
 utils = click.Group("subcommands")
 
 
@@ -44,9 +43,9 @@ def add_dsig(input_path: Path, output_dir: Path = None, recalc_timestamp: bool =
                 font.add_dummy_dsig()
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
         except Exception as e:
             generic_error_message(e)
         finally:
@@ -91,9 +90,9 @@ def del_table(
             if removed_tables_counter > 0:
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -168,7 +167,8 @@ def font_organizer(
             file.rename(target=target)
 
             generic_info_message(
-                f"{file.relative_to(CWD).name} {click.style('-->', fg='bright_magenta')} {target.relative_to(CWD)}"
+                f"{file.relative_to(input_path).name} {click.style('-->', fg='bright_magenta')} "
+                f"{target.relative_to(input_path)}"
             )
 
         except Exception as e:
@@ -227,12 +227,12 @@ def font_renamer(input_path: Path, source: str):
                 )
                 file.rename(output_file)
                 generic_success_message(
-                    f"{file.relative_to(CWD)} {click.style('-->', fg='bright_magenta')} {output_file.relative_to(CWD)}"
+                    f"{file.name} {click.style('-->', fg='bright_magenta')} {output_file.name}"
                 )
             except Exception as e:
                 generic_error_message(e)
         else:
-            file_not_changed_message(file.relative_to(CWD))
+            file_not_changed_message(file)
 
         font.close()
 
@@ -326,9 +326,9 @@ def set_revision(
 
             if has_changed:
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)

@@ -14,7 +14,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     file_not_changed_message,
 )
 
-CWD = Path.cwd()
 tbl_cff = click.Group("subcommands")
 
 
@@ -56,9 +55,9 @@ def del_names(
             if cff_table.compile(font) != cff_table_copy.compile(font):
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -114,9 +113,9 @@ def set_names(
             if cff_table.compile(font) != cff_table_copy.compile(font):
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -166,9 +165,9 @@ def find_replace(
             if cff_table.compile(font) != cff_table_copy.compile(font):
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)

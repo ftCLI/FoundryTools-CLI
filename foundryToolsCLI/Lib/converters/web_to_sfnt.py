@@ -7,8 +7,6 @@ from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.converters.options import WebToSFNTOptions
 from foundryToolsCLI.Lib.utils.click_tools import generic_info_message, generic_error_message, file_saved_message
 
-CWD = Path.cwd()
-
 
 class WF2FTRunner(object):
     def __init__(self):
@@ -49,7 +47,7 @@ class WF2FTRunner(object):
 
                 font.save(output_file)
                 generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
                 converted_files_count += 1
 
             except Exception as e:

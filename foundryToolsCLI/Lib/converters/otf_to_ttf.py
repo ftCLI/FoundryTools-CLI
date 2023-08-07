@@ -10,8 +10,6 @@ from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.converters.options import CFFToTrueTypeOptions
 from foundryToolsCLI.Lib.utils.click_tools import generic_info_message, file_saved_message, generic_error_message
 
-CWD = Path.cwd()
-
 
 class OTF2TTFRunner(object):
     def __init__(self):
@@ -57,7 +55,7 @@ class OTF2TTFRunner(object):
                 ttf_font.close()
 
                 generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
                 converted_files_count += 1
 
             except Exception as e:

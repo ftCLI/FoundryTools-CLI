@@ -21,7 +21,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     generic_info_message,
 )
 
-CWD = Path.cwd()
 fix_fonts = click.Group("subcommands")
 
 
@@ -83,10 +82,10 @@ def monospace(input_path: Path, output_dir: Path = None, recalc_timestamp: bool 
 
             if post_table_changed or os2_table_changed or cff_table_changed:
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
 
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -125,9 +124,9 @@ def nbsp_width(input_path: Path, output_dir: Path = None, recalc_timestamp: bool
 
             if hmtx_table_copy.compile(font) != hmtx_table.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -273,11 +272,11 @@ def italic_angle(
                 and italic_bits_ok
                 and oblique_bit_ok
             ):
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
                 continue
 
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
 
         except Exception as e:
             generic_error_message(e)
@@ -313,9 +312,9 @@ def nbsp_missing(input_path: Path, output_dir: Path = None, recalc_timestamp: bo
 
             if cmap_table_copy.compile(font) != cmap_table.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -388,9 +387,9 @@ def decompose_transformed(
 
             if glyph_table_copy.compile(font) != glyph_table.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -444,9 +443,9 @@ def duplicate_components(
 
             if glyph_table_copy.compile(font) != glyph_table.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -504,9 +503,9 @@ def kern_table(input_path: Path, output_dir: Path = None, recalc_timestamp: bool
 
             if kern_table_copy.compile(font) != kern.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)
@@ -540,10 +539,10 @@ def strip_names(input_path: Path, output_dir: Path = None, recalc_timestamp: boo
 
             if name_table_copy.compile(font) != name_table.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
 
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
 
         except Exception as e:
             generic_error_message(e)

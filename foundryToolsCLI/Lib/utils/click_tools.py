@@ -3,8 +3,6 @@ from pathlib import Path
 
 import click
 
-CWD = Path.cwd()
-
 
 def add_options(options):
     def _add_options(func):
@@ -72,7 +70,7 @@ def add_common_options():
 
 def file_overwrite_prompt(input_file: Path) -> bool:
     return click.confirm(
-        f"{click.style(input_file.relative_to(CWD), fg='yellow', bold=True)} already exists. "
+        f"{click.style(input_file, fg='yellow', bold=True)} already exists. "
         f"Do you want to overwrite it?"
     )
 

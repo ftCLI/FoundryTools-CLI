@@ -19,7 +19,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     generic_info_message,
 )
 
-CWD = Path.cwd()
 ttf_tools = click.Group("subcommands")
 
 
@@ -59,7 +58,7 @@ def autohint(
                 hinted_font.set_modified_timestamp(font.modified_timestamp)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             hinted_font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
         except Exception as e:
             generic_error_message(e)
         finally:
@@ -89,7 +88,7 @@ def decompose(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
         except Exception as e:
             generic_error_message(e)
         finally:
@@ -121,7 +120,7 @@ def dehint(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
         except Exception as e:
             generic_error_message(e)
         finally:
@@ -179,7 +178,7 @@ def fix_contours(
             generic_info_message(f"Checking file {file.name}")
             font.ttf_fix_contours(min_area=min_area, remove_hinting=remove_hinting, verbose=verbose)
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
 
         except Exception as e:
             generic_error_message(e)
@@ -230,7 +229,7 @@ def remove_overlaps(
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             font.ttf_remove_overlaps(remove_hinting=remove_hinting, ignore_errors=ignore_errors)
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
         except Exception as e:
             generic_error_message(e)
         finally:
@@ -279,7 +278,7 @@ def scale_upm(
 
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file.relative_to(CWD))
+            file_saved_message(output_file)
 
         except Exception as e:
             generic_error_message(e)
@@ -332,9 +331,9 @@ def rename_glyph(
             if modified:
                 font.setGlyphOrder(glyph_names)
                 font.save(output_file)
-                file_saved_message(output_file.relative_to(CWD))
+                file_saved_message(output_file)
             else:
-                file_not_changed_message(file.relative_to(CWD))
+                file_not_changed_message(file)
         except Exception as e:
             generic_error_message(e)
         finally:
