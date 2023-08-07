@@ -13,7 +13,7 @@ from foundryToolsCLI.Lib.utils.click_tools import generic_info_message, generic_
 _TTGlyphMapping = Mapping[str, ttFont._TTGlyph]
 
 
-def remove_tiny_paths(path: pathops.Path, glyph_name, min_area: int = 25):
+def remove_tiny_paths(path: pathops.Path, glyph_name, min_area: int = 25, verbose: bool = True):
     """
     Removes tiny paths from a pathops.Path.
 
@@ -27,7 +27,8 @@ def remove_tiny_paths(path: pathops.Path, glyph_name, min_area: int = 25):
         if contour.area >= min_area:
             cleaned_path.addPath(contour)
         else:
-            generic_info_message(f"tiny path removed from glyph {glyph_name}")
+            if verbose:
+                generic_info_message(f"tiny path removed from glyph {glyph_name}")
     return cleaned_path
 
 

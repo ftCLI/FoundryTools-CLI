@@ -34,7 +34,7 @@ def correct_otf_contours(font: TTFont, min_area: int = 25, verbose: bool = False
         path_2 = simplify_path(path=path_2, glyph_name=k, clockwise=False)
 
         if min_area > 0:
-            path_2 = remove_tiny_paths(path=path_2, glyph_name=k, min_area=min_area)
+            path_2 = remove_tiny_paths(path=path_2, glyph_name=k, min_area=min_area, verbose=verbose)
 
         if not same_path(path_1=path_1, path_2=path_2):
             modified.add(k)
