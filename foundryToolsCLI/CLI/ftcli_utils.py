@@ -226,9 +226,7 @@ def font_renamer(input_path: Path, source: str):
                     )
                 )
                 file.rename(output_file)
-                generic_success_message(
-                    f"{file.name} {click.style('-->', fg='bright_magenta')} {output_file.name}"
-                )
+                generic_success_message(f"{file.name} {click.style('-->', fg='bright_magenta')} {output_file.name}")
             except Exception as e:
                 generic_error_message(e)
         else:
