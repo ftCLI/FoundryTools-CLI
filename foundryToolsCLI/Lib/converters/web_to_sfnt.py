@@ -23,7 +23,7 @@ class WF2FTRunner(object):
             try:
                 file = Path(font.reader.file.name)
                 print()
-                generic_info_message(f"Converting file {count} of {len(fonts): {file.name}}")
+                generic_info_message(f"Converting file {count} of {len(fonts)}: {file.name}")
 
                 if not font.flavor:
                     continue
