@@ -15,7 +15,7 @@ The command line interface is built with [click](https://github.com/pallets/clic
 [rich](https://github.com/Textualize/rich).
 
 Even if not directly imported to keep the footprint as small as possible, portions of code have been copied from
-[fontbakery](https://github.com/googlefonts/fontbakery).
+[fontbakery](https://github.com/googlefonts/fontbakery) and [font-line](https://github.com/source-foundry/font-line).
 
 ## Installation
 FoundryTools-CLI requires Python 3.9 or later.
