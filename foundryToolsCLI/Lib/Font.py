@@ -83,6 +83,16 @@ class Font(TTFont):
         return self.flavor == "woff2"
 
     @property
+    def is_web_font(self) -> bool:
+        """
+        This function checks if the font is in WOFF/WOFF2 format.
+
+        :return: A boolean value indicating whether the "flavor" attribute of the object is None or not.
+        If it is None, the function will return False, otherwise it will return True.
+        """
+        return self.flavor is not None
+
+    @property
     def is_sfnt(self) -> bool:
         """
         This function checks if the font is in SFNT format.
