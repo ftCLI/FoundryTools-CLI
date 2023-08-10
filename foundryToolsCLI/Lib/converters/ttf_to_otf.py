@@ -90,12 +90,11 @@ class TTF2OTFRunner(object):
                 ttf2otf_converter = TrueTypeToCFF(font=source_font)
                 cff_font: Font = ttf2otf_converter.run(charstrings=charstrings)
 
-                cff_font.otf_fix_contours(min_area=25, verbose=False)
-
                 if self.options.subroutinize:
                     cff_font.otf_subroutinize()
 
                 cff_font.flavor = flavor
+                cff_font.otf_fix_contours(min_area=25, verbose=False)
                 cff_font.save(output_file)
                 if os.path.exists(temp_source_file):
                     os.close(temp_source_fd)
