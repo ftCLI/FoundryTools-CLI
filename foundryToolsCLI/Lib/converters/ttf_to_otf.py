@@ -67,7 +67,7 @@ class TTF2OTFRunner(object):
 
                 if len(failed) > 0:
                     generic_info_message(f"Retrying to get {len(failed)} charstrings...")
-                    fallback_charstrings = get_fallback_charstrings(font=source_font)
+                    fallback_charstrings = get_fallback_charstrings(font=source_font, tolerance=tolerance)
 
                     for c in failed:
                         try:
@@ -82,6 +82,7 @@ class TTF2OTFRunner(object):
                 cff_font: Font = ttf2otf_converter.run(charstrings=charstrings)
 
                 # We need to save the file here, otherwise the script won't correctly compile cff.topDictIndex values
+                # TODO: this is a workaround. Try to find a solution
                 cff_font.save(output_file)
                 cff_font = Font(output_file, recalcTimestamp=False)
                 cff_font.otf_fix_contours(min_area=25, verbose=False)
@@ -217,11 +218,11 @@ def get_t2_charstrings(font: Font) -> dict:
     return t2_charstrings
 
 
-def get_fallback_charstrings(font: Font) -> dict:
+def get_fallback_charstrings(font: Font, tolerance: float = 1.0) -> dict:
     ttf2otf_converter = TrueTypeToCFF(font=font)
     t2_charstrings = get_t2_charstrings(font=font)
     otf_font: Font = ttf2otf_converter.run(charstrings=t2_charstrings)
     otf_2_ttf_converter = CFFToTrueType(font=otf_font)
     otf_font = otf_2_ttf_converter.run()
-    _, fallback_charstrings = get_qu2cu_charstrings(otf_font)
+    _, fallback_charstrings = get_qu2cu_charstrings(otf_font, tolerance=tolerance)
     return fallback_charstrings
