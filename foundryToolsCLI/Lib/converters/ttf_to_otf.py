@@ -82,6 +82,7 @@ class TTF2OTFRunner(object):
                 ttf2otf_converter = TrueTypeToCFF(font=source_font)
                 cff_font: Font = ttf2otf_converter.run(charstrings=charstrings)
 
+                # We need to save the file here, otherwise the script won't correctly compile cff.topDictIndex values
                 cff_font.save(output_file)
                 cff_font = Font(output_file, recalcTimestamp=False)
                 cff_font.otf_fix_contours(min_area=25, verbose=False)
