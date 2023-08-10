@@ -6,6 +6,7 @@ from pathlib import Path
 from beziers.line import Line
 from beziers.path import BezierPath
 from beziers.point import Point
+from cffsubr import subroutinize, desubroutinize
 from fontTools.misc.psCharStrings import T2CharString
 from fontTools.misc.timeTools import timestampToString
 from fontTools.pens.boundsPen import BoundsPen
@@ -456,8 +457,6 @@ class Font(TTFont):
         if not self.is_otf:
             return
 
-        from cffsubr import desubroutinize
-
         flavor = self.flavor
         self.flavor = None
         desubroutinize(otf=self)
@@ -469,8 +468,6 @@ class Font(TTFont):
         """
         if not self.is_otf:
             return
-
-        from cffsubr import subroutinize
 
         flavor = self.flavor
         self.flavor = None
