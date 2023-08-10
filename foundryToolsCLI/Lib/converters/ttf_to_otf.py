@@ -57,11 +57,8 @@ class TTF2OTFRunner(object):
                     )
                 )
 
-                temp_source_fd, temp_source_file = tempfile.mkstemp(suffix=".ttf")
                 if self.options.scale_upm:
                     source_font.ttf_scale_upem(units_per_em=self.options.scale_upm)
-                    source_font.save(temp_source_file)
-                    source_font = Font(temp_source_file, recalcTimestamp=self.options.recalc_timestamp)
 
                 # Decomponentize the source font
                 source_font.ttf_decomponentize()
@@ -90,15 +87,13 @@ class TTF2OTFRunner(object):
                 ttf2otf_converter = TrueTypeToCFF(font=source_font)
                 cff_font: Font = ttf2otf_converter.run(charstrings=charstrings)
 
+                cff_font.save(output_file)
+                cff_font = Font(output_file, recalcTimestamp=False)
+                cff_font.otf_fix_contours(min_area=25, verbose=False)
                 if self.options.subroutinize:
                     cff_font.otf_subroutinize()
-
-                cff_font.flavor = flavor
-                cff_font.otf_fix_contours(min_area=25, verbose=False)
                 cff_font.save(output_file)
-                if os.path.exists(temp_source_file):
-                    os.close(temp_source_fd)
-                    os.remove(temp_source_file)
+                cff_font.close()
 
                 generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
                 file_saved_message(output_file)
