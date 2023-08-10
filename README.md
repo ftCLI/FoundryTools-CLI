@@ -24,6 +24,9 @@ FoundryTools-CLI requires Python 3.9 or later.
 it, and an attempt of installation would probably fail. Since macOS users successfully installed FoundryTools-CLI on
 Python 3.11, requirements have been loosened up.
 
+**IMPORTANT**: If you have Python 2.x installed in your system, you may have to use `python3` (instead of `python`) in
+the commands below.
+
 ### pip
 FoundryTools-CLI releases are available on the Python Package Index (PyPI), so it can be installed with
 [pip](https://pip.pypa.io/):
@@ -33,9 +36,6 @@ FoundryTools-CLI releases are available on the Python Package Index (PyPI), so i
 ### Editable mode
 If you would like to contribute to the development, you can clone the repository from GitHub, install the package in
 'editable' mode and modify the source code in place. We strongly recommend using a virtual environment.
-
-**IMPORTANT**: If you have Python 2.x installed in your system, you may have to use `python3` (instead of `python`) in
-the commands below.
 
     # clone the repository:
     git clone https://github.com/ftCLI/foundrytools-cli.git
