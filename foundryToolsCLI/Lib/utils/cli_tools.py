@@ -33,6 +33,8 @@ def get_fonts_in_path(
         allow_cff=True,
         allow_static=True,
         allow_variable=True,
+        allow_web_font=True,
+        allow_sfnt=True,
 ) -> list[Font]:
     files = []
     if input_path.is_file():
@@ -54,6 +56,10 @@ def get_fonts_in_path(
             if not allow_static and font.is_static:
                 continue
             if not allow_variable and font.is_variable:
+                continue
+            if not allow_sfnt and font.is_sfnt:
+                continue
+            if not allow_web_font and font.is_web_font:
                 continue
 
             fonts.append(font)
