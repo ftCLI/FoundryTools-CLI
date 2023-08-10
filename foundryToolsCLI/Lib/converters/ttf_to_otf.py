@@ -68,12 +68,7 @@ class TTF2OTFRunner(object):
 
                 if len(failed) > 0:
                     generic_info_message(f"Retrying to get {len(failed)} charstrings...")
-                    t2_ttf2otf_converter = TrueTypeToCFF(font=source_font)
-                    t2_charstrings = get_t2_charstrings(font=source_font)
-                    t2_otf_font: Font = t2_ttf2otf_converter.run(charstrings=t2_charstrings)
-                    t2_otf_2_ttf_converter = CFFToTrueType(font=t2_otf_font)
-                    t2_otf_2_ttf_font = t2_otf_2_ttf_converter.run()
-                    _, fallback_charstrings = get_qu2cu_charstrings(t2_otf_2_ttf_font)
+                    fallback_charstrings = get_fallback_charstrings(font=source_font)
 
                     for c in failed:
                         try:
@@ -220,3 +215,13 @@ def get_t2_charstrings(font: Font) -> dict:
         t2_charstrings[k] = charstring
 
     return t2_charstrings
+
+
+def get_fallback_charstrings(font: Font) -> dict:
+    ttf2otf_converter = TrueTypeToCFF(font=font)
+    t2_charstrings = get_t2_charstrings(font=font)
+    otf_font: Font = ttf2otf_converter.run(charstrings=t2_charstrings)
+    otf_2_ttf_converter = CFFToTrueType(font=otf_font)
+    otf_font = otf_2_ttf_converter.run()
+    _, fallback_charstrings = get_qu2cu_charstrings(otf_font)
+    return fallback_charstrings
