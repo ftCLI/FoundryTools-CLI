@@ -8,6 +8,7 @@ from foundryToolsCLI.Lib.Font import Font
 class VariableFont(Font):
     def __init__(self, file=None, recalcTimestamp=False):
         super().__init__(file=file, recalcTimestamp=recalcTimestamp)
+        assert "fvar" in self
 
     def get_axes(self) -> list[Axis]:
         return [axis for axis in self["fvar"].axes if axis.flags == 0]
@@ -18,14 +19,13 @@ class VariableFont(Font):
     def get_var_name_ids_to_delete(self) -> list:
         name_ids_to_delete = [25]
 
-        if "fvar" in self.keys():
-            for axis in self.get_axes():
-                name_ids_to_delete.append(axis.axisNameID)
-            for instance in self.get_instances():
-                if hasattr(instance, "subfamilyNameID"):
-                    name_ids_to_delete.append(instance.subfamilyNameID)
-                if hasattr(instance, "postscriptNameID"):
-                    name_ids_to_delete.append(instance.postscriptNameID)
+        for axis in self.get_axes():
+            name_ids_to_delete.append(axis.axisNameID)
+        for instance in self.get_instances():
+            if hasattr(instance, "subfamilyNameID"):
+                name_ids_to_delete.append(instance.subfamilyNameID)
+            if hasattr(instance, "postscriptNameID"):
+                name_ids_to_delete.append(instance.postscriptNameID)
 
         if "STAT" in self.keys():
             if hasattr(self["STAT"].table, "DesignAxisRecord"):

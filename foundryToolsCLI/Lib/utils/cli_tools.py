@@ -26,13 +26,13 @@ def get_variable_fonts_in_path(input_path: pathlib.Path, recalc_timestamp: bool 
 
 
 def get_fonts_in_path(
-    input_path: pathlib.Path,
-    recalc_timestamp: bool = False,
-    allow_extensions: list = None,
-    allow_ttf=True,
-    allow_cff=True,
-    allow_static=True,
-    allow_variable=True,
+        input_path: pathlib.Path,
+        recalc_timestamp: bool = False,
+        allow_extensions: list = None,
+        allow_ttf=True,
+        allow_cff=True,
+        allow_static=True,
+        allow_variable=True,
 ) -> list[Font]:
     files = []
     if input_path.is_file():
@@ -44,26 +44,19 @@ def get_fonts_in_path(
     for file in files:
         try:
             font = Font(file, recalcTimestamp=recalc_timestamp)
-            fonts.append(font)
 
-            if allow_extensions:
-                if font.get_real_extension() not in allow_extensions:
-                    fonts.remove(font)
-                    continue
-            if not allow_ttf:
-                if font.is_ttf:
-                    fonts.remove(font)
-                    continue
-            if not allow_cff:
-                if font.is_otf:
-                    fonts.remove(font)
-                    continue
-            if not allow_static:
-                if font.is_static:
-                    fonts.remove(font)
-            if not allow_variable:
-                if font.is_variable:
-                    fonts.remove(font)
+            if allow_extensions and font.get_real_extension() not in allow_extensions:
+                continue
+            if not allow_ttf and font.is_ttf:
+                continue
+            if not allow_cff and font.is_otf:
+                continue
+            if not allow_static and font.is_static:
+                continue
+            if not allow_variable and font.is_variable:
+                continue
+
+            fonts.append(font)
 
         except (TTLibError, Exception):
             pass
