@@ -63,19 +63,25 @@ class TTF2OTFRunner(object):
                 source_font.ttf_decomponentize()
 
                 tolerance = self.options.tolerance / 1000 * source_font["head"].unitsPerEm
-                failed, charstrings = get_qu2cu_charstrings(font=source_font, tolerance=tolerance)
+                failed, charstrings = get_qu2cu_charstrings(
+                    font=source_font, tolerance=tolerance, verbose=self.options.verbose
+                )
 
                 if len(failed) > 0:
-                    generic_info_message(f"Retrying to get {len(failed)} charstrings...")
-                    fallback_charstrings = get_fallback_charstrings(font=source_font, tolerance=tolerance)
+                    if self.options.verbose:
+                        generic_info_message(f"Retrying to get {len(failed)} charstrings...")
+                    fallback_charstrings = get_fallback_charstrings(
+                        font=source_font, tolerance=tolerance, verbose=self.options.verbose
+                    )
 
                     for c in failed:
                         try:
-                            generic_info_message(f"{c}", nl=False)
                             charstrings[c] = fallback_charstrings[c]
-                            click.secho(f" -> {click.style('OK', fg='green')}")
+                            if self.options.verbose:
+                                click.secho(f"{c} -> {click.style('OK', fg='green')}")
                         except Exception as e:
-                            click.secho(f" -> {click.style('FAIL', fg='red')} ({e})")
+                            if self.options.verbose:
+                                click.secho(f" -> {click.style('FAIL', fg='red')} ({e})")
                             generic_error_message(e)
 
                 ttf2otf_converter = TrueTypeToCFF(font=source_font)
@@ -171,7 +177,7 @@ def get_post_values(font: Font) -> dict:
     return post_info
 
 
-def get_qu2cu_charstrings(font: Font, tolerance: float = 1.0):
+def get_qu2cu_charstrings(font: Font, tolerance: float = 1.0, verbose: bool = True):
     qu2cu_charstrings = {}
     failed = []
     glyph_set = font.getGlyphSet()
@@ -183,7 +189,8 @@ def get_qu2cu_charstrings(font: Font, tolerance: float = 1.0):
             glyph_set[k].draw(qu2cu_pen)
             qu2cu_charstrings[k] = t2_pen.getCharString()
         except NotImplementedError as e:
-            generic_warning_message(f"{k}: {e}")
+            if verbose:
+                generic_warning_message(f"{k}: {e}")
             failed.append(k)
 
     return failed, qu2cu_charstrings
@@ -218,11 +225,11 @@ def get_t2_charstrings(font: Font) -> dict:
     return t2_charstrings
 
 
-def get_fallback_charstrings(font: Font, tolerance: float = 1.0) -> dict:
+def get_fallback_charstrings(font: Font, tolerance: float = 1.0, verbose: bool = True) -> dict:
     ttf2otf_converter = TrueTypeToCFF(font=font)
     t2_charstrings = get_t2_charstrings(font=font)
     otf_font: Font = ttf2otf_converter.run(charstrings=t2_charstrings)
     otf_2_ttf_converter = CFFToTrueType(font=otf_font)
     otf_font = otf_2_ttf_converter.run()
-    _, fallback_charstrings = get_qu2cu_charstrings(otf_font, tolerance=tolerance)
+    _, fallback_charstrings = get_qu2cu_charstrings(otf_font, tolerance=tolerance, verbose=verbose)
     return fallback_charstrings

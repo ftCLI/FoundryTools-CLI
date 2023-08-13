@@ -40,6 +40,7 @@ class TrueTypeToCFFOptions(Options):
         self.tolerance: float = 1.0
         self.subroutinize = True
         self.scale_upm = False
+        self.verbose = True
 
 
 class TTCollectionToSFNTOptions(Options):
