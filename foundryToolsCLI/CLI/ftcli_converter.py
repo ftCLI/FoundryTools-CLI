@@ -36,6 +36,7 @@ font_converter = click.Group("subcommands")
     "--scale-upm", type=click.IntRange(1000, 4096, max_open=True), help="Scale the units-per-em of converted fonts."
 )
 @click.option("--no-subr", "subroutinize", is_flag=True, default=True, help="Do not subroutinize converted fonts.")
+@click.option("--silent", "verbose", is_flag=True, default=True, help="Run in silent mode")
 @add_common_options()
 def ttf2otf(
     input_path: Path,
@@ -45,6 +46,7 @@ def ttf2otf(
     recalc_timestamp: bool = False,
     output_dir: Path = None,
     overwrite: bool = True,
+    verbose: bool = True,
 ):
     """
     Converts TTF fonts to OTF (or TrueType flavored woff/woff2 web fonts to PostScript flavored woff/woff2 web fonts).
@@ -65,6 +67,7 @@ def ttf2otf(
     runner.options.recalc_timestamp = recalc_timestamp
     runner.options.output_dir = output_dir
     runner.options.overwrite = overwrite
+    runner.options.verbose = verbose
     runner.run(source_fonts=fonts)
 
 
