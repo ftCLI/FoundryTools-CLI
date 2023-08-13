@@ -7,7 +7,7 @@ from foundryToolsCLI.Lib.utils.cli_tools import (
     get_style_mapping_path,
     get_fonts_data_path,
     get_project_files_path,
-    get_output_dir
+    get_output_dir,
 )
 
 CWD = pathlib.Path.cwd()

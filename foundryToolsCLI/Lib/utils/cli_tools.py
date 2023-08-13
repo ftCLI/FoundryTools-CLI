@@ -26,15 +26,15 @@ def get_variable_fonts_in_path(input_path: pathlib.Path, recalc_timestamp: bool 
 
 
 def get_fonts_in_path(
-        input_path: pathlib.Path,
-        recalc_timestamp: bool = False,
-        allow_extensions: list = None,
-        allow_ttf=True,
-        allow_cff=True,
-        allow_static=True,
-        allow_variable=True,
-        allow_web_font=True,
-        allow_sfnt=True,
+    input_path: pathlib.Path,
+    recalc_timestamp: bool = False,
+    allow_extensions: list = None,
+    allow_ttf=True,
+    allow_cff=True,
+    allow_static=True,
+    allow_variable=True,
+    allow_web_font=True,
+    allow_sfnt=True,
 ) -> list[Font]:
     files = []
     if input_path.is_file():
