@@ -166,7 +166,7 @@ def autohint(
             hinted_font.save(output_file)
             hinted_font.close()
             temp_otf_file.unlink(missing_ok=True)
-            generic_info_message(f"Done in {round(time.time() - t, 3)}")
+            generic_info_message(f"Done in {round(time.time() - t, 3)} seconds")
             file_saved_message(output_file)
 
         except Exception as e:
