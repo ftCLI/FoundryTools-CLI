@@ -1,6 +1,6 @@
 # Hard pinning here gets relaxed to ">=" in setup.py
 afdko==3.9.7
-fonttools==4.42.0
+fonttools==4.42.1
 brotli==1.0.9
 click==8.1.7
 cffsubr==0.2.9.post1
