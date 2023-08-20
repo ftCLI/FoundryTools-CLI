@@ -3,20 +3,16 @@ import os
 import tempfile
 from pathlib import Path
 
-from beziers.line import Line
-from beziers.path import BezierPath
-from beziers.point import Point
 from cffsubr import subroutinize, desubroutinize
 from fontTools.misc.psCharStrings import T2CharString
 from fontTools.misc.timeTools import timestampToString
-from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.statisticsPen import StatisticsPen
 from fontTools.ttLib.ttFont import TTFont
 
-from foundryToolsCLI.Lib.tables.hhea import TableHhea
-from foundryToolsCLI.Lib.tables.name import TableName
 from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.tables.head import TableHead
+from foundryToolsCLI.Lib.tables.hhea import TableHhea
+from foundryToolsCLI.Lib.tables.name import TableName
 from foundryToolsCLI.Lib.tables.post import TablePost
 from foundryToolsCLI.Lib.utils.otf_tools import correct_otf_contours
 from foundryToolsCLI.Lib.utils.ttf_tools import correct_ttf_contours, decomponentize
@@ -921,7 +917,7 @@ class Font(TTFont):
             try:
                 glyph_set[g].draw(pen)
                 italic_angle = -1 * round(math.degrees(math.atan(pen.slant)))
-                if abs(italic_angle) >= min_slant:
+                if abs(italic_angle) >= abs(min_slant):
                     return italic_angle
                 else:
                     return 0

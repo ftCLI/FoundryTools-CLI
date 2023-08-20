@@ -9,7 +9,6 @@ and convert fonts. It takes advantage of the capabilities made available by othe
 * [psautohint](https://github.com/adobe-type-tools/psautohint)
 * [ttfautohint-py](https://github.com/fonttools/ttfautohint-py)
 * [dehinter](https://github.com/source-foundry/dehinter)
-* [beziers](https://github.com/simoncozens/beziers.py)
 
 The command line interface is built with [click](https://github.com/pallets/click/) and tables are rendered by
 [rich](https://github.com/Textualize/rich).
