@@ -12,7 +12,7 @@ def _get_requirements():
     """
     Relax hard pinning in setup.py
     """
-    with io.open("requirements.txt") as requirements:
+    with io.open("requirements.txt", encoding="utf-8") as requirements:
         return [line.replace("==", ">=") for line in requirements.readlines()]
 
 
