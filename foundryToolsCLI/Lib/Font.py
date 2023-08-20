@@ -10,6 +10,7 @@ from cffsubr import subroutinize, desubroutinize
 from fontTools.misc.psCharStrings import T2CharString
 from fontTools.misc.timeTools import timestampToString
 from fontTools.pens.boundsPen import BoundsPen
+from fontTools.pens.statisticsPen import StatisticsPen
 from fontTools.ttLib.ttFont import TTFont
 
 from foundryToolsCLI.Lib.tables.hhea import TableHhea
@@ -913,69 +914,19 @@ class Font(TTFont):
                 )
         return sorted(feature_tags)
 
-    def calculate_italic_angle(self) -> float:
-        """
-        Calculates the italic angle of the font by processing the glyphs "bar" (uni007C), "bracketleft" (uni005B),
-        "H" (uni0048), "I" (uni0049)
-
-        Copied from fontbakery.profiles.post
-
-        :return: The calculated italic angle.
-        """
-
-        # Calculating italic angle from the font's glyph outlines
-        def x_leftmost_intersection(in_paths, y):
-            for y_adjust in range(0, 20, 2):
-                line = Line(Point(xMin - 100, y + y_adjust), Point(xMax + 100, y + y_adjust))
-                for path in in_paths:
-                    for s in path.asSegments():
-                        intersections = s.intersections(line)
-                        if intersections:
-                            return intersections[0].point.x
-
-        calculated_italic_angle = None
-        for glyph_name in (
-            "H",
-            "uni0048",  # LATIN CAPITAL LETTER H
-            "bar",
-            "uni007C",  # VERTICAL LINE
-            "I",
-            "uni0049",  # LATIN CAPITAL LETTER I
-            "bracketleft",
-            "uni005B",  # LEFT SQUARE BRACKET
-        ):
+    def calculate_italic_angle(self, min_slant: float = 2.0) -> int:
+        glyph_set = self.getGlyphSet()
+        pen = StatisticsPen(glyphset=glyph_set)
+        for g in ("H", "uni0048"):
             try:
-                paths = BezierPath.fromFonttoolsGlyph(self, glyph_name)
+                glyph_set[g].draw(pen)
+                italic_angle = -1 * round(math.degrees(math.atan(pen.slant)))
+                if abs(italic_angle) >= min_slant:
+                    return italic_angle
+                else:
+                    return 0
             except KeyError:
-                continue
-
-            # Get bounds
-            bounds_pen = BoundsPen(self.getGlyphSet())
-            self.getGlyphSet()[glyph_name].draw(bounds_pen)
-            (xMin, yMin, xMax, yMax) = bounds_pen.bounds
-
-            # Measure at 20% distance from bottom and top
-            y_bottom = yMin + (yMax - yMin) * 0.2
-            y_top = yMin + (yMax - yMin) * 0.8
-
-            x_intsctn_bottom = x_leftmost_intersection(in_paths=paths, y=y_bottom)
-            x_intsctn_top = x_leftmost_intersection(in_paths=paths, y=y_top)
-
-            # Fails to calculate the intersection for some situations,
-            # so try again with next glyph
-            if not x_intsctn_bottom or not x_intsctn_top:
-                continue
-
-            x_d = x_intsctn_top - x_intsctn_bottom
-            y_d = y_top - y_bottom
-
-            calculated_italic_angle = -1 * math.degrees(math.atan2(x_d, y_d))
-
-        # If the italic angle is < .5, this allows to not set the italic bits when using ftcli fix italic-angle command
-        if abs(calculated_italic_angle) < 0.5:
-            return 0
-        else:
-            return round(calculated_italic_angle)
+                return 0
 
     def check_italic_angle(self) -> bool:
         # Allow .1 degrees tolerance
