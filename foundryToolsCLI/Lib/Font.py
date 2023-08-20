@@ -924,9 +924,9 @@ class Font(TTFont):
             except KeyError:
                 return 0
 
-    def check_italic_angle(self) -> bool:
+    def check_italic_angle(self, min_slant: float = 2.0) -> bool:
         # Allow .1 degrees tolerance
-        return abs(self.calculate_italic_angle() - self["post"].italicAngle) < 0.1
+        return abs(self.calculate_italic_angle(min_slant=min_slant) - self["post"].italicAngle) < 0.1
 
     def calculate_caret_slope_rise(self) -> int:
         if self["post"].italicAngle == 0:

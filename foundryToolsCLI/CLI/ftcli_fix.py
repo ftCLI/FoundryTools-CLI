@@ -148,9 +148,27 @@ def nbsp_width(input_path: Path, output_dir: Path = None, recalc_timestamp: bool
               3: sets only the oblique bit and clears italic bits
               """,
 )
+@click.option(
+    "--min-slant",
+    type=click.FloatRange(min=0.0, max_open=True),
+    default=2.0,
+    show_default=True,
+    help="""Minimum slant value under which the font is considered upright.
+    
+    The italic angle is calculated by drawing the 'H' glyph with the fontTools.pens.statisticsPen.StatisticsPen and
+    rounding the value of the pen's 'slant' attribute. In few cases, upright fonts may return non-zero slant values
+    (e.g.: 1.0). They will be considered as uprights anyway, if the returned italic angle's absolute value is lower than
+    the minimum (default is 2.0).
+    """,
+)
 @add_common_options()
 def italic_angle(
-    input_path: Path, mode: int = 1, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True
+    input_path: Path,
+    mode: int = 1,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+    min_slant: float = 2.0,
 ):
     """
     Recalculates post.italicAngle, hhea.caretSlopeRise, hhea.caretSlopeRun and sets/clears the italic/oblique bits
@@ -174,8 +192,8 @@ def italic_angle(
 
             # Check post.italicAngle
             post_italic_angle = post_table.italicAngle
-            calculated_post_italic_angle = font.calculate_italic_angle()
-            post_italic_angle_ok = font.check_italic_angle()
+            calculated_post_italic_angle = font.calculate_italic_angle(min_slant=min_slant)
+            post_italic_angle_ok = font.check_italic_angle(min_slant=min_slant)
             if post_italic_angle_ok:
                 generic_success_message(
                     f"post.italicAngle    : {click.style(post_italic_angle, fg='green', bold=True)}"
