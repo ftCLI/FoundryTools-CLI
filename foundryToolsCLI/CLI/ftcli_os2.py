@@ -37,7 +37,7 @@ def recalc_x_height(input_path: Path, recalc_timestamp: bool = False, output_dir
         try:
             file = Path(font.reader.file.name)
             os_2: TableOS2 = font["OS/2"]
-            if os_2.version < 25:
+            if os_2.version < 2:
                 generic_warning_message(
                     f"{file.name}: sxHeight is defined only in OS/2 version 2 and up. Current version is {os_2.version}"
                 )
