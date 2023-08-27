@@ -15,11 +15,11 @@ class TableName(table__n_a_m_e):
         language_string: str = "en",
     ) -> None:
         """
-        Adds a namerecord to the `name` table. If the namerecord already exists, it will be overwritten.
+        Adds a NameRecord to the `name` table. If the NameRecord already exists, it will be overwritten.
 
         :param font: the font object
-        :param string: The string to be written to the namerecord
-        :param name_id: The name ID of the namerecord to be added
+        :param string: The string to be written to the NameRecord
+        :param name_id: The name ID of the NameRecord to be added
         :type name_id: int
         :param platform_id: 1 = Macintosh, 3 = Windows
         :type platform_id: int
@@ -27,7 +27,7 @@ class TableName(table__n_a_m_e):
         :type language_string: str (optional)
         """
 
-        # Remove the namerecord before writing it to avoid duplicates
+        # Remove the NameRecord before writing it to avoid duplicates
         self.del_names(name_ids=[name_id], platform_id=platform_id, language_string=language_string)
 
         if platform_id == 1:
