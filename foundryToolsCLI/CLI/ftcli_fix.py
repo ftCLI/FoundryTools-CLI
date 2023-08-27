@@ -307,7 +307,9 @@ def italic_angle(
 @add_common_options()
 def nbsp_missing(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
     """
-    Checks if the font has a non-breaking space character, and if it doesn't, it adds one by double mapping 'space'
+    Checks if the font has a non-breaking space character, and if it doesn't, it adds one by double mapping 'space'.
+
+    fontbakery check id: com.google.fonts/check/whitespace_glyphs
     """
 
     fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
