@@ -568,6 +568,43 @@ def strip_names(input_path: Path, output_dir: Path = None, recalc_timestamp: boo
             font.close()
 
 
+@fix_fonts.command()
+@add_file_or_path_argument()
+@add_common_options()
+def empty_names(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+    """
+    Removes empty namerecords.
+
+    fontbakery check id: com.adobe.fonts/check/name/empty_records
+    """
+    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
+    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    if not initial_check_pass(fonts=fonts, output_dir=output_dir):
+        return
+
+    for font in fonts:
+        try:
+            file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            name_table: TableName = font["name"]
+            name_table_copy = deepcopy(name_table)
+
+            name_table.remove_empty_names()
+
+            if name_table_copy.compile(font) != name_table.compile(font):
+                font.save(output_file)
+                file_saved_message(output_file)
+
+            else:
+                file_not_changed_message(file)
+
+        except Exception as e:
+            generic_error_message(e)
+        finally:
+            font.close()
+
+
 cli = click.CommandCollection(
     sources=[fix_fonts],
     help="""

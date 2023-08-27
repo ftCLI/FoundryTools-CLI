@@ -168,3 +168,10 @@ class TableName(table__n_a_m_e):
                 name.platEncID,
                 name.langID,
             )
+
+    def remove_empty_names(self):
+        for name in self.names:
+            if str(name).strip() == "":
+                self.removeNames(
+                    nameID=name.nameID, platformID=name.platformID, platEncID=name.platEncID, langID=name.langID
+                )
