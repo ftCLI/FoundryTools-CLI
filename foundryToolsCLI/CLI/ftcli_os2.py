@@ -1,5 +1,5 @@
 import os
-from copy import deepcopy
+from copy import deepcopy, copy
 from pathlib import Path
 
 import click
@@ -369,8 +369,8 @@ def set_flags(
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
-    options = {k: v for k, v in kwargs.items() if v is not None}
-    if len(options) == 0:
+    params = {k: v for k, v in kwargs.items() if v is not None}
+    if len(params) == 0:
         generic_error_message("Please, pass at least one valid parameter.")
         return
 
@@ -384,7 +384,7 @@ def set_flags(
             os2 = font["OS/2"]
             os2_copy = deepcopy(os2)
 
-            for flag, value in options.items():
+            for flag, value in params.items():
                 if flag in ("use_typo_metrics", "wws_consistent", "oblique") and os2.version < 4:
                     generic_warning_message(
                         f"{flag.upper()} flag can't be set. Bits 7, 8 and 9 are only defined in OS/2 version 4 and up."
@@ -560,6 +560,82 @@ def set_width(
             generic_error_message(e)
         finally:
             font.close()
+
+
+@tbl_os2.command()
+@add_file_or_path_argument()
+@click.option("--family-type", "bFamilyType", type=click.IntRange(0, 5),
+              help="Sets 'bFamilyType' value"
+              )
+@click.option("--serif-style", "bSerifStyle", type=click.IntRange(0, 15),
+              help="Sets 'bSerifStyle' value"
+              )
+@click.option("--weight", "bWeight", type=click.IntRange(0, 11),
+              help="Sets 'bWeight' value"
+              )
+@click.option("--proportion", "bProportion", type=click.IntRange(0, 9),
+              help="Sets 'bProportion' value"
+              )
+@click.option("--contrast", "bContrast", type=click.IntRange(0, 9),
+              help="Sets 'bContrast' value"
+              )
+@click.option("--stroke-variation", "bStrokeVariation", type=click.IntRange(0, 9),
+              help="Sets 'bStrokeVariation' value"
+              )
+@click.option("--arm-style", "bArmStyle", type=click.IntRange(0, 11),
+              help="Sets 'bArmStyle' value"
+              )
+@click.option("--letter-form", "bLetterForm", type=click.IntRange(0, 15),
+              help="Sets 'bLetterForm' value"
+              )
+@click.option("--midline", "bMidline", type=click.IntRange(0, 13),
+              help="Sets 'bMidline' value"
+              )
+@click.option("--x-height", "bXHeight", type=click.IntRange(0, 7),
+              help="Sets 'bXHeight' value"
+              )
+@add_common_options()
+def panose(
+        input_path: Path,
+        recalc_timestamp,
+        output_dir,
+        overwrite,
+        **kwargs,
+):
+    """
+    Command line panose editor.
+    """
+    fonts = get_fonts_in_path(input_path, recalc_timestamp=recalc_timestamp)
+    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    if not initial_check_pass(fonts=fonts, output_dir=output_dir):
+        return
+
+    params = {k: v for k, v in kwargs.items() if v is not None}
+    if len(params) == 0:
+        generic_error_message("Please, pass at least a valid parameter.")
+        return
+
+    for font in fonts:
+        try:
+            file = Path(font.reader.file.name)
+            output_file = Path(
+                makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite)
+            )
+            os2_table: TableOS2 = font["OS/2"]
+            panose_src = os2_table.panose
+            panose_copy = copy(panose_src)
+
+            for k, v in params.items():
+                setattr(panose_src, k, v)
+
+            if panose_copy.__dict__ != panose_src.__dict__:
+                font.save(output_file)
+                file_saved_message(output_file)
+            else:
+                file_not_changed_message(file)
+
+        except Exception as e:
+            generic_error_message(e)
 
 
 cli = click.CommandCollection(
