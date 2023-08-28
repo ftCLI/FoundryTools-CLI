@@ -562,7 +562,7 @@ PANOSE_LATIN_PICTORIAL = {
         },
     },
     "bStrokeVariation": {
-        "description": "Aspect ratio of character 94",
+        "description": "Character 94 Ratio",
         "values": {
             0: "Any",
             1: "No Fit",
@@ -577,7 +577,7 @@ PANOSE_LATIN_PICTORIAL = {
         },
     },
     "bArmStyle": {
-        "description": "Aspect ratio of character 119",
+        "description": "Character 119 Ratio",
         "values": {
             0: "Any",
             1: "No Fit",
@@ -592,7 +592,7 @@ PANOSE_LATIN_PICTORIAL = {
         },
     },
     "bLetterForm": {
-        "description": "Aspect ratio of character 157",
+        "description": "Character 157 Ratio",
         "values": {
             0: "Any",
             1: "No Fit",
@@ -607,7 +607,7 @@ PANOSE_LATIN_PICTORIAL = {
         },
     },
     "bMidline": {
-        "description": "Aspect ratio of character 163",
+        "description": "Character 163 Ratio",
         "values": {
             0: "Any",
             1: "No Fit",
@@ -622,7 +622,7 @@ PANOSE_LATIN_PICTORIAL = {
         },
     },
     "bXHeight": {
-        "description": "Aspect ratio of character 211",
+        "description": "Character 211 Ratio",
         "values": {
             0: "Any",
             1: "No Fit",
