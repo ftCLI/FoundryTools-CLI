@@ -3,6 +3,13 @@ from pathlib import Path
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
+from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
+
+from foundryToolsCLI.Lib.tables.name import TableName
+
+from foundryToolsCLI.Lib.tables.CFF_ import TableCFF
+
+from foundryToolsCLI.Lib.tables.head import TableHead
 from pathvalidate import sanitize_filename, sanitize_filepath
 
 from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
@@ -270,11 +277,6 @@ def set_revision(
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
-    from foundryToolsCLI.Lib.tables.head import TableHead
-    from foundryToolsCLI.Lib.tables.name import TableName
-    from foundryToolsCLI.Lib.tables.CFF_ import TableCFF
-    from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
-
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
@@ -291,8 +293,6 @@ def set_revision(
             new_major_version = str(major) if major is not None else old_major_version
             new_minor_version = str(minor).rjust(3, "0") if minor is not None else old_minor_version
             new_font_revision = f"{new_major_version}.{new_minor_version}"
-
-            print(old_font_revision, new_font_revision)
 
             if old_font_revision != new_font_revision:
                 head_table.set_font_revision(float(new_font_revision))
