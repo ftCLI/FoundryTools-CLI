@@ -183,46 +183,18 @@ def align(
 @click.option(
     "-s",
     "--source-file",
-    type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True, path_type=Path),
     required=True,
     help="Source file. Vertical metrics from this font will be applied to all destination fonts.",
 )
 @click.option(
     "-d",
     "--destination",
-    type=click.Path(exists=True, resolve_path=True),
+    type=click.Path(exists=True, resolve_path=True, path_type=Path),
     required=True,
     help="Destination file or directory.",
 )
-@click.option(
-    "-o",
-    "--output-dir",
-    "outputDir",
-    type=click.Path(file_okay=False, resolve_path=True),
-    help="""
-The output directory where the output files are to be created. If it doesn't exist, will be created. If not specified,
-files are saved to the same folder.""",
-)
-@click.option(
-    "--recalc-timestamp",
-    "recalcTimestamp",
-    is_flag=True,
-    default=False,
-    help="""
-By default, original head.modified value is kept when a font is saved. Use this switch to set head.modified timestamp
-to current time.
-""",
-)
-@click.option(
-    "--no-overwrite",
-    "overWrite",
-    is_flag=True,
-    default=True,
-    help="""
-By default, modified files are overwritten. Use this switch to save them to a new file (numbers are appended at the end
-of file name).
-""",
-)
+@add_common_options()
 def copy_metrics(
     source_file: Path,
     destination: Path,
