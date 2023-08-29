@@ -328,11 +328,17 @@ def print_os2_table(font: Font):
     )
 
     os2_dict = os2_table.to_dict()
+    panose_dict = os2_table.panose_to_dict()
 
     for k, v in os2_dict.items():
-        table.add_row(f"[bold cyan]{k.ljust(20)}[reset] : {v}")
+        table.add_row(f"[bold cyan]{k.ljust(19)}[reset] : {v}")
         if k == "tableTag":
             table.add_section()
+        if k == "panose":
+            table.add_row()
+            for key, value in panose_dict.items():
+                table.add_row(f"  [bold cyan]{key.ljust(18)}[reset]: {value}")
+            table.add_row()
 
     console = Console()
     console.print(table)
