@@ -3,15 +3,12 @@ from pathlib import Path
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
-from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
-
-from foundryToolsCLI.Lib.tables.name import TableName
-
-from foundryToolsCLI.Lib.tables.CFF_ import TableCFF
-
-from foundryToolsCLI.Lib.tables.head import TableHead
 from pathvalidate import sanitize_filename, sanitize_filepath
 
+from foundryToolsCLI.Lib.tables.CFF_ import TableCFF
+from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
+from foundryToolsCLI.Lib.tables.head import TableHead
+from foundryToolsCLI.Lib.tables.name import TableName
 from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
