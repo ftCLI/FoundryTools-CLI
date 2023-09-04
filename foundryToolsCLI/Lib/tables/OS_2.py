@@ -413,7 +413,3 @@ class TableOS2(table_O_S_2f_2):
             panose_dict.update({k: f"{sub_digit_description}: {sub_digit_value} - {sub_digit_value_description}"})
 
         return panose_dict
-
-
-
-

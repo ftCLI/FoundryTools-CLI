@@ -564,43 +564,23 @@ def set_width(
 
 @tbl_os2.command()
 @add_file_or_path_argument()
-@click.option("--family-type", "bFamilyType", type=click.IntRange(0, 5),
-              help="Sets 'bFamilyType' value"
-              )
-@click.option("--serif-style", "bSerifStyle", type=click.IntRange(0, 15),
-              help="Sets 'bSerifStyle' value"
-              )
-@click.option("--weight", "bWeight", type=click.IntRange(0, 11),
-              help="Sets 'bWeight' value"
-              )
-@click.option("--proportion", "bProportion", type=click.IntRange(0, 9),
-              help="Sets 'bProportion' value"
-              )
-@click.option("--contrast", "bContrast", type=click.IntRange(0, 9),
-              help="Sets 'bContrast' value"
-              )
-@click.option("--stroke-variation", "bStrokeVariation", type=click.IntRange(0, 9),
-              help="Sets 'bStrokeVariation' value"
-              )
-@click.option("--arm-style", "bArmStyle", type=click.IntRange(0, 11),
-              help="Sets 'bArmStyle' value"
-              )
-@click.option("--letter-form", "bLetterForm", type=click.IntRange(0, 15),
-              help="Sets 'bLetterForm' value"
-              )
-@click.option("--midline", "bMidline", type=click.IntRange(0, 13),
-              help="Sets 'bMidline' value"
-              )
-@click.option("--x-height", "bXHeight", type=click.IntRange(0, 7),
-              help="Sets 'bXHeight' value"
-              )
+@click.option("--family-type", "bFamilyType", type=click.IntRange(0, 5), help="Sets 'bFamilyType' value")
+@click.option("--serif-style", "bSerifStyle", type=click.IntRange(0, 15), help="Sets 'bSerifStyle' value")
+@click.option("--weight", "bWeight", type=click.IntRange(0, 11), help="Sets 'bWeight' value")
+@click.option("--proportion", "bProportion", type=click.IntRange(0, 9), help="Sets 'bProportion' value")
+@click.option("--contrast", "bContrast", type=click.IntRange(0, 9), help="Sets 'bContrast' value")
+@click.option("--stroke-variation", "bStrokeVariation", type=click.IntRange(0, 9), help="Sets 'bStrokeVariation' value")
+@click.option("--arm-style", "bArmStyle", type=click.IntRange(0, 11), help="Sets 'bArmStyle' value")
+@click.option("--letter-form", "bLetterForm", type=click.IntRange(0, 15), help="Sets 'bLetterForm' value")
+@click.option("--midline", "bMidline", type=click.IntRange(0, 13), help="Sets 'bMidline' value")
+@click.option("--x-height", "bXHeight", type=click.IntRange(0, 7), help="Sets 'bXHeight' value")
 @add_common_options()
 def panose(
-        input_path: Path,
-        recalc_timestamp,
-        output_dir,
-        overwrite,
-        **kwargs,
+    input_path: Path,
+    recalc_timestamp,
+    output_dir,
+    overwrite,
+    **kwargs,
 ):
     """
     Command line panose editor.
@@ -618,9 +598,7 @@ def panose(
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
-            output_file = Path(
-                makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite)
-            )
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             os2_table: TableOS2 = font["OS/2"]
             panose_src = os2_table.panose
             panose_copy = copy(panose_src)
