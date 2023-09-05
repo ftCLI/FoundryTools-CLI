@@ -1,8 +1,11 @@
+import os
+import tempfile
 from copy import deepcopy
 from pathlib import Path
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
+from fontTools.ttLib import TTFont
 from pathvalidate import sanitize_filename, sanitize_filepath
 
 from foundryToolsCLI.Lib.tables.CFF_ import TableCFF
@@ -237,6 +240,47 @@ def font_renamer(input_path: Path, source: str):
             file_not_changed_message(file)
 
         font.close()
+
+
+@utils.command()
+@add_file_or_path_argument()
+@add_common_options()
+def rebuild(
+    input_path: Path,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
+    """
+    Rebuilds fonts by converting to XML and then converting back to the original format
+    """
+    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
+    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    if not initial_check_pass(fonts=fonts, output_dir=output_dir):
+        return
+
+    for font in fonts:
+        try:
+            file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            flavor = font.flavor
+
+            fd, xml_file = tempfile.mkstemp()
+            os.close(fd)
+            font.saveXML(xml_file)
+
+            rebuilt_font = TTFont(recalcTimestamp=recalc_timestamp)
+            rebuilt_font.importXML(xml_file)
+            rebuilt_font.flavor = flavor
+            rebuilt_font.save(output_file)
+
+            file_saved_message(output_file)
+            os.remove(xml_file)
+
+        except Exception as e:
+            generic_error_message(e)
+        finally:
+            font.close()
 
 
 @utils.command()
