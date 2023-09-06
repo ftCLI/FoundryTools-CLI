@@ -1,5 +1,6 @@
 import os
 import tempfile
+import time
 from copy import deepcopy
 from pathlib import Path
 
@@ -259,11 +260,18 @@ def rebuild(
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
-    for font in fonts:
+    rebuilt_files_count = 0
+    start_time = time.time()
+
+    for count, font in enumerate(fonts, start=1):
         try:
+            t = time.time()
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             flavor = font.flavor
+
+            print()
+            generic_info_message(f"Rebuilding file {count} of {len(fonts)}: {file.name}")
 
             fd, xml_file = tempfile.mkstemp()
             os.close(fd)
@@ -274,13 +282,22 @@ def rebuild(
             rebuilt_font.flavor = flavor
             rebuilt_font.save(output_file)
 
+            generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
             file_saved_message(output_file)
-            os.remove(xml_file)
+            rebuilt_files_count += 1
+
+            if os.path.exists(xml_file):
+                os.remove(xml_file)
 
         except Exception as e:
             generic_error_message(e)
         finally:
             font.close()
+
+    print()
+    generic_info_message(f"Total files     : {len(fonts)}")
+    generic_info_message(f"Converted files : {rebuilt_files_count}")
+    generic_info_message(f"Elapsed time    : {round(time.time() - start_time, 3)} seconds")
 
 
 @utils.command()
