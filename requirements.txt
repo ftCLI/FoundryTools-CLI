@@ -8,6 +8,6 @@ dehinter==4.0.0
 pathvalidate==3.1.0
 psautohint==2.4.0
 rich==13.5.2
-skia-pathops==0.8.0
+skia-pathops==0.8.0.post1
 ttfautohint-py==0.5.1
 zopfli==0.2.2
