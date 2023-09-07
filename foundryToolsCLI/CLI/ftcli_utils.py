@@ -295,9 +295,9 @@ def rebuild(
             font.close()
 
     print()
-    generic_info_message(f"Total files     : {len(fonts)}")
-    generic_info_message(f"Converted files : {rebuilt_files_count}")
-    generic_info_message(f"Elapsed time    : {round(time.time() - start_time, 3)} seconds")
+    generic_info_message(f"Total files   : {len(fonts)}")
+    generic_info_message(f"Rebuilt files : {rebuilt_files_count}")
+    generic_info_message(f"Elapsed time  : {round(time.time() - start_time, 3)} seconds")
 
 
 @utils.command()
