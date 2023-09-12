@@ -6,7 +6,6 @@ and convert fonts. It takes advantage of the capabilities made available by othe
 * [AFDKO](https://github.com/adobe-type-tools/afdko)
 * [skia-pathops](https://github.com/fonttools/skia-pathops)
 * [cffsubr](https://github.com/adobe-type-tools/cffsubr)
-* [psautohint](https://github.com/adobe-type-tools/psautohint)
 * [ttfautohint-py](https://github.com/fonttools/ttfautohint-py)
 * [dehinter](https://github.com/source-foundry/dehinter)
 
@@ -19,9 +18,9 @@ Even if not directly imported to keep the footprint as small as possible, portio
 ## Installation
 FoundryTools-CLI requires Python 3.9 or later.
 
-**Note for Windows users**: installation on Python 3.11 is strongly discouraged because AFDKO 3.9.6 doesn't support
-it, and an attempt of installation would probably fail. Since macOS users successfully installed FoundryTools-CLI on
-Python 3.11, requirements have been loosened up.
+**Note for Windows users**: installation on Python 3.11 is strongly discouraged because AFDKO doesn't support it, and
+an attempt of installation would probably fail. Since macOS users successfully installed FoundryTools-CLI on Python
+3.11, requirements have been loosened up.
 
 **IMPORTANT**: If you have Python 2.x installed in your system, you may have to use `python3` (instead of `python`) in
 the commands below.
