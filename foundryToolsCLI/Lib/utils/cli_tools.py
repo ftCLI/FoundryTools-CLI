@@ -8,9 +8,8 @@ from foundryToolsCLI.Lib.VFont import VariableFont
 
 
 def get_variable_fonts_in_path(
-        input_path: pathlib.Path, recursive: bool = False, recalc_timestamp: bool = False
+    input_path: pathlib.Path, recursive: bool = False, recalc_timestamp: bool = False
 ) -> list[VariableFont]:
-
     files = []
     if input_path.is_file():
         files.append(input_path.resolve())

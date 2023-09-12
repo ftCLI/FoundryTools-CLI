@@ -59,7 +59,7 @@ def ttf2otf(
         recursive=recursive,
         allow_cff=False,
         allow_variable=False,
-        recalc_timestamp=recalc_timestamp
+        recalc_timestamp=recalc_timestamp,
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -104,7 +104,7 @@ def otf2ttf(
         recursive=recursive,
         allow_ttf=False,
         allow_variable=False,
-        recalc_timestamp=recalc_timestamp
+        recalc_timestamp=recalc_timestamp,
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -253,7 +253,7 @@ def wf2ft(
         input_path=input_path,
         recursive=recursive,
         allow_extensions=allowed_extensions,
-        recalc_timestamp=recalc_timestamp
+        recalc_timestamp=recalc_timestamp,
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -321,11 +321,11 @@ def ft2wf(input_path, flavor=None, recursive: bool = False, output_dir=None, rec
 @add_recursive_option()
 @add_common_options()
 def ttc2sfnt(
-        input_path: Path,
-        recursive: bool = False,
-        output_dir: Path = None,
-        recalc_timestamp: bool = False,
-        overwrite: bool = True
+    input_path: Path,
+    recursive: bool = False,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
 ):
     """
     Extracts each font from a TTC file, and saves it as a TTF or OTF file.

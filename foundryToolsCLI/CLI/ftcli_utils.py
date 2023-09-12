@@ -35,11 +35,11 @@ utils = click.Group("subcommands")
 @add_recursive_option()
 @add_common_options()
 def add_dsig(
-        input_path: Path,
-        recursive: bool = False,
-        output_dir: Path = None,
-        recalc_timestamp: bool = False,
-        overwrite: bool = True
+    input_path: Path,
+    recursive: bool = False,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
 ):
     """
     Adds a dummy DSIG table to the fonts, unless the table is already present, or the font flavor is woff2.
@@ -49,7 +49,7 @@ def add_dsig(
         input_path=input_path,
         recursive=recursive,
         recalc_timestamp=recalc_timestamp,
-        allow_extensions=[".ttf", ".otf", ".woff"]
+        allow_extensions=[".ttf", ".otf", ".woff"],
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):

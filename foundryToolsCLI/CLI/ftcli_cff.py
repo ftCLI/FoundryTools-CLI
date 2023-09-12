@@ -33,7 +33,8 @@ def del_names(
     recursive: bool = False,
     recalc_timestamp: bool = False,
     output_dir: Path = None,
-    overwrite: bool = True, **kwargs
+    overwrite: bool = True,
+    **kwargs
 ):
     """
     Deletes CFF names from topDict.
@@ -48,7 +49,7 @@ def del_names(
         recursive=recursive,
         recalc_timestamp=recalc_timestamp,
         allow_ttf=False,
-        allow_variable=False
+        allow_variable=False,
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -116,7 +117,7 @@ def set_names(
         recursive=recursive,
         recalc_timestamp=recalc_timestamp,
         allow_ttf=False,
-        allow_variable=False
+        allow_variable=False,
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -174,7 +175,7 @@ def find_replace(
         recursive=recursive,
         recalc_timestamp=recalc_timestamp,
         allow_ttf=False,
-        allow_variable=False
+        allow_variable=False,
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
