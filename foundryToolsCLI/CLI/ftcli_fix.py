@@ -12,7 +12,6 @@ from foundryToolsCLI.Lib.tables.post import TablePost
 from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
-    add_recursive_option,
     add_common_options,
     generic_error_message,
     file_saved_message,
@@ -27,11 +26,9 @@ fix_fonts = click.Group("subcommands")
 
 @fix_fonts.command()
 @add_file_or_path_argument()
-@add_recursive_option()
 @add_common_options()
 def monospace(
     input_path: Path,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -47,7 +44,7 @@ def monospace(
     fontbakery check id: com.google.fonts/check/monospace
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -103,11 +100,9 @@ def monospace(
 
 @fix_fonts.command()
 @add_file_or_path_argument()
-@add_recursive_option()
 @add_common_options()
 def nbsp_width(
     input_path: Path,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -118,7 +113,7 @@ def nbsp_width(
     fontbakery check id: com.google.fonts/check/whitespace_widths
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -176,12 +171,10 @@ def nbsp_width(
     the minimum (default is 2.0).
     """,
 )
-@add_recursive_option()
 @add_common_options()
 def italic_angle(
     input_path: Path,
     mode: int = 1,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -191,7 +184,7 @@ def italic_angle(
     Recalculates post.italicAngle, hhea.caretSlopeRise, hhea.caretSlopeRun and sets/clears the italic/oblique bits
     according to the calculated values. In CFF fonts, also CFF.topDictIndex[0].ItalicAngle is recalculated.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -321,11 +314,9 @@ def italic_angle(
 
 @fix_fonts.command()
 @add_file_or_path_argument()
-@add_recursive_option()
 @add_common_options()
 def nbsp_missing(
     input_path: Path,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -336,7 +327,7 @@ def nbsp_missing(
     fontbakery check id: com.google.fonts/check/whitespace_glyphs
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -368,11 +359,9 @@ def nbsp_missing(
 
 @fix_fonts.command()
 @add_file_or_path_argument()
-@add_recursive_option()
 @add_common_options()
 def decompose_transformed(
     input_path: Path,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -388,7 +377,7 @@ def decompose_transformed(
     import pathops
 
     fonts = get_fonts_in_path(
-        input_path=input_path, recursive=recursive, allow_cff=False, recalc_timestamp=recalc_timestamp
+        input_path=input_path, allow_cff=False, recalc_timestamp=recalc_timestamp
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -450,11 +439,9 @@ def decompose_transformed(
 
 @fix_fonts.command()
 @add_file_or_path_argument()
-@add_recursive_option()
 @add_common_options()
 def duplicate_components(
     input_path: Path,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -465,7 +452,7 @@ def duplicate_components(
     fontbakery check id: com.google.fonts/check/glyf_non_transformed_duplicate_components
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -511,11 +498,9 @@ def duplicate_components(
 
 @fix_fonts.command()
 @add_file_or_path_argument()
-@add_recursive_option()
 @add_common_options()
 def kern_table(
     input_path: Path,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -529,7 +514,7 @@ def kern_table(
 
     fontbakery check id: com.google.fonts/check/kern_table
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -578,11 +563,9 @@ def kern_table(
 
 @fix_fonts.command()
 @add_file_or_path_argument()
-@add_recursive_option()
 @add_common_options()
 def strip_names(
     input_path: Path,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -592,7 +575,7 @@ def strip_names(
 
     fontbakery check id: com.google.fonts/check/name/trailing_spaces
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -622,11 +605,9 @@ def strip_names(
 
 @fix_fonts.command()
 @add_file_or_path_argument()
-@add_recursive_option()
 @add_common_options()
 def empty_names(
     input_path: Path,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,

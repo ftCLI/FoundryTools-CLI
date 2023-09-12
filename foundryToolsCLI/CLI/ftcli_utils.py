@@ -16,7 +16,6 @@ from foundryToolsCLI.Lib.tables.name import TableName
 from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
-    add_recursive_option,
     add_common_options,
     file_not_changed_message,
     file_saved_message,
@@ -32,11 +31,9 @@ utils = click.Group("subcommands")
 
 @utils.command()
 @add_file_or_path_argument()
-@add_recursive_option()
 @add_common_options()
 def add_dsig(
     input_path: Path,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -47,7 +44,6 @@ def add_dsig(
 
     fonts = get_fonts_in_path(
         input_path=input_path,
-        recursive=recursive,
         recalc_timestamp=recalc_timestamp,
         allow_extensions=[".ttf", ".otf", ".woff"],
     )
@@ -80,12 +76,10 @@ def add_dsig(
     required=True,
     help=""" TableTag of the table(s) to delete. Can be repeated to delete multiple tables at once.""",
 )
-@add_recursive_option()
 @add_common_options()
 def del_table(
     input_path: Path,
     table_tags: tuple,
-    recursive: bool = False,
     recalc_timestamp: bool = False,
     output_dir: Path = None,
     overwrite: bool = True,
@@ -94,7 +88,7 @@ def del_table(
     Deletes the specified tables from the fonts.
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp, recursive=recursive)
+    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -221,13 +215,12 @@ def font_organizer(
               5: CFF TopDict FullName (CFF fonts only)
               """,
 )
-@add_recursive_option()
-def font_renamer(input_path: Path, source: str, recursive: bool = False):
+def font_renamer(input_path: Path, source: str):
     """
     Rename font files according to the provided source string.
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive)
+    fonts = get_fonts_in_path(input_path=input_path)
     if len(fonts) == 0:
         no_valid_fonts_message(input_path)
 
@@ -264,10 +257,8 @@ def font_renamer(input_path: Path, source: str, recursive: bool = False):
 @utils.command()
 @add_file_or_path_argument()
 @add_common_options()
-@add_recursive_option()
 def rebuild(
     input_path: Path,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -275,7 +266,7 @@ def rebuild(
     """
     Rebuilds fonts by converting to XML and then converting back to the original format
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp, recursive=recursive)
+    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -327,7 +318,6 @@ def rebuild(
 @click.option("-minor", type=click.IntRange(0, 999), help="Minor version")
 @click.option("-ui", "--unique-identifier", is_flag=True, help="Recalculates nameID 3 (Unique identifier)")
 @click.option("-vs", "--version-string", is_flag=True, help="Recalculates nameID 5 (version string)")
-@add_recursive_option()
 @add_common_options()
 def set_revision(
     input_path: Path,
@@ -335,7 +325,6 @@ def set_revision(
     minor: int = None,
     unique_identifier: bool = False,
     version_string: bool = False,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -353,7 +342,7 @@ def set_revision(
         generic_error_message("At least one parameter of -minor or -major must be passed")
         return
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp, recursive=recursive)
+    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return

@@ -51,7 +51,13 @@ from foundryToolsCLI.Lib.utils.click_tools import (
 )
 @click.option("--recalc-offset", is_flag=True, default=None, help="""Recalculate 'caretOffset' value.""")
 @add_common_options()
-def cli(input_path: Path, recalc_timestamp: bool = True, output_dir: Path = None, overwrite: bool = True, **kwargs):
+def cli(
+    input_path: Path,
+    recalc_timestamp: bool = True,
+    output_dir: Path = None,
+    overwrite: bool = True,
+    **kwargs
+):
     """A command line tool to manipulate the 'hhea' table."""
 
     params = {k: v for k, v in kwargs.items() if v is not None}

@@ -488,7 +488,7 @@ def set_version(
 
 @tbl_os2.command()
 @add_file_or_path_argument()
-@click.option("-w", "--weight", type=click.IntRange(1, 1000), required=True, help="usWeightClass value.")
+@click.option("-w", "--weight", type=click.IntRange(1, 1000), prompt=True, required=True, help="usWeightClass value.")
 @add_common_options()
 def set_weight(
     input_path: Path, weight: int, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True

@@ -8,16 +8,13 @@ from foundryToolsCLI.Lib.VFont import VariableFont
 
 
 def get_variable_fonts_in_path(
-    input_path: pathlib.Path, recursive: bool = False, recalc_timestamp: bool = False
+    input_path: pathlib.Path, recalc_timestamp: bool = False
 ) -> list[VariableFont]:
     files = []
     if input_path.is_file():
         files.append(input_path.resolve())
     if input_path.is_dir():
-        if recursive:
-            files = [p.resolve() for p in input_path.rglob("*") if p.is_file()]
-        else:
-            files = [p.resolve() for p in input_path.iterdir() if p.is_file()]
+        files = [p.resolve() for p in input_path.iterdir() if p.is_file()]
 
     variable_fonts = []
     for file in files:
@@ -32,7 +29,6 @@ def get_variable_fonts_in_path(
 
 def get_fonts_in_path(
     input_path: pathlib.Path,
-    recursive: bool = False,
     recalc_timestamp: bool = False,
     allow_extensions: list = None,
     allow_ttf=True,
@@ -46,10 +42,7 @@ def get_fonts_in_path(
     if input_path.is_file():
         files.append(input_path.resolve())
     if input_path.is_dir():
-        if recursive:
-            files = [p.resolve() for p in input_path.rglob("*") if p.is_file()]
-        else:
-            files = [p.resolve() for p in input_path.iterdir() if p.is_file()]
+        files = [p.resolve() for p in input_path.iterdir() if p.is_file()]
 
     fonts = []
     for file in files:
