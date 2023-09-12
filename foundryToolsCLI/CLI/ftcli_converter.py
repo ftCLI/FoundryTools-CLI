@@ -156,9 +156,7 @@ def vf2i(
     """
     Exports static instances from variable fonts.
     """
-    variable_fonts = get_variable_fonts_in_path(
-        input_path=input_path, recalc_timestamp=recalc_timestamp
-    )
+    variable_fonts = get_variable_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=variable_fonts, output_dir=output_dir):
         return

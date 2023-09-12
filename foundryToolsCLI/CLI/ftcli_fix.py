@@ -376,9 +376,7 @@ def decompose_transformed(
     from fontTools.pens.ttGlyphPen import TTGlyphPen
     import pathops
 
-    fonts = get_fonts_in_path(
-        input_path=input_path, allow_cff=False, recalc_timestamp=recalc_timestamp
-    )
+    fonts = get_fonts_in_path(input_path=input_path, allow_cff=False, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return

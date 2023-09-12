@@ -7,9 +7,7 @@ from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.VFont import VariableFont
 
 
-def get_variable_fonts_in_path(
-    input_path: pathlib.Path, recalc_timestamp: bool = False
-) -> list[VariableFont]:
+def get_variable_fonts_in_path(input_path: pathlib.Path, recalc_timestamp: bool = False) -> list[VariableFont]:
     files = []
     if input_path.is_file():
         files.append(input_path.resolve())

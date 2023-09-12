@@ -27,11 +27,7 @@ tbl_cff = click.Group("subcommands")
 @click.option("--notice", "Notice", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Copyright")
 @add_common_options()
 def del_names(
-    input_path: Path,
-    recalc_timestamp: bool = False,
-    output_dir: Path = None,
-    overwrite: bool = True,
-    **kwargs
+    input_path: Path, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = True, **kwargs
 ):
     """
     Deletes CFF names from topDict.
@@ -91,11 +87,7 @@ def del_names(
 @click.option("--version", "version", type=str, help="Sets CFF.cff.topDictIndex[0] version value")
 @add_common_options()
 def set_names(
-    input_path: Path,
-    recalc_timestamp: bool = False,
-    output_dir: Path = None,
-    overwrite: bool = True,
-    **kwargs
+    input_path: Path, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = True, **kwargs
 ):
     """
     Sets CFF names in topDict.
