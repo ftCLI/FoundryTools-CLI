@@ -28,7 +28,11 @@ vertical_metrics_tools = click.Group("subcommands")
 )
 @add_common_options()
 def set_linegap(
-    input_path: Path, percent: int, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True
+    input_path: Path,
+    percent: int,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
 ):
     """Modifies the line spacing metrics in one or more fonts.
 

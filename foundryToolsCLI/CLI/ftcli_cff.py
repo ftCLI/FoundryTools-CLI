@@ -9,7 +9,6 @@ from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_di
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
-    add_recursive_option,
     generic_error_message,
     file_saved_message,
     file_not_changed_message,
@@ -26,14 +25,9 @@ tbl_cff = click.Group("subcommands")
 @click.option("--version", "version", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] version")
 @click.option("--copyright", "Copyright", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Copyright")
 @click.option("--notice", "Notice", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Copyright")
-@add_recursive_option()
 @add_common_options()
 def del_names(
-    input_path: Path,
-    recursive: bool = False,
-    recalc_timestamp: bool = False,
-    output_dir: Path = None,
-    overwrite: bool = True, **kwargs
+    input_path: Path, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = True, **kwargs
 ):
     """
     Deletes CFF names from topDict.
@@ -45,10 +39,9 @@ def del_names(
 
     fonts = get_fonts_in_path(
         input_path=input_path,
-        recursive=recursive,
         recalc_timestamp=recalc_timestamp,
         allow_ttf=False,
-        allow_variable=False
+        allow_variable=False,
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -92,15 +85,9 @@ def del_names(
 )
 @click.option("--weight", "Weight", type=str, help="Sets CFF.cff.topDictIndex[0] Weight value")
 @click.option("--version", "version", type=str, help="Sets CFF.cff.topDictIndex[0] version value")
-@add_recursive_option()
 @add_common_options()
 def set_names(
-    input_path: Path,
-    recursive: bool = False,
-    recalc_timestamp: bool = False,
-    output_dir: Path = None,
-    overwrite: bool = True,
-    **kwargs
+    input_path: Path, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = True, **kwargs
 ):
     """
     Sets CFF names in topDict.
@@ -113,10 +100,9 @@ def set_names(
 
     fonts = get_fonts_in_path(
         input_path=input_path,
-        recursive=recursive,
         recalc_timestamp=recalc_timestamp,
         allow_ttf=False,
-        allow_variable=False
+        allow_variable=False,
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -153,13 +139,11 @@ def set_names(
     help="The string to replace the old string with",
     show_default=True,
 )
-@add_recursive_option()
 @add_common_options()
 def find_replace(
     input_path: Path,
     old_string: str,
     new_string: str,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -171,10 +155,9 @@ def find_replace(
 
     fonts = get_fonts_in_path(
         input_path=input_path,
-        recursive=recursive,
         recalc_timestamp=recalc_timestamp,
         allow_ttf=False,
-        allow_variable=False
+        allow_variable=False,
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):

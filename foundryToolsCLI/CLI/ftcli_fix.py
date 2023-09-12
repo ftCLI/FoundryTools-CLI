@@ -27,7 +27,12 @@ fix_fonts = click.Group("subcommands")
 @fix_fonts.command()
 @add_file_or_path_argument()
 @add_common_options()
-def monospace(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def monospace(
+    input_path: Path,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
     """
     If the family is monospaced:
 
@@ -96,7 +101,12 @@ def monospace(input_path: Path, output_dir: Path = None, recalc_timestamp: bool 
 @fix_fonts.command()
 @add_file_or_path_argument()
 @add_common_options()
-def nbsp_width(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def nbsp_width(
+    input_path: Path,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
     """
     Checks if 'nbspace' and 'space' glyphs have the same width. If not, corrects 'nbspace' width to match 'space' width.
 
@@ -305,7 +315,12 @@ def italic_angle(
 @fix_fonts.command()
 @add_file_or_path_argument()
 @add_common_options()
-def nbsp_missing(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def nbsp_missing(
+    input_path: Path,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
     """
     Checks if the font has a non-breaking space character, and if it doesn't, it adds one by double mapping 'space'.
 
@@ -346,7 +361,10 @@ def nbsp_missing(input_path: Path, output_dir: Path = None, recalc_timestamp: bo
 @add_file_or_path_argument()
 @add_common_options()
 def decompose_transformed(
-    input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True
+    input_path: Path,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
 ):
     """
     Decomposes composite glyphs that have transformed components.
@@ -421,7 +439,10 @@ def decompose_transformed(
 @add_file_or_path_argument()
 @add_common_options()
 def duplicate_components(
-    input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True
+    input_path: Path,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
 ):
     """
     Removes duplicate components which have the same x,y coordinates.
@@ -476,7 +497,12 @@ def duplicate_components(
 @fix_fonts.command()
 @add_file_or_path_argument()
 @add_common_options()
-def kern_table(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def kern_table(
+    input_path: Path,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
     """
     Some applications such as MS PowerPoint require kerning info on the kern table. More specifically, they require a
     format 0 kern subtable from a kern table version 0 with only glyphs defined in the cmap table.
@@ -536,7 +562,12 @@ def kern_table(input_path: Path, output_dir: Path = None, recalc_timestamp: bool
 @fix_fonts.command()
 @add_file_or_path_argument()
 @add_common_options()
-def strip_names(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def strip_names(
+    input_path: Path,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
     """
     Removes leading and trailing spaces from all namerecords.
 
@@ -573,7 +604,12 @@ def strip_names(input_path: Path, output_dir: Path = None, recalc_timestamp: boo
 @fix_fonts.command()
 @add_file_or_path_argument()
 @add_common_options()
-def empty_names(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def empty_names(
+    input_path: Path,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
     """
     Removes empty namerecords.
 

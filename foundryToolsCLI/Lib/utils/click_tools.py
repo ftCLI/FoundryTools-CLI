@@ -42,10 +42,11 @@ def add_recursive_option():
             default=False,
             help="""
             If input_path is a directory, recursively find font files both in input directory and its subdirectories.
-            """
+            """,
         )
     ]
     return add_options(_recursive_option)
+
 
 def add_common_options():
     _common_options = [

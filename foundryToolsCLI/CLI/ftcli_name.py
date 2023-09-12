@@ -56,9 +56,9 @@ def set_name(
     platform_id: int,
     string: str,
     language_string: str,
-    recalc_timestamp: bool,
-    output_dir: Path,
-    overwrite: bool,
+    recalc_timestamp: bool = False,
+    output_dir: Path = None,
+    overwrite: bool = True,
 ) -> None:
     """
     Writes a NameRecord in the 'name' table.
