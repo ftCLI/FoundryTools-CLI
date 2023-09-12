@@ -33,6 +33,20 @@ def add_path_argument():
     return add_file_or_path_argument(file_okay=False)
 
 
+def add_recursive_option():
+    _recursive_option = [
+        click.option(
+            "-r",
+            "--recursive",
+            is_flag=True,
+            default=False,
+            help="""
+            If input_path is a directory, recursively find font files both in input directory and its subdirectories.
+            """
+        )
+    ]
+    return add_options(_recursive_option)
+
 def add_common_options():
     _common_options = [
         click.option(
