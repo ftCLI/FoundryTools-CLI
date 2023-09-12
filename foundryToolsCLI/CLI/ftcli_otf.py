@@ -99,7 +99,7 @@ def autohint(
     Auto-hint OTF and PostScript flavored WOFF/WOFF2 fonts.
     """
     from fontTools.cffLib.specializer import specializeProgram
-    from psautohint.autohint import ACOptions, hintFiles
+    from afdko.otfautohint.autohint import ACOptions, hintFiles
 
     fonts = get_fonts_in_path(
         input_path=input_path, recalc_timestamp=recalc_timestamp, allow_ttf=False, allow_variable=False
@@ -132,12 +132,12 @@ def autohint(
             options = ACOptions()
             options.inputPaths = [input_file]
             options.outputPaths = [output_file]
-            options.reference_font = reference_font
+            options.referenceFont = reference_font
             options.allowChanges = allow_changes
-            options.round_coords = decimal
+            options.roundCoords = decimal
             options.noFlex = no_flex
             options.noHintSub = no_hint_sub
-            options.allow_no_blues = no_zones_stems
+            options.allowNoBlues = no_zones_stems
 
             try:
                 hintFiles(options=options)
