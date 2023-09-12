@@ -11,6 +11,7 @@ from foundryToolsCLI.Lib.utils.cli_tools import (
 )
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
+    add_recursive_option,
     add_common_options,
     generic_info_message,
     select_instance_coordinates,
@@ -37,6 +38,7 @@ font_converter = click.Group("subcommands")
 )
 @click.option("--no-subr", "subroutinize", is_flag=True, default=True, help="Do not subroutinize converted fonts.")
 @click.option("--silent", "verbose", is_flag=True, default=True, help="Run in silent mode")
+@add_recursive_option()
 @add_common_options()
 def ttf2otf(
     input_path: Path,
@@ -44,6 +46,7 @@ def ttf2otf(
     scale_upm: int = None,
     subroutinize: bool = True,
     recalc_timestamp: bool = False,
+    recursive: bool = False,
     output_dir: Path = None,
     overwrite: bool = True,
     verbose: bool = True,
@@ -52,7 +55,11 @@ def ttf2otf(
     Converts TTF fonts to OTF (or TrueType flavored woff/woff2 web fonts to PostScript flavored woff/woff2 web fonts).
     """
     fonts = get_fonts_in_path(
-        input_path=input_path, allow_cff=False, allow_variable=False, recalc_timestamp=recalc_timestamp
+        input_path=input_path,
+        recursive=recursive,
+        allow_cff=False,
+        allow_variable=False,
+        recalc_timestamp=recalc_timestamp
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -79,11 +86,13 @@ def ttf2otf(
     default=1.0,
     help="Approximation error, measured in UPEM",
 )
+@add_recursive_option()
 @add_common_options()
 def otf2ttf(
     input_path: Path,
     max_err: float = 1.0,
     recalc_timestamp: bool = False,
+    recursive: bool = False,
     output_dir: Path = None,
     overwrite: bool = True,
 ):
@@ -91,7 +100,11 @@ def otf2ttf(
     Converts OTF fonts to TTF (or PostScripts flavored woff/woff2 web fonts to TrueType flavored woff/woff2 web fonts).
     """
     fonts = get_fonts_in_path(
-        input_path=input_path, allow_ttf=False, allow_variable=False, recalc_timestamp=recalc_timestamp
+        input_path=input_path,
+        recursive=recursive,
+        allow_ttf=False,
+        allow_variable=False,
+        recalc_timestamp=recalc_timestamp
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -137,12 +150,14 @@ def otf2ttf(
     Prevent updating instantiated fonts `name` table. Input fonts must have a STAT table with Axis Value Tables.
     """,
 )
+@add_recursive_option()
 @add_common_options()
 def vf2i(
     input_path: Path,
     select_instance: bool = False,
     cleanup: bool = True,
     update_name_table: bool = True,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -150,7 +165,9 @@ def vf2i(
     """
     Exports static instances from variable fonts.
     """
-    variable_fonts = get_variable_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
+    variable_fonts = get_variable_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=variable_fonts, output_dir=output_dir):
         return
@@ -213,10 +230,12 @@ def vf2i(
     this option to convert only woff or woff2 flavored web fonts.
     """,
 )
+@add_recursive_option()
 @add_common_options()
 def wf2ft(
     input_path: Path,
     flavor: str = None,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -231,7 +250,10 @@ def wf2ft(
         allowed_extensions = [f".{flavor}"]
 
     fonts = get_fonts_in_path(
-        input_path=input_path, allow_extensions=allowed_extensions, recalc_timestamp=recalc_timestamp
+        input_path=input_path,
+        recursive=recursive,
+        allow_extensions=allowed_extensions,
+        recalc_timestamp=recalc_timestamp
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -264,14 +286,15 @@ def wf2ft(
     this option to create only woff (--flavor woff) or woff2 (--flavor woff2) files.
     """,
 )
+@add_recursive_option()
 @add_common_options()
-def ft2wf(input_path, flavor=None, output_dir=None, recalc_timestamp=False, overwrite=True):
+def ft2wf(input_path, flavor=None, recursive: bool = False, output_dir=None, recalc_timestamp=False, overwrite=True):
     """
     Converts SFNT fonts (TTF or OTF) to web fonts (WOFF and/or WOFF2)
     """
 
     fonts = get_fonts_in_path(
-        input_path=input_path, allow_extensions=[".otf", ".ttf"], recalc_timestamp=recalc_timestamp
+        input_path=input_path, recursive=recursive, allow_extensions=[".otf", ".ttf"], recalc_timestamp=recalc_timestamp
     )
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -295,8 +318,15 @@ def ft2wf(input_path, flavor=None, output_dir=None, recalc_timestamp=False, over
 
 @font_converter.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
-def ttc2sfnt(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def ttc2sfnt(
+        input_path: Path,
+        recursive: bool = False,
+        output_dir: Path = None,
+        recalc_timestamp: bool = False,
+        overwrite: bool = True
+):
     """
     Extracts each font from a TTC file, and saves it as a TTF or OTF file.
     """
@@ -305,7 +335,10 @@ def ttc2sfnt(input_path: Path, output_dir: Path = None, recalc_timestamp: bool =
     if input_path.is_file():
         files = [input_path]
     elif input_path.is_dir():
-        files = input_path.iterdir()
+        if recursive:
+            files = [p.resolve() for p in input_path.rglob("*") if p.is_file()]
+        else:
+            files = [p.resolve() for p in input_path.iterdir() if p.is_file()]
     else:
         generic_error_message(f"Invalid path: {input_path}")
         return
