@@ -1,10 +1,10 @@
 import pathlib
 
-import click
 from fontTools.ttLib import TTLibError
 
 from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.VFont import VariableFont
+from foundryToolsCLI.Lib.utils.logger import logger
 
 
 def get_files_in_path(input_path: pathlib.Path, recursive: bool = False) -> list[pathlib.Path]:
@@ -76,7 +76,7 @@ def get_fonts_in_path(
     :param input_path: The path to the input file or directory
     :param recursive: If True, the function will recursively search for fonts in subdirectories
     :param recalc_timestamp: If True, the ``modified`` timestamp in the ``head`` table will be recalculated on save
-    :param allow_extensions: A list of allowed extensions. If specified, only fonts with extensions in the list will be returned.
+    :param allow_extensions: A list of allowed extensions.
     :param allow_ttf:   If False, TrueType fonts will be excluded from the list
     :param allow_cff:  If False, CFF fonts will be excluded from the list
     :param allow_static: If False, static fonts will be excluded from the list
@@ -135,21 +135,25 @@ def get_output_dir(input_path: pathlib.Path, output_dir: pathlib.Path = None) ->
             return input_path.resolve()
 
 
-def initial_check_pass(fonts: list, output_dir: pathlib.Path) -> bool:
+def initial_check_pass(fonts: list, output_dir: pathlib.Path = None) -> bool:
     """
     Checks if the list of fonts is not empty and if the output directory is writable.
+
     :param fonts: a list Font objects
     :param output_dir: the output directory
     :return: False if one of the checks fails, True if both checks succeed
     """
     if not len(fonts) > 0:
-        click.secho(f"[{click.style('FAIL', fg='red')}] No fonts matching the given criteria")
+        logger.error("No valid fonts found")
         return False
-    try:
-        output_dir.mkdir(parents=True, exist_ok=True)
-    except Exception as e:
-        click.secho(f"[{click.style('FAIL', fg='red')}] {e}")
-        return False
+
+    if output_dir is not None:
+        try:
+            output_dir.mkdir(parents=True, exist_ok=True)
+        except Exception as e:
+            logger.exception(e)
+            return False
+
     return True
 
 
