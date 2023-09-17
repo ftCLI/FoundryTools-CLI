@@ -6,14 +6,13 @@ from fontTools.misc.cliTools import makeOutputFileName
 
 from foundryToolsCLI.Lib.constants import LANGUAGES_EPILOG
 from foundryToolsCLI.Lib.tables.name import TableName
-from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
+from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, initial_check_pass
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
+    add_recursive_option,
     add_common_options,
-    file_saved_message,
-    file_not_changed_message,
-    generic_error_message,
 )
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 tbl_name = click.Group("subcommands")
 
@@ -49,6 +48,7 @@ tbl_name = click.Group("subcommands")
     See epilog for a list of valid language strings.
     """,
 )
+@add_recursive_option()
 @add_common_options()
 def set_name(
     input_path: Path,
@@ -56,16 +56,17 @@ def set_name(
     platform_id: int,
     string: str,
     language_string: str,
+    recursive: bool = False,
     recalc_timestamp: bool = False,
     output_dir: Path = None,
     overwrite: bool = True,
 ) -> None:
     """
-    Writes a NameRecord in the 'name' table.
+    Adds a NameRecord to the name table. If a NameRecord with the same nameID, platformID and languageID already exists,
+    it will be overwritten.
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -74,27 +75,21 @@ def set_name(
 
     for font in fonts:
         try:
+            file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
-
             name_table.add_name(
-                font,
-                name_id=name_id,
-                string=string,
-                platform_id=platform_id,
-                language_string=language_string,
+                font, name_id=name_id, string=string, platform_id=platform_id, language_string=language_string
             )
-
-            file = Path(font.reader.file.name)
             if name_table_copy.compile(font) != name_table.compile(font):
-                output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
-
+                logger.warning(Logs.file_not_changed, file=file)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -135,22 +130,25 @@ def set_name(
     See epilog for a list of valid language strings.
     """,
 )
+@add_recursive_option()
 @add_common_options()
 def del_names(
     input_path: Path,
     name_ids: tuple[int],
     platform_id: int,
     language_string: str,
+    recursive: bool = False,
     recalc_timestamp: bool = False,
     output_dir: Path = None,
     overwrite: bool = True,
 ):
     """
-    Deletes one or more NameRecords.
+    Deletes the specified NameRecords from the name table. If no platformID is specified, all NameRecords with the
+    specified nameID will be deleted. If no language string is specified, all NameRecords with the specified nameID and
+    platformID will be deleted.
     """
 
-    fonts = get_fonts_in_path(input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -159,25 +157,25 @@ def del_names(
 
     for font in fonts:
         try:
+            file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
-
             name_table.del_names(
                 name_ids=name_ids,
                 platform_id=platform_id,
                 language_string=language_string,
             )
 
-            file = Path(font.reader.file.name)
             if name_table_copy.compile(font) != name_table.compile(font):
-                output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.warning(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -220,6 +218,7 @@ def del_names(
     platformID of the NameRecords where to perform find and replace (0: Unicode, 1: Macintosh, 3: Windows).
     """,
 )
+@add_recursive_option()
 @add_common_options()
 def find_replace(
     input_path: Path,
@@ -228,16 +227,16 @@ def find_replace(
     name_ids: tuple[int],
     excluded_name_ids: tuple[int],
     platform_id: int,
+    recursive: bool = False,
     recalc_timestamp: bool = False,
     output_dir: Path = None,
     overwrite: bool = True,
 ):
     """
-    Finds a string in the specified NameRecords and replaces it with a new string
+    Finds and replaces a string in the specified NameRecords. If no nameID is specified, the string will be replaced in
+    all NameRecords.
     """
-
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -246,9 +245,11 @@ def find_replace(
 
     for font in fonts:
         try:
+            file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
-
             name_table.find_replace(
                 old_string=old_string,
                 new_string=new_string,
@@ -257,16 +258,14 @@ def find_replace(
                 platform_id=platform_id,
             )
 
-            file = Path(font.reader.file.name)
             if name_table_copy.compile(font) != name_table.compile(font):
-                output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.warning(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -274,10 +273,12 @@ def find_replace(
 @tbl_name.command()
 @add_file_or_path_argument()
 @click.option("--del-all", is_flag=True, help="Deletes also nameIDs 1, 2, 4, 5 and 6.")
+@add_recursive_option()
 @add_common_options()
 def del_mac_names(
     input_path: Path,
     del_all: bool = False,
+    recursive: bool = False,
     recalc_timestamp: bool = False,
     output_dir: bool = None,
     overwrite: bool = True,
@@ -291,14 +292,15 @@ def del_mac_names(
     platformID 3 instead for maximum compatibility. Some legacy software, however, may still require names with
     platformID 1, platformSpecificID 0".
     """
-
-    fonts = get_fonts_in_path(input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
+            file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
             name_ids = set(name.nameID for name in name_table.names if name.platformID == 1)
@@ -311,16 +313,14 @@ def del_mac_names(
 
             name_table.del_names(name_ids=name_ids, platform_id=1)
 
-            file = Path(font.reader.file.name)
             if name_table_copy.compile(font) != name_table.compile(font):
-                output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.warning(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -360,6 +360,7 @@ def del_mac_names(
 )
 @click.option("--prefix", type=str, help="The string to be prepended to the NameRecords")
 @click.option("--suffix", type=str, help="The suffix to append to the NameRecords")
+@add_recursive_option()
 @add_common_options()
 def append(
     input_path: Path,
@@ -368,20 +369,22 @@ def append(
     language_string: str,
     prefix: str,
     suffix: str,
+    recursive: bool = False,
     recalc_timestamp: bool = False,
     output_dir: Path = None,
     overwrite: bool = True,
 ):
     """
-    Appends a prefix and/or a suffix to the specified NameRecords.
+    Appends a prefix and/or a suffix to the specified NameRecords. If no platformID is specified, the prefix/suffix will
+    be added to all NameRecords with the specified nameID. If no language string is specified, the prefix/suffix will be
+    added to all NameRecords with the specified nameID and platformID.
     """
 
     if prefix is None and suffix is None:
-        generic_error_message("Please, insert at least a prefix or a suffix to append")
+        logger.error("Please, insert at least a prefix or a suffix to append")
         return
 
-    fonts = get_fonts_in_path(input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -390,9 +393,11 @@ def append(
 
     for font in fonts:
         try:
+            file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
-
             name_table.append_string(
                 name_ids=name_ids,
                 platform_id=platform_id,
@@ -400,16 +405,13 @@ def append(
                 prefix=prefix,
                 suffix=suffix,
             )
-            file = Path(font.reader.file.name)
             if name_table.compile(font) != name_table_copy.compile(font):
-                output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
-
+                logger.warning(Logs.file_not_changed, file=file)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -417,6 +419,6 @@ def append(
 cli = click.CommandCollection(
     sources=[tbl_name],
     help="""
-    A set of tools to manipulate the 'name' table.
+    A set of tools to write, delete and modify NameRecords in the ``name`` table.
     """,
 )
