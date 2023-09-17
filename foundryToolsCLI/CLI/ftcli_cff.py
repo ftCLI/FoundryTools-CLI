@@ -28,11 +28,11 @@ tbl_cff = click.Group("subcommands")
 @add_common_options()
 def del_names(
     input_path: Path,
-        recursive: bool = False,
-        recalc_timestamp: bool = False,
-        output_dir: Path = None,
-        overwrite: bool = True,
-        **kwargs
+    recursive: bool = False,
+    recalc_timestamp: bool = False,
+    output_dir: Path = None,
+    overwrite: bool = True,
+    **kwargs
 ):
     """
     Deletes CFF names in topDict.
@@ -92,7 +92,12 @@ def del_names(
 @add_recursive_option()
 @add_common_options()
 def set_names(
-    input_path: Path, recursive: bool = False, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = True, **kwargs
+    input_path: Path,
+    recursive: bool = False,
+    recalc_timestamp: bool = False,
+    output_dir: Path = None,
+    overwrite: bool = True,
+    **kwargs
 ):
     """
     Sets CFF names in topDict. If the name is not present, it will be added. If the name is present, it will be
