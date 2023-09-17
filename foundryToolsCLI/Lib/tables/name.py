@@ -1,6 +1,5 @@
-from fontTools.ttLib.tables._n_a_m_e import table__n_a_m_e, NameRecord, _MAC_LANGUAGE_CODES, _WINDOWS_LANGUAGE_CODES
-
 from fontTools.ttLib import registerCustomTableClass
+from fontTools.ttLib.tables._n_a_m_e import table__n_a_m_e, NameRecord, _MAC_LANGUAGE_CODES, _WINDOWS_LANGUAGE_CODES
 
 registerCustomTableClass("name", "foundryToolsCLI.Lib.tables.name", "TableName")
 
