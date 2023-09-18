@@ -22,6 +22,7 @@ logger.__class__.skip = partialmethod(logger.__class__.log, "SKIP")
 
 
 class Logs:
+    checking_file = "Checking file: {file}"
     file_saved = "File saved: {file}"
     file_not_changed = "File not changed: {file}"
     file_not_selected = "File not selected: {file}"
