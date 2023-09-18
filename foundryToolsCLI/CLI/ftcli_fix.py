@@ -67,8 +67,11 @@ def monospace(
     If the font is monospaced, then:
 
     * Set ``post.isFixedPitch`` to ``True`` (1)
+
     * Correct the ``hhea.advanceWidthMax`` value
+
     * Set the ``OS/2.panose.bProportion`` value to 9 or 3, according to the ``OS/2.panose.bFamilyType`` value
+
     * Set ``CFF.cff.TopDictIndex[0].isFixedPitch`` to ``True`` for CFF fonts
     """
 
