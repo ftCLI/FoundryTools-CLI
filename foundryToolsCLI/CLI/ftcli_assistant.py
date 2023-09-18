@@ -54,7 +54,7 @@ def init(input_path: Path, quiet: bool = False):
             styles_mapping.reset_defaults()
             logger.success(Logs.file_saved, file=styles_mapping_file)
         else:
-            logger.warning(Logs.file_not_changed, file=styles_mapping_file)
+            logger.skip(Logs.file_not_changed, file=styles_mapping_file)
 
         fonts_data_file = get_fonts_data_path(input_path)
         fonts_data = FontsData(fonts_data_file)
@@ -66,7 +66,7 @@ def init(input_path: Path, quiet: bool = False):
             fonts_data.reset_data(styles_mapping=styles_mapping)
             logger.success(Logs.file_saved, file=fonts_data_file)
         else:
-            logger.warning(Logs.file_not_changed, file=fonts_data_file)
+            logger.skip(Logs.file_not_changed, file=fonts_data_file)
     except Exception as e:
         logger.exception(e)
 
@@ -308,7 +308,7 @@ def commit(
                 font.save(output_file)
                 logger.success(Logs.file_saved, output_file)
             else:
-                logger.warning(Logs.file_not_changed, file)
+                logger.skip(Logs.file_not_changed, file)
 
         except Exception as e:
             logger.exception(e)
