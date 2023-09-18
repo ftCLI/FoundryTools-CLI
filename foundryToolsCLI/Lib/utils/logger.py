@@ -10,14 +10,14 @@ logger.remove(0)
 # Add a sink to the logger to print to stdout
 logger.add(
     sys.stdout,
-    level="SUCCESS",
+    level="INFO",
     backtrace=False,
     colorize=True,
     format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | " "<level>{level: <8}</level> | " "<level>{message}</level>",
 )
 
 # Add a custom level to the logger
-logger.level("SKIP", no=27, color="<yellow>", icon="⏭️")
+logger.level("SKIP", no=27, color="<light-black><bold>", icon="⏭️")
 logger.__class__.skip = partialmethod(logger.__class__.log, "SKIP")
 
 
