@@ -87,7 +87,7 @@ def set_name(
                 font.save(output_file)
                 logger.success(Logs.file_saved, file=output_file)
             else:
-                logger.warning(Logs.file_not_changed, file=file)
+                logger.skip(Logs.file_not_changed, file=file)
         except Exception as e:
             logger.exception(e)
         finally:
@@ -172,7 +172,7 @@ def del_names(
                 font.save(output_file)
                 logger.success(Logs.file_saved, file=output_file)
             else:
-                logger.warning(Logs.file_not_changed, file=file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
             logger.exception(e)
@@ -262,7 +262,7 @@ def find_replace(
                 font.save(output_file)
                 logger.success(Logs.file_saved, file=output_file)
             else:
-                logger.warning(Logs.file_not_changed, file=file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
             logger.exception(e)
@@ -317,7 +317,7 @@ def del_mac_names(
                 font.save(output_file)
                 logger.success(Logs.file_saved, file=output_file)
             else:
-                logger.warning(Logs.file_not_changed, file=file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
             logger.exception(e)
@@ -409,7 +409,7 @@ def append(
                 font.save(output_file)
                 logger.success(Logs.file_saved, file=output_file)
             else:
-                logger.warning(Logs.file_not_changed, file=file)
+                logger.skip(Logs.file_not_changed, file=file)
         except Exception as e:
             logger.exception(e)
         finally:
