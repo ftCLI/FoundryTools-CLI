@@ -79,7 +79,6 @@ def cli(
                 temp_otf_fd, temp_otf_file = font.make_temp_otf()
                 temp_font = Font(temp_otf_file)
                 calculated_offset = temp_font["hhea"].caretOffset
-                print(hhea_table.caretOffset, calculated_offset)
                 hhea_table.set_caret_offset(calculated_offset)
                 temp_font.close()
                 os.close(temp_otf_fd)
@@ -89,7 +88,7 @@ def cli(
                 font.save(output_file)
                 logger.info(Logs.file_saved, file=output_file)
             else:
-                logger.info(Logs.file_not_changed, file=output_file)
+                logger.skip(Logs.file_not_changed, file=output_file)
 
         except Exception as e:
             logger.exception(e)
