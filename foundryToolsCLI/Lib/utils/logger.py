@@ -22,6 +22,7 @@ class Logs:
     file_not_exists = "File does not exist: {file}"
     no_valid_fonts = "No valid fonts found: {input_path}"
     x_height_not_defined = "sxHeight is defined only in OS/2 version 2 and up. Current OS/2 version is {version}"
+    not_monospaced = "Font is not monospaced: {file}"
 
 
 __all__ = ["logger", "Logs"]
