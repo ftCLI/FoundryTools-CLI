@@ -57,8 +57,8 @@ def monospace(
     also uses ``bProportion`` to determine if the font is monospaced."
     (https://www.microsoft.com/typography/otspec/os2.htm#pan, https://monotypecom-test.monotype.de/services/pan2)
 
-    * ``OS/2.xAvgCharWidth`` must be set accurately. "OS/2.xAvgCharWidth is used when rendering monospaced fonts, at least
-    by Windows GDI" (https://typedrawers.com/discussion/comment/15397/#Comment_15397)
+    * ``OS/2.xAvgCharWidth`` must be set accurately. "OS/2.xAvgCharWidth is used when rendering monospaced fonts, at
+    least by Windows GDI" (https://typedrawers.com/discussion/comment/15397/#Comment_15397)
 
     * ``CFF.cff.TopDictIndex[0].isFixedPitch`` must be set to ``True`` for CFF fonts.
 
