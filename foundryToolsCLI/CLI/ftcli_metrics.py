@@ -5,14 +5,9 @@ import click
 from fontTools.misc.cliTools import makeOutputFileName
 
 from foundryToolsCLI.Lib.Font import Font
-from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
-from foundryToolsCLI.Lib.utils.click_tools import (
-    add_common_options,
-    file_saved_message,
-    generic_error_message,
-    add_file_or_path_argument,
-    file_not_changed_message,
-)
+from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, initial_check_pass
+from foundryToolsCLI.Lib.utils.click_tools import add_common_options, add_file_or_path_argument
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 vertical_metrics_tools = click.Group("subcommands")
 
@@ -34,19 +29,22 @@ def set_linegap(
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
-    """Modifies the line spacing metrics in one or more fonts.
+    """
+    Modifies the line spacing metrics in one or more fonts.
 
     This is a fork of font-line by Source Foundry: https://github.com/source-foundry/font-line
     """
 
     fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.current_file, file=file)
 
             hhea_table = font["hhea"]
             os2_table = font["OS/2"]
@@ -59,14 +57,13 @@ def set_linegap(
             os2_modified = os2_table_copy != os2_table
 
             if hhea_modified or os2_modified:
-                output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -109,7 +106,6 @@ def align(
     import math
 
     fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -135,7 +131,7 @@ def align(
                 ideal_ascenders = real_descenders
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
 
     max_real_ascender = max(real_ascenders)
     min_real_descender = min(real_descenders)
@@ -144,13 +140,17 @@ def align(
     typo_line_gap = (max_real_ascender + abs(min_real_descender)) - (max_ideal_ascender + abs(min_ideal_descender))
 
     for font in fonts:
-        hhea_table = font["hhea"]
-        os2_table = font["OS/2"]
-        hhea_table_copy = copy(hhea_table)
-        os2_table_copy = copy(os2_table)
-
         try:
             file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(font.reader.file.name, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.current_file, file=file)
+
+            hhea_table = font["hhea"]
+            os2_table = font["OS/2"]
+            hhea_table_copy = copy(hhea_table)
+            os2_table_copy = copy(os2_table)
+
             hhea_table.ascender = max_real_ascender
             hhea_table.descender = min_real_descender
             hhea_table.lineGap = 0
@@ -170,15 +170,13 @@ def align(
             os2_modified = os2_table_copy != os2_table
 
             if hhea_modified or os2_modified:
-                output_file = Path(makeOutputFileName(font.reader.file.name, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file)
-
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -210,7 +208,6 @@ def copy_metrics(
     Copies vertical metrics from a source font to one or more destination fonts.
     """
     fonts = get_fonts_in_path(input_path=destination, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=destination, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -231,12 +228,15 @@ def copy_metrics(
         sTypoLineGap = os2_source.sTypoLineGap
 
     except Exception as e:
-        generic_error_message(e)
+        logger.exception(e)
         return
 
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.current_file, file=file)
 
             hhea_table = font["hhea"]
             os2_table = font["OS/2"]
@@ -258,14 +258,13 @@ def copy_metrics(
             os2_modified = os2_table_copy != os2_table
 
             if hhea_modified or os2_modified:
-                output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
