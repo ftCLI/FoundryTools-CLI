@@ -988,16 +988,10 @@ class Font(TTFont):
         # NOTE: `range(a, b)` includes `a` and does not include `b`.
         #       Here we don't include 0-31 as well as 127
         #       because these are control characters.
-        ascii_glyph_names = [
-            self.getBestCmap()[c] for c in range(32, 127) if c in self.getBestCmap()
-        ]
+        ascii_glyph_names = [self.getBestCmap()[c] for c in range(32, 127) if c in self.getBestCmap()]
 
         if len(ascii_glyph_names) > 0.8 * (127 - 32):
-            ascii_widths = [
-                adv
-                for name, (adv, lsb) in glyph_metrics.items()
-                if name in ascii_glyph_names and adv != 0
-            ]
+            ascii_widths = [adv for name, (adv, lsb) in glyph_metrics.items() if name in ascii_glyph_names and adv != 0]
             ascii_width_count = Counter(ascii_widths)
             ascii_most_common_width = ascii_width_count.most_common(1)[0][1]
             seems_monospaced = ascii_most_common_width >= len(ascii_widths) * 0.8
@@ -1010,31 +1004,21 @@ class Font(TTFont):
             # Letter, Mark, Number, Punctuation, Symbol, Space_Separator.
             # This excludes Line_Separator, Paragraph_Separator and Control.
             for value, name in self.getBestCmap().items():
-                if unicodedata.category(chr(value)).startswith(
-                    ("L", "M", "N", "P", "S", "Zs")
-                ):
+                if unicodedata.category(chr(value)).startswith(("L", "M", "N", "P", "S", "Zs")):
                     relevant_glyph_names.add(name)
             # Remove character glyphs that are mark glyphs.
             gdef = self.get("GDEF")
             if gdef and gdef.table.GlyphClassDef:
-                marks = {
-                    name for name, c in gdef.table.GlyphClassDef.classDefs.items() if c == 3
-                }
+                marks = {name for name, c in gdef.table.GlyphClassDef.classDefs.items() if c == 3}
                 relevant_glyph_names.difference_update(marks)
 
             widths = sorted(
-                {
-                    adv
-                    for name, (adv, lsb) in glyph_metrics.items()
-                    if name in relevant_glyph_names and adv != 0
-                }
+                {adv for name, (adv, lsb) in glyph_metrics.items() if name in relevant_glyph_names and adv != 0}
             )
             seems_monospaced = len(widths) <= 2
 
         width_max = max(adv for k, (adv, lsb) in glyph_metrics.items())
-        most_common_width = Counter(
-            [g for g in glyph_metrics.values() if g[0] != 0]
-        ).most_common(1)[0][0][0]
+        most_common_width = Counter([g for g in glyph_metrics.values() if g[0] != 0]).most_common(1)[0][0][0]
         return {
             "seems_monospaced": seems_monospaced,
             "width_max": width_max,
