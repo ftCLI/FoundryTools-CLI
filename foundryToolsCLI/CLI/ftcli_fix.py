@@ -73,7 +73,6 @@ def monospace(
 
     * Set post.isFixedPitch to True (1)
     * Correct hhea.advanceWidthMax value
-    * Correct hhea.numberOfHMetrics value
     * Set OS/2.panose.bProportion to 9 or 3, according to the panose.bFamilyType value
     * Set CFF.cff.TopDictIndex[0].isFixedPitch to True for CFF fonts
     """
@@ -91,7 +90,6 @@ def monospace(
 
             glyph_metrics_stats = font.glyph_metrics_stats()
             seems_monospaced = glyph_metrics_stats["seems_monospaced"]
-            most_common_width = glyph_metrics_stats["most_common_width"]
             width_max = glyph_metrics_stats["width_max"]
 
             # Do nothing if the font does not seem monospaced
@@ -109,13 +107,6 @@ def monospace(
                 hhea_table_changed = True
                 logger.info("hhea.advanceWidthMax: {old} -> {new}", old=current_width_max, new=width_max)
 
-            # Ensure that hhea.numberOfHMetrics is correct
-            current_number_of_h_metrics = hhea_table.numberOfHMetrics
-            if current_number_of_h_metrics != 3:
-                hhea_table.numberOfHMetrics = 3
-                hhea_table_changed = True
-                logger.info("hhea.numberOfHMetrics: {old} -> {new}", old=current_number_of_h_metrics, new=3)
-
             # Ensure that post.isFixedPitch is non-zero when the font is monospaced
             post_table: TablePost = font["post"]
             post_table_changed = False
@@ -127,20 +118,22 @@ def monospace(
 
             # Ensure that OS/2.panose.bProportion is correctly set
             os2_table: TableOS2 = font["OS/2"]
-            os2_table_copy = deepcopy(os2_table)
             os2_table_changed = False
 
             # Ensure that panose.bFamilyType is non-zero when panose.bProportion is 9
+            current_family_type = os2_table.panose.bFamilyType
+
             if os2_table.panose.bFamilyType == 0:
                 os2_table.panose.bFamilyType = 2
-                logger.info("OS/2.panose.bFamilyType: {old} -> {new}", old=os2_table_copy.panose.bFamilyType, new=2)
+                logger.info("OS/2.panose.bFamilyType: {old} -> {new}", old=current_family_type, new=2)
                 os2_table_changed = True
 
             # Ensure that panose.bProportion is 9 when the font is monospaced in latin text fonts (bFamilyType = 2)
+            current_proportion = os2_table.panose.bProportion
             if os2_table.panose.bFamilyType == 2:
                 if not os2_table.panose.bProportion == 9:
                     os2_table.panose.bProportion = 9
-                    logger.info("OS/2.panose.bProportion: {old} -> {new}", old=os2_table_copy.panose.bProportion, new=9)
+                    logger.info("OS/2.panose.bProportion: {old} -> {new}", old=current_proportion, new=9)
                     os2_table_changed = True
 
             # Ensure that panose.bProportion is 3 when the font is monospaced in latin handwritten fonts
@@ -148,31 +141,17 @@ def monospace(
             if os2_table.panose.bFamilyType in [3, 5]:
                 if not os2_table.panose.bProportion == 3:
                     os2_table.panose.bProportion = 3
-                    logger.info(
-                        "OS/2.panose.bProportion: {old} -> {new}",
-                        old=os2_table_copy.panose.bProportion,
-                        new=3,
-                    )
+                    logger.info("OS/2.panose.bProportion: {old} -> {new}", old=current_proportion, new=3)
                     os2_table_changed = True
-                    logger.info("OS/2.panose.bProportion: {old} -> {new}", old=os2_table_copy.panose.bProportion, new=3)
-
-            # Ensure that panose.bProportion is 3 when the font is monospaced in latin symbol fonts (bFamilyType = 4)
-            if os2_table.panose.bFamilyType == 5:
-                os2_table.panose.bProportion = 3
-                logger.info("OS/2.panose.bProportion: {old} -> {new}", old=os2_table_copy.panose.bProportion, new=3)
-
-            if os2_table_copy.compile(font) != os2_table.compile(font):
-                os2_table_changed = True
 
             # Ensure that CFF.cff.TopDictIndex[0].isFixedPitch is True for CFF fonts
             cff_table_changed = False
             if font.is_otf:
                 cff_table = font["CFF "]
-                cff_table_copy = deepcopy(cff_table)
                 top_dict = cff_table.cff.topDictIndex[0]
-                setattr(top_dict, "isFixedPitch", True)
-
-                if cff_table_copy.compile(font) != cff_table.compile(font):
+                if not getattr(top_dict, "isFixedPitch", 1):
+                    setattr(top_dict, "isFixedPitch", True)
+                    logger.info("CFF.cff.TopDictIndex[0].isFixedPitch: {old} -> {new}", old=0, new=1)
                     cff_table_changed = True
 
             # Check if one of the tables has changed and save the font.
