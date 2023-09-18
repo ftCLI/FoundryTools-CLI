@@ -5,7 +5,6 @@ from pathlib import Path
 import click
 from fontTools.misc.cliTools import makeOutputFileName
 
-from foundryToolsCLI.Lib.utils.logger import logger, Logs
 from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.tables.hhea import TableHhea
 from foundryToolsCLI.Lib.tables.name import TableName
@@ -15,13 +14,9 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_recursive_option,
     add_common_options,
-    generic_error_message,
-    file_saved_message,
-    file_not_changed_message,
     generic_warning_message,
-    generic_success_message,
-    generic_info_message,
 )
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 fix_fonts = click.Group("subcommands")
 
@@ -47,34 +42,34 @@ def monospace(
 
     Requirements for monospace fonts:
 
-    * post.isFixedPitch - "Set to 0 if the font is proportionally spaced, non-zero if the font is not proportionally
+    * ``post.isFixedPitch`` - "Set to 0 if the font is proportionally spaced, non-zero if the font is not proportionally
     paced (monospaced)" (https://www.microsoft.com/typography/otspec/post.htm)
 
-    * hhea.advanceWidthMax must be correct, meaning no glyph's width value is greater.
+    * ``hhea.advanceWidthMax`` must be correct, meaning no glyph's width value is greater.
     (https://www.microsoft.com/typography/otspec/hhea.htm)
 
-    * OS/2.panose.bProportion must be set to 9 (monospace) on latin text fonts.
+    * ``OS/2.panose.bProportion`` must be set to 9 (monospace) on latin text fonts.
 
-    * OS/2.panose.bSpacing must be set to 3 (monospace) on latin hand written or latin symbol fonts.
+    * ``OS/2.panose.bSpacing`` must be set to 3 (monospace) on latin handwritten or latin symbol fonts.
 
     * Spec says: "The PANOSE definition contains ten digits each of which currently describes up to sixteen variations.
-    Windows uses bFamilyType, bSerifStyle and bProportion in the font mapper to determine family type. It also uses
-    bProportion to determine if the font is monospaced." (https://www.microsoft.com/typography/otspec/os2.htm#pan,
-    https://monotypecom-test.monotype.de/services/pan2)
+    Windows uses ``bFamilyType``, ``bSerifStyle`` and ``bProportion`` in the font mapper to determine family type. It
+    also uses ``bProportion`` to determine if the font is monospaced."
+    (https://www.microsoft.com/typography/otspec/os2.htm#pan, https://monotypecom-test.monotype.de/services/pan2)
 
-    * OS/2.xAvgCharWidth must be set accurately. "OS/2.xAvgCharWidth is used when rendering monospaced fonts, at least
+    * ``OS/2.xAvgCharWidth`` must be set accurately. "OS/2.xAvgCharWidth is used when rendering monospaced fonts, at least
     by Windows GDI" (https://typedrawers.com/discussion/comment/15397/#Comment_15397)
 
-    * CFF.cff.TopDictIndex[0].isFixedPitch must be set to True for CFF fonts.
+    * ``CFF.cff.TopDictIndex[0].isFixedPitch`` must be set to ``True`` for CFF fonts.
 
     Fixing procedure:
 
     If the font is monospaced, then:
 
-    * Set post.isFixedPitch to True (1)
-    * Correct hhea.advanceWidthMax value
-    * Set OS/2.panose.bProportion to 9 or 3, according to the panose.bFamilyType value
-    * Set CFF.cff.TopDictIndex[0].isFixedPitch to True for CFF fonts
+    * Set ``post.isFixedPitch`` to ``True`` (1)
+    * Correct the ``hhea.advanceWidthMax`` value
+    * Set the ``OS/2.panose.bProportion`` value to 9 or 3, according to the ``OS/2.panose.bFamilyType`` value
+    * Set ``CFF.cff.TopDictIndex[0].isFixedPitch`` to ``True`` for CFF fonts
     """
 
     fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
@@ -169,21 +164,37 @@ def monospace(
 
 @fix_fonts.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def nbsp_width(
     input_path: Path,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
     """
-    Checks if 'nbspace' and 'space' glyphs have the same width. If not, corrects 'nbspace' width to match 'space' width.
-
     fontbakery check id: com.google.fonts/check/whitespace_widths
+
+    Rationale:
+
+    If the ``space`` and ``nbspace`` glyphs have different widths, then Google Workspace has problems with the font.
+
+    The ``nbspace`` is used to replace the space character in multiple situations in documents; such as the space before
+    punctuation in languages that do that. It avoids the punctuation to be separated from the last word and go to next
+    line.
+
+    This is automatic substitution by the text editors, not by fonts. It's also used by designers in text composition
+    practice to create nicely shaped paragraphs. If the ``space`` and the ``nbspace`` are not the same width, it breaks
+    the text composition of documents.
+
+    Fixing procedure:
+
+    * Check if ``nbspace`` and space glyphs have the same width. If not, correct ``nbspace`` width to match the
+    ``space`` width.
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -191,6 +202,8 @@ def nbsp_width(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.checking_file, file=file)
 
             hmtx_table = font["hmtx"]
             hmtx_table_copy = deepcopy(hmtx_table)
@@ -203,12 +216,12 @@ def nbsp_width(
 
             if hmtx_table_copy.compile(font) != hmtx_table.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -244,27 +257,58 @@ def nbsp_width(
 def italic_angle(
     input_path: Path,
     mode: int = 1,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
     min_slant: float = 2.0,
 ):
     """
-    Recalculates post.italicAngle, hhea.caretSlopeRise, hhea.caretSlopeRun and sets/clears the italic/oblique bits
-    according to the calculated values. In CFF fonts, also CFF.topDictIndex[0].ItalicAngle is recalculated.
+    fontbakery check ids:
+
+    \b
+    * com.google.fonts/check/italic_angle
+    * com.google.fonts/check/caret_slope
+
+    Rationale:
+    The ``post`` table ``italicAngle`` property should be a reasonable amount, likely not more than 30°. Note that in
+    the OpenType specification, the value is negative for a rightward lean.
+
+    https://docs.microsoft.com/en-us/typography/opentype/spec/post
+
+    Checks whether ``hhea.caretSlopeRise`` and ``hhea.caretSlopeRun`` match with ``post.italicAngle``.
+
+    For Upright fonts, you can set ``hhea.caretSlopeRise`` to 1 and ``hhea.caretSlopeRun`` to 0.
+
+    For Italic fonts, you can set ``hhea.caretSlopeRise`` to ``head.unitsPerEm`` and calculate ``hhea.caretSlopeRun``
+    like this:
+
+    ``round(math.tan(math.radians(-1 * font["post"].italicAngle)) * font["head"].unitsPerEm)``
+
+    This check allows for a 0.1° rounding difference between the Italic angle as calculated by the caret slope and
+    ``post.italicAngle``
+
+    Fixing procedure:
+
+    * Recalculate ``post.italicAngle``
+
+    * Recalculate ``hhea.caretSlopeRise`` and ``hhea.caretSlopeRun`` according to the calculated ``post.italicAngle``
+
+    * Set/clear the italic and/or oblique bits according to the calculated values
+
+    * In CFF fonts, recalculate also ``CFF.topDictIndex[0].ItalicAngle`` and set it to ``post.italicAngle`` rounded to
+    the nearest integer
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
-        print()
-
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-            generic_info_message(f"Checking file: {file.name}")
+
+            logger.info(Logs.checking_file, file=file)
 
             post_table: TablePost = font["post"]
             hhea_table: TableHhea = font["hhea"]
@@ -273,16 +317,17 @@ def italic_angle(
             post_italic_angle = post_table.italicAngle
             calculated_post_italic_angle = font.calculate_italic_angle(min_slant=min_slant)
             post_italic_angle_ok = font.check_italic_angle(min_slant=min_slant)
+
             if post_italic_angle_ok:
-                generic_success_message(
-                    f"post.italicAngle    : {click.style(post_italic_angle, fg='green', bold=True)}"
+                logger.opt(colors=True).info(
+                    "post.italicAngle: {post_italic_angle} -> <green>OK</>", post_italic_angle=post_italic_angle
                 )
             else:
                 post_table.set_italic_angle(calculated_post_italic_angle)
-                generic_warning_message(
-                    f"post.italicAngle    : "
-                    f"{click.style(post_italic_angle, fg='red', bold=True)} -> "
-                    f"{click.style(calculated_post_italic_angle, fg='green', bold=True)}"
+                logger.opt(colors=True).info(
+                    "post.italicAngle: <red>{old}</> -> <green>{new}</>",
+                    old=post_italic_angle,
+                    new=calculated_post_italic_angle,
                 )
 
             calculated_rise = font.calculate_caret_slope_rise()
@@ -294,19 +339,19 @@ def italic_angle(
             hhea_italic_angle = font.calculate_run_rise_angle()
             hhea_italic_angle_ok = abs(post_table.italicAngle - hhea_italic_angle) < 0.1
             if hhea_italic_angle_ok:
-                generic_success_message(f"hhea.caretSlopeRise : {click.style(rise, fg='green', bold=True)}")
-                generic_success_message(f"hhea.caretSlopeRun  : {(click.style(run, fg='green', bold=True))}")
+                logger.opt(colors=True).info("hhea.caretSlopeRise: {rise} -> <green>OK</>", rise=rise)
+                logger.opt(colors=True).info("hhea.caretSlopeRun: {run} -> <green>OK</>", run=run)
             else:
-                hhea_table.caretSlopeRise = calculated_rise
-                generic_warning_message(
-                    f"hhea.caretSlopeRise : {click.style(rise, fg='red', bold=True)} -> "
-                    f"{click.style(calculated_rise, fg='green', bold=True)}"
-                )
-                hhea_table.caretSlopeRun = calculated_run
-                generic_warning_message(
-                    f"hhea.caretSlopeRun  : {click.style(run, fg='red', bold=True)} -> "
-                    f"{click.style(calculated_run, fg='green', bold=True)}"
-                )
+                if hhea_table.caretSlopeRise != calculated_rise:
+                    hhea_table.caretSlopeRise = calculated_rise
+                    logger.opt(colors=True).info(
+                        "hhea.caretSlopeRise: <red>{rise}</> -> <green>{new}</>", rise=rise, new=calculated_rise
+                    )
+                if hhea_table.caretSlopeRun != calculated_run:
+                    hhea_table.caretSlopeRun = calculated_run
+                    logger.opt(colors=True).info(
+                        "hhea.caretSlopeRun: <red>{run}</> -> <green>{new}</>", run=run, new=calculated_run
+                    )
 
             # Check CFF italic angle
             if font.is_otf:
@@ -315,15 +360,16 @@ def italic_angle(
                 cff_italic_angle_ok = cff_italic_angle == round(post_table.italicAngle)
 
                 if cff_italic_angle_ok:
-                    generic_success_message(
-                        f"CFF.ItalicAngle     : " f"{click.style(cff_italic_angle, fg='green', bold=True)}"
+                    logger.opt(colors=True).info(
+                        "CFF.cff.topDictIndex[0].ItalicAngle: {cff_italic_angle} -> <green>OK</>",
+                        cff_italic_angle=cff_italic_angle,
                     )
                 else:
                     cff_table.cff.topDictIndex[0].ItalicAngle = round(post_table.italicAngle)
-                    generic_warning_message(
-                        f"CFF.ItalicAngle     : "
-                        f"{click.style(cff_italic_angle, fg='red', bold=True)} -> "
-                        f"{click.style(cff_table.cff.topDictIndex[0].ItalicAngle, fg='green', bold=True)}"
+                    logger.opt(colors=True).info(
+                        "CFF.cff.topDictIndex[0].ItalicAngle: <red>{old}</> -> <green>{new}</>",
+                        old=cff_italic_angle,
+                        new=round(post_table.italicAngle),
                     )
             else:
                 cff_italic_angle_ok = True
@@ -344,21 +390,17 @@ def italic_angle(
                 oblique_bit_ok = False
 
             if italic_bits_ok:
-                generic_success_message(f"Italic              : " f"{click.style(is_italic, fg='green', bold=True)}")
+                logger.opt(colors=True).info("Italic: {italic} -> <green>OK</>", italic=is_italic)
             else:
-                generic_info_message(
-                    f"Italic              : "
-                    f"{click.style(is_italic, fg='red', bold=True)} -> "
-                    f"{click.style(font.is_italic, fg='green', bold=True)}"
+                logger.opt(colors=True).info(
+                    "Italic: <red>{old}</> -> <green>{new}</>", old=is_italic, new=font.is_italic
                 )
 
             if oblique_bit_ok:
-                generic_success_message(f"Oblique             : " f"{click.style(is_oblique, fg='green', bold=True)}")
+                logger.opt(colors=True).info("Oblique: {oblique} -> <green>OK</>", oblique=is_oblique)
             else:
-                generic_info_message(
-                    f"Oblique             : "
-                    f"{click.style(is_oblique, fg='red', bold=True)} -> "
-                    f"{click.style(font.is_oblique, fg='green', bold=True)}"
+                logger.opt(colors=True).info(
+                    "Oblique: <red>{old}</> -> <green>{new}</>", old=is_oblique, new=font.is_oblique
                 )
 
             # Don't save the file if nothing has been modified
@@ -369,35 +411,42 @@ def italic_angle(
                 and italic_bits_ok
                 and oblique_bit_ok
             ):
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
                 continue
 
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
 
 @fix_fonts.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def nbsp_missing(
     input_path: Path,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
     """
-    Checks if the font has a non-breaking space character, and if it doesn't, it adds one by double mapping 'space'.
-
     fontbakery check id: com.google.fonts/check/whitespace_glyphs
+
+    Rationale:
+
+    Font contains glyphs for whitespace characters?
+
+    Fixing procedure:
+
+    * Add a glyph for the missing ``nbspace`` character by double mapping the ``space`` character
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -405,6 +454,8 @@ def nbsp_missing(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.checking_file, file=file)
 
             cmap_table = font["cmap"]
             cmap_table_copy = deepcopy(cmap_table)
@@ -416,37 +467,60 @@ def nbsp_missing(
 
             if cmap_table_copy.compile(font) != cmap_table.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
 
 @fix_fonts.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def decompose_transformed(
     input_path: Path,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
     """
-    Decomposes composite glyphs that have transformed components.
-
     fontbakery check id: com.google.fonts/check/transformed_components
+
+    Rationale:
+
+    Some families have glyphs which have been constructed by using transformed components e.g. the 'u' being constructed
+    from a flipped 'n'.
+
+    From a designers point of view, this sounds like a win (less work). However, such approaches can lead to
+    rasterization issues, such as having the 'u' not sitting on the baseline at certain sizes after running the font
+    through ttfautohint.
+
+    Other issues are outlines that end up reversed when only one dimension is flipped while the other isn't.
+
+    As of July 2019, Marc Foley observed that ttfautohint assigns cvt values to transformed glyphs as if they are not
+    transformed and the result is they render very badly, and that vttLib does not support flipped components.
+
+    When building the font with fontmake, the problem can be fixed by adding this to the command line:
+
+    ``--filter DecomposeTransformedComponentsFilter``
+
+    Fixing procedure:
+
+    * Decompose composite glyphs that have transformed components.
     """
 
     from fontTools.pens.recordingPen import DecomposingRecordingPen
     from fontTools.pens.ttGlyphPen import TTGlyphPen
     import pathops
 
-    fonts = get_fonts_in_path(input_path=input_path, allow_cff=False, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, allow_cff=False, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -454,6 +528,8 @@ def decompose_transformed(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.checking_file, file=file)
 
             glyph_set = font.getGlyphSet()
             glyph_table = font["glyf"]
@@ -494,33 +570,45 @@ def decompose_transformed(
 
             if glyph_table_copy.compile(font) != glyph_table.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
 
 @fix_fonts.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def duplicate_components(
     input_path: Path,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
     """
-    Removes duplicate components which have the same x,y coordinates.
-
     fontbakery check id: com.google.fonts/check/glyf_non_transformed_duplicate_components
+
+    Rationale:
+
+    There have been cases in which fonts had faulty double quote marks, with each of them containing two single quote
+    marks as components with the same x, y coordinates which makes them visually look like single quote marks.
+
+    This check ensures that glyphs do not contain duplicate components which have the same x,y coordinates.
+
+    Fixing procedure:
+
+    * Remove duplicate components which have the same x,y coordinates.
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(
+        input_path=input_path, allow_cff=False, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -528,6 +616,8 @@ def duplicate_components(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.checking_file, file=file)
 
             glyph_table = font["glyf"]
             glyph_table_copy = deepcopy(glyph_table)
@@ -553,36 +643,52 @@ def duplicate_components(
 
             if glyph_table_copy.compile(font) != glyph_table.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
 
 @fix_fonts.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def kern_table(
     input_path: Path,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
     """
-    Some applications such as MS PowerPoint require kerning info on the kern table. More specifically, they require a
-    format 0 kern subtable from a kern table version 0 with only glyphs defined in the cmap table.
-
-    Given this, the command deletes all kerning pairs from kern v0 subtables where one of the two glyphs is not defined
-    in the cmap table.
-
     fontbakery check id: com.google.fonts/check/kern_table
+
+    Rationale:
+
+    Even though all fonts should have their kerning implemented in the ``GPOS`` table, there may be kerning info at the
+    ``kern`` table as well.
+
+    Some applications such as MS PowerPoint require kerning info on the kern table. More specifically, they require a
+    format 0 kern subtable from a kern table version 0 with only glyphs defined in the ``cmap`` table, which is the only
+    one that Windows understands (and which is also the simplest and more limited of all the kern subtables).
+
+    Google Fonts ingests fonts made for download and use on desktops, and does all web font optimizations in the serving
+    pipeline (using libre libraries that anyone can replicate.)
+
+    Ideally, TTFs intended for desktop users (and thus the ones intended for Google Fonts) should have both ``kern`` and
+    ``GPOS`` tables.
+
+    Given all of the above, we currently treat kerning on a v0 ``kern`` table as a good-to-have (but optional) feature.
+
+    Fixing procedure:
+
+    * Remove glyphs that are not defined in the ``cmap`` table from the ``kern`` table.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -591,7 +697,10 @@ def kern_table(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
+            logger.info(Logs.checking_file, file=file)
+
             if "kern" not in font:
+                logger.skip(Logs.file_not_changed, file=file)
                 continue
 
             kern = font["kern"]
@@ -618,32 +727,40 @@ def kern_table(
 
             if kern_table_copy.compile(font) != kern.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
 
 @fix_fonts.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def strip_names(
     input_path: Path,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
     """
-    Removes leading and trailing spaces from all namerecords.
-
     fontbakery check id: com.google.fonts/check/name/trailing_spaces
+
+    Rationale:
+
+    Name table records must not have trailing spaces.
+
+    Fixing procedure:
+
+    * Remove leading and trailing spaces from all NameRecords in the ``name`` table.
+
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -652,6 +769,8 @@ def strip_names(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
+            logger.info(Logs.checking_file, file=file)
+
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
 
@@ -659,13 +778,13 @@ def strip_names(
 
             if name_table_copy.compile(font) != name_table.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
 
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -680,9 +799,17 @@ def empty_names(
     overwrite: bool = True,
 ):
     """
-    Removes empty namerecords.
-
     fontbakery check id: com.adobe.fonts/check/name/empty_records
+
+    Rationale:
+
+    Check name table for empty records.
+
+    Fixing procedure:
+
+    * Remove empty NameRecords from the ``name`` table.
+
+
     """
     fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
@@ -694,6 +821,8 @@ def empty_names(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
+            logger.info(Logs.checking_file, file=file)
+
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
 
@@ -701,13 +830,13 @@ def empty_names(
 
             if name_table_copy.compile(font) != name_table.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
 
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
