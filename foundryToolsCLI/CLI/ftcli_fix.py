@@ -5,6 +5,7 @@ from pathlib import Path
 import click
 from fontTools.misc.cliTools import makeOutputFileName
 
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.tables.hhea import TableHhea
 from foundryToolsCLI.Lib.tables.name import TableName
@@ -12,6 +13,7 @@ from foundryToolsCLI.Lib.tables.post import TablePost
 from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
+    add_recursive_option,
     add_common_options,
     generic_error_message,
     file_saved_message,
@@ -26,26 +28,57 @@ fix_fonts = click.Group("subcommands")
 
 @fix_fonts.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def monospace(
     input_path: Path,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
     """
-    If the family is monospaced:
-
-    \b
-    * post.isFixedPitch must be set to a non-zero value
-    * OS/2.panose.bProportion must be set to 9
-    * CFF.cff.TopDictIndex[0].isFixedPitch must be set to True
-
     fontbakery check id: com.google.fonts/check/monospace
+
+    Rationale:
+
+    There are various metadata in the OpenType spec to specify if a font is monospaced or not. If the font is not truly
+    monospaced, then no monospaced metadata should be set (as sometimes they mistakenly are...)
+
+    Requirements for monospace fonts:
+
+    * post.isFixedPitch - "Set to 0 if the font is proportionally spaced, non-zero if the font is not proportionally
+    paced (monospaced)" (https://www.microsoft.com/typography/otspec/post.htm)
+
+    * hhea.advanceWidthMax must be correct, meaning no glyph's width value is greater.
+    (https://www.microsoft.com/typography/otspec/hhea.htm)
+
+    * OS/2.panose.bProportion must be set to 9 (monospace) on latin text fonts.
+
+    * OS/2.panose.bSpacing must be set to 3 (monospace) on latin hand written or latin symbol fonts.
+
+    * Spec says: "The PANOSE definition contains ten digits each of which currently describes up to sixteen variations.
+    Windows uses bFamilyType, bSerifStyle and bProportion in the font mapper to determine family type. It also uses
+    bProportion to determine if the font is monospaced." (https://www.microsoft.com/typography/otspec/os2.htm#pan,
+    https://monotypecom-test.monotype.de/services/pan2)
+
+    * OS/2.xAvgCharWidth must be set accurately. "OS/2.xAvgCharWidth is used when rendering monospaced fonts, at least
+    by Windows GDI" (https://typedrawers.com/discussion/comment/15397/#Comment_15397)
+
+    * CFF.cff.TopDictIndex[0].isFixedPitch must be set to True for CFF fonts.
+
+    Fixing procedure:
+
+    If the font is monospaced, then:
+
+    * Set post.isFixedPitch to True (1)
+    * Correct hhea.advanceWidthMax value
+    * Correct hhea.numberOfHMetrics value
+    * Set OS/2.panose.bProportion to 9 or 3, according to the panose.bFamilyType value
+    * Set CFF.cff.TopDictIndex[0].isFixedPitch to True for CFF fonts
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -54,27 +87,84 @@ def monospace(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
+            logger.info(Logs.checking_file, file=file)
+
+            glyph_metrics_stats = font.glyph_metrics_stats()
+            seems_monospaced = glyph_metrics_stats["seems_monospaced"]
+            most_common_width = glyph_metrics_stats["most_common_width"]
+            width_max = glyph_metrics_stats["width_max"]
+
+            # Do nothing if the font does not seem monospaced
+            if not seems_monospaced:
+                logger.skip(Logs.not_monospaced, file=file)
+                continue
+
+            hhea_table: TableHhea = font["hhea"]
+            hhea_table_changed = False
+
+            # Ensure that hhea.advanceWidthMax is correct
+            current_width_max = hhea_table.advanceWidthMax
+            if current_width_max != width_max:
+                hhea_table.advanceWidthMax = width_max
+                hhea_table_changed = True
+                logger.info("hhea.advanceWidthMax: {old} -> {new}", old=current_width_max, new=width_max)
+
+            # Ensure that hhea.numberOfHMetrics is correct
+            current_number_of_h_metrics = hhea_table.numberOfHMetrics
+            if current_number_of_h_metrics != 3:
+                hhea_table.numberOfHMetrics = 3
+                hhea_table_changed = True
+                logger.info("hhea.numberOfHMetrics: {old} -> {new}", old=current_number_of_h_metrics, new=3)
+
+            # Ensure that post.isFixedPitch is non-zero when the font is monospaced
             post_table: TablePost = font["post"]
-            os2_table: TableOS2 = font["OS/2"]
-            post_table_copy = deepcopy(post_table)
-            os2_table_copy = deepcopy(os2_table)
-
-            post_table.set_fixed_pitch(True)
-
-            if os2_table.panose.bProportion != 9:
-                os2_table.panose.bProportion = 9
-                # Ensure that panose.bFamilyType is non-zero when panose.bProportion is 9
-                if os2_table.panose.bFamilyType == 0:
-                    os2_table.panose.bFamilyType = 2
-
             post_table_changed = False
-            if post_table_copy.compile(font) != post_table.compile(font):
+
+            if post_table.isFixedPitch == 0:
+                post_table.set_fixed_pitch(True)
+                logger.info("post.isFixedPitch: {old} -> {new}", old=0, new=1)
                 post_table_changed = True
 
+            # Ensure that OS/2.panose.bProportion is correctly set
+            os2_table: TableOS2 = font["OS/2"]
+            os2_table_copy = deepcopy(os2_table)
             os2_table_changed = False
+
+            # Ensure that panose.bFamilyType is non-zero when panose.bProportion is 9
+            if os2_table.panose.bFamilyType == 0:
+                os2_table.panose.bFamilyType = 2
+                logger.info("OS/2.panose.bFamilyType: {old} -> {new}", old=os2_table_copy.panose.bFamilyType, new=2)
+                os2_table_changed = True
+
+            # Ensure that panose.bProportion is 9 when the font is monospaced in latin text fonts (bFamilyType = 2)
+            if os2_table.panose.bFamilyType == 2:
+                if not os2_table.panose.bProportion == 9:
+                    os2_table.panose.bProportion = 9
+                    logger.info("OS/2.panose.bProportion: {old} -> {new}", old=os2_table_copy.panose.bProportion, new=9)
+                    os2_table_changed = True
+
+            # Ensure that panose.bProportion is 3 when the font is monospaced in latin handwritten fonts
+            # (bFamilyType = 3) and in latin symbol fonts (bFamilyType = 5)
+            if os2_table.panose.bFamilyType in [3, 5]:
+                if not os2_table.panose.bProportion == 3:
+                    os2_table.panose.bProportion = 3
+                    logger.info(
+                        "OS/2.panose.bProportion: {old} -> {new}",
+                        old=os2_table_copy.panose.bProportion,
+                        new=3,
+                    )
+                    os2_table_changed = True
+                    logger.info("OS/2.panose.bProportion: {old} -> {new}", old=os2_table_copy.panose.bProportion, new=3)
+
+            # Ensure that panose.bProportion is 3 when the font is monospaced in latin symbol fonts (bFamilyType = 4)
+            if os2_table.panose.bFamilyType == 5:
+                os2_table.panose.bProportion = 3
+                logger.info("OS/2.panose.bProportion: {old} -> {new}", old=os2_table_copy.panose.bProportion, new=3)
+
             if os2_table_copy.compile(font) != os2_table.compile(font):
                 os2_table_changed = True
 
+            # Ensure that CFF.cff.TopDictIndex[0].isFixedPitch is True for CFF fonts
             cff_table_changed = False
             if font.is_otf:
                 cff_table = font["CFF "]
@@ -85,15 +175,15 @@ def monospace(
                 if cff_table_copy.compile(font) != cff_table.compile(font):
                     cff_table_changed = True
 
-            if post_table_changed or os2_table_changed or cff_table_changed:
+            # Check if one of the tables has changed and save the font.
+            if hhea_table_changed or post_table_changed or os2_table_changed or cff_table_changed:
                 font.save(output_file)
-                file_saved_message(output_file)
-
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
