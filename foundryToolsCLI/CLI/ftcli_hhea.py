@@ -18,41 +18,13 @@ from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 @click.command()
 @add_file_or_path_argument()
-@click.option(
-    "--rise",
-    type=int,
-    help="""Sets the ``caretSlopeRise`` value.""",
-)
-@click.option(
-    "--run",
-    type=int,
-    help="""Sets the ``caretSlopeRun`` value.""",
-)
-@click.option(
-    "--offset",
-    type=int,
-    help="""Sets the ``caretOffset`` value.""",
-)
-@click.option(
-    "--ascent",
-    type=int,
-    help="""Sets the ``ascent`` value.""",
-)
-@click.option(
-    "--descent",
-    type=int,
-    help="""Sets the ``descent`` value.""",
-)
-@click.option(
-    "--linegap",
-    type=int,
-    help="""Sets the ``lineGap`` value.""",
-)
-@click.option(
-    "--recalc-offset",
-    is_flag=True,
-    default=None,
-    help="""Recalculate the ``caretOffset`` value.""")
+@click.option("--rise", type=int, help="""Sets the ``caretSlopeRise`` value.""")
+@click.option("--run", type=int, help="""Sets the ``caretSlopeRun`` value.""")
+@click.option("--offset", type=int, help="""Sets the ``caretOffset`` value.""")
+@click.option("--ascent", type=int, help="""Sets the ``ascent`` value.""")
+@click.option("--descent", type=int, help="""Sets the ``descent`` value.""")
+@click.option("--linegap", type=int, help="""Sets the ``lineGap`` value.""")
+@click.option("--recalc-offset", is_flag=True, default=None, help="""Recalculate the ``caretOffset`` value.""")
 @add_recursive_option()
 @add_common_options()
 def cli(
