@@ -5,17 +5,15 @@ from pathlib import Path
 import click
 from fontTools.misc.cliTools import makeOutputFileName
 
+from Lib.utils.logger import logger, Logs
 from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.utils.bits_tools import unset_nth_bit
-from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
+from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, initial_check_pass
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
+    add_recursive_option,
     add_common_options,
-    generic_error_message,
-    generic_warning_message,
-    file_saved_message,
-    file_not_changed_message,
 )
 
 tbl_os2 = click.Group("subcommands")
@@ -23,140 +21,165 @@ tbl_os2 = click.Group("subcommands")
 
 @tbl_os2.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
-def recalc_x_height(input_path: Path, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = True):
+def recalc_x_height(
+    input_path: Path,
+    recursive: bool = False,
+    recalc_timestamp: bool = False,
+    output_dir: Path = None,
+    overwrite: bool = True,
+):
     """
     Recalculates sxHeight value.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(input=file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.current_file, file=file)
+
             os_2: TableOS2 = font["OS/2"]
             if os_2.version < 2:
-                generic_warning_message(
-                    f"{file.name}: sxHeight is defined only in OS/2 version 2 and up. Current version is {os_2.version}"
-                )
+                logger.warning(Logs.x_height_not_defined, version=os_2.version)
+                logger.skip(Logs.file_not_changed, file=file)
                 continue
 
             current = os_2.sxHeight
             x_height = font.recalc_x_height()
             if current == x_height:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
                 continue
 
             os_2.set_x_height(x_height)
-            output_file = Path(makeOutputFileName(input=file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
 
 @tbl_os2.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def recalc_cap_height(
-    input_path: Path, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = True
+    input_path: Path,
+    recursive: bool = False,
+    recalc_timestamp: bool = False,
+    output_dir: Path = None,
+    overwrite: bool = True,
 ):
     """
     Recalculates sCapHeight value.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(input=file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.current_file, file=file)
+
             os_2: TableOS2 = font["OS/2"]
             if os_2.version < 2:
-                generic_warning_message(
-                    f"{file.name}: "
-                    f"sCapHeight is defined only in OS/2 version 2 and up. Current version is {os_2.version}"
-                )
+                logger.warning(Logs.cap_height_not_defined, version=os_2.version)
+                logger.skip(Logs.file_not_changed, file=file)
                 continue
 
             current = os_2.sCapHeight
             cap_height = font.recalc_cap_height()
             if current == cap_height:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
                 continue
 
             os_2.set_cap_height(cap_height)
-            output_file = Path(makeOutputFileName(input=file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
 
 @tbl_os2.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def recalc_max_context(
-    input_path: Path, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = True
+    input_path: Path,
+    recursive: bool = False,
+    recalc_timestamp: bool = False,
+    output_dir: Path = None,
+    overwrite: bool = True,
 ):
     """
     Recalculates usMaxContext value.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.current_file, file=file)
+
             os_2: TableOS2 = font["OS/2"]
 
             if os_2.version < 2:
-                generic_warning_message(
-                    f"{file.name}: "
-                    f"usMaxContext is defined only in OS/2 version 2 and up. Current version is {os_2.version}"
-                )
+                logger.warning(Logs.max_context_not_defined, version=os_2.version)
+                logger.skip(Logs.file_not_changed, file=file)
                 continue
 
             current = os_2.usMaxContex
             max_context = font.recalc_max_context()
             if current == max_context:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
                 continue
 
             os_2.usMaxContext = max_context
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
 
 @tbl_os2.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
-def recalc_ranges(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def recalc_ranges(
+    input_path: Path,
+    recursive: bool = False,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
     """
     Generates a temporary Type 1 from the font file using tx, converts that to an OpenType font using makeotf, reads the
     Unicode ranges and codepage ranges from the temporary OpenType font file, and then writes those ranges to the
     original font's OS/2 table.
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -164,6 +187,9 @@ def recalc_ranges(input_path: Path, output_dir: Path = None, recalc_timestamp: b
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.current_file, file=file)
+
             temp_otf_fd, temp_otf_file = font.make_temp_otf()
             temp_font = Font(temp_otf_file)
 
@@ -178,16 +204,16 @@ def recalc_ranges(input_path: Path, output_dir: Path = None, recalc_timestamp: b
                 os_2.setUnicodeRanges(bits=new_unicode_ranges)
                 os_2.set_codepage_ranges(codepage_ranges=new_codepage_ranges)
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
             temp_font.close()
             os.close(temp_otf_fd)
             os.remove(temp_otf_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -336,9 +362,15 @@ no bitmaps available in the font, then the font is considered unembeddable and t
 embedding restrictions specified in bits 0-3 and 8 also apply.
 """,
 )
+@add_recursive_option()
 @add_common_options()
 def set_flags(
-    input_path: Path, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = True, **kwargs
+    input_path: Path,
+    recursive: bool = False,
+    recalc_timestamp: bool = False,
+    output_dir: Path = None,
+    overwrite: bool = True,
+    **kwargs,
 ):
     """
     Sets/clears the following flags in OS/2.fsSelection and OS/2.fsType fields:
@@ -364,20 +396,21 @@ def set_flags(
     Bit 8: No subsetting
     Bit 9: Bitmap embedding only
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     params = {k: v for k, v in kwargs.items() if v is not None}
     if len(params) == 0:
-        generic_error_message("Please, pass at least one valid parameter.")
+        logger.error(Logs.no_parameter)
         return
 
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.current_file, file=file)
 
             head = font["head"]
             head_copy = deepcopy(head)
@@ -386,9 +419,7 @@ def set_flags(
 
             for flag, value in params.items():
                 if flag in ("use_typo_metrics", "wws_consistent", "oblique") and os2.version < 4:
-                    generic_warning_message(
-                        f"{flag.upper()} flag can't be set. Bits 7, 8 and 9 are only defined in OS/2 version 4 and up."
-                    )
+                    logger.warning(Logs.bits_7_8_9_not_defined, flag=flag.upper(), version=os2.version)
                     continue
                 if flag == "embed_level":
                     value = int(value)
@@ -397,12 +428,12 @@ def set_flags(
 
             if head_copy.compile(font) != head.compile(font) or os2_copy.compile(font) != os2.compile(font):
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -410,10 +441,12 @@ def set_flags(
 @tbl_os2.command()
 @click.option("-v", "target_version", type=click.IntRange(1, 5), required=True, help="Target version")
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def set_version(
     input_path: Path,
     target_version: int,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -421,8 +454,7 @@ def set_version(
     """
     Upgrades OS/2 table version.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -431,12 +463,14 @@ def set_version(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
+            logger.info(Logs.current_file, file=file)
+
             os_2: TableOS2 = font["OS/2"]
             current_version = getattr(os_2, "version")
 
             if target_version <= current_version:
-                generic_warning_message(f"Current OS/2 table version is already {current_version}")
-                file_not_changed_message(file)
+                logger.warning(f"Current OS/2 table version is already {current_version}")
+                logger.skip(Logs.file_not_changed, file=file)
                 continue
 
             setattr(os_2, "version", target_version)
@@ -455,7 +489,7 @@ def set_version(
             # Return if upgrading from version 0 to version 1.
             if target_version == 1:
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
                 continue
 
             # Upgrading from version 1 requires creating sxHeight, sCapHeight, usDefaultChar, usBreakChar and
@@ -478,10 +512,10 @@ def set_version(
                     setattr(os_2, "fsSelection", unset_nth_bit(os_2.fsSelection, b))
 
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -489,9 +523,15 @@ def set_version(
 @tbl_os2.command()
 @add_file_or_path_argument()
 @click.option("-w", "--weight", type=click.IntRange(1, 1000), prompt=True, required=True, help="usWeightClass value.")
+@add_recursive_option()
 @add_common_options()
 def set_weight(
-    input_path: Path, weight: int, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True
+    input_path: Path,
+    weight: int,
+    recursive: bool = False,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
 ):
     """
     Sets the Weight class value.
@@ -499,27 +539,29 @@ def set_weight(
     usWeightClass indicates the visual weight (degree of blackness or thickness of strokes) of the characters in the
     font. Values from 1 to 1000 are valid.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.current_file, file=file)
+
             os_2: TableOS2 = font["OS/2"]
 
             if weight == os_2.get_weight_class():
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
                 continue
 
             os_2.set_weight_class(weight)
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -527,9 +569,15 @@ def set_weight(
 @tbl_os2.command()
 @add_file_or_path_argument()
 @click.option("-w", "--width", type=click.IntRange(1, 9), required=True, help="usWidthClass value.")
+@add_recursive_option()
 @add_common_options()
 def set_width(
-    input_path: Path, width: int, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True
+    input_path: Path,
+    width: int,
+    recursive: bool = False,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
 ):
     """
     Sets the Width class value.
@@ -537,27 +585,29 @@ def set_width(
     usWidthClass indicates a relative change from the normal aspect ratio (width to height ratio) as specified by a font
     designer for the glyphs in a font. Values from 1 to 9 are valid.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.info(Logs.current_file, file=file)
+
             os_2: TableOS2 = font["OS/2"]
 
             if width == os_2.get_width_class():
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
                 continue
 
             os_2.set_width_class(width)
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -574,25 +624,26 @@ def set_width(
 @click.option("--letter-form", "bLetterForm", type=click.IntRange(0, 15), help="Sets 'bLetterForm' value")
 @click.option("--midline", "bMidline", type=click.IntRange(0, 13), help="Sets 'bMidline' value")
 @click.option("--x-height", "bXHeight", type=click.IntRange(0, 7), help="Sets 'bXHeight' value")
+@add_recursive_option()
 @add_common_options()
 def panose(
     input_path: Path,
     recalc_timestamp,
-    output_dir,
-    overwrite,
+    recursive: bool = False,
+    output_dir: Path = None,
+    overwrite: bool = True,
     **kwargs,
 ):
     """
     Command line panose editor.
     """
-    fonts = get_fonts_in_path(input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     params = {k: v for k, v in kwargs.items() if v is not None}
     if len(params) == 0:
-        generic_error_message("Please, pass at least a valid parameter.")
+        logger.error(Logs.no_parameter)
         return
 
     for font in fonts:
@@ -608,12 +659,14 @@ def panose(
 
             if panose_copy.__dict__ != panose_src.__dict__:
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
+        finally:
+            font.close()
 
 
 cli = click.CommandCollection(

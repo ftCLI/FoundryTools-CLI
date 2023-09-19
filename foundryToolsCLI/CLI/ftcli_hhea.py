@@ -40,7 +40,7 @@ def cli(
     params = {k: v for k, v in kwargs.items() if v is not None}
 
     if len(params) == 0:
-        logger.error("No parameters were passed to the command.")
+        logger.error(Logs.no_parameter)
         return
 
     fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)

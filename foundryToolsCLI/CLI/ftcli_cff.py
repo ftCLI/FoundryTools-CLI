@@ -39,7 +39,7 @@ def del_names(
     """
     params = {k: v for k, v in kwargs.items() if v}
     if len(params) == 0:
-        logger.error("Please, pass at least a valid parameter.")
+        logger.error(Logs.no_parameter)
         return
 
     fonts = get_fonts_in_path(
@@ -106,7 +106,7 @@ def set_names(
 
     params = {k: v for k, v in kwargs.items() if v is not None}
     if len(params) == 0:
-        logger.error("Please, pass at least a valid parameter.")
+        logger.error(Logs.no_parameter)
         return
 
     fonts = get_fonts_in_path(
