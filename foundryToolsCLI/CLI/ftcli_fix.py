@@ -84,7 +84,7 @@ def monospace(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.checking_file, file=file)
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
 
             glyph_metrics_stats = font.glyph_metrics_stats()
             seems_monospaced = glyph_metrics_stats["seems_monospaced"]
@@ -206,7 +206,7 @@ def nbsp_width(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.checking_file, file=file)
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
 
             hmtx_table = font["hmtx"]
             hmtx_table_copy = deepcopy(hmtx_table)
@@ -311,7 +311,7 @@ def italic_angle(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.checking_file, file=file)
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
 
             post_table: TablePost = font["post"]
             hhea_table: TableHhea = font["hhea"]
@@ -458,7 +458,7 @@ def nbsp_missing(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.checking_file, file=file)
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
 
             cmap_table = font["cmap"]
             cmap_table_copy = deepcopy(cmap_table)
@@ -532,7 +532,7 @@ def decompose_transformed(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.checking_file, file=file)
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
 
             glyph_set = font.getGlyphSet()
             glyph_table = font["glyf"]
@@ -620,7 +620,7 @@ def duplicate_components(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.checking_file, file=file)
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
 
             glyph_table = font["glyf"]
             glyph_table_copy = deepcopy(glyph_table)
@@ -700,7 +700,7 @@ def kern_table(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.checking_file, file=file)
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
 
             if "kern" not in font:
                 logger.skip(Logs.file_not_changed, file=file)
@@ -772,7 +772,7 @@ def strip_names(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.checking_file, file=file)
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
 
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
@@ -824,7 +824,7 @@ def empty_names(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.checking_file, file=file)
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
 
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
