@@ -13,7 +13,7 @@ logger.add(
     level="INFO",
     backtrace=False,
     colorize=True,
-    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | " "<level>{level: <8}</level> | " "<level>{message}</level>",
+    format="[ <level>{level: <8}</level> ] " "<level>{message}</level>",
 )
 
 # Add a custom level to the logger
@@ -29,7 +29,14 @@ class Logs:
     file_not_selected = "File not selected: {file}"
     file_not_exists = "File does not exist: {file}"
     no_valid_fonts = "No valid fonts found: {input_path}"
+    no_parameter = "Please, pass at least a valid parameter."
     x_height_not_defined = "sxHeight is defined only in OS/2 version 2 and up. Current OS/2 version is {version}"
+    cap_height_not_defined = "sCapHeight is defined only in OS/2 version 2 and up. Current version is {os_2.version}"
+    max_context_not_defined = "usMaxContext is defined only in OS/2 version 2 and up. Current version is {os_2.version}"
+    bits_7_8_9_not_defined = (
+        "{flag} flag can't be set. Bits 7, 8 and 9 are defined only in OS/2 version 4 and up. Current version is "
+        "{os_2.version}"
+    )
     not_monospaced = "Font is not monospaced: {file}"
 
 
