@@ -306,9 +306,9 @@ def commit(
             if font_has_changed:
                 output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                logger.success(Logs.file_saved, output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                logger.skip(Logs.file_not_changed, file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
             logger.exception(e)
