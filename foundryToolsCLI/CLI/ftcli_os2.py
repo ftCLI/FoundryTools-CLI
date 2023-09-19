@@ -5,7 +5,7 @@ from pathlib import Path
 import click
 from fontTools.misc.cliTools import makeOutputFileName
 
-from Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.utils.bits_tools import unset_nth_bit
