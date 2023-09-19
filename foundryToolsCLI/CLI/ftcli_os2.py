@@ -419,7 +419,7 @@ def set_flags(
 
             for flag, value in params.items():
                 if flag in ("use_typo_metrics", "wws_consistent", "oblique") and os2.version < 4:
-                    logger.warning(Logs.bits_7_8_9_not_defined, flag=flag.upper(), version=os2.version)
+                    logger.warning(Logs.bits_7_8_9_not_defined, flag=flag, version=os2.version)
                     continue
                 if flag == "embed_level":
                     value = int(value)
