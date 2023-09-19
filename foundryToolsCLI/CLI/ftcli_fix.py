@@ -33,6 +33,8 @@ def monospace(
     overwrite: bool = True,
 ):
     """
+    Fix metadata in monospaced fonts
+
     fontbakery check id: com.google.fonts/check/monospace
 
     Rationale:
@@ -177,6 +179,8 @@ def nbsp_width(
     overwrite: bool = True,
 ):
     """
+    Fix whitespace widths.
+
     fontbakery check id: com.google.fonts/check/whitespace_widths
 
     Rationale:
@@ -267,6 +271,8 @@ def italic_angle(
     min_slant: float = 2.0,
 ):
     """
+    Fix italic angle and italic/oblique bits.
+
     fontbakery check ids:
 
     \b
@@ -438,6 +444,8 @@ def nbsp_missing(
     overwrite: bool = True,
 ):
     """
+    Fix missing whitespace glyphs.
+
     fontbakery check id: com.google.fonts/check/whitespace_glyphs
 
     Rationale:
@@ -492,6 +500,8 @@ def decompose_transformed(
     overwrite: bool = True,
 ):
     """
+    Decompose glyphs with transformed components.
+
     fontbakery check id: com.google.fonts/check/transformed_components
 
     Rationale:
@@ -595,6 +605,8 @@ def duplicate_components(
     overwrite: bool = True,
 ):
     """
+    Remove duplicate components.
+
     fontbakery check id: com.google.fonts/check/glyf_non_transformed_duplicate_components
 
     Rationale:
@@ -668,6 +680,8 @@ def kern_table(
     overwrite: bool = True,
 ):
     """
+    Fix ``kern`` table.
+
     fontbakery check id: com.google.fonts/check/kern_table
 
     Rationale:
@@ -752,6 +766,8 @@ def strip_names(
     overwrite: bool = True,
 ):
     """
+    Remove leading and trailing spaces from ``name`` table entries.
+
     fontbakery check id: com.google.fonts/check/name/trailing_spaces
 
     Rationale:
@@ -802,6 +818,8 @@ def empty_names(
     overwrite: bool = True,
 ):
     """
+    Remove empty NameRecords from ``name`` table.
+
     fontbakery check id: com.adobe.fonts/check/name/empty_records
 
     Rationale:

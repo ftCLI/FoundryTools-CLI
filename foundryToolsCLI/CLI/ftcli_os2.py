@@ -42,7 +42,7 @@ def recalc_x_height(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(input=file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.current_file, file=file)
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
             if os_2.version < 2:
@@ -89,7 +89,7 @@ def recalc_cap_height(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(input=file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.current_file, file=file)
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
             if os_2.version < 2:
@@ -136,7 +136,7 @@ def recalc_max_context(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.current_file, file=file)
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
 
@@ -188,7 +188,7 @@ def recalc_ranges(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.current_file, file=file)
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             temp_otf_fd, temp_otf_file = font.make_temp_otf()
             temp_font = Font(temp_otf_file)
@@ -410,7 +410,7 @@ def set_flags(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.current_file, file=file)
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             head = font["head"]
             head_copy = deepcopy(head)
@@ -463,7 +463,7 @@ def set_version(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.current_file, file=file)
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
             current_version = getattr(os_2, "version")
@@ -548,7 +548,7 @@ def set_weight(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.current_file, file=file)
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
 
@@ -594,7 +594,7 @@ def set_width(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.current_file, file=file)
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
 

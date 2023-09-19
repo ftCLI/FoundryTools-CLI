@@ -44,7 +44,7 @@ def set_linegap(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.current_file, file=file)
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             hhea_table = font["hhea"]
             os2_table = font["OS/2"]
@@ -144,7 +144,7 @@ def align(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(font.reader.file.name, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.current_file, file=file)
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             hhea_table = font["hhea"]
             os2_table = font["OS/2"]
@@ -236,7 +236,7 @@ def copy_metrics(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
-            logger.info(Logs.current_file, file=file)
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             hhea_table = font["hhea"]
             os2_table = font["OS/2"]

@@ -22,8 +22,8 @@ logger.__class__.skip = partialmethod(logger.__class__.log, "SKIP")
 
 
 class Logs:
-    checking_file = "Checking file: {file}"
-    current_file = "Current file: {file}"
+    checking_file = "Checking file: <cyan>{file}</>"
+    current_file = "Current file: <cyan>{file}</>"
     file_saved = "File saved: {file}"
     file_not_changed = "File not changed: {file}"
     file_not_selected = "File not selected: {file}"
@@ -35,7 +35,7 @@ class Logs:
     max_context_not_defined = "usMaxContext is defined only in OS/2 version 2 and up. Current version is {os_2.version}"
     bits_7_8_9_not_defined = (
         "{flag} flag can't be set. Bits 7, 8 and 9 are defined only in OS/2 version 4 and up. Current version is "
-        "{os_2.version}"
+        "{version}"
     )
     not_monospaced = "Font is not monospaced: {file}"
 

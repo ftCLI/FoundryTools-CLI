@@ -78,6 +78,8 @@ def set_name(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
             name_table.add_name(
@@ -159,6 +161,8 @@ def del_names(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
@@ -248,6 +252,8 @@ def find_replace(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
             name_table.find_replace(
@@ -300,6 +306,8 @@ def del_mac_names(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
@@ -395,6 +403,8 @@ def append(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
