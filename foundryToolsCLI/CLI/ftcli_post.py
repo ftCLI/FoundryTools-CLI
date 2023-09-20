@@ -5,14 +5,11 @@ import click
 from fontTools.misc.cliTools import makeOutputFileName
 
 from foundryToolsCLI.Lib.tables.post import TablePost
-from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
+from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, initial_check_pass
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_recursive_option,
     add_common_options,
-    file_saved_message,
-    file_not_changed_message,
-    generic_error_message,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
