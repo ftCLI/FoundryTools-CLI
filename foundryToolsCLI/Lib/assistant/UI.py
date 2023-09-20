@@ -20,7 +20,8 @@ from foundryToolsCLI.Lib.utils.cli_tools import (
     get_fonts_data_path,
     get_fonts_in_path,
 )
-from foundryToolsCLI.Lib.utils.click_tools import generic_error_message, no_valid_fonts_message, OptionalParamType
+from foundryToolsCLI.Lib.utils.click_tools import OptionalParamType
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 
 class AssistantUI(object):
@@ -28,7 +29,7 @@ class AssistantUI(object):
         self.input_path = input_path
 
         if len(self.fonts_list) == 0:
-            no_valid_fonts_message(input_path)
+            logger.error(Logs.no_valid_fonts)
             sys.exit()
 
         self.styles_mapping = StylesMapping(get_style_mapping_path(self.input_path))
@@ -572,13 +573,12 @@ def get_fonts_rows(fonts: list[Font]) -> list:
             )
             rows.append(row)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
     return rows
 
 
 def get_fonts_list_table(rows: list) -> Table:
     table = Table(box=box.HORIZONTALS)
-
     table.add_column("#", justify="right")
     table.add_column("File name")
     table.add_column("Family name")
