@@ -168,6 +168,7 @@ def fix_contours(
     min_area: int = 25,
     remove_hinting: bool = True,
     verbose: bool = True,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -179,6 +180,7 @@ def fix_contours(
         input_path=input_path,
         allow_variable=False,
         allow_cff=False,
+        recursive=recursive,
         recalc_timestamp=recalc_timestamp,
     )
 
