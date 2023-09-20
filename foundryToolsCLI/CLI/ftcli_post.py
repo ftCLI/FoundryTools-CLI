@@ -8,11 +8,13 @@ from foundryToolsCLI.Lib.tables.post import TablePost
 from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
+    add_recursive_option,
     add_common_options,
     file_saved_message,
     file_not_changed_message,
     generic_error_message,
 )
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 
 @click.command()
@@ -37,18 +39,25 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     default=None,
     help="""Sets or clears the `isFixedPitch` value.""",
 )
+@add_recursive_option()
 @add_common_options()
-def cli(input_path: Path, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = None, **kwargs):
+def cli(
+    input_path: Path,
+    recursive: bool = False,
+    recalc_timestamp: bool = False,
+    output_dir: Path = None,
+    overwrite: bool = None,
+    **kwargs
+):
     """A command line tool to manipulate the 'post' table."""
 
     params = {k: v for k, v in kwargs.items() if v is not None}
 
     if len(params) == 0:
-        generic_error_message("Please, pass at least a valid parameter.")
+        logger.error(Logs.no_parameter)
         return
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -56,6 +65,7 @@ def cli(input_path: Path, recalc_timestamp: bool = False, output_dir: Path = Non
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             post_table: TablePost = font["post"]
             post_table_copy = copy(post_table)
@@ -93,11 +103,11 @@ def cli(input_path: Path, recalc_timestamp: bool = False, output_dir: Path = Non
 
             if post_table_modified or cff_table_modified:
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
