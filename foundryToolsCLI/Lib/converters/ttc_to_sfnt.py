@@ -15,7 +15,6 @@ class TTC2SFNTRunner(object):
     def run(self, tt_collections: list[TTCollection]) -> None:
 
         for ttc in tt_collections:
-
             try:
                 for font in ttc.fonts:
                     font.recalcTimestamp = self.options.recalc_timestamp
