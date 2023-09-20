@@ -13,7 +13,6 @@ class TTC2SFNTRunner(object):
         self.options = TTCollectionToSFNTOptions()
 
     def run(self, tt_collections: list[TTCollection]) -> None:
-
         for ttc in tt_collections:
             try:
                 for font in ttc.fonts:

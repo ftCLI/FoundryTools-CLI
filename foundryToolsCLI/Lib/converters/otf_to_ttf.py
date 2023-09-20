@@ -16,9 +16,7 @@ class OTF2TTFRunner(object):
         self.options = CFFToTrueTypeOptions()
 
     def run(self, source_fonts: list[Font]) -> None:
-
         for source_font in source_fonts:
-
             try:
                 file = Path(source_font.reader.file.name)
                 logger.opt(colors=True).info(Logs.converting_file, file=file)

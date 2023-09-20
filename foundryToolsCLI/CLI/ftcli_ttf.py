@@ -13,7 +13,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_recursive_option,
     add_common_options,
-    generic_error_message,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
@@ -188,7 +187,6 @@ def fix_contours(
         return
 
     for font in fonts:
-        print()
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
@@ -199,7 +197,7 @@ def fix_contours(
             logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -365,7 +363,7 @@ def rename_glyph(
             else:
                 logger.skip(Logs.file_not_changed, file=file)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 

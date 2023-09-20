@@ -16,7 +16,6 @@ class FT2WFRunner(object):
         converted_files_count = 0
 
         for font in fonts:
-
             try:
                 if font.flavor is not None:
                     continue
