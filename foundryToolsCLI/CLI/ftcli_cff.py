@@ -57,6 +57,8 @@ def del_names(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
             cff_table: TableCFF = font["CFF "]
             cff_table_copy = deepcopy(cff_table)
             cff_table.del_top_dict_names(list(params.keys()))
@@ -124,9 +126,10 @@ def set_names(
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
             cff_table: TableCFF = font["CFF "]
             cff_table_copy = deepcopy(cff_table)
-
             cff_table.set_top_dict_names(params)
 
             if cff_table.compile(font) != cff_table_copy.compile(font):
@@ -181,6 +184,8 @@ def find_replace(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             cff_table: TableCFF = font["CFF "]
             cff_table_copy = deepcopy(cff_table)
