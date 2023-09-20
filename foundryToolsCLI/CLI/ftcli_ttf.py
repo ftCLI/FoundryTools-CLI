@@ -7,26 +7,26 @@ from fontTools.misc.cliTools import makeOutputFileName
 from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.utils.cli_tools import (
     get_fonts_in_path,
-    get_output_dir,
     initial_check_pass,
 )
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
+    add_recursive_option,
     add_common_options,
-    file_not_changed_message,
-    file_saved_message,
     generic_error_message,
-    generic_info_message,
 )
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 ttf_tools = click.Group("subcommands")
 
 
 @ttf_tools.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def autohint(
     input_path: Path,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -39,37 +39,42 @@ def autohint(
 
     fonts = get_fonts_in_path(
         input_path,
+        recursive=recursive,
         recalc_timestamp=recalc_timestamp,
         allow_cff=False,
         allow_variable=False,
     )
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
+            file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
             buf = BytesIO()
             font.save(buf)
             data = ttfautohint(in_buffer=buf.getvalue(), no_info=True)
             hinted_font = Font(BytesIO(data))
-            file = Path(font.reader.file.name)
             if not recalc_timestamp:
                 hinted_font.set_modified_timestamp(font.modified_timestamp)
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
             hinted_font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
 
 @ttf_tools.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def decompose(
     input_path: Path,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -77,29 +82,35 @@ def decompose(
     """
     Decompose composite glyphs of a TrueType font.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp, allow_cff=False)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp, allow_cff=False
+    )
+
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
-            font.ttf_decomponentize()
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
+            font.ttf_decomponentize()
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
 
 @ttf_tools.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def dehint(
     input_path: Path,
+    recursive: bool = False,
     recalc_timestamp: bool = False,
     output_dir: Path = None,
     overwrite: bool = True,
@@ -109,20 +120,23 @@ def dehint(
 
     This is a CLI for dehinter by Source Foundry: https://github.com/source-foundry/dehinter
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp, allow_cff=False)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp, allow_cff=False
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
-            font.ttf_dehint()
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
+            font.ttf_dehint()
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -147,6 +161,7 @@ def dehint(
     help="""Do not remove hinting.""",
 )
 @click.option("--silent", "verbose", is_flag=True, default=True, help="Run in silent mode")
+@add_recursive_option()
 @add_common_options()
 def fix_contours(
     input_path: Path,
@@ -166,7 +181,7 @@ def fix_contours(
         allow_cff=False,
         recalc_timestamp=recalc_timestamp,
     )
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -175,10 +190,11 @@ def fix_contours(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-            generic_info_message(f"Checking file {file.name}")
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
+
             font.ttf_fix_contours(min_area=min_area, remove_hinting=remove_hinting, verbose=verbose)
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
             generic_error_message(e)
@@ -200,11 +216,13 @@ def fix_contours(
     is_flag=True,
     help="""Ignore errors while removing overlaps.""",
 )
+@add_recursive_option()
 @add_common_options()
 def remove_overlaps(
     input_path: Path,
     remove_hinting: bool = True,
     ignore_errors: bool = False,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -215,11 +233,11 @@ def remove_overlaps(
 
     fonts = get_fonts_in_path(
         input_path,
+        recursive=recursive,
         recalc_timestamp=recalc_timestamp,
         allow_cff=False,
         allow_variable=False,
     )
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -227,11 +245,13 @@ def remove_overlaps(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
+
             font.ttf_remove_overlaps(remove_hinting=remove_hinting, ignore_errors=ignore_errors)
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -246,10 +266,12 @@ def remove_overlaps(
     New UPM value
     """,
 )
+@add_recursive_option()
 @add_common_options()
 def scale_upm(
     input_path: Path,
     upm: int,
+    recursive: bool = False,
     recalc_timestamp: bool = False,
     output_dir: Path = None,
     overwrite: bool = True,
@@ -261,27 +283,28 @@ def scale_upm(
     ttf-autohint' to hint the scaled fonts.
     """
 
-    fonts = get_fonts_in_path(input_path, allow_cff=False, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path, recursive=recursive, allow_cff=False, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             if font["head"].unitsPerEm == upm:
-                file_not_changed_message(file.relative_to(input_path))
+                logger.skip(Logs.file_not_changed, file=file)
                 continue
 
             font.ttf_scale_upem(units_per_em=upm)
 
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -300,11 +323,13 @@ def scale_upm(
     required=True,
     help="New glyph name",
 )
+@add_recursive_option()
 @add_common_options()
 def rename_glyph(
     input_path: Path,
     old_glyph_name: str,
     new_glyph_name: str,
+    recursive: bool = False,
     recalc_timestamp: bool = False,
     output_dir: Path = None,
     overwrite: bool = True,
@@ -312,8 +337,9 @@ def rename_glyph(
     """
     Renames a glyph.
     """
-    fonts = get_fonts_in_path(input_path=input_path, allow_cff=False, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, allow_cff=False, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -321,19 +347,21 @@ def rename_glyph(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
             glyph_names = font.getGlyphOrder()
             modified = False
             for i in range(len(glyph_names)):
                 if glyph_names[i] == old_glyph_name:
                     glyph_names[i] = new_glyph_name
-                    generic_info_message(f"{old_glyph_name} renamed to {new_glyph_name}")
+                    logger.info(f"{old_glyph_name} renamed to {new_glyph_name}")
                     modified = True
             if modified:
                 font.setGlyphOrder(glyph_names)
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
         except Exception as e:
             generic_error_message(e)
         finally:
