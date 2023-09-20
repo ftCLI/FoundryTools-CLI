@@ -204,11 +204,13 @@ def autohint(
     fontTools drops font-wide hinting values from the Private dict, while tx preserves them.
     """,
 )
+@add_recursive_option()
 @add_common_options()
 def dehint(
     input_path: Path,
     dehinter: str = "tx",
     subroutinize: bool = True,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -218,7 +220,9 @@ def dehint(
     """
     from afdko.fdkutils import run_shell_command
 
-    fonts = get_fonts_in_path(input_path=input_path, allow_ttf=False, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, allow_ttf=False, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -298,12 +302,14 @@ def dehint(
 )
 @click.option("--no-subr", "subroutinize", is_flag=True, default=True, help="""Do not subroutinize fixed fonts.""")
 @click.option("--silent", "verbose", is_flag=True, default=True, help="Run in silent mode")
+@add_recursive_option()
 @add_common_options()
 def fix_contours(
     input_path: Path,
     min_area: int = 25,
     subroutinize: bool = True,
     verbose: bool = True,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -312,7 +318,11 @@ def fix_contours(
     Fix contours by correcting contours direction, removing overlaps and tiny paths.
     """
     fonts = get_fonts_in_path(
-        input_path=input_path, allow_variable=False, allow_ttf=False, recalc_timestamp=recalc_timestamp
+        input_path=input_path,
+        recursive=recursive,
+        allow_variable=False,
+        allow_ttf=False,
+        recalc_timestamp=recalc_timestamp,
     )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -338,15 +348,26 @@ def fix_contours(
 
 @otf_tools.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
-def fix_version(input_path: Path, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = True):
+def fix_version(
+    input_path: Path,
+    recalc_timestamp: bool = False,
+    recursive: bool = False,
+    output_dir: Path = None,
+    overwrite: bool = True,
+):
     """
     Aligns CFF topDict version string to the head.fontRevision value.
 
     For example, if head.fontRevision value is 2.001, CFF topDict version value will be 2.1.
     """
     fonts = get_fonts_in_path(
-        input_path=input_path, recalc_timestamp=recalc_timestamp, allow_ttf=False, allow_variable=False
+        input_path=input_path,
+        recursive=recursive,
+        recalc_timestamp=recalc_timestamp,
+        allow_ttf=False,
+        allow_variable=False,
     )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -376,12 +397,21 @@ def fix_version(input_path: Path, recalc_timestamp: bool = False, output_dir: Pa
 
 @otf_tools.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
-def subr(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def subr(
+    input_path: Path,
+    recursive: bool = False,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
     """
     Subroutinize OpenType-PS fonts.
     """
-    fonts = get_fonts_in_path(input_path=input_path, allow_ttf=False, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, allow_ttf=False, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -403,12 +433,21 @@ def subr(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = Fal
 
 @otf_tools.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
-def desubr(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def desubr(
+    input_path: Path,
+    recursive: bool = False,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
     """
     Desubroutinize OpenType-PS fonts.
     """
-    fonts = get_fonts_in_path(input_path=input_path, allow_ttf=False, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, allow_ttf=False, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -416,7 +455,6 @@ def desubr(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = F
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             font.otf_desubroutinize()
@@ -431,10 +469,12 @@ def desubr(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = F
 @otf_tools.command()
 @add_file_or_path_argument()
 @click.option("-q", "--quiet-mode", is_flag=True, help="Run in quiet mode.")
+@add_recursive_option()
 @add_common_options()
 def check_outlines(
     input_path: Path,
     quiet_mode: bool = False,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -445,7 +485,9 @@ def check_outlines(
 
     from afdko import checkoutlinesufo
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp, allow_ttf=False)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp, allow_ttf=False
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -453,7 +495,6 @@ def check_outlines(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.checking_file, file=file)
 
             flavor = font.flavor
