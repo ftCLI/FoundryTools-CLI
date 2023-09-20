@@ -1,11 +1,10 @@
-import time
 from pathlib import Path
 
 from fontTools.misc.cliTools import makeOutputFileName
 
 from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.converters.options import SFNTToWebOptions
-from foundryToolsCLI.Lib.utils.click_tools import generic_info_message, file_saved_message, generic_error_message
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 
 class FT2WFRunner(object):
@@ -15,18 +14,15 @@ class FT2WFRunner(object):
 
     def run(self, fonts: list[Font]) -> None:
         converted_files_count = 0
-        start_time = time.time()
 
-        for count, font in enumerate(fonts, start=1):
-            t = time.time()
+        for font in fonts:
 
             try:
                 if font.flavor is not None:
                     continue
 
                 file = Path(font.reader.file.name)
-                print()
-                generic_info_message(f"Converting file {count} of {len(fonts)}: {file.name}")
+                logger.opt(colors=True).info(Logs.converting_file, file=file)
 
                 if self.options.woff:
                     converter = SFNTToWeb(font=font, flavor="woff")
@@ -41,8 +37,7 @@ class FT2WFRunner(object):
                         )
                     )
                     web_font.save(output_file, reorderTables=False)
-                    file_saved_message(output_file)
-                    generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
+                    logger.success(Logs.file_saved, file=output_file)
                     converted_files_count += 1
 
                 if self.options.woff2:
@@ -58,19 +53,12 @@ class FT2WFRunner(object):
                         )
                     )
                     web_font.save(output_file, reorderTables=False)
-                    file_saved_message(output_file)
-                    generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
-                    converted_files_count += 1
+                    logger.success(Logs.file_saved, file=output_file)
 
             except Exception as e:
-                generic_error_message(e)
+                logger.exception(e)
             finally:
                 font.close()
-
-        print()
-        generic_info_message(f"Total files     : {len(fonts)}")
-        generic_info_message(f"Converted files : {converted_files_count}")
-        generic_info_message(f"Elapsed time    : {round(time.time() - start_time, 3)} seconds")
 
 
 class SFNTToWeb(object):
