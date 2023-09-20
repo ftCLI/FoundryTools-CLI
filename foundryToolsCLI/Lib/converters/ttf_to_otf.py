@@ -2,7 +2,6 @@ import os
 import time
 from pathlib import Path
 
-import click
 from fontTools.fontBuilder import FontBuilder
 from fontTools.misc.cliTools import makeOutputFileName
 from fontTools.pens.qu2cuPen import Qu2CuPen
@@ -11,12 +10,7 @@ from fontTools.pens.t2CharStringPen import T2CharStringPen
 from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.converters.options import TrueTypeToCFFOptions
 from foundryToolsCLI.Lib.converters.otf_to_ttf import CFFToTrueType
-from foundryToolsCLI.Lib.utils.click_tools import (
-    file_saved_message,
-    generic_info_message,
-    generic_error_message,
-    generic_warning_message,
-)
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 
 class TTF2OTFRunner(object):
@@ -25,16 +19,10 @@ class TTF2OTFRunner(object):
         self.options = TrueTypeToCFFOptions()
 
     def run(self, source_fonts: list[Font]) -> None:
-        converted_files_count = 0
-        start_time = time.time()
-
-        for count, source_font in enumerate(source_fonts, start=1):
-            t = time.time()
-
+        for source_font in source_fonts:
             try:
                 file = Path(source_font.reader.file.name)
-                print()
-                generic_info_message(f"Converting file {count} of {len(source_fonts)}: {file.name}")
+                logger.opt(colors=True).info(Logs.converting_file, file=file)
 
                 # If the source font is a WOFF or WOFF2, we add a suffix to avoid unwanted overwriting
                 flavor = source_font.flavor
@@ -69,7 +57,7 @@ class TTF2OTFRunner(object):
 
                 if len(failed) > 0:
                     if self.options.verbose:
-                        generic_info_message(f"Retrying to get {len(failed)} charstrings...")
+                        logger.info("Retrying to get {failed} charstrings...", failed=len(failed))
                     fallback_charstrings = get_fallback_charstrings(
                         font=source_font, tolerance=tolerance, verbose=self.options.verbose
                     )
@@ -78,11 +66,11 @@ class TTF2OTFRunner(object):
                         try:
                             charstrings[c] = fallback_charstrings[c]
                             if self.options.verbose:
-                                click.secho(f"{c} -> {click.style('OK', fg='green')}")
+                                logger.opt(colors=True).info("{c} -> <green>OK</>", c=c)
+
                         except Exception as e:
                             if self.options.verbose:
-                                click.secho(f" -> {click.style('FAIL', fg='red')} ({e})")
-                            generic_error_message(e)
+                                logger.exception(e)
 
                 ttf2otf_converter = TrueTypeToCFF(font=source_font)
                 cff_font: Font = ttf2otf_converter.run(charstrings=charstrings)
@@ -97,19 +85,12 @@ class TTF2OTFRunner(object):
                 cff_font.save(output_file)
                 cff_font.close()
 
-                generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
-                file_saved_message(output_file)
-                converted_files_count += 1
+                logger.success(Logs.file_saved, file=output_file)
 
             except Exception as e:
-                generic_error_message(e)
+                logger.exception(e)
             finally:
                 source_font.close()
-
-        print()
-        generic_info_message(f"Total files     : {len(source_fonts)}")
-        generic_info_message(f"Converted files : {converted_files_count}")
-        generic_info_message(f"Elapsed time    : {round(time.time() - start_time, 3)} seconds")
 
 
 class TrueTypeToCFF(object):
@@ -190,7 +171,7 @@ def get_qu2cu_charstrings(font: Font, tolerance: float = 1.0, verbose: bool = Tr
             qu2cu_charstrings[k] = t2_pen.getCharString()
         except NotImplementedError as e:
             if verbose:
-                generic_warning_message(f"{k}: {e}")
+                logger.warning(f"{k}: {e}")
             failed.append(k)
 
     return failed, qu2cu_charstrings
