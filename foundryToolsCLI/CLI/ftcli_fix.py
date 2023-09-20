@@ -1,4 +1,3 @@
-import os
 from copy import deepcopy
 from pathlib import Path
 
@@ -14,7 +13,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_recursive_option,
     add_common_options,
-    generic_warning_message,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
@@ -723,7 +721,7 @@ def kern_table(
             kern = font["kern"]
 
             if all(kernTable.format != 0 for kernTable in kern.kernTables):
-                generic_warning_message(f"{os.path.basename(file)} The 'kern' table doesn't have any format-0 subtable")
+                logger.warning(f"{file.name}: The 'kern' table doesn't have any format-0 subtable")
                 continue
 
             kern_table_copy = deepcopy(kern)
