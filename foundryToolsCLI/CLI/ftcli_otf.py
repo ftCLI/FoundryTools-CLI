@@ -10,7 +10,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
     add_recursive_option,
-    file_saved_message,
     generic_error_message,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
@@ -172,7 +171,7 @@ def autohint(
             logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
 
 
 @otf_tools.command()
@@ -423,9 +422,9 @@ def desubr(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = F
 
             font.otf_desubroutinize()
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
