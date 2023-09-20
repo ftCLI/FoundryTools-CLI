@@ -1,4 +1,3 @@
-import time
 from pathlib import Path
 
 from fontTools.misc.cliTools import makeOutputFileName
@@ -17,11 +16,8 @@ class OTF2TTFRunner(object):
         self.options = CFFToTrueTypeOptions()
 
     def run(self, source_fonts: list[Font]) -> None:
-        converted_files_count = 0
-        start_time = time.time()
 
-        for count, source_font in enumerate(source_fonts, start=1):
-            t = time.time()
+        for source_font in source_fonts:
 
             try:
                 file = Path(source_font.reader.file.name)
@@ -51,10 +47,7 @@ class OTF2TTFRunner(object):
                 ttf_font = converter.run()
                 ttf_font.save(output_file)
                 ttf_font.close()
-
-                logger.info(f"Elapsed time: {round(time.time() - t, 3)} seconds")
                 logger.success(Logs.file_saved, file=output_file)
-                converted_files_count += 1
 
             except Exception as e:
                 logger.exception(e)
