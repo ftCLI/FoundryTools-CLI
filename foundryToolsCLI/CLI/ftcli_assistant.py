@@ -260,6 +260,9 @@ def commit(
 
         try:
             font = Font(file, recalcTimestamp=recalc_timestamp)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             name_table = font["name"]
             name_table_copy = deepcopy(name_table)
@@ -304,7 +307,6 @@ def commit(
                     font_has_changed = True
 
             if font_has_changed:
-                output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
                 logger.success(Logs.file_saved, file=output_file)
             else:
