@@ -17,11 +17,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_recursive_option,
     add_common_options,
-    file_not_changed_message,
-    file_saved_message,
-    generic_error_message,
-    generic_warning_message,
-    no_valid_fonts_message,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
@@ -164,8 +159,8 @@ def font_organizer(
     Sorts fonts in folders by family name and optionally by foundry, font revision and extension.
     """
     fonts = get_fonts_in_path(input_path=input_path)
-    if len(fonts) == 0:
-        no_valid_fonts_message(input_path=input_path)
+    if not initial_check_pass(fonts=fonts):
+        return
 
     for font in fonts:
         try:
@@ -241,7 +236,7 @@ def font_renamer(input_path: Path, source: str, recursive: bool = False):
         file = Path(font.reader.file.name)
 
         if font.is_ttf and source in (4, 5):
-            generic_warning_message(f"Source 4 and 5 con be used for OTF files only. Using source=1 for {file.name}")
+            logger.warning(f"Source 4 and 5 con be used for OTF files only. Using source=1 for {file.name}")
 
         old_file_name, old_file_extension = file.stem, file.suffix
         new_file_name = sanitize_filename(font.get_file_name(source=source), platform="auto")
@@ -306,7 +301,7 @@ def rebuild(
                 os.remove(xml_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -338,7 +333,7 @@ def set_revision(
     """
 
     if major is None and minor is None:
-        generic_error_message("At least one parameter of -minor or -major must be passed")
+        logger.error("At least one parameter of -minor or -major must be passed")
         return
 
     fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
@@ -393,12 +388,12 @@ def set_revision(
 
             if has_changed:
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
