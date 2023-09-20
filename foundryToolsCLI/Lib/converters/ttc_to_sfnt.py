@@ -1,11 +1,10 @@
-import time
 from pathlib import Path
 
 from fontTools.misc.cliTools import makeOutputFileName
 from fontTools.ttLib import TTCollection
 
+from Lib.utils.logger import logger, Logs
 from foundryToolsCLI.Lib.converters.options import TTCollectionToSFNTOptions
-from foundryToolsCLI.Lib.utils.click_tools import generic_info_message, file_saved_message, generic_error_message
 
 
 class TTC2SFNTRunner(object):
@@ -14,19 +13,14 @@ class TTC2SFNTRunner(object):
         self.options = TTCollectionToSFNTOptions()
 
     def run(self, tt_collections: list[TTCollection]) -> None:
-        extracted_files = 0
-        start_time = time.time()
 
-        for count, ttc in enumerate(tt_collections, start=1):
-            t = time.time()
+        for ttc in tt_collections:
+
             try:
-                print()
-                generic_info_message(f"Converting file {count} of {len(tt_collections)}")
-
                 for font in ttc.fonts:
                     font.recalcTimestamp = self.options.recalc_timestamp
                     file_name = font["name"].getDebugName(6)
-                    extension = ".otf" if font.sfntVersion == "OTTO" else ".ttf"
+                    extension = font.get_real_extension()
                     output_file = Path(
                         makeOutputFileName(
                             file_name,
@@ -37,17 +31,10 @@ class TTC2SFNTRunner(object):
                     )
 
                     font.save(output_file)
+                    logger.success(Logs.file_saved, file=output_file)
                     font.close()
-                    generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
-                    file_saved_message(output_file)
-                    extracted_files += 1
 
             except Exception as e:
-                generic_error_message(e)
+                logger.exception(e)
             finally:
                 ttc.close()
-
-        print()
-        generic_info_message(f"Total TTC files : {len(tt_collections)}")
-        generic_info_message(f"Extracted files : {extracted_files}")
-        generic_info_message(f"Elapsed time    : {round(time.time() - start_time, 3)} seconds")
