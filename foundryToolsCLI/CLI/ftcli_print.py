@@ -3,7 +3,8 @@ from pathlib import Path
 import click
 
 from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_variable_fonts_in_path
-from foundryToolsCLI.Lib.utils.click_tools import generic_error_message, add_file_or_path_argument
+from foundryToolsCLI.Lib.utils.click_tools import add_file_or_path_argument
+from foundryToolsCLI.Lib.utils.logger import logger
 
 ftcli_printer = click.Group("subcommands")
 
@@ -21,7 +22,7 @@ def font_info(input_path: Path):
         try:
             print_font_info(font)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -54,7 +55,7 @@ def font_names(input_path: Path, max_lines: int = None, minimal: bool = False):
         try:
             print_font_names(font, max_lines=max_lines, minimal=minimal)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -84,7 +85,7 @@ def tbl_os2(input_path: Path):
         try:
             print_os2_table(font)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -103,7 +104,7 @@ def vf_instances(input_path: Path):
             print_instances(variable_font)
             variable_font.close()
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             variable_font.close()
 
