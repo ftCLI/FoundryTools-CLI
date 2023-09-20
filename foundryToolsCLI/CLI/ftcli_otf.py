@@ -10,7 +10,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
     add_recursive_option,
-    generic_error_message,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
@@ -115,10 +114,10 @@ def autohint(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-            temp_otf_file = Path(makeOutputFileName(output_file, extension=".otf", suffix="_tmp", overWrite=True))
 
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
+            temp_otf_file = Path(makeOutputFileName(output_file, extension=".otf", suffix="_tmp", overWrite=True))
             original_timestamp = font.modified_timestamp
 
             flavor = font.flavor
