@@ -22,7 +22,7 @@ class FoundryToolsCLI(click.MultiCommand):
         try:
             mod = __import__(f"foundryToolsCLI.CLI.ftcli_{cmd_name}", None, None, ["cli"])
         except ImportError as e:
-            logger.exception(e)
+            logger.error(e)
             return
 
         return mod.cli
