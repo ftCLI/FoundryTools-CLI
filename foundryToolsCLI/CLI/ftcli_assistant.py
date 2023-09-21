@@ -255,7 +255,7 @@ def commit(
 
         file_is_selected = bool(int(row["selected"]))
         if not file_is_selected:
-            logger.warning(Logs.file_not_selected, file)
+            logger.warning(Logs.file_not_selected, file=file)
             continue
 
         try:
