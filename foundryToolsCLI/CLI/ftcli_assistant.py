@@ -248,7 +248,7 @@ def commit(
     for row in data:
         file = Path(row["file_name"])
         if not Path.exists(file):
-            logger.warning(Logs.file_not_exists, file)
+            logger.warning(Logs.file_not_exists, file=file)
             continue
 
         file_is_selected = bool(int(row["selected"]))
