@@ -5,7 +5,7 @@ from fontTools.misc.cliTools import makeOutputFileName
 
 from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.converters.options import WebToSFNTOptions
-from foundryToolsCLI.Lib.utils.click_tools import generic_info_message, generic_error_message, file_saved_message
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 
 class WF2FTRunner(object):
@@ -14,16 +14,11 @@ class WF2FTRunner(object):
         self.options = WebToSFNTOptions()
 
     def run(self, fonts: list[Font]) -> None:
-        converted_files_count = 0
-        start_time = time.time()
 
-        for count, font in enumerate(fonts, start=1):
-            t = time.time()
-
+        for font in fonts:
             try:
                 file = Path(font.reader.file.name)
-                print()
-                generic_info_message(f"Converting file {count} of {len(fonts)}: {file.name}")
+                logger.opt(colors=True).info(Logs.converting_file, file=file)
 
                 if not font.flavor:
                     continue
@@ -46,16 +41,9 @@ class WF2FTRunner(object):
                 )
 
                 font.save(output_file)
-                generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
-                file_saved_message(output_file)
-                converted_files_count += 1
+                logger.success(Logs.file_saved, file=output_file)
 
             except Exception as e:
-                generic_error_message(e)
+                logger.exception(e)
             finally:
                 font.close()
-
-        print()
-        generic_info_message(f"Total files     : {len(fonts)}")
-        generic_info_message(f"Converted files : {converted_files_count}")
-        generic_info_message(f"Elapsed time    : {round(time.time() - start_time, 3)} seconds")
