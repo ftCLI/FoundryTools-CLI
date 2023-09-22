@@ -7,9 +7,6 @@ from pathvalidate import sanitize_filename
 from foundryToolsCLI.Lib.VFont import VariableFont
 from foundryToolsCLI.Lib.converters.options import Var2StaticOptions
 from foundryToolsCLI.Lib.tables.name import TableName
-from foundryToolsCLI.Lib.utils.click_tools import (
-    generic_error_message,
-)
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 
@@ -23,7 +20,7 @@ class VariableToStatic(object):
             instances = variable_font.get_instances()
 
         if len(instances) == 0:
-            generic_error_message("No instances found")
+            logger.error("No instances found")
             return
 
         if self.options.update_name_table:
