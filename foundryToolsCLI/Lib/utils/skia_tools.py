@@ -20,6 +20,7 @@ def remove_tiny_paths(path: pathops.Path, glyph_name, min_area: int = 25, verbos
     :param path: the path from which to remove the tiny paths
     :param glyph_name: the glyph name
     :param min_area: the minimum are of a path
+    :param verbose: if True, logs the removed tiny paths
     :return: the cleaned path
     """
     cleaned_path = pathops.Path()
