@@ -29,7 +29,7 @@ class AssistantUI(object):
         self.input_path = input_path
 
         if len(self.fonts_list) == 0:
-            logger.error(Logs.no_valid_fonts)
+            logger.error(Logs.no_valid_fonts, input_path=input_path)
             sys.exit()
 
         self.styles_mapping = StylesMapping(get_style_mapping_path(self.input_path))
