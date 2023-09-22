@@ -39,6 +39,8 @@ class Logs:
         "{version}"
     )
     not_monospaced = "Font is not monospaced: {file}"
+    postscript_name_too_long = "PostScript name is too long: {max} characters allowed, {current} found"
+    full_font_name_too_long = "Full font name is too long: {max} characters allowed, {current} found"
 
 
 __all__ = ["logger", "Logs"]
