@@ -15,11 +15,7 @@ from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.tables.head import TableHead
 from foundryToolsCLI.Lib.tables.name import TableName
 from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_style_mapping_path
-from foundryToolsCLI.Lib.utils.click_tools import (
-    generic_error_message,
-    generic_info_message,
-    generic_warning_message,
-)
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 
 class FontsData(object):
@@ -144,7 +140,7 @@ class FontsData(object):
                 font.close()
 
             except Exception as e:
-                generic_error_message(e)
+                logger.exception(e)
 
         self.save(data)
 
@@ -281,7 +277,7 @@ class FontsData(object):
                 find_replace=[(weight, wgt), (width, wdt)],
                 max_len=MAX_FAMILY_NAME_LEN,
             )
-            generic_info_message(f"Windows Family Name shortened: {family_name_win}.")
+            logger.info(f"Windows Family Name shortened: {family_name_win}.")
 
         # Build PostScript Name
         postscript_name = str(name_table.getDebugName(6))
@@ -326,14 +322,11 @@ class FontsData(object):
                     ],
                     max_len=MAX_POSTSCRIPT_NAME_LEN,
                 )
-                generic_info_message(f"PostScript Name shortened: {postscript_name}.")
+                logger.info(f"PostScript Name shortened: {postscript_name}.")
 
         # Print a warning if PostScript Name is longer than 29 chars.
         if len(postscript_name) > MAX_POSTSCRIPT_NAME_LEN:
-            generic_warning_message(
-                f"PostScript Name is longer than {MAX_POSTSCRIPT_NAME_LEN} characters "
-                f"(actually {len(postscript_name)})."
-            )
+            logger.warning(Logs.postscript_name_too_long, max=MAX_POSTSCRIPT_NAME_LEN, current=len(postscript_name))
 
         # Build the Full Font Name
         full_font_name = name_table.getDebugName(4)
@@ -359,11 +352,11 @@ class FontsData(object):
                     find_replace=[(slope, slp), (weight, wgt), (width, wdt)],
                     max_len=MAX_FULL_NAME_LEN,
                 )
-                generic_info_message(f"Full Font Name shortened: {full_font_name}.")
+                logger.info(f"Full Font Name shortened: {full_font_name}.")
 
         # Print a warning if Full Font Name is longer than 31 chars.
         if len(full_font_name) > MAX_FULL_NAME_LEN:
-            generic_warning_message(f"Full Font Name is longer than {MAX_FULL_NAME_LEN} characters.")
+            logger.warning(Logs.full_font_name_too_long, max=MAX_FULL_NAME_LEN, current=len(full_font_name))
 
         # Build Unique Identifier
         ach_vend_id = str(os2_table.achVendID).replace(" ", "").strip("\x00")
@@ -535,7 +528,7 @@ class FontsData(object):
                 font_row["selected"] = 1
                 rows.append(font_row)
             except Exception as e:
-                generic_error_message(e)
+                logger.exception(e)
         self.save(rows)
 
     @staticmethod
@@ -619,7 +612,7 @@ class FontsData(object):
                 writer.writeheader()
                 writer.writerows(rows)
             except Exception as e:
-                generic_error_message(e)
+                logger.exception(e)
                 click.pause()
 
     @staticmethod
