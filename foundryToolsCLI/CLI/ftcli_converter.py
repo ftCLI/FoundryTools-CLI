@@ -1,4 +1,3 @@
-import time
 from pathlib import Path
 
 import click
@@ -12,10 +11,9 @@ from foundryToolsCLI.Lib.utils.cli_tools import (
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
-    generic_info_message,
     select_instance_coordinates,
-    generic_error_message,
 )
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 font_converter = click.Group("subcommands")
 
@@ -164,11 +162,10 @@ def vf2i(
     from foundryToolsCLI.Lib.converters.variable_to_static import VariableToStatic
     from fontTools.ttLib.tables._f_v_a_r import NamedInstance
 
-    start_time = time.time()
     for variable_font in variable_fonts:
-        print()
         file = Path(variable_font.reader.file.name)
-        generic_info_message(f"Converting file {file.name}")
+        logger.opt(colors=True).info(Logs.converting_file, file=file.name)
+
         try:
             converter = VariableToStatic()
             converter.options.cleanup = cleanup
@@ -201,11 +198,7 @@ def vf2i(
             converter.run(variable_font=variable_font, instances=instances)
 
         except Exception as e:
-            generic_error_message(e)
-
-    print()
-    generic_info_message(f"Total files  : {len(variable_fonts)}")
-    generic_info_message(f"Elapsed time : {round(time.time() - start_time, 3)} seconds")
+            logger.exception(e)
 
 
 @font_converter.command()
@@ -320,7 +313,7 @@ def ttc2sfnt(
     elif input_path.is_dir():
         files = [p.resolve() for p in input_path.iterdir() if p.is_file()]
     else:
-        generic_error_message(f"Invalid path: {input_path}")
+        logger.error(f"Invalid path: {input_path}")
         return
 
     tt_collections: list[TTCollection] = []
