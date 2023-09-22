@@ -8,7 +8,7 @@ from fontTools.ttLib import ttFont
 from fontTools.ttLib.tables import _g_l_y_f
 from fontTools.ttLib.tables import _h_m_t_x
 
-from foundryToolsCLI.Lib.utils.click_tools import generic_error_message, generic_info_message
+from foundryToolsCLI.Lib.utils.logger import logger
 from foundryToolsCLI.Lib.utils.skia_tools import (
     remove_tiny_paths,
     skia_path_from_glyph,
@@ -100,11 +100,11 @@ def correct_ttf_contours(
         except CorrectTTFContoursError:
             if not ignore_errors:
                 raise
-            generic_error_message(f"Failed to remove overlaps for '{glyph_name}'")
+            logger.error(f"Failed to remove overlaps for '{glyph_name}'")
 
     if verbose:
         modified = sorted(list(modified))
-        generic_info_message(f"{len(modified)} glyphs modified: {', '.join(modified)}")
+        logger.info(f"{len(modified)} {'glyph' if len(modified) == 1 else 'glyphs'} modified")
 
 
 def decomponentize(font: ttFont.TTFont):

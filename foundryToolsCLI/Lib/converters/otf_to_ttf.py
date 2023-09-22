@@ -1,4 +1,3 @@
-import time
 from pathlib import Path
 
 from fontTools.misc.cliTools import makeOutputFileName
@@ -8,7 +7,7 @@ from fontTools.ttLib import TTLibError, newTable
 
 from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.converters.options import CFFToTrueTypeOptions
-from foundryToolsCLI.Lib.utils.click_tools import generic_info_message, file_saved_message, generic_error_message
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 
 class OTF2TTFRunner(object):
@@ -17,16 +16,10 @@ class OTF2TTFRunner(object):
         self.options = CFFToTrueTypeOptions()
 
     def run(self, source_fonts: list[Font]) -> None:
-        converted_files_count = 0
-        start_time = time.time()
-
-        for count, source_font in enumerate(source_fonts, start=1):
-            t = time.time()
-
+        for source_font in source_fonts:
             try:
-                print()
                 file = Path(source_font.reader.file.name)
-                generic_info_message(f"Converting file {count} of {len(source_fonts)}: {file.name}")
+                logger.opt(colors=True).info(Logs.converting_file, file=file)
 
                 # If the source font is a WOFF or WOFF2, we add a suffix to avoid unwanted overwriting
                 if source_font.flavor is None:
@@ -52,20 +45,12 @@ class OTF2TTFRunner(object):
                 ttf_font = converter.run()
                 ttf_font.save(output_file)
                 ttf_font.close()
-
-                generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
-                file_saved_message(output_file)
-                converted_files_count += 1
+                logger.success(Logs.file_saved, file=output_file)
 
             except Exception as e:
-                generic_error_message(e)
+                logger.exception(e)
             finally:
                 source_font.close()
-
-        print()
-        generic_info_message(f"Total files     : {len(source_fonts)}")
-        generic_info_message(f"Converted files : {converted_files_count}")
-        generic_info_message(f"Elapsed time    : {round(time.time() - start_time, 3)} seconds")
 
 
 class CFFToTrueType(object):

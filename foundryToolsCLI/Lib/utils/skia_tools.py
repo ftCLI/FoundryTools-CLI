@@ -8,7 +8,7 @@ from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib import ttFont
 from fontTools.ttLib.tables import _g_l_y_f
 
-from foundryToolsCLI.Lib.utils.click_tools import generic_info_message, generic_error_message
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 _TTGlyphMapping = Mapping[str, ttFont._TTGlyph]
 
@@ -20,6 +20,7 @@ def remove_tiny_paths(path: pathops.Path, glyph_name, min_area: int = 25, verbos
     :param path: the path from which to remove the tiny paths
     :param glyph_name: the glyph name
     :param min_area: the minimum are of a path
+    :param verbose: if True, logs the removed tiny paths
     :return: the cleaned path
     """
     cleaned_path = pathops.Path()
@@ -28,7 +29,7 @@ def remove_tiny_paths(path: pathops.Path, glyph_name, min_area: int = 25, verbos
             cleaned_path.addPath(contour)
         else:
             if verbose:
-                generic_info_message(f"tiny path removed from glyph {glyph_name}")
+                logger.info(Logs.tiny_path_removed, glyph_name=glyph_name)
     return cleaned_path
 
 
@@ -108,13 +109,13 @@ def simplify_path(path: pathops.Path, glyph_name: str, clockwise: bool) -> patho
     path = round_path(path)
     try:
         path = pathops.simplify(path, fix_winding=True, clockwise=clockwise)
-        generic_info_message(
+        logger.info(
             f"skia-pathops failed to simplify glyph '{glyph_name}' with float coordinates, but succeeded using rounded "
             f"integer coordinates"
         )
         return path
     except pathops.PathOpsError as e:
-        generic_error_message(f"skia-pathops failed to simplify glyph '{glyph_name}': {e}")
+        logger.error(f"skia-pathops failed to simplify glyph '{glyph_name}': {e}")
 
     raise AssertionError("Unreachable")
 

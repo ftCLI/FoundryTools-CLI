@@ -12,19 +12,13 @@ from foundryToolsCLI.Lib.assistant.styles_mapping import StylesMapping
 from foundryToolsCLI.Lib.utils.cli_tools import (
     get_style_mapping_path,
     get_fonts_data_path,
-    get_output_dir,
 )
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
     file_overwrite_prompt,
-    generic_error_message,
-    file_saved_message,
-    file_not_changed_message,
-    generic_warning_message,
-    file_not_selected_message,
-    add_path_argument,
 )
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 assistant = click.Group("subcommands")
 
@@ -39,12 +33,12 @@ assistant = click.Group("subcommands")
     Suppress the overwrite confirmation message if the fonts_data.csv and/or styles_mapping.json files already
     exist in the ftCLI_files folder.""",
 )
-def init(input_path, quiet=False):
+def init(input_path: Path, quiet: bool = False):
     """
-    Creates the 'styles_mapping.json' and the 'fonts_data.csv' files in the 'ftCLI_files' directory. If one or both
-    files already exist, user will be asked to overwrite.
+    Creates the ``styles_mapping.json`` and the ``fonts_data.csv`` files in the ``ftCLI_files`` directory. If one or
+    both files already exist, user will be prompted for overwrite.
 
-    Both files can be edited manually or using the 'ftcli assistant ui' command.
+    Both files can be edited manually or using the ``ftcli assistant ui`` command.
     """
 
     try:
@@ -57,9 +51,9 @@ def init(input_path, quiet=False):
 
         if styles_mapping_overwrite is True:
             styles_mapping.reset_defaults()
-            file_saved_message(styles_mapping_file)
+            logger.success(Logs.file_saved, file=styles_mapping_file)
         else:
-            file_not_changed_message(styles_mapping_file)
+            logger.skip(Logs.file_not_changed, file=styles_mapping_file)
 
         fonts_data_file = get_fonts_data_path(input_path)
         fonts_data = FontsData(fonts_data_file)
@@ -69,15 +63,15 @@ def init(input_path, quiet=False):
             fonts_data_overwrite = True
         if fonts_data_overwrite is True:
             fonts_data.reset_data(styles_mapping=styles_mapping)
-            file_saved_message(fonts_data_file)
+            logger.success(Logs.file_saved, file=fonts_data_file)
         else:
-            file_not_changed_message(fonts_data_file)
+            logger.skip(Logs.file_not_changed, file=fonts_data_file)
     except Exception as e:
-        generic_error_message(e)
+        logger.exception(e)
 
 
 @assistant.command()
-@add_path_argument()
+@add_file_or_path_argument(file_okay=False)
 @click.option(
     "--width-elidable",
     default="Normal",
@@ -228,11 +222,11 @@ def commit(
     Writes data from CSV to fonts.
     """
 
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
-    try:
-        output_dir.mkdir(exist_ok=True)
-    except Exception as e:
-        generic_error_message(e)
+    if output_dir is not None:
+        try:
+            output_dir.mkdir(exist_ok=True, parents=True)
+        except Exception as e:
+            logger.exception(e)
 
     if linked_styles:
         linked_styles = sorted(linked_styles)
@@ -249,22 +243,25 @@ def commit(
         fonts_data = FontsData(get_fonts_data_path(input_path))
         data = fonts_data.get_data()
     except Exception as e:
-        generic_error_message(e)
+        logger.exception(e)
         return
 
     for row in data:
         file = Path(row["file_name"])
         if not Path.exists(file):
-            generic_warning_message(f"{file} {click.style('file does not exist', fg='yellow')}")
+            logger.warning(Logs.file_not_exists, file)
             continue
 
         file_is_selected = bool(int(row["selected"]))
         if not file_is_selected:
-            file_not_selected_message(file)
+            logger.warning(Logs.file_not_selected, file=file)
             continue
 
         try:
             font = Font(file, recalcTimestamp=recalc_timestamp)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
             name_table = font["name"]
             name_table_copy = deepcopy(name_table)
@@ -309,14 +306,13 @@ def commit(
                     font_has_changed = True
 
             if font_has_changed:
-                output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
 
 
 @assistant.command()

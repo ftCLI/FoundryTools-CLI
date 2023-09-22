@@ -1,4 +1,3 @@
-import time
 from copy import deepcopy
 from pathlib import Path
 
@@ -6,15 +5,13 @@ import click
 from fontTools.misc.cliTools import makeOutputFileName
 
 from foundryToolsCLI.Lib.Font import Font
-from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
+from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, initial_check_pass
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
-    file_saved_message,
-    generic_error_message,
-    generic_info_message,
-    file_not_changed_message,
+    add_recursive_option,
 )
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 otf_tools = click.Group("subcommands")
 
@@ -81,6 +78,7 @@ otf_tools = click.Group("subcommands")
     Allow the font to have no alignment zones nor stem widths.
     """,
 )
+@add_recursive_option()
 @add_common_options()
 def autohint(
     input_path: Path,
@@ -91,6 +89,7 @@ def autohint(
     no_hint_sub: bool = False,
     no_zones_stems: bool = False,
     optimize: bool = True,
+    recursive: bool = False,
     output_dir: bool = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -102,21 +101,23 @@ def autohint(
     from afdko.otfautohint.autohint import ACOptions, hintFiles
 
     fonts = get_fonts_in_path(
-        input_path=input_path, recalc_timestamp=recalc_timestamp, allow_ttf=False, allow_variable=False
+        input_path=input_path,
+        recursive=recursive,
+        recalc_timestamp=recalc_timestamp,
+        allow_ttf=False,
+        allow_variable=False,
     )
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
-    for count, font in enumerate(fonts, start=1):
-        t = time.time()
-        print()
+    for font in fonts:
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-            temp_otf_file = Path(makeOutputFileName(output_file, extension=".otf", suffix="_tmp", overWrite=True))
 
-            generic_info_message(f"Auto-hinting file {count} of {len(fonts)}: {file.name} ")
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
+            temp_otf_file = Path(makeOutputFileName(output_file, extension=".otf", suffix="_tmp", overWrite=True))
             original_timestamp = font.modified_timestamp
 
             flavor = font.flavor
@@ -142,7 +143,7 @@ def autohint(
             try:
                 hintFiles(options=options)
             except Exception as e:
-                generic_error_message(e)
+                logger.exception(e)
                 continue
 
             hinted_font = Font(output_file, recalcTimestamp=recalc_timestamp)
@@ -151,14 +152,14 @@ def autohint(
                 hinted_font.set_modified_timestamp(original_timestamp)
 
             if optimize:
-                generic_info_message("Performing charstrings optimization")
+                logger.info("Performing charstrings optimization")
                 top_dict = hinted_font["CFF "].cff.topDictIndex[0]
                 charstrings = top_dict.CharStrings
                 for charstring in charstrings.values():
                     charstring.decompile()
                     charstring.program = specializeProgram(charstring.program)
 
-                generic_info_message("Applying subroutines")
+                logger.info("Applying subroutines")
                 hinted_font.otf_subroutinize()
 
             hinted_font.flavor = flavor
@@ -166,11 +167,10 @@ def autohint(
             hinted_font.save(output_file)
             hinted_font.close()
             temp_otf_file.unlink(missing_ok=True)
-            generic_info_message(f"Done in {round(time.time() - t, 3)} seconds")
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
 
 
 @otf_tools.command()
@@ -204,11 +204,13 @@ def autohint(
     fontTools drops font-wide hinting values from the Private dict, while tx preserves them.
     """,
 )
+@add_recursive_option()
 @add_common_options()
 def dehint(
     input_path: Path,
     dehinter: str = "tx",
     subroutinize: bool = True,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -218,32 +220,33 @@ def dehint(
     """
     from afdko.fdkutils import run_shell_command
 
-    fonts = get_fonts_in_path(input_path=input_path, allow_ttf=False, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, allow_ttf=False, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
+        file = Path(font.reader.file.name)
+        output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+        logger.opt(colors=True).info(Logs.current_file, file=file)
+
         # Using fontTools.subset.cff.remove_hints()
         if dehinter == "fonttools":
             try:
                 font.otf_dehint()
                 if subroutinize:
                     font.otf_subroutinize()
-
-                file = Path(font.reader.file.name)
-                output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             except Exception as e:
-                generic_error_message(e)
+                logger.exception(e)
             font.close()
             continue
 
         # Using tx -cff -n +b +/-S and then sfntedit -a to merge the CFF table to the destination file
         try:
-            file = Path(font.reader.file.name)
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             temp_cff_file = Path(makeOutputFileName(output_file, extension=".cff", overWrite=True))
             temp_otf_file = Path(makeOutputFileName(output_file, extension=".otf", suffix="_tmp", overWrite=True))
 
@@ -277,12 +280,12 @@ def dehint(
                 font.save(output_file)
                 font.close()
 
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
             temp_cff_file.unlink()
             temp_otf_file.unlink(missing_ok=True)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
 
 
 @otf_tools.command()
@@ -299,12 +302,14 @@ def dehint(
 )
 @click.option("--no-subr", "subroutinize", is_flag=True, default=True, help="""Do not subroutinize fixed fonts.""")
 @click.option("--silent", "verbose", is_flag=True, default=True, help="Run in silent mode")
+@add_recursive_option()
 @add_common_options()
 def fix_contours(
     input_path: Path,
     min_area: int = 25,
     subroutinize: bool = True,
     verbose: bool = True,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -313,112 +318,150 @@ def fix_contours(
     Fix contours by correcting contours direction, removing overlaps and tiny paths.
     """
     fonts = get_fonts_in_path(
-        input_path=input_path, allow_variable=False, allow_ttf=False, recalc_timestamp=recalc_timestamp
+        input_path=input_path,
+        recursive=recursive,
+        allow_variable=False,
+        allow_ttf=False,
+        recalc_timestamp=recalc_timestamp,
     )
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
-        print()
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-            generic_info_message(f"Checking file {file.name}")
+
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
+
             font.otf_fix_contours(min_area=min_area, verbose=verbose)
             if subroutinize:
                 font.otf_subroutinize()
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
 
 @otf_tools.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
-def fix_version(input_path: Path, recalc_timestamp: bool = False, output_dir: Path = None, overwrite: bool = True):
+def fix_version(
+    input_path: Path,
+    recalc_timestamp: bool = False,
+    recursive: bool = False,
+    output_dir: Path = None,
+    overwrite: bool = True,
+):
     """
     Aligns CFF topDict version string to the head.fontRevision value.
 
     For example, if head.fontRevision value is 2.001, CFF topDict version value will be 2.1.
     """
     fonts = get_fonts_in_path(
-        input_path=input_path, recalc_timestamp=recalc_timestamp, allow_ttf=False, allow_variable=False
+        input_path=input_path,
+        recursive=recursive,
+        recalc_timestamp=recalc_timestamp,
+        allow_ttf=False,
+        allow_variable=False,
     )
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
+
             cff_table = font["CFF "]
             cff_table_copy = deepcopy(cff_table)
 
             font.fix_cff_top_dict_version()
 
             if cff_table_copy.compile(font) != cff_table.compile(font):
-                output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
 
 @otf_tools.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
-def subr(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def subr(
+    input_path: Path,
+    recursive: bool = False,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
     """
     Subroutinize OpenType-PS fonts.
     """
-    fonts = get_fonts_in_path(input_path=input_path, allow_ttf=False, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, allow_ttf=False, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
-            font.otf_subroutinize()
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
+            font.otf_subroutinize()
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
 
 @otf_tools.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
-def desubr(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = False, overwrite: bool = True):
+def desubr(
+    input_path: Path,
+    recursive: bool = False,
+    output_dir: Path = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
     """
     Desubroutinize OpenType-PS fonts.
     """
-    fonts = get_fonts_in_path(input_path=input_path, allow_ttf=False, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, allow_ttf=False, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
-            font.otf_desubroutinize()
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
+            font.otf_desubroutinize()
             font.save(output_file)
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -426,10 +469,12 @@ def desubr(input_path: Path, output_dir: Path = None, recalc_timestamp: bool = F
 @otf_tools.command()
 @add_file_or_path_argument()
 @click.option("-q", "--quiet-mode", is_flag=True, help="Run in quiet mode.")
+@add_recursive_option()
 @add_common_options()
 def check_outlines(
     input_path: Path,
     quiet_mode: bool = False,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -440,18 +485,17 @@ def check_outlines(
 
     from afdko import checkoutlinesufo
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp, allow_ttf=False)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp, allow_ttf=False
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
-        print()
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
-            generic_info_message(f"Checking file {file.name}")
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
 
             flavor = font.flavor
             if flavor:
@@ -473,10 +517,10 @@ def check_outlines(
                 font.flavor = flavor
                 font.save(output_file)
 
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 

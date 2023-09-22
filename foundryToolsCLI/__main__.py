@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
 
+from loguru import logger
+
 import click
 
 this_directory = Path(__file__).parent
@@ -20,7 +22,7 @@ class FoundryToolsCLI(click.MultiCommand):
         try:
             mod = __import__(f"foundryToolsCLI.CLI.ftcli_{cmd_name}", None, None, ["cli"])
         except ImportError as e:
-            click.secho(f"{click.style('ERROR', fg='red')}: {e}")
+            logger.error(e)
             return
 
         return mod.cli

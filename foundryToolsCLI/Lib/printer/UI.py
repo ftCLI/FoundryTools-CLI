@@ -11,7 +11,7 @@ from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.VFont import VariableFont
 from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.tables.name import TableName
-from foundryToolsCLI.Lib.utils.click_tools import generic_error_message
+from foundryToolsCLI.Lib.utils.logger import logger
 from foundryToolsCLI.Lib.utils.text_tools import wrap_string
 
 
@@ -37,7 +37,7 @@ def print_fonts_list(fonts: list[Font]) -> None:
             )
             rows.append(row)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
 
     table = Table(box=box.HORIZONTALS)
     table.add_column("#", justify="right")

@@ -1,6 +1,5 @@
 import os
 import tempfile
-import time
 from copy import deepcopy
 from pathlib import Path
 
@@ -13,27 +12,24 @@ from foundryToolsCLI.Lib.tables.CFF_ import TableCFF
 from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.tables.head import TableHead
 from foundryToolsCLI.Lib.tables.name import TableName
-from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
+from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, initial_check_pass
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
+    add_recursive_option,
     add_common_options,
-    file_not_changed_message,
-    file_saved_message,
-    generic_error_message,
-    generic_warning_message,
-    no_valid_fonts_message,
-    generic_success_message,
-    generic_info_message,
 )
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 utils = click.Group("subcommands")
 
 
 @utils.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def add_dsig(
     input_path: Path,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -44,25 +40,28 @@ def add_dsig(
 
     fonts = get_fonts_in_path(
         input_path=input_path,
+        recursive=recursive,
         recalc_timestamp=recalc_timestamp,
         allow_extensions=[".ttf", ".otf", ".woff"],
     )
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
             if "DSIG" not in font:
                 font.add_dummy_dsig()
-                output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.warning("DSIG table already present in the font. Skipping.")
+                logger.skip(Logs.file_not_changed, file=file)
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -76,10 +75,12 @@ def add_dsig(
     required=True,
     help=""" TableTag of the table(s) to delete. Can be repeated to delete multiple tables at once.""",
 )
+@add_recursive_option()
 @add_common_options()
 def del_table(
     input_path: Path,
     table_tags: tuple,
+    recursive: bool = False,
     recalc_timestamp: bool = False,
     output_dir: Path = None,
     overwrite: bool = True,
@@ -88,8 +89,7 @@ def del_table(
     Deletes the specified tables from the fonts.
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -99,22 +99,24 @@ def del_table(
         removed_tables_counter = 0
         try:
             file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
             for tag in table_tags:
                 if tag in font.keys():
                     del font[tag]
                     removed_tables_counter += 1
                 else:
-                    generic_warning_message(f"'{tag}' table is not present in {file.name}")
+                    logger.warning(f"'{tag}' table is not present in {file.name}")
 
             if removed_tables_counter > 0:
-                output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -157,8 +159,8 @@ def font_organizer(
     Sorts fonts in folders by family name and optionally by foundry, font revision and extension.
     """
     fonts = get_fonts_in_path(input_path=input_path)
-    if len(fonts) == 0:
-        no_valid_fonts_message(input_path=input_path)
+    if not initial_check_pass(fonts=fonts):
+        return
 
     for font in fonts:
         try:
@@ -185,13 +187,15 @@ def font_organizer(
             target = Path(makeOutputFileName(output_dir.joinpath(file.name), overWrite=False))
             file.rename(target=target)
 
-            generic_info_message(
-                f"{file.relative_to(input_path).name} {click.style('-->', fg='bright_magenta')} "
-                f"{target.relative_to(input_path)}"
-            )
+            logger.opt(colors=True).success(f"{file} <magenta>--></> <cyan>{target}</>")
+
+            # generic_info_message(
+            #     f"{file.relative_to(input_path).name} {click.style('-->', fg='bright_magenta')} "
+            #     f"{target.relative_to(input_path)}"
+            # )
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 
@@ -215,14 +219,15 @@ def font_organizer(
               5: CFF TopDict FullName (CFF fonts only)
               """,
 )
-def font_renamer(input_path: Path, source: str):
+@add_recursive_option()
+def font_renamer(input_path: Path, source: str, recursive: bool = False):
     """
     Rename font files according to the provided source string.
     """
 
-    fonts = get_fonts_in_path(input_path=input_path)
-    if len(fonts) == 0:
-        no_valid_fonts_message(input_path)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive)
+    if not initial_check_pass(fonts=fonts):
+        return
 
     # click.Choice() only accepts strings as choices, so we need to convert to integer
     source = int(source)
@@ -231,7 +236,7 @@ def font_renamer(input_path: Path, source: str):
         file = Path(font.reader.file.name)
 
         if font.is_ttf and source in (4, 5):
-            generic_warning_message(f"Source 4 and 5 con be used for OTF files only. Using source=1 for {file.name}")
+            logger.warning(f"Source 4 and 5 con be used for OTF files only. Using source=1 for {file.name}")
 
         old_file_name, old_file_extension = file.stem, file.suffix
         new_file_name = sanitize_filename(font.get_file_name(source=source), platform="auto")
@@ -245,20 +250,23 @@ def font_renamer(input_path: Path, source: str):
                     )
                 )
                 file.rename(output_file)
-                generic_success_message(f"{file.name} {click.style('-->', fg='bright_magenta')} {output_file.name}")
+                logger.opt(colors=True).success(f"{file} <magenta>--></> <cyan>{output_file}</>")
+                # generic_success_message(f"{file.name} {click.style('-->', fg='bright_magenta')} {output_file.name}")
             except Exception as e:
-                generic_error_message(e)
+                logger.exception(e)
         else:
-            file_not_changed_message(file)
+            logger.skip(Logs.file_not_changed, file=file)
 
         font.close()
 
 
 @utils.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def rebuild(
     input_path: Path,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -266,23 +274,17 @@ def rebuild(
     """
     Rebuilds fonts by converting to XML and then converting back to the original format
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
-    rebuilt_files_count = 0
-    start_time = time.time()
-
-    for count, font in enumerate(fonts, start=1):
+    for font in fonts:
         try:
-            t = time.time()
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-            flavor = font.flavor
+            logger.opt(colors=True).info(Logs.current_file, file=file)
 
-            print()
-            generic_info_message(f"Rebuilding file {count} of {len(fonts)}: {file.name}")
+            flavor = font.flavor
 
             fd, xml_file = tempfile.mkstemp()
             os.close(fd)
@@ -293,23 +295,15 @@ def rebuild(
             rebuilt_font.flavor = flavor
             rebuilt_font.save(output_file)
 
-            generic_info_message(f"Elapsed time: {round(time.time() - t, 3)} seconds")
-            file_saved_message(output_file)
-            rebuilt_files_count += 1
+            logger.success(Logs.file_saved, file=output_file)
 
             if os.path.exists(xml_file):
                 os.remove(xml_file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
-
-    print()
-
-    generic_info_message(f"Total files   : {len(fonts)}")
-    generic_info_message(f"Rebuilt files : {rebuilt_files_count}")
-    generic_info_message(f"Elapsed time  : {round(time.time() - start_time, 3)} seconds")
 
 
 @utils.command()
@@ -339,11 +333,11 @@ def set_revision(
     """
 
     if major is None and minor is None:
-        generic_error_message("At least one parameter of -minor or -major must be passed")
+        logger.error("At least one parameter of -minor or -major must be passed")
         return
 
     fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -394,12 +388,12 @@ def set_revision(
 
             if has_changed:
                 font.save(output_file)
-                file_saved_message(output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
-                file_not_changed_message(file)
+                logger.skip(Logs.file_not_changed, file=file)
 
         except Exception as e:
-            generic_error_message(e)
+            logger.exception(e)
         finally:
             font.close()
 

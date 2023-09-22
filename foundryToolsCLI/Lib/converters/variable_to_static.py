@@ -1,4 +1,3 @@
-import time
 from pathlib import Path
 
 from fontTools.misc.cliTools import makeOutputFileName
@@ -8,12 +7,7 @@ from pathvalidate import sanitize_filename
 from foundryToolsCLI.Lib.VFont import VariableFont
 from foundryToolsCLI.Lib.converters.options import Var2StaticOptions
 from foundryToolsCLI.Lib.tables.name import TableName
-from foundryToolsCLI.Lib.utils.click_tools import (
-    generic_warning_message,
-    generic_info_message,
-    file_saved_message,
-    generic_error_message,
-)
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
 
 class VariableToStatic(object):
@@ -21,30 +15,27 @@ class VariableToStatic(object):
         self.options = Var2StaticOptions()
 
     def run(self, variable_font: VariableFont, instances: list = None):
-        start_time = time.time()
 
         if not instances:
             instances = variable_font.get_instances()
 
         if len(instances) == 0:
-            generic_error_message("No instances found")
+            logger.error("No instances found")
             return
 
         if self.options.update_name_table:
             if "STAT" not in variable_font:
                 self.options.update_name_table = False
-                generic_warning_message("Cannot update name table if there is no STAT table.")
+                logger.warning("Cannot update name table if there is no STAT table.")
             if not hasattr(variable_font["STAT"], "AxisValueArray"):
                 self.options.update_name_table = False
-                generic_warning_message("Cannot update name table if there are no STAT Axis Values.")
+                logger.warning("Cannot update name table if there are no STAT Axis Values.")
 
         instance_count = 0
         for instance in instances:
-            t = time.time()
             instance_count += 1
 
-            print()
-            generic_info_message(f"Exporting instance {instance_count} of {len(instances)}")
+            logger.info(f"Exporting instance {instance_count} of {len(instances)}")
 
             static_instance = instantiateVariableFont(
                 varfont=variable_font,
@@ -82,12 +73,6 @@ class VariableToStatic(object):
             )
             static_instance.save(output_file)
             static_instance.close()
-
-            generic_info_message(f"Done in {round(time.time() - t, 3)} seconds")
-            file_saved_message(output_file)
+            logger.success(Logs.file_saved, file=output_file)
 
         variable_font.close()
-
-        print()
-        generic_info_message(f"Total instances : {len(instances)}")
-        generic_info_message(f"Elapsed time    : {round(time.time() - start_time, 3)} seconds")
