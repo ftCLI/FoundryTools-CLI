@@ -1,4 +1,3 @@
-import os
 from copy import copy, deepcopy
 from pathlib import Path
 
@@ -323,11 +322,11 @@ def ui(input_path: Path):
     """
 
     styles_mapping_file = get_style_mapping_path(input_path)
-    if not os.path.exists(styles_mapping_file):
+    if not styles_mapping_file.exists():
         StylesMapping(styles_mapping_file).reset_defaults()
 
     fonts_data_file = get_fonts_data_path(input_path)
-    if not os.path.exists(fonts_data_file):
+    if not fonts_data_file.exists():
         FontsData(fonts_data_file).reset_data()
 
     AssistantUI(input_path).run()
