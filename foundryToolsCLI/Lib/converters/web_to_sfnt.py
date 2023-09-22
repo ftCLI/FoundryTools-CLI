@@ -1,4 +1,3 @@
-import time
 from pathlib import Path
 
 from fontTools.misc.cliTools import makeOutputFileName
