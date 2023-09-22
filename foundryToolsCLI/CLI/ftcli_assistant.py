@@ -17,7 +17,6 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
     file_overwrite_prompt,
-    add_path_argument,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
@@ -72,7 +71,7 @@ def init(input_path: Path, quiet: bool = False):
 
 
 @assistant.command()
-@add_path_argument()
+@add_file_or_path_argument(file_okay=False)
 @click.option(
     "--width-elidable",
     default="Normal",
