@@ -4,7 +4,6 @@ import click
 
 from foundryToolsCLI.Lib.utils.cli_tools import (
     get_fonts_in_path,
-    get_output_dir,
     initial_check_pass,
     get_variable_fonts_in_path,
 )
@@ -59,7 +58,6 @@ def ttf2otf(
         allow_variable=False,
         recalc_timestamp=recalc_timestamp,
     )
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -104,7 +102,6 @@ def otf2ttf(
         allow_variable=False,
         recalc_timestamp=recalc_timestamp,
     )
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -166,7 +163,6 @@ def vf2i(
     variable_fonts = get_variable_fonts_in_path(
         input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
     )
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=variable_fonts, output_dir=output_dir):
         return
 
@@ -248,7 +244,6 @@ def wf2ft(
         allow_extensions=allowed_extensions,
         recalc_timestamp=recalc_timestamp,
     )
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -289,7 +284,6 @@ def ft2wf(input_path, flavor=None, recursive: bool = False, output_dir=None, rec
     fonts = get_fonts_in_path(
         input_path=input_path, allow_extensions=[".otf", ".ttf"], recalc_timestamp=recalc_timestamp, recursive=recursive
     )
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -339,7 +333,6 @@ def ttc2sfnt(
         except (TTLibError, Exception):
             pass
 
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=tt_collections, output_dir=output_dir):
         return
 

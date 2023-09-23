@@ -8,7 +8,7 @@ from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.tables.hhea import TableHhea
 from foundryToolsCLI.Lib.tables.name import TableName
 from foundryToolsCLI.Lib.tables.post import TablePost
-from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, get_output_dir, initial_check_pass
+from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, initial_check_pass
 from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_recursive_option,
@@ -258,7 +258,6 @@ def nbsp_width(
     the minimum (default is 2.0).
     """,
 )
-@add_recursive_option()
 @add_common_options()
 def italic_angle(
     input_path: Path,
@@ -809,17 +808,15 @@ def strip_names(
 
 @fix_fonts.command()
 @add_file_or_path_argument()
-@add_recursive_option()
 @add_common_options()
 def empty_names(
     input_path: Path,
-    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
     """
-    Removes empty NameRecords from the ``name`` table.
+    Remove empty NameRecords from ``name`` table.
 
     fontbakery check id: com.adobe.fonts/check/name/empty_records
 
@@ -833,8 +830,7 @@ def empty_names(
 
 
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
-    output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
+    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 

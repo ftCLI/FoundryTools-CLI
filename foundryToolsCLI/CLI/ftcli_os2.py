@@ -40,7 +40,7 @@ def recalc_x_height(
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
-            output_file = Path(makeOutputFileName(input=file, outputDir=output_dir, overWrite=overwrite))
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
@@ -87,7 +87,7 @@ def recalc_cap_height(
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
-            output_file = Path(makeOutputFileName(input=file, outputDir=output_dir, overWrite=overwrite))
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
 
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
