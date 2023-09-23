@@ -260,10 +260,13 @@ def remove_overlaps(
 @add_file_or_path_argument()
 @click.option(
     "-upm",
-    type=int,
+    type=click.IntRange(min=16, max=16384),
     required=True,
     help="""
-    New UPM value
+    New UPM value.
+    
+    According to the OpenType spec, ``unitsPerEm`` attribute in the ``head`` table must be a value between 16 and
+    16384.
     """,
 )
 @add_recursive_option()
