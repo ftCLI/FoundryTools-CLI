@@ -25,14 +25,6 @@ def add_file_or_path_argument(dir_okay=True, file_okay=True):
     return add_options(_file_or_path_argument)
 
 
-def add_file_argument():
-    return add_file_or_path_argument(dir_okay=False)
-
-
-def add_path_argument():
-    return add_file_or_path_argument(file_okay=False)
-
-
 def add_recursive_option():
     _recursive_option = [
         click.option(
