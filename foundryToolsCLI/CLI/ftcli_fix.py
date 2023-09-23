@@ -258,6 +258,7 @@ def nbsp_width(
     the minimum (default is 2.0).
     """,
 )
+@add_recursive_option()
 @add_common_options()
 def italic_angle(
     input_path: Path,
