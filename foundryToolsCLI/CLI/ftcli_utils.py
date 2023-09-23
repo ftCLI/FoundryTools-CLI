@@ -73,7 +73,7 @@ def add_dsig(
     "table_tags",
     multiple=True,
     required=True,
-    help=""" TableTag of the table(s) to delete. Can be repeated to delete multiple tables at once.""",
+    help="""TableTag of the table(s) to delete. Can be repeated to delete multiple tables at once.""",
 )
 @add_recursive_option()
 @add_common_options()
