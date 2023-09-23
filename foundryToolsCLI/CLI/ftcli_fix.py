@@ -808,15 +808,17 @@ def strip_names(
 
 @fix_fonts.command()
 @add_file_or_path_argument()
+@add_recursive_option()
 @add_common_options()
 def empty_names(
     input_path: Path,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
     """
-    Remove empty NameRecords from ``name`` table.
+    Removes empty NameRecords from the ``name`` table.
 
     fontbakery check id: com.adobe.fonts/check/name/empty_records
 
@@ -830,7 +832,7 @@ def empty_names(
 
 
     """
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
     output_dir = get_output_dir(input_path=input_path, output_dir=output_dir)
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
