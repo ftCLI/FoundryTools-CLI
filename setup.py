@@ -18,7 +18,7 @@ def _get_requirements():
 
 setuptools.setup(
     name="foundrytools-cli",
-    version="1.0.8",
+    version="1.1.0",
     description="A set of command line tools to inspect, manipulate and convert font files",
     long_description=long_description,
     long_description_content_type="text/markdown",
