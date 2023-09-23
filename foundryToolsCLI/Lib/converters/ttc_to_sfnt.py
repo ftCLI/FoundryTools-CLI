@@ -3,7 +3,7 @@ from pathlib import Path
 from fontTools.misc.cliTools import makeOutputFileName
 from fontTools.ttLib import TTCollection
 
-from Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
 from foundryToolsCLI.Lib.converters.options import TTCollectionToSFNTOptions
 
 
@@ -18,7 +18,8 @@ class TTC2SFNTRunner(object):
                 for font in ttc.fonts:
                     font.recalcTimestamp = self.options.recalc_timestamp
                     file_name = font["name"].getDebugName(6)
-                    extension = font.get_real_extension()
+                    extension = ".otf" if font.sfntVersion == "OTTO" else ".ttf"
+                    logger.opt(colors=True).info(Logs.current_file, file=file_name + extension)
                     output_file = Path(
                         makeOutputFileName(
                             file_name,

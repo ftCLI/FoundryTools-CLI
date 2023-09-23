@@ -15,7 +15,6 @@ class VariableToStatic(object):
         self.options = Var2StaticOptions()
 
     def run(self, variable_font: VariableFont, instances: list = None):
-
         if not instances:
             instances = variable_font.get_instances()
 

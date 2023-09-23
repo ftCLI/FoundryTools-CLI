@@ -25,14 +25,6 @@ def add_file_or_path_argument(dir_okay=True, file_okay=True):
     return add_options(_file_or_path_argument)
 
 
-def add_file_argument():
-    return add_file_or_path_argument(dir_okay=False)
-
-
-def add_path_argument():
-    return add_file_or_path_argument(file_okay=False)
-
-
 def add_recursive_option():
     _recursive_option = [
         click.option(
@@ -87,52 +79,6 @@ def file_overwrite_prompt(input_file: Path) -> bool:
     return click.confirm(
         f"{click.style(input_file, fg='yellow', bold=True)} already exists. " f"Do you want to overwrite it?"
     )
-
-
-def file_not_selected_message(file: Path):
-    click.secho(
-        f"[{click.style('SKIP', fg='yellow')}] {file.name} ({click.style('file is not selected', fg='yellow')})"
-    )
-
-
-def no_valid_fonts_message(input_path: Path):
-    if input_path.is_dir():
-        message = f"No valid font files matching the given criteria found in {input_path.name}"
-    else:
-        message = f"{input_path.name} is not a valid font file or doesn't match the given criteria"
-    click.secho(f"[{click.style('FAIL', fg='red')}] {message}")
-
-
-def file_not_exists_message(file: Path):
-    click.secho(
-        f"[{click.style('WARN', fg='bright_yellow')}] {file} {click.style('file does not exist', fg='bright_yellow')}"
-    )
-
-
-def file_not_changed_message(file: Path):
-    click.secho(
-        f"[{click.style('SKIP', fg='bright_yellow')}] {file} ({click.style('no changes made', fg='bright_yellow')})"
-    )
-
-
-def file_saved_message(file: Path):
-    click.secho(f"[{click.style('DONE', fg='green')}] {file} ({click.style('saved', fg='green')})")
-
-
-def generic_success_message(success_message):
-    click.secho(f"[{click.style('PASS', fg='green')}] {success_message}")
-
-
-def generic_info_message(info_message, nl=True):
-    click.secho(f"[{click.style('INFO', fg='cyan')}] {info_message}", nl=nl)
-
-
-def generic_error_message(error_message):
-    click.secho(f"[{click.style('FAIL', fg='red')}] {error_message}")
-
-
-def generic_warning_message(warning_message):
-    click.secho(f"[{click.style('WARN', fg='bright_yellow')}] {warning_message}")
 
 
 def select_instance_coordinates(axes: list) -> dict:

@@ -13,7 +13,6 @@ class WF2FTRunner(object):
         self.options = WebToSFNTOptions()
 
     def run(self, fonts: list[Font]) -> None:
-
         for font in fonts:
             try:
                 file = Path(font.reader.file.name)
