@@ -19,6 +19,7 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_common_options,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.timer import Timer
 
 utils = click.Group("subcommands")
 
@@ -27,6 +28,7 @@ utils = click.Group("subcommands")
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def add_dsig(
     input_path: Path,
     recursive: bool = False,
@@ -77,6 +79,7 @@ def add_dsig(
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def del_table(
     input_path: Path,
     table_tags: tuple,
@@ -152,6 +155,7 @@ def del_table(
     help="Appends the version string to the family folder.",
 )
 @add_file_or_path_argument()
+@Timer(logger=logger.info)
 def font_organizer(
     input_path: Path, sort_by_foundry: bool = False, sort_by_extension: bool = False, sort_by_version: bool = False
 ):
@@ -220,6 +224,7 @@ def font_organizer(
               """,
 )
 @add_recursive_option()
+@Timer(logger=logger.info)
 def font_renamer(input_path: Path, source: str, recursive: bool = False):
     """
     Rename font files according to the provided source string.
@@ -263,6 +268,7 @@ def font_renamer(input_path: Path, source: str, recursive: bool = False):
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def rebuild(
     input_path: Path,
     recursive: bool = False,
@@ -312,6 +318,7 @@ def rebuild(
 @click.option("-ui", "--unique-identifier", is_flag=True, help="Recalculates nameID 3 (Unique identifier)")
 @click.option("-vs", "--version-string", is_flag=True, help="Recalculates nameID 5 (version string)")
 @add_common_options()
+@Timer(logger=logger.info)
 def set_revision(
     input_path: Path,
     major: int = None,

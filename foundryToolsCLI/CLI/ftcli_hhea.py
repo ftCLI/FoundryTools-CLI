@@ -14,6 +14,7 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_common_options,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.timer import Timer
 
 
 @click.command()
@@ -27,6 +28,7 @@ from foundryToolsCLI.Lib.utils.logger import logger, Logs
 @click.option("--recalc-offset", is_flag=True, default=None, help="""Recalculate the ``caretOffset`` value.""")
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def cli(
     input_path: Path,
     recursive: bool = False,

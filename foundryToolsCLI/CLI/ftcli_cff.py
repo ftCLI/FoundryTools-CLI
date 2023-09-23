@@ -12,6 +12,7 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_common_options,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.timer import Timer
 
 tbl_cff = click.Group("subcommands")
 
@@ -26,6 +27,7 @@ tbl_cff = click.Group("subcommands")
 @click.option("--notice", "Notice", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Copyright")
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def del_names(
     input_path: Path,
     recursive: bool = False,
@@ -92,6 +94,7 @@ def del_names(
 @click.option("--version", "version", type=str, help="Sets CFF.cff.topDictIndex[0] version value")
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def set_names(
     input_path: Path,
     recursive: bool = False,
@@ -154,6 +157,7 @@ def set_names(
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def find_replace(
     input_path: Path,
     old_string: str,

@@ -15,6 +15,7 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_common_options,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.timer import Timer
 
 fix_fonts = click.Group("subcommands")
 
@@ -23,6 +24,7 @@ fix_fonts = click.Group("subcommands")
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def monospace(
     input_path: Path,
     recursive: bool = False,
@@ -169,6 +171,7 @@ def monospace(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def nbsp_width(
     input_path: Path,
     recursive: bool = False,
@@ -259,6 +262,7 @@ def nbsp_width(
     """,
 )
 @add_common_options()
+@Timer(logger=logger.info)
 def italic_angle(
     input_path: Path,
     mode: int = 1,
@@ -434,6 +438,7 @@ def italic_angle(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def nbsp_missing(
     input_path: Path,
     recursive: bool = False,
@@ -490,6 +495,7 @@ def nbsp_missing(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def decompose_transformed(
     input_path: Path,
     recursive: bool = False,
@@ -595,6 +601,7 @@ def decompose_transformed(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def duplicate_components(
     input_path: Path,
     recursive: bool = False,
@@ -670,6 +677,7 @@ def duplicate_components(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def kern_table(
     input_path: Path,
     recursive: bool = False,
@@ -756,6 +764,7 @@ def kern_table(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def strip_names(
     input_path: Path,
     recursive: bool = False,
@@ -809,6 +818,7 @@ def strip_names(
 @fix_fonts.command()
 @add_file_or_path_argument()
 @add_common_options()
+@Timer(logger=logger.info)
 def empty_names(
     input_path: Path,
     output_dir: Path = None,

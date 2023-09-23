@@ -14,6 +14,7 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     select_instance_coordinates,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.timer import Timer
 
 font_converter = click.Group("subcommands")
 
@@ -37,6 +38,7 @@ font_converter = click.Group("subcommands")
 @click.option("--silent", "verbose", is_flag=True, default=True, help="Run in silent mode")
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def ttf2otf(
     input_path: Path,
     tolerance: float = 1.0,
@@ -84,6 +86,7 @@ def ttf2otf(
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def otf2ttf(
     input_path: Path,
     max_err: float = 1.0,
@@ -147,6 +150,7 @@ def otf2ttf(
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def vf2i(
     input_path: Path,
     select_instance: bool = False,
@@ -221,6 +225,7 @@ def vf2i(
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def wf2ft(
     input_path: Path,
     flavor: str = None,
@@ -276,6 +281,7 @@ def wf2ft(
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def ft2wf(input_path, flavor=None, recursive: bool = False, output_dir=None, recalc_timestamp=False, overwrite=True):
     """
     Converts SFNT fonts (TTF or OTF) to web fonts (WOFF and/or WOFF2)
@@ -306,6 +312,7 @@ def ft2wf(input_path, flavor=None, recursive: bool = False, output_dir=None, rec
 @font_converter.command()
 @add_file_or_path_argument()
 @add_common_options()
+@Timer(logger=logger.info)
 def ttc2sfnt(
     input_path: Path,
     output_dir: Path = None,

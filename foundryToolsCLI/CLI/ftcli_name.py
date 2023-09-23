@@ -13,6 +13,7 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_common_options,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.timer import Timer
 
 tbl_name = click.Group("subcommands")
 
@@ -50,6 +51,7 @@ tbl_name = click.Group("subcommands")
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def set_name(
     input_path: Path,
     name_id: int,
@@ -133,6 +135,7 @@ def set_name(
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def del_names(
     input_path: Path,
     name_ids: tuple[int],
@@ -222,6 +225,7 @@ def del_names(
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def find_replace(
     input_path: Path,
     old_string: str,
@@ -278,6 +282,7 @@ def find_replace(
 @click.option("--del-all", is_flag=True, help="Deletes also nameIDs 1, 2, 4, 5 and 6.")
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def del_mac_names(
     input_path: Path,
     del_all: bool = False,
@@ -366,6 +371,7 @@ def del_mac_names(
 @click.option("--suffix", type=str, help="The suffix to append to the NameRecords")
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def append(
     input_path: Path,
     name_ids: tuple[int],

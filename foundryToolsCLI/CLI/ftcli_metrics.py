@@ -8,6 +8,7 @@ from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, initial_check_pass
 from foundryToolsCLI.Lib.utils.click_tools import add_common_options, add_file_or_path_argument
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.timer import Timer
 
 vertical_metrics_tools = click.Group("subcommands")
 
@@ -22,6 +23,7 @@ vertical_metrics_tools = click.Group("subcommands")
     help="Adjust font line spacing to % of UPM value.",
 )
 @add_common_options()
+@Timer(logger=logger.info)
 def set_linegap(
     input_path: Path,
     percent: int,
@@ -82,6 +84,7 @@ def set_linegap(
     """,
 )
 @add_common_options()
+@Timer(logger=logger.info)
 def align(
     input_path: Path,
     with_linegap: bool = False,
@@ -195,6 +198,7 @@ def align(
     help="Destination file or directory.",
 )
 @add_common_options()
+@Timer(logger=logger.info)
 def copy_metrics(
     source_file: Path,
     destination: Path,
