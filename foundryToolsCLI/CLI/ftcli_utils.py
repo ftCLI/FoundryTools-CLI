@@ -250,8 +250,7 @@ def font_renamer(input_path: Path, source: str, recursive: bool = False):
                     )
                 )
                 file.rename(output_file)
-                logger.opt(colors=True).success(f"{file} <magenta>--></> <cyan>{output_file}</>")
-                # generic_success_message(f"{file.name} {click.style('-->', fg='bright_magenta')} {output_file.name}")
+                logger.opt(colors=True).success(f"{file.name} <magenta>--></> <cyan>{output_file.name}</>")
             except Exception as e:
                 logger.exception(e)
         else:
