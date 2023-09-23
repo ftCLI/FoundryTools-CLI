@@ -254,7 +254,7 @@ def font_renamer(input_path: Path, source: str, recursive: bool = False):
             except Exception as e:
                 logger.exception(e)
         else:
-            logger.skip(Logs.file_not_changed, file=file)
+            logger.skip(Logs.file_not_changed, file=file.name)
 
         font.close()
 
