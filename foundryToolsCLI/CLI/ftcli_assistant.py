@@ -259,7 +259,6 @@ def commit(
         try:
             font = Font(file, recalcTimestamp=recalc_timestamp)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             name_table = font["name"]

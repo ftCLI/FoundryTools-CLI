@@ -41,7 +41,6 @@ def recalc_x_height(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
@@ -88,7 +87,6 @@ def recalc_cap_height(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
@@ -135,7 +133,6 @@ def recalc_max_context(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
@@ -187,7 +184,6 @@ def recalc_ranges(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             temp_otf_fd, temp_otf_file = font.make_temp_otf()
@@ -409,7 +405,6 @@ def set_flags(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             head = font["head"]
@@ -462,7 +457,6 @@ def set_version(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
@@ -547,7 +541,6 @@ def set_weight(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
@@ -593,7 +586,6 @@ def set_width(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]

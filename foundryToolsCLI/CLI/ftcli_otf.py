@@ -114,7 +114,6 @@ def autohint(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             temp_otf_file = Path(makeOutputFileName(output_file, extension=".otf", suffix="_tmp", overWrite=True))
@@ -229,7 +228,6 @@ def dehint(
     for font in fonts:
         file = Path(font.reader.file.name)
         output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
         logger.opt(colors=True).info(Logs.current_file, file=file)
 
         # Using fontTools.subset.cff.remove_hints()
@@ -419,7 +417,6 @@ def subr(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             font.otf_subroutinize()
