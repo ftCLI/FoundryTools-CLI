@@ -3,7 +3,7 @@ from fontTools.pens.t2CharStringPen import T2CharStringPen
 from fontTools.ttLib.ttFont import TTFont
 
 from foundryToolsCLI.Lib.tables.CFF_ import TableCFF
-from foundryToolsCLI.Lib.utils.click_tools import generic_info_message
+from foundryToolsCLI.Lib.utils.logger import logger
 from foundryToolsCLI.Lib.utils.skia_tools import (
     remove_tiny_paths,
     skia_path_from_glyph,
@@ -44,9 +44,9 @@ def correct_otf_contours(font: TTFont, min_area: int = 25, verbose: bool = False
         modified = sorted(list(modified))
 
         if len(modified) > 0:
-            generic_info_message(f"The following glyphs have been modified: {', '.join(modified)}")
+            logger.info(f"The following glyphs have been modified: {', '.join(modified)}")
         else:
-            generic_info_message("No glyphs modified")
+            logger.info("No glyphs modified")
 
     ps_name = cff_table.get_fb_ps_name()
     font_info = cff_table.get_fb_font_info()
