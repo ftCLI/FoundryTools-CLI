@@ -27,7 +27,7 @@ otf_tools = click.Group("subcommands")
     """,
 )
 @click.option(
-    "-r",
+    "-rf",
     "--reference-font",
     type=click.Path(exists=True, dir_okay=False, resolve_path=True),
     help="""
