@@ -317,6 +317,7 @@ def rebuild(
 @click.option("-minor", type=click.IntRange(0, 999), help="Minor version")
 @click.option("-ui", "--unique-identifier", is_flag=True, help="Recalculates nameID 3 (Unique identifier)")
 @click.option("-vs", "--version-string", is_flag=True, help="Recalculates nameID 5 (version string)")
+@add_recursive_option()
 @add_common_options()
 @Timer(logger=logger.info)
 def set_revision(
@@ -325,6 +326,7 @@ def set_revision(
     minor: int = None,
     unique_identifier: bool = False,
     version_string: bool = False,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -342,7 +344,7 @@ def set_revision(
         logger.error("At least one parameter of -minor or -major must be passed")
         return
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
 
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
