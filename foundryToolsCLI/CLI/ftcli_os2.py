@@ -523,7 +523,14 @@ def set_version(
 
 @tbl_os2.command()
 @add_file_or_path_argument()
-@click.option("-w", "--weight", type=click.IntRange(1, 1000), prompt=True, required=True, help="usWeightClass value.")
+@click.option(
+    "-w",
+    "--weight",
+    type=click.IntRange(1, 1000),
+    prompt="New usWeightClass value",
+    required=True,
+    help="usWeightClass value.",
+)
 @add_recursive_option()
 @add_common_options()
 @Timer(logger=logger.info)
@@ -569,7 +576,14 @@ def set_weight(
 
 @tbl_os2.command()
 @add_file_or_path_argument()
-@click.option("-w", "--width", type=click.IntRange(1, 9), required=True, help="usWidthClass value.")
+@click.option(
+    "-w",
+    "--width",
+    prompt="New usWidthClass value",
+    type=click.IntRange(1, 9),
+    required=True,
+    help="usWidthClass value.",
+)
 @add_recursive_option()
 @add_common_options()
 @Timer(logger=logger.info)

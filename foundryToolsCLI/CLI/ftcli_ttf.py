@@ -274,6 +274,7 @@ def remove_overlaps(
     According to the OpenType spec, ``unitsPerEm`` attribute in the ``head`` table must be a value between 16 and
     16384.
     """,
+    prompt="New UPM value",
 )
 @add_recursive_option()
 @add_common_options()
