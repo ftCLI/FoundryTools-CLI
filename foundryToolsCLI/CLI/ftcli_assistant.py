@@ -18,6 +18,7 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     file_overwrite_prompt,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.timer import Timer
 
 assistant = click.Group("subcommands")
 
@@ -197,6 +198,7 @@ def init(input_path: Path, quiet: bool = False):
     """,
 )
 @add_common_options()
+@Timer(logger=logger.info)
 def commit(
     input_path: Path,
     width_elidable: str,
@@ -259,7 +261,6 @@ def commit(
         try:
             font = Font(file, recalcTimestamp=recalc_timestamp)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             name_table = font["name"]

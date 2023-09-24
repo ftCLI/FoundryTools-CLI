@@ -15,6 +15,7 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_common_options,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.timer import Timer
 
 ttf_tools = click.Group("subcommands")
 
@@ -23,6 +24,7 @@ ttf_tools = click.Group("subcommands")
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def autohint(
     input_path: Path,
     recursive: bool = False,
@@ -71,6 +73,7 @@ def autohint(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def decompose(
     input_path: Path,
     recursive: bool = False,
@@ -107,6 +110,7 @@ def decompose(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def dehint(
     input_path: Path,
     recursive: bool = False,
@@ -162,6 +166,7 @@ def dehint(
 @click.option("--silent", "verbose", is_flag=True, default=True, help="Run in silent mode")
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def fix_contours(
     input_path: Path,
     min_area: int = 25,
@@ -218,6 +223,7 @@ def fix_contours(
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def remove_overlaps(
     input_path: Path,
     remove_hinting: bool = True,
@@ -260,14 +266,19 @@ def remove_overlaps(
 @add_file_or_path_argument()
 @click.option(
     "-upm",
-    type=int,
+    type=click.IntRange(min=16, max=16384),
     required=True,
     help="""
-    New UPM value
+    New UPM value.
+    
+    According to the OpenType spec, ``unitsPerEm`` attribute in the ``head`` table must be a value between 16 and
+    16384.
     """,
+    prompt="New UPM value",
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def scale_upm(
     input_path: Path,
     upm: int,
@@ -291,7 +302,6 @@ def scale_upm(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             if font["head"].unitsPerEm == upm:
@@ -325,6 +335,7 @@ def scale_upm(
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def rename_glyph(
     input_path: Path,
     old_glyph_name: str,

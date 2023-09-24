@@ -115,6 +115,7 @@ def get_fonts_in_path(
     return fonts
 
 
+# Actually, this function is not used anywhere
 def get_output_dir(input_path: pathlib.Path, output_dir: pathlib.Path = None) -> pathlib.Path:
     """
     If the output directory is not specified, then the output directory is the directory of the input file if the input

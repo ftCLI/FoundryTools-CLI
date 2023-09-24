@@ -19,6 +19,7 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_common_options,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.timer import Timer
 
 utils = click.Group("subcommands")
 
@@ -27,6 +28,7 @@ utils = click.Group("subcommands")
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def add_dsig(
     input_path: Path,
     recursive: bool = False,
@@ -73,10 +75,11 @@ def add_dsig(
     "table_tags",
     multiple=True,
     required=True,
-    help=""" TableTag of the table(s) to delete. Can be repeated to delete multiple tables at once.""",
+    help="""TableTag of the table(s) to delete. Can be repeated to delete multiple tables at once.""",
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def del_table(
     input_path: Path,
     table_tags: tuple,
@@ -152,6 +155,7 @@ def del_table(
     help="Appends the version string to the family folder.",
 )
 @add_file_or_path_argument()
+@Timer(logger=logger.info)
 def font_organizer(
     input_path: Path, sort_by_foundry: bool = False, sort_by_extension: bool = False, sort_by_version: bool = False
 ):
@@ -220,6 +224,7 @@ def font_organizer(
               """,
 )
 @add_recursive_option()
+@Timer(logger=logger.info)
 def font_renamer(input_path: Path, source: str, recursive: bool = False):
     """
     Rename font files according to the provided source string.
@@ -254,7 +259,7 @@ def font_renamer(input_path: Path, source: str, recursive: bool = False):
             except Exception as e:
                 logger.exception(e)
         else:
-            logger.skip(Logs.file_not_changed, file=file)
+            logger.skip(Logs.file_not_changed, file=file.name)
 
         font.close()
 
@@ -263,6 +268,7 @@ def font_renamer(input_path: Path, source: str, recursive: bool = False):
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def rebuild(
     input_path: Path,
     recursive: bool = False,
@@ -311,13 +317,16 @@ def rebuild(
 @click.option("-minor", type=click.IntRange(0, 999), help="Minor version")
 @click.option("-ui", "--unique-identifier", is_flag=True, help="Recalculates nameID 3 (Unique identifier)")
 @click.option("-vs", "--version-string", is_flag=True, help="Recalculates nameID 5 (version string)")
+@add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def set_revision(
     input_path: Path,
     major: int = None,
     minor: int = None,
     unique_identifier: bool = False,
     version_string: bool = False,
+    recursive: bool = False,
     output_dir: Path = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
@@ -335,7 +344,7 @@ def set_revision(
         logger.error("At least one parameter of -minor or -major must be passed")
         return
 
-    fonts = get_fonts_in_path(input_path=input_path, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
 
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return

@@ -12,6 +12,7 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_recursive_option,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.timer import Timer
 
 otf_tools = click.Group("subcommands")
 
@@ -26,7 +27,7 @@ otf_tools = click.Group("subcommands")
     """,
 )
 @click.option(
-    "-r",
+    "-rf",
     "--reference-font",
     type=click.Path(exists=True, dir_okay=False, resolve_path=True),
     help="""
@@ -80,6 +81,7 @@ otf_tools = click.Group("subcommands")
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def autohint(
     input_path: Path,
     reference_font: Path = None,
@@ -114,7 +116,6 @@ def autohint(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             temp_otf_file = Path(makeOutputFileName(output_file, extension=".otf", suffix="_tmp", overWrite=True))
@@ -143,7 +144,7 @@ def autohint(
             try:
                 hintFiles(options=options)
             except Exception as e:
-                logger.exception(e)
+                logger.error(e)
                 continue
 
             hinted_font = Font(output_file, recalcTimestamp=recalc_timestamp)
@@ -206,6 +207,7 @@ def autohint(
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def dehint(
     input_path: Path,
     dehinter: str = "tx",
@@ -229,7 +231,6 @@ def dehint(
     for font in fonts:
         file = Path(font.reader.file.name)
         output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
         logger.opt(colors=True).info(Logs.current_file, file=file)
 
         # Using fontTools.subset.cff.remove_hints()
@@ -304,6 +305,7 @@ def dehint(
 @click.option("--silent", "verbose", is_flag=True, default=True, help="Run in silent mode")
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def fix_contours(
     input_path: Path,
     min_area: int = 25,
@@ -350,6 +352,7 @@ def fix_contours(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def fix_version(
     input_path: Path,
     recalc_timestamp: bool = False,
@@ -399,6 +402,7 @@ def fix_version(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def subr(
     input_path: Path,
     recursive: bool = False,
@@ -419,7 +423,6 @@ def subr(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             font.otf_subroutinize()
@@ -435,6 +438,7 @@ def subr(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def desubr(
     input_path: Path,
     recursive: bool = False,
@@ -471,6 +475,7 @@ def desubr(
 @click.option("-q", "--quiet-mode", is_flag=True, help="Run in quiet mode.")
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def check_outlines(
     input_path: Path,
     quiet_mode: bool = False,

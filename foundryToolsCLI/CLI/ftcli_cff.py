@@ -12,6 +12,7 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_common_options,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.timer import Timer
 
 tbl_cff = click.Group("subcommands")
 
@@ -26,6 +27,7 @@ tbl_cff = click.Group("subcommands")
 @click.option("--notice", "Notice", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Copyright")
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def del_names(
     input_path: Path,
     recursive: bool = False,
@@ -56,7 +58,6 @@ def del_names(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             cff_table: TableCFF = font["CFF "]
@@ -93,6 +94,7 @@ def del_names(
 @click.option("--version", "version", type=str, help="Sets CFF.cff.topDictIndex[0] version value")
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def set_names(
     input_path: Path,
     recursive: bool = False,
@@ -125,7 +127,6 @@ def set_names(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             cff_table: TableCFF = font["CFF "]
@@ -156,6 +157,7 @@ def set_names(
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def find_replace(
     input_path: Path,
     old_string: str,
@@ -184,7 +186,6 @@ def find_replace(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             cff_table: TableCFF = font["CFF "]

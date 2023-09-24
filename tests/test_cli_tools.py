@@ -7,7 +7,6 @@ from foundryToolsCLI.Lib.utils.cli_tools import (
     get_style_mapping_path,
     get_fonts_data_path,
     get_project_files_path,
-    get_output_dir,
 )
 
 CWD = pathlib.Path.cwd()
@@ -53,9 +52,3 @@ class Test(TestCase):
         project_files_path = get_project_files_path(input_path=INPUT_PATH)
         expected = pathlib.Path.joinpath(INPUT_PATH, "ftCLI_files")
         self.assertEqual(project_files_path, expected)
-
-    def test_get_output_dir(self):
-        output_dir = get_output_dir(input_path=INPUT_PATH, output_dir=None)
-        self.assertEqual(output_dir, INPUT_PATH)
-        output_dir = get_output_dir(input_path=INPUT_PATH, output_dir=CWD)
-        self.assertEqual(output_dir, CWD)

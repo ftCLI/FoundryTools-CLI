@@ -5,7 +5,6 @@ from pathlib import Path
 import click
 from fontTools.misc.cliTools import makeOutputFileName
 
-from foundryToolsCLI.Lib.utils.logger import logger, Logs
 from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.utils.bits_tools import unset_nth_bit
@@ -15,6 +14,8 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_recursive_option,
     add_common_options,
 )
+from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.timer import Timer
 
 tbl_os2 = click.Group("subcommands")
 
@@ -23,6 +24,7 @@ tbl_os2 = click.Group("subcommands")
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def recalc_x_height(
     input_path: Path,
     recursive: bool = False,
@@ -40,8 +42,7 @@ def recalc_x_height(
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
-            output_file = Path(makeOutputFileName(input=file, outputDir=output_dir, overWrite=overwrite))
-
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
@@ -70,6 +71,7 @@ def recalc_x_height(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def recalc_cap_height(
     input_path: Path,
     recursive: bool = False,
@@ -87,8 +89,7 @@ def recalc_cap_height(
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
-            output_file = Path(makeOutputFileName(input=file, outputDir=output_dir, overWrite=overwrite))
-
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
@@ -117,6 +118,7 @@ def recalc_cap_height(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def recalc_max_context(
     input_path: Path,
     recursive: bool = False,
@@ -135,7 +137,6 @@ def recalc_max_context(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
@@ -166,6 +167,7 @@ def recalc_max_context(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def recalc_ranges(
     input_path: Path,
     recursive: bool = False,
@@ -187,7 +189,6 @@ def recalc_ranges(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             temp_otf_fd, temp_otf_file = font.make_temp_otf()
@@ -364,6 +365,7 @@ embedding restrictions specified in bits 0-3 and 8 also apply.
 )
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def set_flags(
     input_path: Path,
     recursive: bool = False,
@@ -409,7 +411,6 @@ def set_flags(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             head = font["head"]
@@ -443,6 +444,7 @@ def set_flags(
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def set_version(
     input_path: Path,
     target_version: int,
@@ -462,7 +464,6 @@ def set_version(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
@@ -522,9 +523,17 @@ def set_version(
 
 @tbl_os2.command()
 @add_file_or_path_argument()
-@click.option("-w", "--weight", type=click.IntRange(1, 1000), prompt=True, required=True, help="usWeightClass value.")
+@click.option(
+    "-w",
+    "--weight",
+    type=click.IntRange(1, 1000),
+    prompt="New usWeightClass value",
+    required=True,
+    help="usWeightClass value.",
+)
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def set_weight(
     input_path: Path,
     weight: int,
@@ -547,7 +556,6 @@ def set_weight(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
@@ -568,9 +576,17 @@ def set_weight(
 
 @tbl_os2.command()
 @add_file_or_path_argument()
-@click.option("-w", "--width", type=click.IntRange(1, 9), required=True, help="usWidthClass value.")
+@click.option(
+    "-w",
+    "--width",
+    prompt="New usWidthClass value",
+    type=click.IntRange(1, 9),
+    required=True,
+    help="usWidthClass value.",
+)
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def set_width(
     input_path: Path,
     width: int,
@@ -593,7 +609,6 @@ def set_width(
         try:
             file = Path(font.reader.file.name)
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
             os_2: TableOS2 = font["OS/2"]
@@ -626,6 +641,7 @@ def set_width(
 @click.option("--x-height", "bXHeight", type=click.IntRange(0, 7), help="Sets 'bXHeight' value")
 @add_recursive_option()
 @add_common_options()
+@Timer(logger=logger.info)
 def panose(
     input_path: Path,
     recalc_timestamp,
