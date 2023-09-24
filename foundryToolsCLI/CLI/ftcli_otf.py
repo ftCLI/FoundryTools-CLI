@@ -144,7 +144,7 @@ def autohint(
             try:
                 hintFiles(options=options)
             except Exception as e:
-                logger.exception(e)
+                logger.error(e)
                 continue
 
             hinted_font = Font(output_file, recalcTimestamp=recalc_timestamp)
