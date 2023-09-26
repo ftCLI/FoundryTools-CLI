@@ -195,11 +195,6 @@ def font_organizer(
 
             logger.opt(colors=True).success(f"{file} <magenta>--></> <cyan>{target}</>")
 
-            # generic_info_message(
-            #     f"{file.relative_to(input_path).name} {click.style('-->', fg='bright_magenta')} "
-            #     f"{target.relative_to(input_path)}"
-            # )
-
         except Exception as e:
             logger.exception(e)
         finally:
