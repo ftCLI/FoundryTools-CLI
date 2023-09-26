@@ -403,12 +403,12 @@ class TableOS2(table_O_S_2f_2):
     def panose_to_dict(self) -> dict:
         panose_dict = {}
 
-        panose_family_type = self.panose.bFamilyType
-        panose_data = PANOSE_STRUCT["bFamilyType"].get(panose_family_type)
-        family_description = panose_data["description"]
+        panose_family_type: int = self.panose.bFamilyType
+        panose_data: dict = PANOSE_STRUCT["bFamilyType"].get(panose_family_type)
+        family_description: str = panose_data["description"]
         panose_dict.update({"bFamilyType": f"Family Type: {panose_family_type} - {family_description}"})
 
-        family_sub_digits = panose_data["sub_digits"]
+        family_sub_digits: dict = panose_data["sub_digits"]
         for k in family_sub_digits.keys():
             sub_digit_description = family_sub_digits[k]["description"]
             sub_digit_value = getattr(self.panose, k)
