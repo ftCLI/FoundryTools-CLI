@@ -481,7 +481,7 @@ def check_outlines(
     input_path: Path,
     quiet_mode: bool = False,
     recursive: bool = False,
-    output_dir: (Path) = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
