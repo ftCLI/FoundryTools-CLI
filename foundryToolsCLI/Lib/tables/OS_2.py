@@ -403,9 +403,9 @@ class TableOS2(table_O_S_2f_2):
     def panose_to_dict(self) -> dict:
         panose_dict = {}
 
-        panose_family_type = self.panose.bFamilyType
+        panose_family_type: int = self.panose.bFamilyType
         panose_data = PANOSE_STRUCT["bFamilyType"].get(panose_family_type)
-        family_description = panose_data["description"]
+        family_description: str = panose_data["description"]
         panose_dict.update({"bFamilyType": f"Family Type: {panose_family_type} - {family_description}"})
 
         family_sub_digits = panose_data["sub_digits"]
