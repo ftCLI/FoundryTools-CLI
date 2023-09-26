@@ -33,16 +33,20 @@ from foundryToolsCLI.Lib.utils.timer import Timer
 def cli(
     input_path: Path,
     recursive: bool = False,
-    recalc_timestamp: bool = True,
     output_dir: t.Optional[Path] = None,
+    recalc_timestamp: bool = True,
     overwrite: bool = True,
-    **kwargs
+    rise: t.Optional[int] = None,
+    run: t.Optional[int] = None,
+    offset: t.Optional[int] = None,
+    ascent: t.Optional[int] = None,
+    descent: t.Optional[int] = None,
+    linegap: t.Optional[int] = None,
+    recalc_offset: t.Optional[bool] = False,
 ):
     """A command line tool to manipulate the ``hhea`` table."""
 
-    params = {k: v for k, v in kwargs.items() if v is not None}
-
-    if len(params) == 0:
+    if not (rise or run or offset or ascent or descent or linegap or recalc_offset):
         logger.error(Logs.no_parameter)
         return
 
@@ -59,25 +63,25 @@ def cli(
             hhea_table: TableHhea = font["hhea"]
             hhea_table_copy = copy(hhea_table)
 
-            if "rise" in params.keys() and isinstance(params.get("rise"), int):
-                hhea_table.set_caret_slope_rise(params.get("rise"))
+            if rise:
+                hhea_table.set_caret_slope_rise(rise)
 
-            if "run" in params.keys() and isinstance(params.get("run"), int):
-                hhea_table.set_caret_slope_run(params.get("run"))
+            if run:
+                hhea_table.set_caret_slope_run(run)
 
-            if "offset" in params.keys() and isinstance(params.get("offset"), int):
-                hhea_table.set_caret_offset(params.get("offset"))
+            if offset:
+                hhea_table.set_caret_offset(offset)
 
-            if "ascent" in params.keys() and isinstance(params.get("ascent"), int):
-                hhea_table.set_ascent(params.get("ascent"))
+            if ascent:
+                hhea_table.set_ascent(ascent)
 
-            if "descent" in params.keys() and isinstance(params.get("descent"), int):
-                hhea_table.set_descent(params.get("descent"))
+            if descent:
+                hhea_table.set_descent(descent)
 
-            if "linegap" in params.keys() and isinstance(params.get("linegap"), int):
-                hhea_table.set_linegap(params.get("linegap"))
+            if linegap:
+                hhea_table.set_linegap(linegap)
 
-            if params.get("recalc_offset") is True:
+            if recalc_offset:
                 temp_otf_fd, temp_otf_file = font.make_temp_otf()
                 temp_font = Font(temp_otf_file)
                 calculated_offset = temp_font["hhea"].caretOffset
