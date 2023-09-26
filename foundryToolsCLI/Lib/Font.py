@@ -1,6 +1,7 @@
 import math
 import os
 import tempfile
+import typing as t
 from collections import Counter
 from pathlib import Path
 
@@ -345,12 +346,12 @@ class Font(TTFont):
     def recalc_cap_height(self) -> int:
         return self.get_glyph_bounds("H")["yMax"]
 
-    def recalc_max_context(self) -> int:
-        if self["OS/2"].version >= 2:
-            from fontTools.otlLib.maxContextCalc import maxCtxFont
-
-            max_context = maxCtxFont(self)
-            return max_context
+    def recalc_max_context(self) -> t.Optional[int]:
+        if self["OS/2"].version < 2:
+            return None
+        from fontTools.otlLib.maxContextCalc import maxCtxFont
+        max_context = maxCtxFont(self)
+        return max_context
 
     def set_created_timestamp(self, timestamp: int) -> None:
         """
