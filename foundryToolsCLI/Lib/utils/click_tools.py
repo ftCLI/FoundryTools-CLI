@@ -6,7 +6,7 @@ import click
 
 def choice_to_int_callback(
         ctx: click.Context, param: click.Parameter, value: t.Union[str, t.Tuple]
-) -> t.Union[int, t.Tuple[int]]:
+) -> t.Union[int, t.Tuple]:
     """
     Converts a click choice to an integer, or a tuple of integers for multiple choice.
     :param ctx: click Context
