@@ -1,4 +1,6 @@
 import csv
+import typing as t
+
 from pathlib import Path
 
 import click
@@ -148,20 +150,20 @@ class FontsData(object):
         self,
         font: Font,
         row: dict,
+        linked_styles: t.Optional[t.Tuple[int, int]] = None,
+        shorten_width: t.Tuple[int] = (),
+        shorten_weight: t.Tuple[int] = (),
+        shorten_slope: t.Tuple[int] = (),
+        exclude_namerecords: t.Tuple[int] = (),
         width_elidable: str = "Normal",
         weight_elidable: str = "Regular",
         keep_width_elidable: bool = False,
         keep_weight_elidable: bool = False,
-        linked_styles: list = None,
-        exclude_namerecords: tuple = None,
-        shorten_width=None,
-        shorten_weight=None,
-        shorten_slope=None,
-        super_family=False,
-        alt_uid=False,
-        oblique_not_italic=False,
-        auto_shorten=True,
-        cff=False,
+        super_family: bool = False,
+        alt_uid: bool = False,
+        oblique_not_italic: bool = False,
+        auto_shorten: bool = True,
+        cff: bool = False,
     ):
         family_name = row["family_name"]
         is_italic = bool(int(row["is_italic"]))
@@ -254,7 +256,6 @@ class FontsData(object):
             if us_weight_class in linked_styles:
                 family_name_win = family_name_win.replace(weight, "").replace("  ", " ").strip()
 
-            linked_styles.sort()
             if us_weight_class == linked_styles[1]:
                 # The bold bit is set HERE AND ONLY HERE.
                 font.set_bold_flag(True)
