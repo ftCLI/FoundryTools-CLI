@@ -1,3 +1,5 @@
+from typing import Optional
+
 from copy import deepcopy
 from pathlib import Path
 
@@ -28,7 +30,7 @@ fix_fonts = click.Group("subcommands")
 def monospace(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -175,7 +177,7 @@ def monospace(
 def nbsp_width(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -267,7 +269,7 @@ def italic_angle(
     input_path: Path,
     mode: int = 1,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
     min_slant: float = 2.0,
@@ -442,7 +444,7 @@ def italic_angle(
 def nbsp_missing(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -499,7 +501,7 @@ def nbsp_missing(
 def decompose_transformed(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -605,7 +607,7 @@ def decompose_transformed(
 def duplicate_components(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -681,7 +683,7 @@ def duplicate_components(
 def kern_table(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -768,7 +770,7 @@ def kern_table(
 def strip_names(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -821,7 +823,7 @@ def strip_names(
 @Timer(logger=logger.info)
 def empty_names(
     input_path: Path,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
