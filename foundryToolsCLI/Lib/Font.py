@@ -375,7 +375,7 @@ class Font(TTFont):
         """
         self["head"].modified = timestamp
 
-    def get_real_extension(self) -> str:
+    def get_real_extension(self) -> t.Optional[str]:
         """
         This function returns the file extension of a font file based on its flavor or type.
         :return: A string representing the file extension of a font file. If the font has a flavor, the
@@ -388,6 +388,7 @@ class Font(TTFont):
             return ".ttf"
         elif self.is_otf:
             return ".otf"
+        return None
 
     def ttf_decomponentize(self) -> None:
         """
@@ -643,7 +644,7 @@ class Font(TTFont):
                     ui_name_ids.append(record.Feature.FeatureParams.UINameID)
         return sorted(set(ui_name_ids))
 
-    def reorder_ui_name_ids(self):
+    def reorder_ui_name_ids(self) -> None:
         """
         Takes the IDs of the UI names in the name table and reorders them to start at 256
         """
@@ -897,14 +898,13 @@ class Font(TTFont):
 
         return font_v_metrics
 
-    def get_font_feature_tags(self) -> list:
+    def get_font_feature_tags(self) -> t.List[str]:
         """
         Returns a sorted list of all the feature tags in the font's GSUB and GPOS tables
 
         :return: A list of feature tags.
         """
-
-        feature_tags = set()
+        feature_tags = set[str]()
         for table_tag in ("GSUB", "GPOS"):
             if table_tag in self:
                 if not self[table_tag].table.ScriptList or not self[table_tag].table.FeatureList:
