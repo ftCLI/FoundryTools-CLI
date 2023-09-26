@@ -920,7 +920,7 @@ class Font(TTFont):
         for g in ("H", "uni0048"):
             try:
                 glyph_set[g].draw(pen)
-                italic_angle = -1 * round(math.degrees(math.atan(pen.slant)))
+                italic_angle: int = -1 * round(math.degrees(math.atan(pen.slant)))
                 if abs(italic_angle) >= abs(min_slant):
                     return italic_angle
                 else:
