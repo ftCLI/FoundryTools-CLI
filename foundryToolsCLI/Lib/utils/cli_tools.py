@@ -1,4 +1,6 @@
-import pathlib
+from typing import Optional
+
+from pathlib import Path
 
 from fontTools.ttLib import TTLibError
 
@@ -7,7 +9,7 @@ from foundryToolsCLI.Lib.VFont import VariableFont
 from foundryToolsCLI.Lib.utils.logger import logger
 
 
-def get_files_in_path(input_path: pathlib.Path, recursive: bool = False) -> list[pathlib.Path]:
+def get_files_in_path(input_path: Path, recursive: bool = False) -> list[Path]:
     """
     Get a list of files from a path. If the path is a directory, the function will return a list of all files found in
     the directory. If ``recursive`` is True, the function will recursively search for files in subdirectories. If the
@@ -29,7 +31,7 @@ def get_files_in_path(input_path: pathlib.Path, recursive: bool = False) -> list
 
 
 def get_variable_fonts_in_path(
-    input_path: pathlib.Path, recursive: bool = False, recalc_timestamp: bool = False
+    input_path: Path, recursive: bool = False, recalc_timestamp: bool = False
 ) -> list[VariableFont]:
     """
     Get a list of VariableFont objects from a path. If the path is a directory, the function will return a list of all
@@ -56,7 +58,7 @@ def get_variable_fonts_in_path(
 
 
 def get_fonts_in_path(
-    input_path: pathlib.Path,
+    input_path: Path,
     recursive: bool = False,
     recalc_timestamp: bool = False,
     allow_extensions: list = None,
@@ -115,28 +117,7 @@ def get_fonts_in_path(
     return fonts
 
 
-# Actually, this function is not used anywhere
-def get_output_dir(input_path: pathlib.Path, output_dir: pathlib.Path = None) -> pathlib.Path:
-    """
-    If the output directory is not specified, then the output directory is the directory of the input file if the input
-    is a file, or the input directory if the input is a directory
-
-    :param input_path: The path to the input file or directory
-    :type input_path: str
-    :param output_dir: The output directory, if specified
-    :type output_dir: str
-    :return: The output directory.
-    """
-    if output_dir is not None:
-        return output_dir.resolve()
-    else:
-        if input_path.is_file():
-            return input_path.parent.resolve()
-        else:
-            return input_path.resolve()
-
-
-def initial_check_pass(fonts: list, output_dir: pathlib.Path = None) -> bool:
+def initial_check_pass(fonts: list, output_dir: Optional[Path] = None) -> bool:
     """
     Checks if the list of fonts is not empty and if the output directory is writable.
 
@@ -158,7 +139,7 @@ def initial_check_pass(fonts: list, output_dir: pathlib.Path = None) -> bool:
     return True
 
 
-def get_project_files_path(input_path: pathlib.Path) -> pathlib.Path:
+def get_project_files_path(input_path: Path) -> Path:
     """
     Get the path to the directory containing the project files (styles_mapping.json, fonts_data.csv).
     :param input_path:
@@ -172,25 +153,25 @@ def get_project_files_path(input_path: pathlib.Path) -> pathlib.Path:
     return project_files_path
 
 
-def get_style_mapping_path(input_path: pathlib.Path) -> pathlib.Path:
+def get_style_mapping_path(input_path: Path) -> Path:
     """
     Get the path to the styles_mapping.json file.
     :param input_path: Path to the input file or directory
     :return: A pathlib.Path object representing the styles_mapping.json file
     """
     project_files_dir = get_project_files_path(input_path)
-    styles_mapping_file = pathlib.Path.joinpath(project_files_dir, "styles_mapping.json")
+    styles_mapping_file = Path.joinpath(project_files_dir, "styles_mapping.json")
 
     return styles_mapping_file
 
 
-def get_fonts_data_path(input_path: pathlib.Path) -> pathlib.Path:
+def get_fonts_data_path(input_path: Path) -> Path:
     """
     Get the path to the fonts_data.csv file.
     :param input_path: Path to the input file or directory
     :return: A pathlib.Path object representing the fonts_data.csv file
     """
     project_files_dir = get_project_files_path(input_path)
-    fonts_data_file = pathlib.Path.joinpath(project_files_dir, "fonts_data.csv")
+    fonts_data_file = Path.joinpath(project_files_dir, "fonts_data.csv")
 
     return fonts_data_file
