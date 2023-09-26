@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 import click
 
@@ -44,7 +45,7 @@ def font_info(input_path: Path):
     Prints a minimal set of NameRecords, omitting the ones with nameID not in 1, 2, 3, 4, 5, 6, 16, 17, 18, 21, 22, 25
     """,
 )
-def font_names(input_path: Path, max_lines: int = None, minimal: bool = False):
+def font_names(input_path: Path, max_lines: Optional[int] = None, minimal: bool = False):
     """
     Prints the 'name' table and, if the font is CFF, the names in the 'CFF' table topDict.
     """

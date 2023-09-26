@@ -1,3 +1,5 @@
+from typing import Optional
+
 import os.path
 from shutil import get_terminal_size
 
@@ -189,7 +191,7 @@ def print_font_info(font: Font):
     console.print(table)
 
 
-def print_font_names(font: Font, max_lines: int = None, minimal: bool = False):
+def print_font_names(font: Font, max_lines: Optional[int] = None, minimal: bool = False):
     """
     Prints the names in the name table and in the CFF table if present
 
