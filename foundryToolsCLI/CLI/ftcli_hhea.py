@@ -46,7 +46,7 @@ def cli(
 ):
     """A command line tool to manipulate the ``hhea`` table."""
 
-    if not (rise or run or offset or ascent or descent or linegap or recalc_offset):
+    if not any([rise, run, offset, ascent, descent, linegap, recalc_offset]):
         logger.error(Logs.no_parameter)
         return
 
