@@ -84,7 +84,7 @@ def add_dsig(
 @Timer(logger=logger.info)
 def del_table(
     input_path: Path,
-    table_tags: t.Tuple[str],
+    table_tags: t.Tuple,
     recursive: bool = False,
     recalc_timestamp: bool = False,
     output_dir: t.Optional[Path] = None,
