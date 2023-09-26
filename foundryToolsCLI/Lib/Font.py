@@ -22,7 +22,9 @@ from foundryToolsCLI.Lib.utils.ttf_tools import correct_ttf_contours, decomponen
 
 # The Font class is a subclass of the fontTools.ttLib.TTFont class.
 class Font(TTFont):
-    def __init__(self, file=None, recalcBBoxes: bool = True, recalcTimestamp: bool = False, lazy: bool = None):
+    def __init__(
+            self, file=None, recalcBBoxes: bool = True, recalcTimestamp: bool = False, lazy: t.Optional[bool] = None
+    ):
         super().__init__(file=file, recalcBBoxes=recalcBBoxes, recalcTimestamp=recalcTimestamp, lazy=lazy)
 
     @property
