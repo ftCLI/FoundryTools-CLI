@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional, List
 
 from fontTools.misc.cliTools import makeOutputFileName
 from fontTools.varLib.instancer import instantiateVariableFont, OverlapMode
@@ -14,7 +15,7 @@ class VariableToStatic(object):
     def __init__(self):
         self.options = Var2StaticOptions()
 
-    def run(self, variable_font: VariableFont, instances: list = None):
+    def run(self, variable_font: VariableFont, instances: Optional[List] = None):
         if not instances:
             instances = variable_font.get_instances()
 
