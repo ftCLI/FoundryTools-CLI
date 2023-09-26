@@ -1,3 +1,5 @@
+import typing as t
+
 from pathlib import Path
 
 import click
@@ -42,11 +44,11 @@ font_converter = click.Group("subcommands")
 def ttf2otf(
     input_path: Path,
     tolerance: float = 1.0,
-    scale_upm: int = None,
+    scale_upm: t.Optional[int] = None,
     subroutinize: bool = True,
     recalc_timestamp: bool = False,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: t.Optional[Path] = None,
     overwrite: bool = True,
     verbose: bool = True,
 ):
@@ -92,7 +94,7 @@ def otf2ttf(
     max_err: float = 1.0,
     recalc_timestamp: bool = False,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: t.Optional[Path] = None,
     overwrite: bool = True,
 ):
     """
@@ -157,7 +159,7 @@ def vf2i(
     cleanup: bool = True,
     update_name_table: bool = True,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: t.Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -228,9 +230,9 @@ def vf2i(
 @Timer(logger=logger.info)
 def wf2ft(
     input_path: Path,
-    flavor: str = None,
+    flavor: t.Optional[str] = None,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: t.Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -282,7 +284,14 @@ def wf2ft(
 @add_recursive_option()
 @add_common_options()
 @Timer(logger=logger.info)
-def ft2wf(input_path, flavor=None, recursive: bool = False, output_dir=None, recalc_timestamp=False, overwrite=True):
+def ft2wf(
+        input_path: Path,
+        flavor: t.Optional[str] = None,
+        recursive: bool = False,
+        output_dir: t.Optional[Path] = None,
+        recalc_timestamp=False,
+        overwrite=True
+):
     """
     Converts SFNT fonts (TTF or OTF) to web fonts (WOFF and/or WOFF2)
     """
@@ -315,7 +324,7 @@ def ft2wf(input_path, flavor=None, recursive: bool = False, output_dir=None, rec
 @Timer(logger=logger.info)
 def ttc2sfnt(
     input_path: Path,
-    output_dir: Path = None,
+    output_dir: t.Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
