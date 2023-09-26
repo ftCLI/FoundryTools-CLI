@@ -92,7 +92,7 @@ def cli(
 
             if hhea_table_copy.compile(font) != hhea_table.compile(font):
                 font.save(output_file)
-                logger.info(Logs.file_saved, file=output_file)
+                logger.success(Logs.file_saved, file=output_file)
             else:
                 logger.skip(Logs.file_not_changed, file=output_file)
 
