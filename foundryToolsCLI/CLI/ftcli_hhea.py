@@ -59,22 +59,22 @@ def cli(
             hhea_table: TableHhea = font["hhea"]
             hhea_table_copy = copy(hhea_table)
 
-            if "rise" in params.keys() and type(params.get("rise")) is int:
+            if "rise" in params.keys() and isinstance(params.get("rise"), int):
                 hhea_table.set_caret_slope_rise(params.get("rise"))
 
-            if "run" in params.keys() and type(params.get("run")) is int:
+            if "run" in params.keys() and isinstance(params.get("run"), int):
                 hhea_table.set_caret_slope_run(params.get("run"))
 
-            if "offset" in params.keys() and type(params.get("offset")) is int:
+            if "offset" in params.keys() and isinstance(params.get("offset"), int):
                 hhea_table.set_caret_offset(params.get("offset"))
 
-            if "ascent" in params.keys() and type(params.get("ascent")) is int:
+            if "ascent" in params.keys() and isinstance(params.get("ascent"), int):
                 hhea_table.set_ascent(params.get("ascent"))
 
-            if "descent" in params.keys() and type(params.get("descent")) is int:
+            if "descent" in params.keys() and isinstance(params.get("descent"), int):
                 hhea_table.set_descent(params.get("descent"))
 
-            if "linegap" in params.keys() and type(params.get("linegap")) is int:
+            if "linegap" in params.keys() and isinstance(params.get("linegap"), int):
                 hhea_table.set_linegap(params.get("linegap"))
 
             if params.get("recalc_offset") is True:
