@@ -1,5 +1,6 @@
 import os
 import tempfile
+import typing as t
 from copy import deepcopy
 from pathlib import Path
 
@@ -32,7 +33,7 @@ utils = click.Group("subcommands")
 def add_dsig(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: t.Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
