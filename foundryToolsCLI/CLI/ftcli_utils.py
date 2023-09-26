@@ -18,6 +18,7 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_recursive_option,
     add_common_options,
+    choice_to_int_callback,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
 from foundryToolsCLI.Lib.utils.timer import Timer
@@ -83,10 +84,10 @@ def add_dsig(
 @Timer(logger=logger.info)
 def del_table(
     input_path: Path,
-    table_tags: tuple,
+    table_tags: t.Tuple[str],
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: t.Optional[Path] = None,
     overwrite: bool = True,
 ):
     """
@@ -97,7 +98,7 @@ def del_table(
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
-    table_tags = [tag.ljust(4, " ") for tag in table_tags]
+    table_tags = tuple(set(tag.ljust(4, " ") for tag in table_tags))
 
     for font in fonts:
         removed_tables_counter = 0
@@ -212,6 +213,7 @@ def font_organizer(
     "--source",
     type=click.Choice(choices=["1", "2", "3", "4", "5"]),
     default="1",
+    callback=choice_to_int_callback,
     help="""
               The source string(s) from which to extract the new file name. Default is 1 (FamilyName-StyleName), used
               also as fallback name when 4 or 5 are passed but the font is TrueType
@@ -234,9 +236,6 @@ def font_renamer(input_path: Path, source: str, recursive: bool = False):
     fonts = get_fonts_in_path(input_path=input_path, recursive=recursive)
     if not initial_check_pass(fonts=fonts):
         return
-
-    # click.Choice() only accepts strings as choices, so we need to convert to integer
-    source = int(source)
 
     for font in fonts:
         file = Path(font.reader.file.name)
@@ -323,12 +322,12 @@ def rebuild(
 @Timer(logger=logger.info)
 def set_revision(
     input_path: Path,
-    major: int = None,
-    minor: int = None,
+    major: t.Optional[int] = None,
+    minor: t.Optional[int] = None,
     unique_identifier: bool = False,
     version_string: bool = False,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: t.Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
