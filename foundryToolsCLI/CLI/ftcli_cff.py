@@ -1,3 +1,5 @@
+import typing as t
+
 from copy import deepcopy
 from pathlib import Path
 
@@ -32,7 +34,7 @@ def del_names(
     input_path: Path,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: t.Optional[Path] = None,
     overwrite: bool = True,
     **kwargs
 ):
@@ -99,7 +101,7 @@ def set_names(
     input_path: Path,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: t.Optional[Path] = None,
     overwrite: bool = True,
     **kwargs
 ):
@@ -163,7 +165,7 @@ def find_replace(
     old_string: str,
     new_string: str,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: t.Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
