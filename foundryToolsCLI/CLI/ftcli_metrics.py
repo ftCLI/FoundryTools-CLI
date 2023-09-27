@@ -1,5 +1,6 @@
 from copy import copy
 from pathlib import Path
+from typing import Optional
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
@@ -27,7 +28,7 @@ vertical_metrics_tools = click.Group("subcommands")
 def set_linegap(
     input_path: Path,
     percent: int,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -88,7 +89,7 @@ def set_linegap(
 def align(
     input_path: Path,
     with_linegap: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -202,7 +203,7 @@ def align(
 def copy_metrics(
     source_file: Path,
     destination: Path,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
