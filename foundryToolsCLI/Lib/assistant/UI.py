@@ -1,6 +1,7 @@
 import os.path
 import sys
 from pathlib import Path
+from typing import Optional
 
 import click
 from rich import box
@@ -487,7 +488,7 @@ class AssistantUI(object):
         text: str,
         min_value: int,
         max_value: int,
-        default: int = None,
+        default: Optional[int] = None,
         bold: bool = True,
         fg_color: str = "cyan",
     ) -> int:
