@@ -363,7 +363,7 @@ def rename_glyph(
 
             glyph_names = font.getGlyphOrder()
             modified = False
-            for i in range(len(glyph_names)):
+            for i, _ in enumerate(glyph_names):
                 if glyph_names[i] == old_glyph_name:
                     glyph_names[i] = new_glyph_name
                     logger.info(f"{old_glyph_name} renamed to {new_glyph_name}")
