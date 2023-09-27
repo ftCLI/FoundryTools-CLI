@@ -1,6 +1,7 @@
 import os
 from copy import deepcopy, copy
 from pathlib import Path
+from typing import Optional
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
@@ -29,7 +30,7 @@ def recalc_x_height(
     input_path: Path,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
 ):
     """
@@ -76,7 +77,7 @@ def recalc_cap_height(
     input_path: Path,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
 ):
     """
@@ -123,7 +124,7 @@ def recalc_max_context(
     input_path: Path,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
 ):
     """
@@ -171,7 +172,7 @@ def recalc_max_context(
 def recalc_ranges(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -370,7 +371,7 @@ def set_flags(
     input_path: Path,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
     **kwargs,
 ):
@@ -449,7 +450,7 @@ def set_version(
     input_path: Path,
     target_version: int,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -538,7 +539,7 @@ def set_weight(
     input_path: Path,
     weight: int,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -591,7 +592,7 @@ def set_width(
     input_path: Path,
     width: int,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -646,7 +647,7 @@ def panose(
     input_path: Path,
     recalc_timestamp,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
     **kwargs,
 ):
