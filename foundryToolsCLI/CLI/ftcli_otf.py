@@ -267,7 +267,7 @@ def dehint(
                 tx_command.append("+S")
             else:
                 tx_command.append("-S")
-            tx_command.extend([input_file, temp_cff_file])
+            tx_command.extend([input_file.as_posix(), temp_cff_file])
             run_shell_command(tx_command, suppress_output=True)
 
             sfntedit_command = ["sfntedit", "-a", f"CFF={temp_cff_file}", input_file]
