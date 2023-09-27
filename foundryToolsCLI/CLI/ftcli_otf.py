@@ -1,6 +1,6 @@
 from copy import deepcopy
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
@@ -262,12 +262,12 @@ def dehint(
             else:
                 input_file = file
 
-            tx_command = ["tx", "-cff", "-n", "+b"]
+            tx_command: List[str] = ["tx", "-cff", "-n", "+b"]
             if subroutinize:
                 tx_command.append("+S")
             else:
                 tx_command.append("-S")
-            tx_command.extend([input_file.as_posix(), temp_cff_file])
+            tx_command.extend([input_file.as_posix(), temp_cff_file.as_posix()])
             run_shell_command(tx_command, suppress_output=True)
 
             sfntedit_command = ["sfntedit", "-a", f"CFF={temp_cff_file}", input_file]
