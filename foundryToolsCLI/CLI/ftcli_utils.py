@@ -267,7 +267,7 @@ def font_renamer(input_path: Path, source: str, recursive: bool = False):
 def rebuild(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: t.Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
