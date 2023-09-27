@@ -1,5 +1,6 @@
 from copy import deepcopy
 from pathlib import Path
+from typing import Optional, List
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
@@ -84,7 +85,7 @@ otf_tools = click.Group("subcommands")
 @Timer(logger=logger.info)
 def autohint(
     input_path: Path,
-    reference_font: Path = None,
+    reference_font: Optional[Path] = None,
     allow_changes: bool = False,
     decimal: bool = False,
     no_flex: bool = False,
@@ -92,7 +93,7 @@ def autohint(
     no_zones_stems: bool = False,
     optimize: bool = True,
     recursive: bool = False,
-    output_dir: bool = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -213,7 +214,7 @@ def dehint(
     dehinter: str = "tx",
     subroutinize: bool = True,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -261,12 +262,12 @@ def dehint(
             else:
                 input_file = file
 
-            tx_command = ["tx", "-cff", "-n", "+b"]
+            tx_command: List[str] = ["tx", "-cff", "-n", "+b"]
             if subroutinize:
                 tx_command.append("+S")
             else:
                 tx_command.append("-S")
-            tx_command.extend([input_file, temp_cff_file])
+            tx_command.extend([input_file.as_posix(), temp_cff_file.as_posix()])
             run_shell_command(tx_command, suppress_output=True)
 
             sfntedit_command = ["sfntedit", "-a", f"CFF={temp_cff_file}", input_file]
@@ -312,7 +313,7 @@ def fix_contours(
     subroutinize: bool = True,
     verbose: bool = True,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -357,7 +358,7 @@ def fix_version(
     input_path: Path,
     recalc_timestamp: bool = False,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
 ):
     """
@@ -406,7 +407,7 @@ def fix_version(
 def subr(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -442,7 +443,7 @@ def subr(
 def desubr(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -480,7 +481,7 @@ def check_outlines(
     input_path: Path,
     quiet_mode: bool = False,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):

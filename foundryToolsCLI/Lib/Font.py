@@ -1,6 +1,7 @@
 import math
 import os
 import tempfile
+import typing as t
 from collections import Counter
 from pathlib import Path
 
@@ -21,7 +22,9 @@ from foundryToolsCLI.Lib.utils.ttf_tools import correct_ttf_contours, decomponen
 
 # The Font class is a subclass of the fontTools.ttLib.TTFont class.
 class Font(TTFont):
-    def __init__(self, file=None, recalcBBoxes: bool = True, recalcTimestamp: bool = False, lazy: bool = None):
+    def __init__(
+        self, file=None, recalcBBoxes: bool = True, recalcTimestamp: bool = False, lazy: t.Optional[bool] = None
+    ):
         super().__init__(file=file, recalcBBoxes=recalcBBoxes, recalcTimestamp=recalcTimestamp, lazy=lazy)
 
     @property
@@ -345,12 +348,13 @@ class Font(TTFont):
     def recalc_cap_height(self) -> int:
         return self.get_glyph_bounds("H")["yMax"]
 
-    def recalc_max_context(self) -> int:
-        if self["OS/2"].version >= 2:
-            from fontTools.otlLib.maxContextCalc import maxCtxFont
+    def recalc_max_context(self) -> t.Optional[int]:
+        if self["OS/2"].version < 2:
+            return None
+        from fontTools.otlLib.maxContextCalc import maxCtxFont
 
-            max_context = maxCtxFont(self)
-            return max_context
+        max_context = maxCtxFont(self)
+        return max_context
 
     def set_created_timestamp(self, timestamp: int) -> None:
         """
@@ -372,7 +376,7 @@ class Font(TTFont):
         """
         self["head"].modified = timestamp
 
-    def get_real_extension(self) -> str:
+    def get_real_extension(self) -> t.Optional[str]:
         """
         This function returns the file extension of a font file based on its flavor or type.
         :return: A string representing the file extension of a font file. If the font has a flavor, the
@@ -385,6 +389,7 @@ class Font(TTFont):
             return ".ttf"
         elif self.is_otf:
             return ".otf"
+        return None
 
     def ttf_decomponentize(self) -> None:
         """
@@ -640,7 +645,7 @@ class Font(TTFont):
                     ui_name_ids.append(record.Feature.FeatureParams.UINameID)
         return sorted(set(ui_name_ids))
 
-    def reorder_ui_name_ids(self):
+    def reorder_ui_name_ids(self) -> None:
         """
         Takes the IDs of the UI names in the name table and reorders them to start at 256
         """
@@ -894,14 +899,13 @@ class Font(TTFont):
 
         return font_v_metrics
 
-    def get_font_feature_tags(self) -> list:
+    def get_font_feature_tags(self) -> t.List[str]:
         """
         Returns a sorted list of all the feature tags in the font's GSUB and GPOS tables
 
         :return: A list of feature tags.
         """
-
-        feature_tags = set()
+        feature_tags = set[str]()
         for table_tag in ("GSUB", "GPOS"):
             if table_tag in self:
                 if not self[table_tag].table.ScriptList or not self[table_tag].table.FeatureList:
@@ -917,7 +921,7 @@ class Font(TTFont):
         for g in ("H", "uni0048"):
             try:
                 glyph_set[g].draw(pen)
-                italic_angle = -1 * round(math.degrees(math.atan(pen.slant)))
+                italic_angle: int = -1 * round(math.degrees(math.atan(pen.slant)))
                 if abs(italic_angle) >= abs(min_slant):
                     return italic_angle
                 else:

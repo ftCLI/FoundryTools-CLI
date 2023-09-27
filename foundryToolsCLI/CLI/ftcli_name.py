@@ -1,5 +1,6 @@
 from copy import deepcopy
 from pathlib import Path
+from typing import Optional
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
@@ -60,7 +61,7 @@ def set_name(
     language_string: str,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
 ) -> None:
     """
@@ -143,7 +144,7 @@ def del_names(
     language_string: str,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
 ):
     """
@@ -235,7 +236,7 @@ def find_replace(
     platform_id: int,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
 ):
     """
@@ -288,7 +289,7 @@ def del_mac_names(
     del_all: bool = False,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: bool = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
 ):
     """
@@ -381,7 +382,7 @@ def append(
     suffix: str,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
 ):
     """

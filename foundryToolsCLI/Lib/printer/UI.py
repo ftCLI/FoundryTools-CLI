@@ -1,3 +1,5 @@
+from typing import Optional
+
 import os.path
 from shutil import get_terminal_size
 
@@ -189,13 +191,13 @@ def print_font_info(font: Font):
     console.print(table)
 
 
-def print_font_names(font: Font, max_lines: int = None, minimal: bool = False):
+def print_font_names(font: Font, max_lines: Optional[int] = None, minimal: bool = False):
     """
     Prints the names in the name table and in the CFF table if present
 
     :param font: The Font object to print the names from
     :type font: Font
-    :param max_lines: The maximum number of lines to print for each namerecord string. If the name string is longer than
+    :param max_lines: The maximum number of lines to print for each NameRecord string. If the name string is longer than
         this, it will be truncated
     :param minimal: Prints only namerecords with nameID in 1, 2, 3, 4, 5, 6, 16, 17, 18, 21, 22, 25
     :type minimal: bool

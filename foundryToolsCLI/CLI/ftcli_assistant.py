@@ -1,3 +1,5 @@
+import typing as t
+
 from copy import copy, deepcopy
 from pathlib import Path
 
@@ -16,6 +18,8 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_file_or_path_argument,
     add_common_options,
     file_overwrite_prompt,
+    linked_styles_callback,
+    choice_to_int_callback,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
 from foundryToolsCLI.Lib.utils.timer import Timer
@@ -88,6 +92,7 @@ def init(input_path: Path, quiet: bool = False):
     "-ls",
     "--linked-styles",
     type=(click.IntRange(1, 1000), click.IntRange(1, 1000)),
+    callback=linked_styles_callback,
     help="""Use this option to activate linked styles. If this option is active, linked styles must be specified. For
     example: -ls 400 700, or -ls 300 600.
     """,
@@ -97,6 +102,7 @@ def init(input_path: Path, quiet: bool = False):
     "--exclude-namerecords",
     type=click.Choice(choices=["1", "2", "3", "4", "5", "6", "16", "17", "18"]),
     multiple=True,
+    callback=choice_to_int_callback,
     help="""
     Name IDs to skip. The specified name IDs won't be recalculated. This option can be repeated (for example: -x 3 -x 5
     -x 6...).
@@ -107,6 +113,7 @@ def init(input_path: Path, quiet: bool = False):
     "--shorten-width",
     type=click.Choice(choices=["1", "4", "6", "16", "17"]),
     multiple=True,
+    callback=choice_to_int_callback,
     help="""
     Name IDs where to use the short word for width style name (for example, 'Cn' instead of 'Condensed'). This option
     can be repeated (for example: -swdt 1 -swdt 5, -swdt 16...).
@@ -117,9 +124,21 @@ def init(input_path: Path, quiet: bool = False):
     "--shorten-weight",
     type=click.Choice(choices=["1", "4", "6", "17"]),
     multiple=True,
+    callback=choice_to_int_callback,
     help="""
     Name IDs where to use the short word for weight style name (for example, 'Md' instead of 'Medium'). This option can
     be repeated (for example: -swgt 1 -swgt 5 -swgt 6...).
+    """,
+)
+@click.option(
+    "-sslp",
+    "--shorten-slope",
+    type=click.Choice(choices=["4", "6", "16", "17"]),
+    multiple=True,
+    callback=choice_to_int_callback,
+    help="""
+    Name IDs where to use the short word for slope style name (for example, 'It' instead of 'Italic'). This option can
+    be repeated (for example: -sslp 3 -sslp 5 -sslp 6...).
     """,
 )
 @click.option(
@@ -136,16 +155,6 @@ def init(input_path: Path, quiet: bool = False):
     is_flag=True,
     help="""
     Doesn't remove the weight elidable words (by default, "Rg" and "Regular").
-    """,
-)
-@click.option(
-    "-sslp",
-    "--shorten-slope",
-    type=click.Choice(choices=["4", "6", "16", "17"]),
-    multiple=True,
-    help="""
-    Name IDs where to use the short word for slope style name (for example, 'It' instead of 'Italic'). This option can
-    be repeated (for example: -sslp 3 -sslp 5 -sslp 6...).
     """,
 )
 @click.option(
@@ -201,23 +210,23 @@ def init(input_path: Path, quiet: bool = False):
 @Timer(logger=logger.info)
 def commit(
     input_path: Path,
-    width_elidable: str,
-    weight_elidable: str,
-    linked_styles: list = None,
-    exclude_namerecords=None,
-    shorten_width=None,
-    shorten_weight=None,
-    keep_width_elidable=False,
-    keep_weight_elidable=False,
-    shorten_slope=None,
-    super_family=False,
-    alt_uid=False,
-    oblique_not_italic=False,
-    auto_shorten=True,
-    cff=False,
-    output_dir=None,
-    recalc_timestamp=False,
-    overwrite=True,
+    linked_styles: t.Optional[t.Tuple[int, int]] = None,
+    exclude_namerecords: t.Union[t.Tuple[int], t.Tuple[()]] = (),
+    shorten_width: t.Union[t.Tuple[int], t.Tuple[()]] = (),
+    shorten_weight: t.Union[t.Tuple[int], t.Tuple[()]] = (),
+    shorten_slope: t.Union[t.Tuple[int], t.Tuple[()]] = (),
+    width_elidable: str = "Normal",
+    weight_elidable: str = "Regular",
+    keep_width_elidable: bool = False,
+    keep_weight_elidable: bool = False,
+    super_family: bool = False,
+    alt_uid: bool = False,
+    oblique_not_italic: bool = False,
+    auto_shorten: bool = True,
+    cff: bool = False,
+    output_dir: t.Optional[Path] = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
 ):
     """
     Writes data from CSV to fonts.
@@ -228,17 +237,6 @@ def commit(
             output_dir.mkdir(exist_ok=True, parents=True)
         except Exception as e:
             logger.exception(e)
-
-    if linked_styles:
-        linked_styles = sorted(linked_styles)
-    if exclude_namerecords:
-        exclude_namerecords = sorted(set(int(i) for i in exclude_namerecords))
-    if shorten_width:
-        shorten_width = sorted(set(int(i) for i in shorten_width))
-    if shorten_weight:
-        shorten_weight = sorted(set(int(i) for i in shorten_weight))
-    if shorten_slope:
-        shorten_slope = sorted(set(int(i) for i in shorten_slope))
 
     try:
         fonts_data = FontsData(get_fonts_data_path(input_path))

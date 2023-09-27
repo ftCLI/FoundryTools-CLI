@@ -1,5 +1,6 @@
 from io import BytesIO
 from pathlib import Path
+from typing import Optional
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
@@ -28,7 +29,7 @@ ttf_tools = click.Group("subcommands")
 def autohint(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -77,7 +78,7 @@ def autohint(
 def decompose(
     input_path: Path,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -115,7 +116,7 @@ def dehint(
     input_path: Path,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
 ):
     """
@@ -173,7 +174,7 @@ def fix_contours(
     remove_hinting: bool = True,
     verbose: bool = True,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -229,7 +230,7 @@ def remove_overlaps(
     remove_hinting: bool = True,
     ignore_errors: bool = False,
     recursive: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ):
@@ -284,7 +285,7 @@ def scale_upm(
     upm: int,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
 ):
     """
@@ -342,7 +343,7 @@ def rename_glyph(
     new_glyph_name: str,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
+    output_dir: Optional[Path] = None,
     overwrite: bool = True,
 ):
     """
@@ -362,7 +363,7 @@ def rename_glyph(
 
             glyph_names = font.getGlyphOrder()
             modified = False
-            for i in range(len(glyph_names)):
+            for i, _ in enumerate(glyph_names):
                 if glyph_names[i] == old_glyph_name:
                     glyph_names[i] = new_glyph_name
                     logger.info(f"{old_glyph_name} renamed to {new_glyph_name}")

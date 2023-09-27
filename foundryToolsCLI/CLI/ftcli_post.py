@@ -1,5 +1,6 @@
 from copy import copy
 from pathlib import Path
+from typing import Optional
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
@@ -44,15 +45,16 @@ def cli(
     input_path: Path,
     recursive: bool = False,
     recalc_timestamp: bool = False,
-    output_dir: Path = None,
-    overwrite: bool = None,
-    **kwargs
+    output_dir: Optional[Path] = None,
+    overwrite: bool = False,
+    italic_angle: Optional[float] = None,
+    ul_position: Optional[int] = None,
+    ul_thickness: Optional[int] = None,
+    fixed_pitch: Optional[bool] = None,
 ):
     """A command line tool to manipulate the 'post' table."""
 
-    params = {k: v for k, v in kwargs.items() if v is not None}
-
-    if len(params) == 0:
+    if not any([italic_angle, ul_position, ul_thickness, fixed_pitch]):
         logger.error(Logs.no_parameter)
         return
 
@@ -75,19 +77,19 @@ def cli(
                 cff_table = cff_table_copy = None
 
             # Process the arguments
-            if "italic_angle" in params.keys():
-                post_table.set_italic_angle(params.get("italic_angle"))
+            if italic_angle:
+                post_table.set_italic_angle(italic_angle)
                 if font.is_otf:
-                    font["CFF "].cff.topDictIndex[0].ItalicAngle = int(params.get("italic_angle"))
+                    font["CFF "].cff.topDictIndex[0].ItalicAngle = round(italic_angle)
 
-            if "ul_position" in params.keys():
-                post_table.set_underline_position(params.get("ul_position"))
+            if ul_position:
+                post_table.set_underline_position(ul_position)
 
-            if "ul_thickness" in params.keys():
-                post_table.set_underline_thickness(params.get("ul_thickness"))
+            if ul_thickness:
+                post_table.set_underline_thickness(ul_thickness)
 
-            if "fixed_pitch" in params.keys():
-                post_table.set_fixed_pitch(params.get("fixed_pitch"))
+            if fixed_pitch is not None:
+                post_table.set_fixed_pitch(fixed_pitch)
 
             # Check if tables have changed before saving the font. No need to compile here.
             if post_table_copy.compile(font) != post_table.compile(font):

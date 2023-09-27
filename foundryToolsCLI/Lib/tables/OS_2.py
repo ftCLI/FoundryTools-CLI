@@ -1,3 +1,5 @@
+import typing as t
+
 from fontTools.misc.textTools import num2binary
 from fontTools.ttLib import registerCustomTableClass
 from fontTools.ttLib.tables.O_S_2f_2 import table_O_S_2f_2
@@ -366,9 +368,10 @@ class TableOS2(table_O_S_2f_2):
         setattr(self, "ulCodePageRange1", codepage_ranges[0])
         setattr(self, "ulCodePageRange2", codepage_ranges[1])
 
-    def get_codepage_ranges(self) -> tuple[int, int]:
-        if self.version >= 1:
-            return getattr(self, "ulCodePageRange1"), getattr(self, "ulCodePageRange2")
+    def get_codepage_ranges(self) -> t.Optional[t.Tuple[int, int]]:
+        if self.version < 1:
+            return None
+        return getattr(self, "ulCodePageRange1"), getattr(self, "ulCodePageRange2")
 
     def to_dict(self) -> dict:
         """
@@ -400,9 +403,9 @@ class TableOS2(table_O_S_2f_2):
     def panose_to_dict(self) -> dict:
         panose_dict = {}
 
-        panose_family_type = self.panose.bFamilyType
+        panose_family_type: int = self.panose.bFamilyType
         panose_data = PANOSE_STRUCT["bFamilyType"].get(panose_family_type)
-        family_description = panose_data["description"]
+        family_description: str = panose_data["description"]
         panose_dict.update({"bFamilyType": f"Family Type: {panose_family_type} - {family_description}"})
 
         family_sub_digits = panose_data["sub_digits"]

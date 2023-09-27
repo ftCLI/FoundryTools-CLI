@@ -1,7 +1,43 @@
-import pathlib
+import typing as t
 from pathlib import Path
 
 import click
+
+
+def choice_to_int_callback(
+    ctx: click.Context, param: click.Parameter, value: t.Union[str, t.Tuple]
+) -> t.Union[int, t.Tuple]:
+    """
+    Converts a click choice to an integer, or a tuple of integers for multiple choice.
+    :param ctx: click Context
+    :param param: click Parameter
+    :param value: string or tuple of strings to convert
+    :return: an int or a tuple of ints
+    """
+    if not value or ctx.resilient_parsing:
+        return tuple()
+    if param.multiple:
+        return tuple(sorted(set(int(v) for v in value)))
+    else:
+        return int(value)
+
+
+def linked_styles_callback(
+    ctx: click.Context, _: click.Parameter, value: t.Optional[t.Tuple[int, int]]
+) -> t.Optional[t.Tuple]:
+    """
+    Callback for --linked-styles option.
+    :param ctx: click Context
+    :param _: click Parameter. Not used
+    :param value: a tuple of 2 ints
+    :return: a sorted tuple of 2 ints
+    """
+    if not value or ctx.resilient_parsing:
+        return None
+    value = tuple(sorted(set(int(v) for v in value)))
+    if len(value) != 2:
+        raise click.BadParameter(f"Expected 2 different values for --linked-styles, got {len(value)}")
+    return value
 
 
 def add_options(options):
@@ -17,9 +53,7 @@ def add_file_or_path_argument(dir_okay=True, file_okay=True):
     _file_or_path_argument = [
         click.argument(
             "input_path",
-            type=click.Path(
-                exists=True, resolve_path=True, path_type=pathlib.Path, dir_okay=dir_okay, file_okay=file_okay
-            ),
+            type=click.Path(exists=True, resolve_path=True, path_type=Path, dir_okay=dir_okay, file_okay=file_okay),
         )
     ]
     return add_options(_file_or_path_argument)
@@ -45,7 +79,7 @@ def add_common_options():
         click.option(
             "-out",
             "--output-dir",
-            type=click.Path(path_type=pathlib.Path, file_okay=False, resolve_path=True),
+            type=click.Path(path_type=Path, file_okay=False, resolve_path=True),
             default=None,
             help="""
             Specify the directory where output files are to be saved. If the directory doesn't exist, will be created.

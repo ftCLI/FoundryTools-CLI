@@ -1,6 +1,7 @@
 import os.path
 import sys
 from pathlib import Path
+from typing import Optional
 
 import click
 from rich import box
@@ -487,7 +488,7 @@ class AssistantUI(object):
         text: str,
         min_value: int,
         max_value: int,
-        default: int = None,
+        default: Optional[int] = None,
         bold: bool = True,
         fg_color: str = "cyan",
     ) -> int:
@@ -575,33 +576,3 @@ def get_fonts_rows(fonts: list[Font]) -> list:
         except Exception as e:
             logger.exception(e)
     return rows
-
-
-def get_fonts_list_table(rows: list) -> Table:
-    table = Table(box=box.HORIZONTALS)
-    table.add_column("#", justify="right")
-    table.add_column("File name")
-    table.add_column("Family name")
-    table.add_column("Style name")
-    table.add_column("Width", justify="right")
-    table.add_column("Weight", justify="right")
-    table.add_column("Regular", justify="right")
-    table.add_column("Italic", justify="right")
-    table.add_column("Bold", justify="right")
-    table.add_column("Oblique", justify="right")
-
-    for i, row in enumerate(rows, start=1):
-        table.add_row(
-            str(i),
-            row["file_name"],
-            row["family_name"],
-            row["subfamily_name"],
-            row["us_width_class"],
-            row["us_weight_class"],
-            row["is_regular"],
-            row["is_italic"],
-            row["is_bold"],
-            row["is_oblique"],
-        )
-
-    return table
