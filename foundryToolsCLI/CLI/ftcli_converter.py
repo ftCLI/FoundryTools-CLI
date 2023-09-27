@@ -285,12 +285,12 @@ def wf2ft(
 @add_common_options()
 @Timer(logger=logger.info)
 def ft2wf(
-        input_path: Path,
-        flavor: t.Optional[str] = None,
-        recursive: bool = False,
-        output_dir: t.Optional[Path] = None,
-        recalc_timestamp=False,
-        overwrite=True
+    input_path: Path,
+    flavor: t.Optional[str] = None,
+    recursive: bool = False,
+    output_dir: t.Optional[Path] = None,
+    recalc_timestamp=False,
+    overwrite=True,
 ):
     """
     Converts SFNT fonts (TTF or OTF) to web fonts (WOFF and/or WOFF2)

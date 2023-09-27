@@ -5,7 +5,7 @@ import click
 
 
 def choice_to_int_callback(
-        ctx: click.Context, param: click.Parameter, value: t.Union[str, t.Tuple]
+    ctx: click.Context, param: click.Parameter, value: t.Union[str, t.Tuple]
 ) -> t.Union[int, t.Tuple]:
     """
     Converts a click choice to an integer, or a tuple of integers for multiple choice.
@@ -23,7 +23,7 @@ def choice_to_int_callback(
 
 
 def linked_styles_callback(
-        ctx: click.Context, _: click.Parameter, value: t.Optional[t.Tuple[int, int]]
+    ctx: click.Context, _: click.Parameter, value: t.Optional[t.Tuple[int, int]]
 ) -> t.Optional[t.Tuple]:
     """
     Callback for --linked-styles option.
@@ -53,9 +53,7 @@ def add_file_or_path_argument(dir_okay=True, file_okay=True):
     _file_or_path_argument = [
         click.argument(
             "input_path",
-            type=click.Path(
-                exists=True, resolve_path=True, path_type=Path, dir_okay=dir_okay, file_okay=file_okay
-            ),
+            type=click.Path(exists=True, resolve_path=True, path_type=Path, dir_okay=dir_okay, file_okay=file_okay),
         )
     ]
     return add_options(_file_or_path_argument)
