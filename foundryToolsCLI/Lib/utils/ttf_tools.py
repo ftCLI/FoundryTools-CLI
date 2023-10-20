@@ -103,7 +103,7 @@ def correct_ttf_contours(
             logger.error(f"Failed to remove overlaps for '{glyph_name}'")
 
     if verbose:
-        modified = sorted(list(modified))
+        modified = sorted(modified)
         logger.info(f"{len(modified)} {'glyph' if len(modified) == 1 else 'glyphs'} modified")
 
 
