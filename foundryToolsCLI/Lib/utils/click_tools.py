@@ -34,7 +34,7 @@ def linked_styles_callback(
     """
     if not value or ctx.resilient_parsing:
         return None
-    value = tuple(sorted(set(int(v) for v in value)))
+    value = tuple(sorted(set(int(v[0], int(v[1])) for v in value)))
     if len(value) != 2:
         raise click.BadParameter(f"Expected 2 different values for --linked-styles, got {len(value)}")
     return value
