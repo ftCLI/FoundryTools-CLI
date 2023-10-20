@@ -183,8 +183,9 @@ def font_organizer(
                 family_name = family_name + version
             output_dir = output_dir.joinpath(family_name)
 
-            extension = font.get_real_extension().replace(".", "") if sort_by_extension else None
+            extension = font.get_real_extension() if sort_by_extension else None
             if extension:
+                extension = extension.replace(".", "")
                 output_dir = output_dir.joinpath(extension)
 
             output_dir = sanitize_filepath(output_dir, platform="auto")
