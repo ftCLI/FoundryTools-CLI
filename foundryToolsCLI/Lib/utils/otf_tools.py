@@ -21,7 +21,7 @@ def correct_otf_contours(font: TTFont, min_area: int = 25, verbose: bool = False
 
     glyph_set = font.getGlyphSet()
 
-    modified = set()
+    modified = []
     charstrings = {}
 
     for k, v in glyph_set.items():
@@ -37,11 +37,11 @@ def correct_otf_contours(font: TTFont, min_area: int = 25, verbose: bool = False
             path_2 = remove_tiny_paths(path=path_2, glyph_name=k, min_area=min_area, verbose=verbose)
 
         if not same_path(path_1=path_1, path_2=path_2):
-            modified.add(k)
+            modified.append(k)
             charstrings[k] = t2_charstring_from_skia_path(path=path_2, width=v.width)
 
     if verbose:
-        modified = sorted(list(modified))
+        modified = sorted(modified)
 
         if len(modified) > 0:
             logger.info(f"The following glyphs have been modified: {', '.join(modified)}")

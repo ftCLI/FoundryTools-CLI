@@ -916,6 +916,14 @@ class Font(TTFont):
         return sorted(feature_tags)
 
     def calculate_italic_angle(self, min_slant: float = 2.0) -> int:
+        """
+        Calculates the italic angle of a font by drawing the glyph "H" and calculating the angle of the slant.
+
+        :param min_slant: The minimum slant angle that will be considered as italic, defaults to 2.0
+        :type min_slant: float (optional)
+
+        :return: An integer representing the italic angle of the font.
+        """
         glyph_set = self.getGlyphSet()
         pen = StatisticsPen(glyphset=glyph_set)
         for g in ("H", "uni0048"):
@@ -927,7 +935,8 @@ class Font(TTFont):
                 else:
                     return 0
             except KeyError:
-                return 0
+                pass
+            return 0
 
     def check_italic_angle(self, min_slant: float = 2.0) -> bool:
         # Allow .1 degrees tolerance
