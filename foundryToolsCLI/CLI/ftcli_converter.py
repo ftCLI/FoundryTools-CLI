@@ -34,7 +34,7 @@ font_converter = click.Group("subcommands")
     """,
 )
 @click.option(
-    "--scale-upm", type=click.IntRange(1000, 4096, max_open=True), help="Scale the units-per-em of converted fonts."
+    "--scale-upm", type=click.IntRange(16, 16384, max_open=True), help="Scale the units-per-em of converted fonts."
 )
 @click.option("--no-subr", "subroutinize", is_flag=True, default=True, help="Do not subroutinize converted fonts.")
 @click.option("--silent", "verbose", is_flag=True, default=True, help="Run in silent mode")
