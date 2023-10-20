@@ -85,7 +85,7 @@ def correct_ttf_contours(
             name,
         ),
     )
-    modified = set()
+    modified = list()
     for glyph_name in glyph_names:
         try:
             if correct_glyph_contours(
@@ -96,7 +96,7 @@ def correct_ttf_contours(
                 remove_hinting=remove_hinting,
                 min_area=min_area,
             ):
-                modified.add(glyph_name)
+                modified.append(glyph_name)
         except CorrectTTFContoursError:
             if not ignore_errors:
                 raise
