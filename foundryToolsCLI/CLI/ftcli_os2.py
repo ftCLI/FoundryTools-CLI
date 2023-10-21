@@ -501,8 +501,9 @@ def set_version(
                 os_2.set_cap_height(font.recalc_cap_height())
                 os_2.set_default_char(0)
                 os_2.set_break_char(32)
-                if font.recalc_max_context() is not None:
-                    os_2.set_max_context(font.recalc_max_context())
+                max_context = font.recalc_max_context()
+                if max_context is not None:
+                    os_2.set_max_context(max_context)
 
             # Write default values if target_version == 5.
             if target_version > 4:
