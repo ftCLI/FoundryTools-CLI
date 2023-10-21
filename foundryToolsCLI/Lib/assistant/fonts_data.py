@@ -507,7 +507,7 @@ class FontsData(object):
                 if s.lower().replace(" ", "") == v.lower().replace(" ", ""):
                     return key
 
-    def reset_data(self, styles_mapping: StylesMapping = None):
+    def reset_data(self, styles_mapping: t.Optional[StylesMapping] = None):
         """
         It takes a list of font files, and a styles mapping file, and creates a list of dictionaries, each dictionary
         representing a font, and each dictionary containing the font's name, style, weight, width, and selected status
