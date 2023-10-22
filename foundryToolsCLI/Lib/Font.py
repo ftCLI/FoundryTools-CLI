@@ -436,21 +436,26 @@ class Font(TTFont):
 
     def ttf_scale_upem(self, units_per_em: int = 1000) -> None:
         """
-        This function scales the units per em value of a TrueType font.
+        This function scales the UPM of a TrueType font. If the font is hinted, the hints will be removed
+        before scaling the UPM.
 
-        :param units_per_em: The units_per_em parameter is an integer value that represents the number
-        of font units-per-em, defaults to 1000
+        Args:
+            units_per_em (int, optional): The target UPM. Defaults to 1000.
 
-        :type units_per_em: int (optional)
+        Raises:
+            ValueError: If the font is not a TrueType font.
         """
         if not self.is_ttf:
+            raise ValueError("The font is not a TrueType font.")
+
+        if self["head"].unitsPerEm == units_per_em:
             return
 
         from fontTools.ttLib.scaleUpem import scale_upem
-
-        if self.is_ttf:
+        if self.is_hinted_ttf:
             self.ttf_dehint()
         scale_upem(self, new_upem=units_per_em)
+        # TODO: If the font was hinted before scaling upem, rehint it after scaling upem
 
     def otf_dehint(self) -> None:
         """
