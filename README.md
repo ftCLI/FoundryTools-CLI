@@ -22,6 +22,9 @@ FoundryTools-CLI requires Python 3.9 or later.
 the `AFDKO` dependency. This is a known issue and a workaround is to install Visual Studio 2022 (Community Edition is
 fine) and the `Python development` workload, selecting the `Python native development tools` optional component.
 
+![image](https://github.com/ftCLI/FoundryTools-CLI/assets/83063506/3dcb4f74-bb94-4634-b28a-b6aeba7d8575)
+
+
 **IMPORTANT**: If you have Python 2.x installed in your system, you may have to use `python3` (instead of `python`) in
 the commands below.
 
