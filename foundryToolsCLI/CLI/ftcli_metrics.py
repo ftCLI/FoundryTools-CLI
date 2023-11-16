@@ -140,7 +140,9 @@ def align(
     min_real_descender = min(real_descenders)
     max_ideal_ascender = max(ideal_ascenders) if ideal_descenders != [] else max_real_ascender
     min_ideal_descender = min(ideal_descenders) if ideal_descenders != [] else min_real_descender
-    typo_line_gap = (max_real_ascender + abs(min_real_descender)) - (max_ideal_ascender + abs(min_ideal_descender))
+    typo_line_gap = (max_real_ascender + abs(min_real_descender)) - (
+        max_ideal_ascender + abs(min_ideal_descender)
+    )
 
     for font in fonts:
         try:

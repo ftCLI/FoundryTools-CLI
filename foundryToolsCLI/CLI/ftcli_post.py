@@ -58,7 +58,9 @@ def cli(
         logger.error(Logs.no_parameter)
         return
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 

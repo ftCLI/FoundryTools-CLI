@@ -23,9 +23,15 @@ from foundryToolsCLI.Lib.utils.ttf_tools import correct_ttf_contours, decomponen
 # The Font class is a subclass of the fontTools.ttLib.TTFont class.
 class Font(TTFont):
     def __init__(
-        self, file=None, recalcBBoxes: bool = True, recalcTimestamp: bool = False, lazy: t.Optional[bool] = None
+        self,
+        file=None,
+        recalcBBoxes: bool = True,
+        recalcTimestamp: bool = False,
+        lazy: t.Optional[bool] = None,
     ):
-        super().__init__(file=file, recalcBBoxes=recalcBBoxes, recalcTimestamp=recalcTimestamp, lazy=lazy)
+        super().__init__(
+            file=file, recalcBBoxes=recalcBBoxes, recalcTimestamp=recalcTimestamp, lazy=lazy
+        )
 
     @property
     def is_otf(self) -> bool:
@@ -40,8 +46,8 @@ class Font(TTFont):
     @property
     def is_ttf(self) -> bool:
         """
-        This function checks if the string "glyf" table is present in the Font object and returns a boolean
-        value.
+        This function checks if the string "glyf" table is present in the Font object and returns a
+        boolean value.
 
         :return: A boolean value indicating whether the font is TrueType.
         """
@@ -88,8 +94,8 @@ class Font(TTFont):
         """
         This function checks if the font is in WOFF/WOFF2 format.
 
-        :return: A boolean value indicating whether the "flavor" attribute of the object is None or not.
-        If it is None, the function will return False, otherwise it will return True.
+        :return: A boolean value indicating whether the "flavor" attribute of the object is None or
+            not. If it is None, the function will return False, otherwise it will return True.
         """
         return self.flavor is not None
 
@@ -98,8 +104,8 @@ class Font(TTFont):
         """
         This function checks if the font is in SFNT format.
 
-        :return: A boolean value indicating whether the "flavor" attribute of the object is None or not.
-        If it is None, the function will return True, otherwise it will return False.
+        :return: A boolean value indicating whether the "flavor" attribute of the object is None or
+            not. If it is None, the function will return True, otherwise it will return False.
         """
         return self.flavor is None
 
@@ -183,7 +189,8 @@ class Font(TTFont):
 
     def set_bold_flag(self, value: bool) -> None:
         """
-        Sets the bold bit in the OS/2 table and the head table, and clears the regular bit in the OS/2 table
+        Sets the bold bit in the OS/2 table and the head table, and clears the regular bit in the
+        OS/2 table
         """
 
         head: TableHead = self["head"]
@@ -229,7 +236,8 @@ class Font(TTFont):
 
     def set_regular_flag(self, value: bool) -> None:
         """
-        Sets the regular bit in the OS/2 table, clears the bold and italic bits in the OS/2 and head tables
+        Sets the regular bit in the OS/2 table, clears the bold and italic bits in the OS/2 and head
+        tables
         """
         if self.is_regular:
             return
@@ -360,8 +368,8 @@ class Font(TTFont):
         """
         This function sets the "created" attribute of the "head" table to the given timestamp.
 
-        :param timestamp: an integer representing a Unix timestamp (number of seconds since January 1,
-        1970) that indicates when the font was created
+        :param timestamp: an integer representing a Unix timestamp (number of seconds since January
+            1, 1970) that indicates when the font was created
         :type timestamp: int
         """
         self["head"].created = timestamp
@@ -370,8 +378,8 @@ class Font(TTFont):
         """
         This function sets the "modified" attribute of the "head" table to the given timestamp.
 
-        :param timestamp: an integer representing a Unix timestamp (number of seconds since January 1,
-        1970) that indicates when the font was last modified
+        :param timestamp: an integer representing a Unix timestamp (number of seconds since January
+            1, 1970) that indicates when the font was last modified
         :type timestamp: int
         """
         self["head"].modified = timestamp
@@ -379,9 +387,10 @@ class Font(TTFont):
     def get_real_extension(self) -> t.Optional[str]:
         """
         This function returns the file extension of a font file based on its flavor or type.
-        :return: A string representing the file extension of a font file. If the font has a flavor, the
-        extension will be ".woff" or ".woff2". If the font is a TrueType font, the extension will be
-        ".ttf". If the font is an OpenType font, the extension will be ".otf".
+
+        :return: A string representing the file extension of a font file. If the font has a flavor,
+            the extension will be ".woff" or ".woff2". If the font is a TrueType font, the extension
+            will be ".ttf". If the font is an OpenType font, the extension will be ".otf".
         """
         if self.flavor is not None:
             return f".{self.flavor}"
@@ -413,17 +422,17 @@ class Font(TTFont):
 
     def ttf_remove_overlaps(self, remove_hinting: bool = True, ignore_errors: bool = True):
         """
-        This function removes overlaps in a TrueType font while optionally ignoring errors and removing
-        hinting.
+        This function removes overlaps in a TrueType font while optionally ignoring errors and
+        removing hinting.
 
         :param remove_hinting: A boolean parameter that determines whether to remove hinting
-        information when removing overlaps in the font.
+            information when removing overlaps in the font.
 
         :type remove_hinting: bool (optional)
 
-        :param ignore_errors: If set to True, any errors encountered during the overlap removal process
-        will be ignored and the process will continue. If set to False, the process will stop and raise
-        an error if any issues are encountered, defaults to True
+        :param ignore_errors: If set to True, any errors encountered during the overlap removal
+            process will be ignored and the process will continue. If set to False, the process will
+            stop and raise an error if any issues are encountered, defaults to True
 
         :type ignore_errors: bool (optional)
         """
@@ -436,8 +445,8 @@ class Font(TTFont):
 
     def ttf_scale_upem(self, units_per_em: int = 1000) -> None:
         """
-        This function scales the UPM of a TrueType font. If the font is hinted, the hints will be removed
-        before scaling the UPM.
+        This function scales the UPM of a TrueType font. If the font is hinted, the hints will be
+        removed before scaling the UPM.
 
         Args:
             units_per_em (int, optional): The target UPM. Defaults to 1000.
@@ -452,6 +461,7 @@ class Font(TTFont):
             return
 
         from fontTools.ttLib.scaleUpem import scale_upem
+
         if self.is_hinted_ttf:
             self.ttf_dehint()
         scale_upem(self, new_upem=units_per_em)
@@ -495,8 +505,12 @@ class Font(TTFont):
     def otf_fix_contours(self, min_area: int = 25, verbose: bool = False) -> None:
         correct_otf_contours(font=self, min_area=min_area, verbose=verbose)
 
-    def ttf_fix_contours(self, min_area: int = 25, remove_hinting: bool = True, verbose: bool = False) -> None:
-        correct_ttf_contours(self, min_area=min_area, remove_hinting=remove_hinting, verbose=verbose)
+    def ttf_fix_contours(
+        self, min_area: int = 25, remove_hinting: bool = True, verbose: bool = False
+    ) -> None:
+        correct_ttf_contours(
+            self, min_area=min_area, remove_hinting=remove_hinting, verbose=verbose
+        )
 
     def add_dummy_dsig(self) -> None:
         """
@@ -538,20 +552,22 @@ class Font(TTFont):
         """
         Returns the font's file name according to the passed source.
 
-        1: FamilyName-StyleName (FamilyName is retrieved from nameID 21, 16 or 1; SubFamily name from nameID 22,
-        17 or 2)
+        1: FamilyName-StyleName (FamilyName is retrieved from nameID 21, 16 or 1; SubFamily name
+        from nameID 22, 17 or 2)
 
         2: PostScript Name
 
         3: Full Font Name
 
-        4: CFF TopDict fontNames. Valid for CFF fonts only. For TTF files will be used
-        '1' as fallback value.
+        4: CFF TopDict fontNames. Valid for CFF fonts only. For TTF files will be used '1' as
+        fallback value.
 
-        5: CFF TipDict FullName (returns: Family Name Style Name or FamilyName-StyleName, depending on how FullName has
-        been built). Valid for CFF fonts only. For TTF files will be used '1' as fallback value.
+        5: CFF TipDict FullName (returns: Family Name Style Name or FamilyName-StyleName, depending
+        on how FullName has been built). Valid for CFF fonts only. For TTF files will be used '1' as
+        fallback value.
 
-        :param source: The NameRecord or combination of NameRecords from which to build the file name.
+        :param source: The NameRecord or combination of NameRecords from which to build the file
+            name.
         :return: A string representing the file name of the font.
         """
 
@@ -585,10 +601,11 @@ class Font(TTFont):
         """
         This function returns the foundry name of a font by checking the "name" or "OS/2" table.
 
-        :return: a string that represents the foundry name. If nameID 8 is present in the "name" table, the Manufacturer
-         Name string is returned. If nameID 8 is not present, but nameID 9 is found, the Designer string is returned.
-         If nor nameID 8 mor nameID 9 are present, the vendor code from the font's OS/2 table is returned. If also the
-         vendor code is empty or not found, "Unknown" is returned.
+        :return: a string that represents the foundry name. If nameID 8 is present in the "name"
+            table, the Manufacturer Name string is returned. If nameID 8 is not present, but nameID
+            9 is found, the Designer string is returned. If nor nameID 8 mor nameID 9 are present,
+            the vendor code from the font's OS/2 table is returned. If also the vendor code is empty
+            or not found, "Unknown" is returned.
         """
         manufacturer_name: str = self["name"].getDebugName(8)
         if manufacturer_name:
@@ -838,7 +855,8 @@ class Font(TTFont):
             caret_offset={"label": "Caret Offset", "value": hhea_table.caretOffset},
             embed_level={
                 "label": "Embedding",
-                "value": f"{os2_table.get_embed_level()} " f"{EMBED_LEVEL_STRINGS.get(os2_table.get_embed_level())}",
+                "value": f"{os2_table.get_embed_level()} "
+                f"{EMBED_LEVEL_STRINGS.get(os2_table.get_embed_level())}",
             },
         )
 
@@ -846,7 +864,8 @@ class Font(TTFont):
 
     def get_font_v_metrics(self) -> dict:
         """
-        The function returns a dictionary of dictionaries, where each dictionary contains a list of dictionaries.
+        The function returns a dictionary of dictionaries, where each dictionary contains a list of
+        dictionaries.
 
         Each of the innermost dictionaries contains a label and a value.
 
@@ -869,8 +888,8 @@ class Font(TTFont):
         - head yMax
         - head Font BBox
 
-        The function returns the metrics in a dictionary of dictionaries, where each dictionary contains a list of
-        dictionaries.
+        The function returns the metrics in a dictionary of dictionaries, where each dictionary
+        contains a list of dictionaries.
 
         The innermost dictionaries contain a label
         :return: A dictionary with three keys: os2_metrics, hhea_metrics, and head_metrics.
@@ -916,13 +935,15 @@ class Font(TTFont):
                 if not self[table_tag].table.ScriptList or not self[table_tag].table.FeatureList:
                     continue
                 feature_tags.update(
-                    feature_record.FeatureTag for feature_record in self[table_tag].table.FeatureList.FeatureRecord
+                    feature_record.FeatureTag
+                    for feature_record in self[table_tag].table.FeatureList.FeatureRecord
                 )
         return sorted(feature_tags)
 
     def calculate_italic_angle(self, min_slant: float = 2.0) -> int:
         """
-        Calculates the italic angle of a font by drawing the glyph "H" and calculating the angle of the slant.
+        Calculates the italic angle of a font by drawing the glyph "H" and calculating the angle of
+        the slant.
 
         :param min_slant: The minimum slant angle that will be considered as italic, defaults to 2.0
         :type min_slant: float (optional)
@@ -945,7 +966,9 @@ class Font(TTFont):
 
     def check_italic_angle(self, min_slant: float = 2.0) -> bool:
         # Allow .1 degrees tolerance
-        return abs(self.calculate_italic_angle(min_slant=min_slant) - self["post"].italicAngle) < 0.1
+        return (
+            abs(self.calculate_italic_angle(min_slant=min_slant) - self["post"].italicAngle) < 0.1
+        )
 
     def calculate_caret_slope_rise(self) -> int:
         if self["post"].italicAngle == 0:
@@ -957,7 +980,9 @@ class Font(TTFont):
         if self["post"].italicAngle == 0:
             return 0
         else:
-            return round(math.tan(math.radians(-self["post"].italicAngle)) * self["head"].unitsPerEm)
+            return round(
+                math.tan(math.radians(-self["post"].italicAngle)) * self["head"].unitsPerEm
+            )
 
     def calculate_run_rise_angle(self) -> float:
         rise = self["hhea"].caretSlopeRise
@@ -1006,10 +1031,16 @@ class Font(TTFont):
         # NOTE: `range(a, b)` includes `a` and does not include `b`.
         #       Here we don't include 0-31 as well as 127
         #       because these are control characters.
-        ascii_glyph_names = [self.getBestCmap()[c] for c in range(32, 127) if c in self.getBestCmap()]
+        ascii_glyph_names = [
+            self.getBestCmap()[c] for c in range(32, 127) if c in self.getBestCmap()
+        ]
 
         if len(ascii_glyph_names) > 0.8 * (127 - 32):
-            ascii_widths = [adv for name, (adv, lsb) in glyph_metrics.items() if name in ascii_glyph_names and adv != 0]
+            ascii_widths = [
+                adv
+                for name, (adv, lsb) in glyph_metrics.items()
+                if name in ascii_glyph_names and adv != 0
+            ]
             ascii_width_count = Counter(ascii_widths)
             ascii_most_common_width = ascii_width_count.most_common(1)[0][1]
             seems_monospaced = ascii_most_common_width >= len(ascii_widths) * 0.8
@@ -1031,12 +1062,18 @@ class Font(TTFont):
                 relevant_glyph_names.difference_update(marks)
 
             widths = sorted(
-                {adv for name, (adv, lsb) in glyph_metrics.items() if name in relevant_glyph_names and adv != 0}
+                {
+                    adv
+                    for name, (adv, lsb) in glyph_metrics.items()
+                    if name in relevant_glyph_names and adv != 0
+                }
             )
             seems_monospaced = len(widths) <= 2
 
         width_max = max(adv for k, (adv, lsb) in glyph_metrics.items())
-        most_common_width = Counter([g for g in glyph_metrics.values() if g[0] != 0]).most_common(1)[0][0][0]
+        most_common_width = Counter([g for g in glyph_metrics.values() if g[0] != 0]).most_common(
+            1
+        )[0][0][0]
         return {
             "seems_monospaced": seems_monospaced,
             "width_max": width_max,

@@ -406,13 +406,17 @@ class TableOS2(table_O_S_2f_2):
         panose_family_type: int = self.panose.bFamilyType
         panose_data = PANOSE_STRUCT["bFamilyType"].get(panose_family_type)
         family_description: str = panose_data["description"]
-        panose_dict.update({"bFamilyType": f"Family Type: {panose_family_type} - {family_description}"})
+        panose_dict.update(
+            {"bFamilyType": f"Family Type: {panose_family_type} - {family_description}"}
+        )
 
         family_sub_digits = panose_data["sub_digits"]
         for k in family_sub_digits.keys():
             sub_digit_description = family_sub_digits[k]["description"]
             sub_digit_value = getattr(self.panose, k)
             sub_digit_value_description = family_sub_digits[k]["values"].get(sub_digit_value)
-            panose_dict.update({k: f"{sub_digit_description}: {sub_digit_value} - {sub_digit_value_description}"})
+            panose_dict.update(
+                {k: f"{sub_digit_description}: {sub_digit_value} - {sub_digit_value_description}"}
+            )
 
         return panose_dict

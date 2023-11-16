@@ -31,7 +31,10 @@ class VariableFont(Font):
             if hasattr(self["STAT"].table, "DesignAxisRecord"):
                 for axis in self["STAT"].table.DesignAxisRecord.Axis:
                     name_ids_to_delete.append(axis.AxisNameID)
-            if hasattr(self["STAT"].table, "AxisValueArray") and self["STAT"].table.AxisValueArray is not None:
+            if (
+                hasattr(self["STAT"].table, "AxisValueArray")
+                and self["STAT"].table.AxisValueArray is not None
+            ):
                 for axis in self["STAT"].table.AxisValueArray.AxisValue:
                     name_ids_to_delete.append(axis.ValueNameID)
 

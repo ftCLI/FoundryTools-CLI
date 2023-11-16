@@ -159,7 +159,9 @@ class AssistantUI(object):
             if self.__prompt_for_confirmation():
                 for row in fonts_data:
                     if row["selected"] == "1":
-                        row["us_width_class"] = us_width_class if us_width_class else row["us_width_class"]
+                        row["us_width_class"] = (
+                            us_width_class if us_width_class else row["us_width_class"]
+                        )
                         words = [
                             wdt if wdt else row["wdt"],
                             width if width else row["width"],
@@ -170,7 +172,8 @@ class AssistantUI(object):
                 self.fonts_data.save(fonts_data)
         if command == "g":
             us_weight_class = click.prompt(
-                f"usWeightClass {click.style('[1-1000]', bold=True, fg='cyan')} " f"(Enter to skip)",
+                f"usWeightClass {click.style('[1-1000]', bold=True, fg='cyan')} "
+                f"(Enter to skip)",
                 type=OptionalParamType(click.IntRange(1, 1000)),
                 default="",
                 show_default=False,
@@ -242,9 +245,13 @@ class AssistantUI(object):
             click.echo(" : CFF fontNames")
             click.secho("[5]", bold=True, fg="cyan", nl=False)
             click.echo(" : CFF FullName")
-            source_type = self.__prompt_for_int_range("Your selection", min_value=0, max_value=5, default=0)
+            source_type = self.__prompt_for_int_range(
+                "Your selection", min_value=0, max_value=5, default=0
+            )
             if self.__prompt_for_confirmation(text="Recalc data?"):
-                self.fonts_data.recalc_data(source_type=source_type, styles_mapping=self.styles_mapping)
+                self.fonts_data.recalc_data(
+                    source_type=source_type, styles_mapping=self.styles_mapping
+                )
 
         if command == "x":
             return
@@ -299,8 +306,12 @@ class AssistantUI(object):
     def __select_deselect_files(self, action):
         data = self.fonts_data.get_data()
 
-        start = self.__prompt_for_int_range(text="From line", min_value=1, max_value=len(data), default=1)
-        end = self.__prompt_for_int_range(text="To line", min_value=start, max_value=len(data), default=len(data))
+        start = self.__prompt_for_int_range(
+            text="From line", min_value=1, max_value=len(data), default=1
+        )
+        end = self.__prompt_for_int_range(
+            text="To line", min_value=start, max_value=len(data), default=len(data)
+        )
 
         for i in range(start - 1, end):
             if action == "select":
@@ -431,12 +442,14 @@ class AssistantUI(object):
             value = new_value
 
         short_word = click.prompt(
-            f"Short word " f"{click.style(f'[{defaults[0]}]', bold=True, fg='cyan') if defaults[0] else ''}",
+            f"Short word "
+            f"{click.style(f'[{defaults[0]}]', bold=True, fg='cyan') if defaults[0] else ''}",
             default=defaults[0],
             show_default=False,
         )
         long_word = click.prompt(
-            f"Long word  " f"{click.style(f'[{defaults[1]}]', bold=True, fg='cyan') if defaults[1] else ''}",
+            f"Long word  "
+            f"{click.style(f'[{defaults[1]}]', bold=True, fg='cyan') if defaults[1] else ''}",
             default=defaults[1],
             show_default=False,
         )

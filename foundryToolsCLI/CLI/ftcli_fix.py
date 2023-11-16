@@ -41,20 +41,22 @@ def monospace(
 
     Rationale:
 
-    There are various metadata in the OpenType spec to specify if a font is monospaced or not. If the font is not truly
-    monospaced, then no monospaced metadata should be set (as sometimes they mistakenly are...)
+    There are various metadata in the OpenType spec to specify if a font is monospaced or not. If
+        the font is not truly monospaced, then no monospaced metadata should be set (as sometimes they
+        mistakenly are...)
 
     Requirements for monospace fonts:
 
-    * ``post.isFixedPitch`` - "Set to 0 if the font is proportionally spaced, non-zero if the font is not proportionally
-    paced (monospaced)" (https://www.microsoft.com/typography/otspec/post.htm)
+    * ``post.isFixedPitch`` - "Set to 0 if the font is proportionally spaced, non-zero if the font
+    is not proportionally paced (monospaced)" (https://www.microsoft.com/typography/otspec/post.htm)
 
     * ``hhea.advanceWidthMax`` must be correct, meaning no glyph's width value is greater.
     (https://www.microsoft.com/typography/otspec/hhea.htm)
 
     * ``OS/2.panose.bProportion`` must be set to 9 (monospace) on latin text fonts.
 
-    * ``OS/2.panose.bSpacing`` must be set to 3 (monospace) on latin handwritten or latin symbol fonts.
+    * ``OS/2.panose.bSpacing`` must be set to 3 (monospace) on latin handwritten or latin symbol
+    fonts.
 
     * Spec says: "The PANOSE definition contains ten digits each of which currently describes up to sixteen variations.
     Windows uses ``bFamilyType``, ``bSerifStyle`` and ``bProportion`` in the font mapper to determine family type. It
@@ -79,7 +81,9 @@ def monospace(
     * Set ``CFF.cff.TopDictIndex[0].isFixedPitch`` to ``True`` for CFF fonts
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -107,7 +111,9 @@ def monospace(
             if current_width_max != width_max:
                 hhea_table.advanceWidthMax = width_max
                 hhea_table_changed = True
-                logger.info("hhea.advanceWidthMax: {old} -> {new}", old=current_width_max, new=width_max)
+                logger.info(
+                    "hhea.advanceWidthMax: {old} -> {new}", old=current_width_max, new=width_max
+                )
 
             # Ensure that post.isFixedPitch is non-zero when the font is monospaced
             post_table: TablePost = font["post"]
@@ -127,7 +133,9 @@ def monospace(
 
             if os2_table.panose.bFamilyType == 0:
                 os2_table.panose.bFamilyType = 2
-                logger.info("OS/2.panose.bFamilyType: {old} -> {new}", old=current_family_type, new=2)
+                logger.info(
+                    "OS/2.panose.bFamilyType: {old} -> {new}", old=current_family_type, new=2
+                )
                 os2_table_changed = True
 
             # Ensure that panose.bProportion is 9 when the font is monospaced in latin text fonts (bFamilyType = 2)
@@ -135,7 +143,9 @@ def monospace(
             if os2_table.panose.bFamilyType == 2:
                 if not os2_table.panose.bProportion == 9:
                     os2_table.panose.bProportion = 9
-                    logger.info("OS/2.panose.bProportion: {old} -> {new}", old=current_proportion, new=9)
+                    logger.info(
+                        "OS/2.panose.bProportion: {old} -> {new}", old=current_proportion, new=9
+                    )
                     os2_table_changed = True
 
             # Ensure that panose.bProportion is 3 when the font is monospaced in latin handwritten fonts
@@ -143,7 +153,9 @@ def monospace(
             if os2_table.panose.bFamilyType in [3, 5]:
                 if not os2_table.panose.bProportion == 3:
                     os2_table.panose.bProportion = 3
-                    logger.info("OS/2.panose.bProportion: {old} -> {new}", old=current_proportion, new=3)
+                    logger.info(
+                        "OS/2.panose.bProportion: {old} -> {new}", old=current_proportion, new=3
+                    )
                     os2_table_changed = True
 
             # Ensure that CFF.cff.TopDictIndex[0].isFixedPitch is True for CFF fonts
@@ -153,7 +165,9 @@ def monospace(
                 top_dict = cff_table.cff.topDictIndex[0]
                 if not getattr(top_dict, "isFixedPitch", 1):
                     setattr(top_dict, "isFixedPitch", True)
-                    logger.info("CFF.cff.TopDictIndex[0].isFixedPitch: {old} -> {new}", old=0, new=1)
+                    logger.info(
+                        "CFF.cff.TopDictIndex[0].isFixedPitch: {old} -> {new}", old=0, new=1
+                    )
                     cff_table_changed = True
 
             # Check if one of the tables has changed and save the font.
@@ -204,7 +218,9 @@ def nbsp_width(
     ``space`` width.
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -312,7 +328,9 @@ def italic_angle(
     * In CFF fonts, recalculate also ``CFF.topDictIndex[0].ItalicAngle`` and set it to ``post.italicAngle`` rounded to
     the nearest integer
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -333,7 +351,8 @@ def italic_angle(
 
             if post_italic_angle_ok:
                 logger.opt(colors=True).info(
-                    "post.italicAngle: {post_italic_angle} -> <green>OK</>", post_italic_angle=post_italic_angle
+                    "post.italicAngle: {post_italic_angle} -> <green>OK</>",
+                    post_italic_angle=post_italic_angle,
                 )
             else:
                 post_table.set_italic_angle(calculated_post_italic_angle)
@@ -352,18 +371,24 @@ def italic_angle(
             hhea_italic_angle = font.calculate_run_rise_angle()
             hhea_italic_angle_ok = abs(post_table.italicAngle - hhea_italic_angle) < 0.1
             if hhea_italic_angle_ok:
-                logger.opt(colors=True).info("hhea.caretSlopeRise: {rise} -> <green>OK</>", rise=rise)
+                logger.opt(colors=True).info(
+                    "hhea.caretSlopeRise: {rise} -> <green>OK</>", rise=rise
+                )
                 logger.opt(colors=True).info("hhea.caretSlopeRun: {run} -> <green>OK</>", run=run)
             else:
                 if hhea_table.caretSlopeRise != calculated_rise:
                     hhea_table.caretSlopeRise = calculated_rise
                     logger.opt(colors=True).info(
-                        "hhea.caretSlopeRise: <red>{rise}</> -> <green>{new}</>", rise=rise, new=calculated_rise
+                        "hhea.caretSlopeRise: <red>{rise}</> -> <green>{new}</>",
+                        rise=rise,
+                        new=calculated_rise,
                     )
                 if hhea_table.caretSlopeRun != calculated_run:
                     hhea_table.caretSlopeRun = calculated_run
                     logger.opt(colors=True).info(
-                        "hhea.caretSlopeRun: <red>{run}</> -> <green>{new}</>", run=run, new=calculated_run
+                        "hhea.caretSlopeRun: <red>{run}</> -> <green>{new}</>",
+                        run=run,
+                        new=calculated_run,
                     )
 
             # Check CFF italic angle
@@ -410,7 +435,9 @@ def italic_angle(
                 )
 
             if oblique_bit_ok:
-                logger.opt(colors=True).info("Oblique: {oblique} -> <green>OK</>", oblique=is_oblique)
+                logger.opt(colors=True).info(
+                    "Oblique: {oblique} -> <green>OK</>", oblique=is_oblique
+                )
             else:
                 logger.opt(colors=True).info(
                     "Oblique: <red>{old}</> -> <green>{new}</>", old=is_oblique, new=font.is_oblique
@@ -462,7 +489,9 @@ def nbsp_missing(
     * Add a glyph for the missing ``nbspace`` character by double mapping the ``space`` character
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -538,7 +567,10 @@ def decompose_transformed(
     import pathops
 
     fonts = get_fonts_in_path(
-        input_path=input_path, recursive=recursive, allow_cff=False, recalc_timestamp=recalc_timestamp
+        input_path=input_path,
+        recursive=recursive,
+        allow_cff=False,
+        recalc_timestamp=recalc_timestamp,
     )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -629,7 +661,10 @@ def duplicate_components(
     """
 
     fonts = get_fonts_in_path(
-        input_path=input_path, allow_cff=False, recursive=recursive, recalc_timestamp=recalc_timestamp
+        input_path=input_path,
+        allow_cff=False,
+        recursive=recursive,
+        recalc_timestamp=recalc_timestamp,
     )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -713,7 +748,9 @@ def kern_table(
 
     * Remove glyphs that are not defined in the ``cmap`` table from the ``kern`` table.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -744,7 +781,10 @@ def kern_table(
                 if table.format == 0:
                     pairs_to_delete = []
                     for left_glyph, right_glyph in table.kernTable.keys():
-                        if left_glyph not in character_glyphs or right_glyph not in character_glyphs:
+                        if (
+                            left_glyph not in character_glyphs
+                            or right_glyph not in character_glyphs
+                        ):
                             pairs_to_delete.append((left_glyph, right_glyph))
                     if len(pairs_to_delete) > 0:
                         for pair in pairs_to_delete:
@@ -788,7 +828,9 @@ def strip_names(
     * Remove leading and trailing spaces from all NameRecords in the ``name`` table.
 
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 

@@ -26,7 +26,9 @@ from foundryToolsCLI.Lib.utils.timer import Timer
 @click.option("--ascent", type=int, help="""Sets the ``ascent`` value.""")
 @click.option("--descent", type=int, help="""Sets the ``descent`` value.""")
 @click.option("--linegap", type=int, help="""Sets the ``lineGap`` value.""")
-@click.option("--recalc-offset", is_flag=True, default=None, help="""Recalculate the ``caretOffset`` value.""")
+@click.option(
+    "--recalc-offset", is_flag=True, default=None, help="""Recalculate the ``caretOffset`` value."""
+)
 @add_recursive_option()
 @add_common_options()
 @Timer(logger=logger.info)
@@ -50,7 +52,9 @@ def cli(
         logger.error(Logs.no_parameter)
         return
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 

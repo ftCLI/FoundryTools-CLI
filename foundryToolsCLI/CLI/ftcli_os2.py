@@ -36,7 +36,9 @@ def recalc_x_height(
     """
     Recalculates sxHeight value.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -83,7 +85,9 @@ def recalc_cap_height(
     """
     Recalculates sCapHeight value.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -130,7 +134,9 @@ def recalc_max_context(
     """
     Recalculates usMaxContext value.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -182,7 +188,9 @@ def recalc_ranges(
     original font's OS/2 table.
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -202,7 +210,10 @@ def recalc_ranges(
             new_unicode_ranges = os_2_temp.getUnicodeRanges()
             new_codepage_ranges = os_2_temp.get_codepage_ranges()
 
-            if current_unicode_ranges != new_unicode_ranges or current_codepage_ranges != new_codepage_ranges:
+            if (
+                current_unicode_ranges != new_unicode_ranges
+                or current_codepage_ranges != new_codepage_ranges
+            ):
                 os_2.setUnicodeRanges(bits=new_unicode_ranges)
                 os_2.set_codepage_ranges(codepage_ranges=new_codepage_ranges)
                 font.save(output_file)
@@ -399,7 +410,9 @@ def set_flags(
     Bit 8: No subsetting
     Bit 9: Bitmap embedding only
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -428,7 +441,9 @@ def set_flags(
                 set_flag = getattr(font, f"set_{flag}_flag")
                 set_flag(value)
 
-            if head_copy.compile(font) != head.compile(font) or os2_copy.compile(font) != os2.compile(font):
+            if head_copy.compile(font) != head.compile(font) or os2_copy.compile(
+                font
+            ) != os2.compile(font):
                 font.save(output_file)
                 logger.success(Logs.file_saved, file=output_file)
             else:
@@ -441,7 +456,9 @@ def set_flags(
 
 
 @tbl_os2.command()
-@click.option("-v", "target_version", type=click.IntRange(1, 5), required=True, help="Target version")
+@click.option(
+    "-v", "target_version", type=click.IntRange(1, 5), required=True, help="Target version"
+)
 @add_file_or_path_argument()
 @add_recursive_option()
 @add_common_options()
@@ -457,7 +474,9 @@ def set_version(
     """
     Upgrades OS/2 table version.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -551,7 +570,9 @@ def set_weight(
     usWeightClass indicates the visual weight (degree of blackness or thickness of strokes) of the characters in the
     font. Values from 1 to 1000 are valid.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -604,7 +625,9 @@ def set_width(
     usWidthClass indicates a relative change from the normal aspect ratio (width to height ratio) as specified by a font
     designer for the glyphs in a font. Values from 1 to 9 are valid.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -632,14 +655,27 @@ def set_width(
 
 @tbl_os2.command()
 @add_file_or_path_argument()
-@click.option("--family-type", "bFamilyType", type=click.IntRange(0, 5), help="Sets 'bFamilyType' value")
-@click.option("--serif-style", "bSerifStyle", type=click.IntRange(0, 15), help="Sets 'bSerifStyle' value")
+@click.option(
+    "--family-type", "bFamilyType", type=click.IntRange(0, 5), help="Sets 'bFamilyType' value"
+)
+@click.option(
+    "--serif-style", "bSerifStyle", type=click.IntRange(0, 15), help="Sets 'bSerifStyle' value"
+)
 @click.option("--weight", "bWeight", type=click.IntRange(0, 11), help="Sets 'bWeight' value")
-@click.option("--proportion", "bProportion", type=click.IntRange(0, 9), help="Sets 'bProportion' value")
+@click.option(
+    "--proportion", "bProportion", type=click.IntRange(0, 9), help="Sets 'bProportion' value"
+)
 @click.option("--contrast", "bContrast", type=click.IntRange(0, 9), help="Sets 'bContrast' value")
-@click.option("--stroke-variation", "bStrokeVariation", type=click.IntRange(0, 9), help="Sets 'bStrokeVariation' value")
+@click.option(
+    "--stroke-variation",
+    "bStrokeVariation",
+    type=click.IntRange(0, 9),
+    help="Sets 'bStrokeVariation' value",
+)
 @click.option("--arm-style", "bArmStyle", type=click.IntRange(0, 11), help="Sets 'bArmStyle' value")
-@click.option("--letter-form", "bLetterForm", type=click.IntRange(0, 15), help="Sets 'bLetterForm' value")
+@click.option(
+    "--letter-form", "bLetterForm", type=click.IntRange(0, 15), help="Sets 'bLetterForm' value"
+)
 @click.option("--midline", "bMidline", type=click.IntRange(0, 13), help="Sets 'bMidline' value")
 @click.option("--x-height", "bXHeight", type=click.IntRange(0, 7), help="Sets 'bXHeight' value")
 @add_recursive_option()
@@ -656,7 +692,9 @@ def panose(
     """
     Command line panose editor.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 

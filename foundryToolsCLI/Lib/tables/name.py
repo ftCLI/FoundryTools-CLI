@@ -1,5 +1,10 @@
 from fontTools.ttLib import registerCustomTableClass
-from fontTools.ttLib.tables._n_a_m_e import table__n_a_m_e, NameRecord, _MAC_LANGUAGE_CODES, _WINDOWS_LANGUAGE_CODES
+from fontTools.ttLib.tables._n_a_m_e import (
+    table__n_a_m_e,
+    NameRecord,
+    _MAC_LANGUAGE_CODES,
+    _WINDOWS_LANGUAGE_CODES,
+)
 
 registerCustomTableClass("name", "foundryToolsCLI.Lib.tables.name", "TableName")
 
@@ -50,7 +55,9 @@ class TableName(table__n_a_m_e):
         :param language_string: The language of the name records to delete
         """
 
-        names = self.filter_namerecords(name_ids=name_ids, platform_id=platform_id, lang_string=language_string)
+        names = self.filter_namerecords(
+            name_ids=name_ids, platform_id=platform_id, lang_string=language_string
+        )
 
         for name in names:
             self.removeNames(name.nameID, name.platformID, name.platEncID, name.langID)
@@ -80,7 +87,9 @@ class TableName(table__n_a_m_e):
         if lang_string is not None:
             mac_lang_id = _MAC_LANGUAGE_CODES.get(lang_string.lower())
             win_lang_id = _WINDOWS_LANGUAGE_CODES.get(lang_string.lower())
-            filtered_names = [name for name in filtered_names if name.langID in (mac_lang_id, win_lang_id)]
+            filtered_names = [
+                name for name in filtered_names if name.langID in (mac_lang_id, win_lang_id)
+            ]
         return filtered_names
 
     def find_replace(
@@ -129,7 +138,9 @@ class TableName(table__n_a_m_e):
                         name.langID,
                     )
 
-    def append_string(self, name_ids, platform_id=None, language_string=None, prefix=None, suffix=None) -> None:
+    def append_string(
+        self, name_ids, platform_id=None, language_string=None, prefix=None, suffix=None
+    ) -> None:
         """
         Appends a prefix, a suffix, or both to the namerecords that match the name IDs, platform ID, and language
         string.
@@ -141,7 +152,9 @@ class TableName(table__n_a_m_e):
         :param suffix: The string to append to the end of the namerecords
         """
 
-        names = self.filter_namerecords(name_ids=name_ids, platform_id=platform_id, lang_string=language_string)
+        names = self.filter_namerecords(
+            name_ids=name_ids, platform_id=platform_id, lang_string=language_string
+        )
 
         for name in names:
             string = name.toUnicode()
@@ -172,5 +185,8 @@ class TableName(table__n_a_m_e):
         for name in self.names:
             if str(name).strip() == "":
                 self.removeNames(
-                    nameID=name.nameID, platformID=name.platformID, platEncID=name.platEncID, langID=name.langID
+                    nameID=name.nameID,
+                    platformID=name.platformID,
+                    platEncID=name.platEncID,
+                    langID=name.langID,
                 )

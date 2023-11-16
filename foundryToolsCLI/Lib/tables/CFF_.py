@@ -44,7 +44,9 @@ class TableCFF(table_C_F_F_):
 
     def top_dict_find_replace(self, old_string: str, new_string: str) -> None:
         cff_font_names = self.cff.fontNames[0]
-        self.cff.fontNames = [cff_font_names.replace(old_string, new_string).replace("  ", " ").strip()]
+        self.cff.fontNames = [
+            cff_font_names.replace(old_string, new_string).replace("  ", " ").strip()
+        ]
         top_dict = self.cff.topDictIndex[0]
         attr_list = [
             "version",

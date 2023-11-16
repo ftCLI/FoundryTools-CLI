@@ -69,7 +69,9 @@ def set_name(
     it will be overwritten.
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -85,7 +87,11 @@ def set_name(
             name_table: TableName = font["name"]
             name_table_copy = deepcopy(name_table)
             name_table.add_name(
-                font, name_id=name_id, string=string, platform_id=platform_id, language_string=language_string
+                font,
+                name_id=name_id,
+                string=string,
+                platform_id=platform_id,
+                language_string=language_string,
             )
             if name_table_copy.compile(font) != name_table.compile(font):
                 font.save(output_file)
@@ -153,7 +159,9 @@ def del_names(
     platformID will be deleted.
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -189,7 +197,9 @@ def del_names(
 @tbl_name.command()
 @add_file_or_path_argument()
 @click.option("-os", "--old-string", required=True, help="The string to be replaced")
-@click.option("-ns", "--new-string", required=True, help="The string to replace the old string with")
+@click.option(
+    "-ns", "--new-string", required=True, help="The string to replace the old string with"
+)
 @click.option(
     "-n",
     "--name-id",
@@ -243,7 +253,9 @@ def find_replace(
     Finds and replaces a string in the specified NameRecords. If no nameID is specified, the string will be replaced in
     all NameRecords.
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -301,7 +313,9 @@ def del_mac_names(
     platformID 3 instead for maximum compatibility. Some legacy software, however, may still require names with
     platformID 1, platformSpecificID 0".
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -395,7 +409,9 @@ def append(
         logger.error("Please, insert at least a prefix or a suffix to append")
         return
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 

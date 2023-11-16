@@ -119,7 +119,9 @@ def autohint(
             output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
             logger.opt(colors=True).info(Logs.current_file, file=file)
 
-            temp_otf_file = Path(makeOutputFileName(output_file, extension=".otf", suffix="_tmp", overWrite=True))
+            temp_otf_file = Path(
+                makeOutputFileName(output_file, extension=".otf", suffix="_tmp", overWrite=True)
+            )
             original_timestamp = font.modified_timestamp
 
             flavor = font.flavor
@@ -224,7 +226,10 @@ def dehint(
     from afdko.fdkutils import run_shell_command
 
     fonts = get_fonts_in_path(
-        input_path=input_path, recursive=recursive, allow_ttf=False, recalc_timestamp=recalc_timestamp
+        input_path=input_path,
+        recursive=recursive,
+        allow_ttf=False,
+        recalc_timestamp=recalc_timestamp,
     )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -250,7 +255,9 @@ def dehint(
         # Using tx -cff -n +b +/-S and then sfntedit -a to merge the CFF table to the destination file
         try:
             temp_cff_file = Path(makeOutputFileName(output_file, extension=".cff", overWrite=True))
-            temp_otf_file = Path(makeOutputFileName(output_file, extension=".otf", suffix="_tmp", overWrite=True))
+            temp_otf_file = Path(
+                makeOutputFileName(output_file, extension=".otf", suffix="_tmp", overWrite=True)
+            )
 
             # If the font is WOFF or WOFF2, we need to convert to a temporary OTF font
             flavor = font.flavor
@@ -302,7 +309,13 @@ def dehint(
     Default is 25 square units. Subpaths with a bounding box less than this will be reported and deleted.
     """,
 )
-@click.option("--no-subr", "subroutinize", is_flag=True, default=True, help="""Do not subroutinize fixed fonts.""")
+@click.option(
+    "--no-subr",
+    "subroutinize",
+    is_flag=True,
+    default=True,
+    help="""Do not subroutinize fixed fonts.""",
+)
 @click.option("--silent", "verbose", is_flag=True, default=True, help="Run in silent mode")
 @add_recursive_option()
 @add_common_options()
@@ -415,7 +428,10 @@ def subr(
     Subroutinize OpenType-PS fonts.
     """
     fonts = get_fonts_in_path(
-        input_path=input_path, recursive=recursive, allow_ttf=False, recalc_timestamp=recalc_timestamp
+        input_path=input_path,
+        recursive=recursive,
+        allow_ttf=False,
+        recalc_timestamp=recalc_timestamp,
     )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -451,7 +467,10 @@ def desubr(
     Desubroutinize OpenType-PS fonts.
     """
     fonts = get_fonts_in_path(
-        input_path=input_path, recursive=recursive, allow_ttf=False, recalc_timestamp=recalc_timestamp
+        input_path=input_path,
+        recursive=recursive,
+        allow_ttf=False,
+        recalc_timestamp=recalc_timestamp,
     )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -492,7 +511,10 @@ def check_outlines(
     from afdko import checkoutlinesufo
 
     fonts = get_fonts_in_path(
-        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp, allow_ttf=False
+        input_path=input_path,
+        recursive=recursive,
+        recalc_timestamp=recalc_timestamp,
+        allow_ttf=False,
     )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return

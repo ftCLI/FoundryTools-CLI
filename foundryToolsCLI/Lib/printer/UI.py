@@ -96,10 +96,12 @@ def print_instances(variable_font: VariableFont):
 
     for count, instance in enumerate(instances, start=1):
         subfamily_name = (
-            f"{instance.subfamilyNameID}: " f"{variable_font['name'].getDebugName(instance.subfamilyNameID)}"
+            f"{instance.subfamilyNameID}: "
+            f"{variable_font['name'].getDebugName(instance.subfamilyNameID)}"
         )
         postscript_name = (
-            f"{instance.postscriptNameID}: " f"{variable_font['name'].getDebugName(instance.postscriptNameID)}"
+            f"{instance.postscriptNameID}: "
+            f"{variable_font['name'].getDebugName(instance.postscriptNameID)}"
         )
         table.add_row(
             str(count),
@@ -141,15 +143,21 @@ def print_font_info(font: Font):
 
     sub_table_2 = Table(box=None, show_header=False)
     for v in font_v_metrics["os2_metrics"]:
-        sub_table_2.add_row(f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value']).rjust(4)}")
+        sub_table_2.add_row(
+            f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value']).rjust(4)}"
+        )
 
     sub_table_3 = Table(box=None, show_header=False)
     for v in font_v_metrics["hhea_metrics"]:
-        sub_table_3.add_row(f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value']).rjust(4)}")
+        sub_table_3.add_row(
+            f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value']).rjust(4)}"
+        )
 
     sub_table_4 = Table(box=None, show_header=False)
     for v in font_v_metrics["head_metrics"]:
-        sub_table_4.add_row(f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value']).rjust(4)}")
+        sub_table_4.add_row(
+            f"[bold cyan]{v['label'].ljust(16)}[reset] : {str(v['value']).rjust(4)}"
+        )
 
     table.add_row("[bold green]BASIC INFORMATION")
     table.add_section()
@@ -245,7 +253,9 @@ def print_font_names(font: Font, max_lines: Optional[int] = None, minimal: bool 
 
         table.add_section()
 
-        names = name_table.filter_namerecords(platform_id=platform_id, plat_enc_id=plat_enc_id, lang_id=language_id)
+        names = name_table.filter_namerecords(
+            platform_id=platform_id, plat_enc_id=plat_enc_id, lang_id=language_id
+        )
         if minimal:
             names = [n for n in names if n.nameID in (1, 2, 3, 4, 5, 6, 16, 17, 18, 21, 22, 25)]
 
@@ -291,12 +301,22 @@ def print_font_names(font: Font, max_lines: Optional[int] = None, minimal: bool 
         ]
         minimal_cff_names = ["version", "FullName", "FamilyName", "Weight"]
 
-        cff_names = [{k: v} for k, v in cff_table.cff.topDictIndex[0].rawDict.items() if k not in cff_names_to_skip]
+        cff_names = [
+            {k: v}
+            for k, v in cff_table.cff.topDictIndex[0].rawDict.items()
+            if k not in cff_names_to_skip
+        ]
 
         if minimal:
-            cff_names = [{k: v} for k, v in cff_table.cff.topDictIndex[0].rawDict.items() if k in minimal_cff_names]
+            cff_names = [
+                {k: v}
+                for k, v in cff_table.cff.topDictIndex[0].rawDict.items()
+                if k in minimal_cff_names
+            ]
 
-        table.add_row("[bold cyan]{0:<30}".format("fontNames") + "[reset] : " + str(cff_table.cff.fontNames))
+        table.add_row(
+            "[bold cyan]{0:<30}".format("fontNames") + "[reset] : " + str(cff_table.cff.fontNames)
+        )
         for cff_name in cff_names:
             for k, v in cff_name.items():
                 row_string = "[bold cyan]{0:<30}".format(k) + "[reset] : " + str(v)

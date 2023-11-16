@@ -86,7 +86,10 @@ def decompose(
     Decompose composite glyphs of a TrueType font.
     """
     fonts = get_fonts_in_path(
-        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp, allow_cff=False
+        input_path=input_path,
+        recursive=recursive,
+        recalc_timestamp=recalc_timestamp,
+        allow_cff=False,
     )
 
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
@@ -125,7 +128,10 @@ def dehint(
     This is a CLI for dehinter by Source Foundry: https://github.com/source-foundry/dehinter
     """
     fonts = get_fonts_in_path(
-        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp, allow_cff=False
+        input_path=input_path,
+        recursive=recursive,
+        recalc_timestamp=recalc_timestamp,
+        allow_cff=False,
     )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -295,7 +301,9 @@ def scale_upm(
     ttf-autohint' to hint the scaled fonts.
     """
 
-    fonts = get_fonts_in_path(input_path, recursive=recursive, allow_cff=False, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path, recursive=recursive, allow_cff=False, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -350,7 +358,10 @@ def rename_glyph(
     Renames a glyph.
     """
     fonts = get_fonts_in_path(
-        input_path=input_path, recursive=recursive, allow_cff=False, recalc_timestamp=recalc_timestamp
+        input_path=input_path,
+        recursive=recursive,
+        allow_cff=False,
+        recalc_timestamp=recalc_timestamp,
     )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return

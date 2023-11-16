@@ -31,16 +31,26 @@ class Logs:
     file_not_exists = "File does not exist: {file}"
     no_valid_fonts = "No valid fonts found: {input_path}"
     no_parameter = "Please, pass at least a valid parameter."
-    x_height_not_defined = "sxHeight is defined only in OS/2 version 2 and up. Current OS/2 version is {version}"
-    cap_height_not_defined = "sCapHeight is defined only in OS/2 version 2 and up. Current version is {os_2.version}"
-    max_context_not_defined = "usMaxContext is defined only in OS/2 version 2 and up. Current version is {os_2.version}"
+    x_height_not_defined = (
+        "sxHeight is defined only in OS/2 version 2 and up. Current OS/2 version is {version}"
+    )
+    cap_height_not_defined = (
+        "sCapHeight is defined only in OS/2 version 2 and up. Current version is {os_2.version}"
+    )
+    max_context_not_defined = (
+        "usMaxContext is defined only in OS/2 version 2 and up. Current version is {os_2.version}"
+    )
     bits_7_8_9_not_defined = (
         "{flag} flag can't be set. Bits 7, 8 and 9 are defined only in OS/2 version 4 and up. Current version is "
         "{version}"
     )
     not_monospaced = "Font is not monospaced: {file}"
-    postscript_name_too_long = "PostScript name is too long: {max} characters allowed, {current} found"
-    full_font_name_too_long = "Full font name is too long: {max} characters allowed, {current} found"
+    postscript_name_too_long = (
+        "PostScript name is too long: {max} characters allowed, {current} found"
+    )
+    full_font_name_too_long = (
+        "Full font name is too long: {max} characters allowed, {current} found"
+    )
     tiny_path_removed = "Tiny path removed from glyph: {glyph_name}"
 
 

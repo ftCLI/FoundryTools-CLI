@@ -28,7 +28,12 @@ class OTF2TTFRunner(object):
                 else:
                     ext = source_font.get_real_extension()
                     suffix = ".ttf"
-                file_name = file.name.replace(".otf", "").replace(".ttf", "").replace(".woff2", "").replace(".woff", "")
+                file_name = (
+                    file.name.replace(".otf", "")
+                    .replace(".ttf", "")
+                    .replace(".woff2", "")
+                    .replace(".woff", "")
+                )
 
                 output_file = Path(
                     makeOutputFileName(
@@ -113,7 +118,11 @@ class CFFToTrueType(object):
         for gname in glyphs.keys():
             glyph = glyphs[gname]
             ttPen = TTGlyphPen(glyphs)
-            cu2quPen = Cu2QuPen(ttPen, max_err=self.options.max_err, reverse_direction=self.options.reverse_direction)
+            cu2quPen = Cu2QuPen(
+                ttPen,
+                max_err=self.options.max_err,
+                reverse_direction=self.options.reverse_direction,
+            )
             glyph.draw(cu2quPen)
             quadGlyphs[gname] = ttPen.glyph()
         return quadGlyphs

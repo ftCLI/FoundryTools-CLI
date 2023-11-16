@@ -29,14 +29,22 @@ font_converter = click.Group("subcommands")
     type=click.FloatRange(0.0, 3.0),
     default=1.0,
     help="""
-    Conversion tolerance (0.0-3.0, default 1.0). Low tolerance adds more points but keeps shapes. High tolerance adds 
-    few points but may change shape.
+    Conversion tolerance (0.0-3.0, default 1.0). Low tolerance adds more points but keeps shapes.
+    High tolerance adds  few points but may change shape.
     """,
 )
 @click.option(
-    "--scale-upm", type=click.IntRange(16, 16384, max_open=True), help="Scale the units-per-em of converted fonts."
+    "--scale-upm",
+    type=click.IntRange(16, 16384, max_open=True),
+    help="Scale the units-per-em of converted fonts.",
 )
-@click.option("--no-subr", "subroutinize", is_flag=True, default=True, help="Do not subroutinize converted fonts.")
+@click.option(
+    "--no-subr",
+    "subroutinize",
+    is_flag=True,
+    default=True,
+    help="Do not subroutinize converted fonts.",
+)
 @click.option("--silent", "verbose", is_flag=True, default=True, help="Run in silent mode")
 @add_recursive_option()
 @add_common_options()
@@ -53,7 +61,8 @@ def ttf2otf(
     verbose: bool = True,
 ):
     """
-    Converts TTF fonts to OTF (or TrueType flavored woff/woff2 web fonts to PostScript flavored woff/woff2 web fonts).
+    Converts TTF fonts to OTF (or TrueType flavored woff/woff2 web fonts to PostScript flavored
+    woff/woff2 web fonts).
     """
     fonts = get_fonts_in_path(
         input_path=input_path,
@@ -98,7 +107,8 @@ def otf2ttf(
     overwrite: bool = True,
 ):
     """
-    Converts OTF fonts to TTF (or PostScripts flavored woff/woff2 web fonts to TrueType flavored woff/woff2 web fonts).
+    Converts OTF fonts to TTF (or PostScripts flavored woff/woff2 web fonts to TrueType flavored
+    woff/woff2 web fonts).
     """
     fonts = get_fonts_in_path(
         input_path=input_path,
@@ -127,8 +137,8 @@ def otf2ttf(
     is_flag=True,
     default=False,
     help="""
-    By default, the script exports all named instances. Use this option to select custom axis values for a single
-    instance.
+    By default, the script exports all named instances. Use this option to select custom axis values
+    for a single instance.
     """,
 )
 @click.option(
@@ -137,8 +147,8 @@ def otf2ttf(
     is_flag=True,
     default=True,
     help="""
-    By default, STAT table is dropped and axis nameIDs are deleted from name table. Use --no-cleanup to keep STAT table
-    and prevent axis nameIDs to be deleted from name table.
+    By default, STAT table is dropped and axis nameIDs are deleted from name table. Use --no-cleanup
+    to keep STAT table and prevent axis nameIDs to be deleted from name table.
     """,
 )
 @click.option(
@@ -147,7 +157,8 @@ def otf2ttf(
     is_flag=True,
     default=True,
     help="""
-    Prevent updating instantiated fonts `name` table. Input fonts must have a STAT table with Axis Value Tables.
+    Prevent updating instantiated fonts `name` table. Input fonts must have a STAT table with Axis
+    Value Tables.
     """,
 )
 @add_recursive_option()
@@ -192,19 +203,24 @@ def vf2i(
                 selected_coordinates = select_instance_coordinates(axes)
                 is_named_instance = selected_coordinates in [i.coordinates for i in instances]
                 if not is_named_instance:
-                    # Set update_name_table value to False because we won't find this Axis Value in the STAT table.
+                    # Set update_name_table value to False because we won't find this Axis Value in
+                    # the STAT table.
                     converter.options.update_name_table = False
                     selected_instance = NamedInstance()
                     selected_instance.coordinates = selected_coordinates
                 else:
-                    # In case there are several instances with the same coordinates, return only the first one.
+                    # In case there are several instances with the same coordinates, return only the
+                    # first one.
                     #
-                    # From https://learn.microsoft.com/en-us/typography/opentype/spec/fvar#instancerecord:
+                    # https://learn.microsoft.com/en-us/typography/opentype/spec/fvar#instancerecord
                     #
-                    # All the instance records in a font should have distinct coordinates and distinct
-                    # subfamilyNameID and postScriptName ID values. If two or more records share the same coordinates,
-                    # the same nameID values or the same postScriptNameID values, then all but the first can be ignored.
-                    selected_instance = [i for i in instances if i.coordinates == selected_coordinates][0]
+                    # All the instance records in a font should have distinct coordinates and
+                    # distinct subfamilyNameID and postScriptName ID values. If two or more records
+                    # share the same coordinates, the same nameID values or the same
+                    # postScriptNameID values, then all but the first can be ignored.
+                    selected_instance = [
+                        i for i in instances if i.coordinates == selected_coordinates
+                    ][0]
 
                 instances = [selected_instance]
 
@@ -221,8 +237,8 @@ def vf2i(
     "--flavor",
     type=click.Choice(choices=["woff", "woff2"]),
     help="""
-    By default, the script converts both woff and woff2 flavored web fonts to SFNT fonts (TrueType or OpenType). Use
-    this option to convert only woff or woff2 flavored web fonts.
+    By default, the script converts both woff and woff2 flavored web fonts to SFNT fonts (TrueType
+    or OpenType). Use this option to convert only woff or woff2 flavored web fonts.
     """,
 )
 @add_recursive_option()
@@ -277,8 +293,9 @@ def wf2ft(
     "--flavor",
     type=click.Choice(choices=["woff", "woff2"]),
     help="""
-    By default, the script converts SFNT fonts (TrueType or OpenType) both to woff and woff2 flavored web fonts. Use
-    this option to create only woff (--flavor woff) or woff2 (--flavor woff2) files.
+    By default, the script converts SFNT fonts (TrueType or OpenType) both to woff and woff2
+    flavored web fonts. Use this option to create only woff (--flavor woff) or woff2
+    (--flavor woff2) files.
     """,
 )
 @add_recursive_option()
@@ -297,7 +314,10 @@ def ft2wf(
     """
 
     fonts = get_fonts_in_path(
-        input_path=input_path, allow_extensions=[".otf", ".ttf"], recalc_timestamp=recalc_timestamp, recursive=recursive
+        input_path=input_path,
+        allow_extensions=[".otf", ".ttf"],
+        recalc_timestamp=recalc_timestamp,
+        recursive=recursive,
     )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return

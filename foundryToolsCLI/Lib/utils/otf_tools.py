@@ -34,7 +34,9 @@ def correct_otf_contours(font: TTFont, min_area: int = 25, verbose: bool = False
         path_2 = simplify_path(path=path_2, glyph_name=k, clockwise=False)
 
         if min_area > 0:
-            path_2 = remove_tiny_paths(path=path_2, glyph_name=k, min_area=min_area, verbose=verbose)
+            path_2 = remove_tiny_paths(
+                path=path_2, glyph_name=k, min_area=min_area, verbose=verbose
+            )
 
         if not same_path(path_1=path_1, path_2=path_2):
             modified.append(k)
@@ -52,4 +54,6 @@ def correct_otf_contours(font: TTFont, min_area: int = 25, verbose: bool = False
     font_info = cff_table.get_fb_font_info()
     private_dict = cff_table.get_fb_private_dict()
     fb = FontBuilder(font=font)
-    fb.setupCFF(psName=ps_name, fontInfo=font_info, privateDict=private_dict, charStringsDict=charstrings)
+    fb.setupCFF(
+        psName=ps_name, fontInfo=font_info, privateDict=private_dict, charStringsDict=charstrings
+    )

@@ -144,7 +144,9 @@ def ttf_components_overlap(glyph: _g_l_y_f.Glyph, glyph_set: _TTGlyphMapping) ->
 
     def _get_nth_component_path(index: int) -> pathops.Path:
         if index not in component_paths:
-            component_paths[index] = skia_path_from_glyph_component(glyph.components[index], glyph_set)
+            component_paths[index] = skia_path_from_glyph_component(
+                glyph.components[index], glyph_set
+            )
         return component_paths[index]
 
     return any(

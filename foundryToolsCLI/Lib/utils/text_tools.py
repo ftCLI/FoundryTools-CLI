@@ -2,7 +2,9 @@ from textwrap import TextWrapper
 from typing import Optional
 
 
-def wrap_string(string: str, width: int, initial_indent: int, indent: int, max_lines: Optional[int] = None) -> str:
+def wrap_string(
+    string: str, width: int, initial_indent: int, indent: int, max_lines: Optional[int] = None
+) -> str:
     """
     It wraps a string to a given width, with a given indentation
 

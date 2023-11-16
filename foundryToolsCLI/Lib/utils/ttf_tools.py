@@ -36,7 +36,11 @@ def correct_glyph_contours(
 ) -> bool:
     glyph = glyf_table[glyph_name]
 
-    if glyph.numberOfContours > 0 or glyph.isComposite() and ttf_components_overlap(glyph, glyph_set):
+    if (
+        glyph.numberOfContours > 0
+        or glyph.isComposite()
+        and ttf_components_overlap(glyph, glyph_set)
+    ):
         path_1 = skia_path_from_glyph(glyph_name, glyph_set)
         path_2 = skia_path_from_glyph(glyph_name, glyph_set)
         path_2 = simplify_path(path_2, glyph_name, clockwise=True)

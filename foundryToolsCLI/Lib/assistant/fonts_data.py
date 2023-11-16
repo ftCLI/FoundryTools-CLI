@@ -84,7 +84,9 @@ class FontsData(object):
                     us_weight_class = self.__get_key_from_value(weights, weight_string)
                     wgt, weight = weights.get(us_weight_class)
                 else:
-                    us_weight_class = self.__get_font_row(font, styles_mapping_data)["us_weight_class"]
+                    us_weight_class = self.__get_font_row(font, styles_mapping_data)[
+                        "us_weight_class"
+                    ]
                     wgt = self.__get_font_row(font, styles_mapping_data)["wgt"]
                     weight = self.__get_font_row(font, styles_mapping_data)["weight"]
                 row["us_weight_class"], row["wgt"], row["weight"] = (
@@ -102,7 +104,9 @@ class FontsData(object):
                     us_width_class = self.__get_key_from_value(widths, width_string)
                     wdt, width = widths.get(us_width_class)
                 else:
-                    us_width_class = self.__get_font_row(font, styles_mapping_data)["us_width_class"]
+                    us_width_class = self.__get_font_row(font, styles_mapping_data)[
+                        "us_width_class"
+                    ]
                     wdt = self.__get_font_row(font, styles_mapping_data)["wdt"]
                     width = self.__get_font_row(font, styles_mapping_data)["width"]
                 row["us_width_class"], row["wdt"], row["width"] = (
@@ -122,12 +126,18 @@ class FontsData(object):
                     keep_list=obliques,
                 )
                 slp = slope = None
-                if italic_string in [self.__normalize_string(str(word)) for word in italics] or font.is_italic:
+                if (
+                    italic_string in [self.__normalize_string(str(word)) for word in italics]
+                    or font.is_italic
+                ):
                     is_italic = "1"
                     slp, slope = italics
                 else:
                     is_italic = "0"
-                if oblique_string in [self.__normalize_string(str(word)) for word in obliques] or font.is_oblique:
+                if (
+                    oblique_string in [self.__normalize_string(str(word)) for word in obliques]
+                    or font.is_oblique
+                ):
                     is_oblique = "1"
                     slp, slope = obliques
                 else:
@@ -227,13 +237,17 @@ class FontsData(object):
             subfamily_name_ot = f"{subfamily_name_ot} {slope}"
             if not keep_weight_elidable:
                 if weight.lower() == weight_elidable.lower():
-                    subfamily_name_ot = subfamily_name_ot.replace(weight, "").replace("  ", " ").strip()
+                    subfamily_name_ot = (
+                        subfamily_name_ot.replace(weight, "").replace("  ", " ").strip()
+                    )
 
         # Remove the elidable weight, but only if it's not the only word left.
         if subfamily_name_ot.lower() != weight.lower():
             if not keep_weight_elidable:
                 if weight.lower() == weight_elidable.lower():
-                    subfamily_name_ot = subfamily_name_ot.replace(weight, "").replace("  ", " ").strip()
+                    subfamily_name_ot = (
+                        subfamily_name_ot.replace(weight, "").replace("  ", " ").strip()
+                    )
 
         # Build Windows family and subfamily names
         family_name_win = f"{family_name} {width} {weight}"
@@ -327,7 +341,11 @@ class FontsData(object):
 
         # Print a warning if PostScript Name is longer than 29 chars.
         if len(postscript_name) > MAX_POSTSCRIPT_NAME_LEN:
-            logger.warning(Logs.postscript_name_too_long, max=MAX_POSTSCRIPT_NAME_LEN, current=len(postscript_name))
+            logger.warning(
+                Logs.postscript_name_too_long,
+                max=MAX_POSTSCRIPT_NAME_LEN,
+                current=len(postscript_name),
+            )
 
         # Build the Full Font Name
         full_font_name = name_table.getDebugName(4)
@@ -357,7 +375,9 @@ class FontsData(object):
 
         # Print a warning if Full Font Name is longer than 31 chars.
         if len(full_font_name) > MAX_FULL_NAME_LEN:
-            logger.warning(Logs.full_font_name_too_long, max=MAX_FULL_NAME_LEN, current=len(full_font_name))
+            logger.warning(
+                Logs.full_font_name_too_long, max=MAX_FULL_NAME_LEN, current=len(full_font_name)
+            )
 
         # Build Unique Identifier
         ach_vend_id = str(os2_table.achVendID).replace(" ", "").strip("\x00")
@@ -423,7 +443,9 @@ class FontsData(object):
             # Weight and Slope literals shouldn't be here, so they are not shortened.
 
             # If nameID 16 is not equal to nameID 1, write it. Otherwise, delete it in case is present.
-            if name_id_16 != str(name_table.getName(nameID=1, platformID=3, platEncID=1, langID=0x409)):
+            if name_id_16 != str(
+                name_table.getName(nameID=1, platformID=3, platEncID=1, langID=0x409)
+            ):
                 name_table.add_name(font=font, name_id=16, string=name_id_16)
             else:
                 name_table.del_names(name_ids=[16])
@@ -440,7 +462,9 @@ class FontsData(object):
             if 17 in shorten_slope:
                 name_id_17 = name_id_17.replace(slope, slp)
             # If nameID 17 is not equal to nameID 2, write it. Otherwise, delete it in case is present.
-            if name_id_17 != str(name_table.getName(nameID=2, platformID=3, platEncID=1, langID=0x409)):
+            if name_id_17 != str(
+                name_table.getName(nameID=2, platformID=3, platEncID=1, langID=0x409)
+            ):
                 name_table.add_name(font=font, name_id=17, string=name_id_17)
             else:
                 name_table.del_names(name_ids=[17])
@@ -497,7 +521,9 @@ class FontsData(object):
                 for k in keep_list:
                     if word.lower() in k.lower():
                         if len(input_string) > 0:
-                            input_string = input_string.lower().replace(k.lower().replace(word.lower(), ""), k)
+                            input_string = input_string.lower().replace(
+                                k.lower().replace(word.lower(), ""), k
+                            )
         return input_string
 
     @staticmethod

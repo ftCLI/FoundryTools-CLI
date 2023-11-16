@@ -51,7 +51,9 @@ class VariableToStatic(object):
 
             if self.options.cleanup:
                 name_table: TableName = static_instance["name"]
-                name_ids_to_delete = variable_font.get_var_name_ids_to_delete() if self.options.cleanup else []
+                name_ids_to_delete = (
+                    variable_font.get_var_name_ids_to_delete() if self.options.cleanup else []
+                )
                 name_table.del_names(name_ids=name_ids_to_delete)
 
                 if "STAT" in static_instance:

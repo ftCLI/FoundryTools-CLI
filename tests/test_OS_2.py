@@ -40,7 +40,9 @@ class TableOS2Test(unittest.TestCase):
         self.assertEqual(table.get_vend_id(), "123 ")
 
     def test_flags(self):
-        source_file = pathlib.Path.joinpath(pathlib.Path.cwd(), "data", "IBMPlexSerif-BoldItalic.ttf")
+        source_file = pathlib.Path.joinpath(
+            pathlib.Path.cwd(), "data", "IBMPlexSerif-BoldItalic.ttf"
+        )
         font = Font(source_file)
         table: TableOS2 = font["OS/2"]
 
@@ -115,7 +117,9 @@ class TableOS2Test(unittest.TestCase):
         self.assertEqual(table.is_bitmap_embed_only_bit_set(), False)
 
     def test_embed_level(self):
-        source_file = pathlib.Path.joinpath(pathlib.Path.cwd(), "data", "IBMPlexSerif-BoldItalic.ttf")
+        source_file = pathlib.Path.joinpath(
+            pathlib.Path.cwd(), "data", "IBMPlexSerif-BoldItalic.ttf"
+        )
         font = Font(source_file)
         table: TableOS2 = font["OS/2"]
 

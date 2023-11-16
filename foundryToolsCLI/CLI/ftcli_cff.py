@@ -21,11 +21,17 @@ tbl_cff = click.Group("subcommands")
 
 @tbl_cff.command()
 @add_file_or_path_argument()
-@click.option("--full-name", "FullName", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] FullName")
-@click.option("--family-name", "FamilyName", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] FamilyName")
+@click.option(
+    "--full-name", "FullName", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] FullName"
+)
+@click.option(
+    "--family-name", "FamilyName", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] FamilyName"
+)
 @click.option("--weight", "Weight", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Weight")
 @click.option("--version", "version", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] version")
-@click.option("--copyright", "Copyright", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Copyright")
+@click.option(
+    "--copyright", "Copyright", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Copyright"
+)
 @click.option("--notice", "Notice", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Copyright")
 @add_recursive_option()
 @add_common_options()

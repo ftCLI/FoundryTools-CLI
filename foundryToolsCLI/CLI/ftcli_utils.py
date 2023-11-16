@@ -94,7 +94,9 @@ def del_table(
     Deletes the specified tables from the fonts.
     """
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -159,7 +161,10 @@ def del_table(
 @add_file_or_path_argument()
 @Timer(logger=logger.info)
 def font_organizer(
-    input_path: Path, sort_by_foundry: bool = False, sort_by_extension: bool = False, sort_by_version: bool = False
+    input_path: Path,
+    sort_by_foundry: bool = False,
+    sort_by_extension: bool = False,
+    sort_by_version: bool = False,
 ):
     """
     Sorts fonts in folders by family name and optionally by foundry, font revision and extension.
@@ -237,7 +242,9 @@ def font_renamer(input_path: Path, source: str, recursive: bool = False):
         file = Path(font.reader.file.name)
 
         if font.is_ttf and source in (4, 5):
-            logger.warning(f"Source 4 and 5 con be used for OTF files only. Using source=1 for {file.name}")
+            logger.warning(
+                f"Source 4 and 5 con be used for OTF files only. Using source=1 for {file.name}"
+            )
 
         old_file_name, old_file_extension = file.stem, file.suffix
         new_file_name = sanitize_filename(font.get_file_name(source=source), platform="auto")
@@ -247,11 +254,16 @@ def font_renamer(input_path: Path, source: str, recursive: bool = False):
             try:
                 output_file = Path(
                     makeOutputFileName(
-                        new_file_name, extension=new_file_extension, outputDir=file.parent, overWrite=False
+                        new_file_name,
+                        extension=new_file_extension,
+                        outputDir=file.parent,
+                        overWrite=False,
                     )
                 )
                 file.rename(output_file)
-                logger.opt(colors=True).success(f"{file.name} <magenta>--></> <cyan>{output_file.name}</>")
+                logger.opt(colors=True).success(
+                    f"{file.name} <magenta>--></> <cyan>{output_file.name}</>"
+                )
             except Exception as e:
                 logger.exception(e)
         else:
@@ -275,7 +287,9 @@ def rebuild(
     """
     Rebuilds fonts by converting to XML and then converting back to the original format
     """
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
 
@@ -311,8 +325,12 @@ def rebuild(
 @add_file_or_path_argument()
 @click.option("-major", type=click.IntRange(0, 999), help="Major version")
 @click.option("-minor", type=click.IntRange(0, 999), help="Minor version")
-@click.option("-ui", "--unique-identifier", is_flag=True, help="Recalculates nameID 3 (Unique identifier)")
-@click.option("-vs", "--version-string", is_flag=True, help="Recalculates nameID 5 (version string)")
+@click.option(
+    "-ui", "--unique-identifier", is_flag=True, help="Recalculates nameID 3 (Unique identifier)"
+)
+@click.option(
+    "-vs", "--version-string", is_flag=True, help="Recalculates nameID 5 (version string)"
+)
 @add_recursive_option()
 @add_common_options()
 @Timer(logger=logger.info)
@@ -340,7 +358,9 @@ def set_revision(
         logger.error("At least one parameter of -minor or -major must be passed")
         return
 
-    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp)
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
 
     if not initial_check_pass(fonts=fonts, output_dir=output_dir):
         return
@@ -382,7 +402,9 @@ def set_revision(
                     os2: TableOS2 = font["OS/2"]
                     vend_id = os2.get_vend_id()
                     ps_name = name_table.getDebugName(6)
-                    name_table.add_name(font, string=f"{new_font_revision};{vend_id};{ps_name}", name_id=3)
+                    name_table.add_name(
+                        font, string=f"{new_font_revision};{vend_id};{ps_name}", name_id=3
+                    )
 
                 if version_string:
                     name_table.add_name(font, string=f"Version {new_font_revision}", name_id=5)

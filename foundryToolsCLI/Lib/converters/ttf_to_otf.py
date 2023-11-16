@@ -23,7 +23,8 @@ class TTF2OTFRunner(object):
                 file = Path(source_font.reader.file.name)
                 logger.opt(colors=True).info(Logs.converting_file, file=file)
 
-                # If the source font is a WOFF or WOFF2, we add a suffix to avoid unwanted overwriting
+                # If the source font is a WOFF or WOFF2, we add a suffix to avoid unwanted
+                # overwriting
                 flavor = source_font.flavor
                 if flavor is None:
                     ext = ".otf"
@@ -31,7 +32,12 @@ class TTF2OTFRunner(object):
                 else:
                     ext = source_font.get_real_extension()
                     suffix = ".otf"
-                file_name = file.name.replace(".otf", "").replace(".ttf", "").replace(".woff2", "").replace(".woff", "")
+                file_name = (
+                    file.name.replace(".otf", "")
+                    .replace(".ttf", "")
+                    .replace(".woff2", "")
+                    .replace(".woff", "")
+                )
 
                 output_file = Path(
                     makeOutputFileName(
@@ -74,7 +80,8 @@ class TTF2OTFRunner(object):
                 ttf2otf_converter = TrueTypeToCFF(font=source_font)
                 cff_font: Font = ttf2otf_converter.run(charstrings=charstrings)
 
-                # We need to save the file here, otherwise the script won't correctly compile cff.topDictIndex values
+                # We need to save the file here, otherwise the script won't correctly compile
+                # cff.topDictIndex values
                 # TODO: this is a workaround. Try to find a solution
                 cff_font.save(output_file)
                 cff_font = Font(output_file, recalcTimestamp=False)

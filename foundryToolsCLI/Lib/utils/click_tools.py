@@ -36,7 +36,9 @@ def linked_styles_callback(
         return None
     value = tuple(sorted(set(value)))
     if len(value) != 2:
-        raise click.BadParameter(f"Expected 2 different values for --linked-styles, got {len(value)}")
+        raise click.BadParameter(
+            f"Expected 2 different values for --linked-styles, got {len(value)}"
+        )
     return value
 
 
@@ -53,7 +55,13 @@ def add_file_or_path_argument(dir_okay=True, file_okay=True):
     _file_or_path_argument = [
         click.argument(
             "input_path",
-            type=click.Path(exists=True, resolve_path=True, path_type=Path, dir_okay=dir_okay, file_okay=file_okay),
+            type=click.Path(
+                exists=True,
+                resolve_path=True,
+                path_type=Path,
+                dir_okay=dir_okay,
+                file_okay=file_okay,
+            ),
         )
     ]
     return add_options(_file_or_path_argument)
@@ -111,7 +119,8 @@ def add_common_options():
 
 def file_overwrite_prompt(input_file: Path) -> bool:
     return click.confirm(
-        f"{click.style(input_file, fg='yellow', bold=True)} already exists. " f"Do you want to overwrite it?"
+        f"{click.style(input_file, fg='yellow', bold=True)} already exists. "
+        f"Do you want to overwrite it?"
     )
 
 
