@@ -32,9 +32,7 @@ class VariableToStatic(object):
                 self.options.update_name_table = False
                 logger.warning("Cannot update name table since there are no STAT Axis Values")
 
-        for count, instance in enumerate(instances):
-            count += 1
-
+        for count, instance in enumerate(instances, start=1):
             logger.info(f"Exporting instance {count} of {len(instances)}")
 
             static_instance = instantiateVariableFont(
