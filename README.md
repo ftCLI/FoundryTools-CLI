@@ -9,6 +9,8 @@ and convert fonts. It takes advantage of the capabilities made available by othe
 * [ttfautohint-py](https://github.com/fonttools/ttfautohint-py)
 * [dehinter](https://github.com/source-foundry/dehinter)
 
+![image](https://github.com/ftCLI/FoundryTools-CLI/assets/83063506/f648829c-3e3c-45ee-be3e-b5f9b35b30f7)
+
 The command line interface is built with [click](https://github.com/pallets/click/) and tables are rendered by
 [rich](https://github.com/Textualize/rich).
 
