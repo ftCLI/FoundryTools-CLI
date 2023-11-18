@@ -51,14 +51,10 @@ class VariableToStatic(object):
 
             if self.options.cleanup:
                 name_table: TableName = static_instance["name"]
-                name_ids_to_delete = (
-                    variable_font.get_var_name_ids_to_delete() if self.options.cleanup else []
-                )
-                name_table.del_names(name_ids=name_ids_to_delete)
-
                 if "STAT" in static_instance:
                     del static_instance["STAT"]
-
+                name_table.removeUnusedNames(static_instance)
+                name_table.del_names(25)
                 static_instance.reorder_ui_name_ids()
 
             static_instance_name = sanitize_filename(variable_font.get_instance_file_name(instance))
