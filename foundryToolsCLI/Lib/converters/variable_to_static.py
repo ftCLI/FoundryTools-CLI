@@ -26,16 +26,16 @@ class VariableToStatic(object):
         if self.options.update_name_table:
             if "STAT" not in variable_font:
                 self.options.update_name_table = False
-                logger.warning("Cannot update name table if there is no STAT table.")
-            if not hasattr(variable_font["STAT"], "AxisValueArray"):
+                logger.warning("Cannot update name table since there is no STAT table.")
+            stat_table = variable_font["STAT"].table
+            if not stat_table.AxisValueArray:
                 self.options.update_name_table = False
-                logger.warning("Cannot update name table if there are no STAT Axis Values.")
+                logger.warning("Cannot update name table since there are no STAT Axis Values")
 
-        instance_count = 0
-        for instance in instances:
-            instance_count += 1
+        for count, instance in enumerate(instances):
+            count += 1
 
-            logger.info(f"Exporting instance {instance_count} of {len(instances)}")
+            logger.info(f"Exporting instance {count} of {len(instances)}")
 
             static_instance = instantiateVariableFont(
                 varfont=variable_font,
@@ -51,14 +51,10 @@ class VariableToStatic(object):
 
             if self.options.cleanup:
                 name_table: TableName = static_instance["name"]
-                name_ids_to_delete = (
-                    variable_font.get_var_name_ids_to_delete() if self.options.cleanup else []
-                )
-                name_table.del_names(name_ids=name_ids_to_delete)
-
                 if "STAT" in static_instance:
                     del static_instance["STAT"]
-
+                name_table.removeUnusedNames(static_instance)
+                name_table.del_names(25)
                 static_instance.reorder_ui_name_ids()
 
             static_instance_name = sanitize_filename(variable_font.get_instance_file_name(instance))
