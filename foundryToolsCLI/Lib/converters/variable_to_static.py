@@ -52,7 +52,7 @@ class VariableToStatic(object):
                 if "STAT" in static_instance:
                     del static_instance["STAT"]
                 name_table.removeUnusedNames(static_instance)
-                name_table.del_names(25)
+                name_table.del_names(name_ids=[25])
                 static_instance.reorder_ui_name_ids()
 
             static_instance_name = sanitize_filename(variable_font.get_instance_file_name(instance))
