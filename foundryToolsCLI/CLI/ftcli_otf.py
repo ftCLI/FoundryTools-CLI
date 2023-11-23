@@ -4,6 +4,7 @@ from typing import Optional, List
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
+from rich.pretty import pprint
 
 from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, initial_check_pass
@@ -546,6 +547,97 @@ def check_outlines(
                 font.save(output_file)
 
             logger.success(Logs.file_saved, file=output_file)
+
+        except Exception as e:
+            logger.exception(e)
+        finally:
+            font.close()
+
+
+@otf_tools.command()
+@add_file_or_path_argument()
+@add_recursive_option()
+@add_common_options()
+@Timer(logger=logger.info)
+def recalc_zones(
+    input_path: Path,
+    recursive: bool = False,
+    output_dir: Optional[Path] = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
+    """
+    Recalculates the alignment zones of the font.
+    """
+    from afdko.otfautohint.__main__ import stemhist
+
+    fonts = get_fonts_in_path(
+        input_path=input_path,
+        recursive=recursive,
+        recalc_timestamp=recalc_timestamp,
+        allow_ttf=False,
+    )
+
+    for font in fonts:
+        try:
+            file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
+
+            p_x_min = font.get_glyph_bounds("p")["yMin"]
+            print(p_x_min)
+            g_x_min = font.get_glyph_bounds("g")["yMin"]
+            print(g_x_min)
+            return
+
+            zones_file_name = "zones"
+            stems_file_name = "stems"
+
+            zones_base_path = (file.parent / zones_file_name)
+            stems_file_path = (file.parent / stems_file_name)
+
+            top_zones_file_path = zones_base_path.with_suffix(".top.txt")
+            bottom_zones_file_path = zones_base_path.with_suffix(".bot.txt")
+
+            horizontal_stems_file_path = stems_file_path.with_suffix(".hstm.txt")
+            vertical_stems_file_path = stems_file_path.with_suffix(".vstm.txt")
+
+            stemhist(
+                args=[
+                    file.as_posix(),
+                    "-z",
+                    "-g", "a-z",
+                    "-o", zones_base_path.as_posix()
+                ]
+            )
+            # stemhist(
+            #     args=[
+            #         file.as_posix(),
+            #         # "-g", "A-Z,a-z,zero-nine",
+            #         "-o", stems_file_path.as_posix()
+            #     ]
+            # )
+
+            with open(bottom_zones_file_path, "r") as f:
+                stemhist_top_content = f.read()
+                # Remove the first two lines and the last line
+                stemhist_top_content = "\n".join(stemhist_top_content.split("\n")[2:-1])
+                lines = stemhist_top_content.split("\n")
+                content = []
+                for line in lines:
+                    count = int(line[0:5].strip())
+                    height = int(line[6:14].strip())
+                    content.append({"count": count, "height": height})
+
+                # Sort by count
+                content = sorted(content, key=lambda k: k["count"], reverse=True)
+                pprint(content)
+                # Sort by height
+                content = sorted(content, key=lambda k: k["height"], reverse=True)
+                pprint(content)
+
+            # font.save(output_file)
+            # logger.success(Logs.file_saved, file=output_file)
 
         except Exception as e:
             logger.exception(e)
