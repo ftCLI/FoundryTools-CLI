@@ -553,6 +553,7 @@ def check_outlines(
         finally:
             font.close()
 
+
 cli = click.CommandCollection(
     sources=[otf_tools],
     help="""
