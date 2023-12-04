@@ -17,6 +17,8 @@ from foundryToolsCLI.Lib.tables.hhea import TableHhea
 from foundryToolsCLI.Lib.tables.name import TableName
 from foundryToolsCLI.Lib.tables.post import TablePost
 from foundryToolsCLI.Lib.utils.otf_tools import correct_otf_contours
+from foundryToolsCLI.Lib.utils.ps_recalc_zones import recalc_zones
+from foundryToolsCLI.Lib.utils.ps_recalc_stems import recalc_stems
 from foundryToolsCLI.Lib.utils.ttf_tools import correct_ttf_contours, decomponentize
 
 
@@ -504,6 +506,55 @@ class Font(TTFont):
 
     def otf_fix_contours(self, min_area: int = 25, verbose: bool = False) -> None:
         correct_otf_contours(font=self, min_area=min_area, verbose=verbose)
+
+    def otf_recalc_zones(self) -> t.Optional[t.Tuple[t.List[int], t.List[int]]]:
+        """
+        This function recalculates the zones of an OpenType font.
+        """
+        if not self.is_otf:
+            return
+
+        zones = recalc_zones(font=self)
+        return zones
+
+    def otf_recalc_stems(self) -> t.Tuple[int, int]:
+        """
+        This function recalculates the stems of an OpenType font.
+        """
+        if not self.is_otf:
+            raise ValueError("The font is not an OpenType font.")
+        if not hasattr(self.reader, "file"):
+            raise ValueError("The font is not a file-backed font.")
+
+        stems = recalc_stems(file_path=Path(self.reader.file.name))
+        return stems
+
+    def set_zones(self, other_blues: t.List[int], blue_values: t.List[int]) -> None:
+        """
+        Set zones for a font.
+
+        :param other_blues: Other blues.
+        :param blue_values: Blue values.
+        """
+        if not self.is_otf:
+            raise NotImplementedError("Setting zones is only supported for PostScript fonts.")
+
+        self["CFF "].cff.topDictIndex[0].Private.BlueValues = blue_values
+        self["CFF "].cff.topDictIndex[0].Private.OtherBlues = other_blues
+
+    def set_stems(self, std_h_w: int, std_v_w: int) -> None:
+        """
+        Set stems for a font.
+
+        :param std_h_w: StdHW.
+        :param std_v_w: StdVW.
+        """
+        if not self.is_otf:
+            raise NotImplementedError("Setting stems is only supported for PostScript fonts.")
+
+        self["CFF "].cff.topDictIndex[0].Private.StdHW = std_h_w
+        self["CFF "].cff.topDictIndex[0].Private.StdVW = std_v_w
+
 
     def ttf_fix_contours(
         self, min_area: int = 25, remove_hinting: bool = True, verbose: bool = False
