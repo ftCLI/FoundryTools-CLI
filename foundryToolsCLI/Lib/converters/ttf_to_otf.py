@@ -86,8 +86,15 @@ class TTF2OTFRunner(object):
                 cff_font.save(output_file)
                 cff_font = Font(output_file, recalcTimestamp=False)
                 cff_font.otf_fix_contours(min_area=25, verbose=False)
+
                 if self.options.subroutinize:
                     cff_font.otf_subroutinize()
+
+                other_blues, blue_values = cff_font.otf_recalc_zones()
+                cff_font.set_zones(other_blues=other_blues, blue_values=blue_values)
+                std_h_w, std_v_w = cff_font.otf_recalc_stems()
+                cff_font.set_stems(std_h_w=std_h_w, std_v_w=std_v_w)
+
                 cff_font.save(output_file)
                 cff_font.close()
 

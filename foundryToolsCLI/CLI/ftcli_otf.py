@@ -4,6 +4,7 @@ from typing import Optional, List
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
+from rich.pretty import pprint
 
 from foundryToolsCLI.Lib.Font import Font
 from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, initial_check_pass
