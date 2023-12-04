@@ -137,6 +137,28 @@ def fix_lists_overlaps(lists: t.List[t.List[float]]) -> t.List[t.List[float]]:
     return lists
 
 
+def fix_min_separation_limits(lists: t.List[t.List[float]]) -> t.List[t.List[float]]:
+    """
+    Fixes the minimum separation between zones.
+
+    Args:
+        lists (List[List[float]]): A list of lists of floats.
+
+    Returns:
+        List[List[float]]: The input list with the minimum separation between zones fixed.
+    """
+    for i in range(len(lists) - 1):
+        if lists[i + 1][0] - lists[i][1] < 3:
+            # If the difference between the two values is less than 3, then
+            # set the second value to the first value
+            if lists[i + 1][1] - lists[i][1] > 3:
+                lists[i + 1][0] = lists[i + 1][1]
+            else:
+                # Remove the second list
+                lists.pop(i + 1)
+    return lists
+
+
 def calculate_zone(
     font: TTFont, glyph_names: t.List[str], min_or_max: t.Literal["yMin", "yMax"]
 ) -> t.List[float]:
@@ -210,8 +232,12 @@ def recalc_zones(
     zones = sorted([descender_zone, baseline_zone, x_height_zone, uppercase_zone, ascender_zone])
     if lists_overlaps(zones):
         zones = fix_lists_overlaps(zones)
+    zones = fix_min_separation_limits(zones)
 
     other_blues = [int(v) for v in zones[0]]
-    blue_values = [int(v) for v in zones[1] + zones[2] + zones[3] + zones[4]]
+
+    blue_values = []
+    for zone in zones[1:]:
+        blue_values.extend([int(v) for v in zone])
 
     return other_blues, blue_values
