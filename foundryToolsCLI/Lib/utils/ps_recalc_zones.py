@@ -4,9 +4,9 @@ from collections import Counter
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.ttLib.ttFont import TTFont
 
-UPPERCASE_LETTERS = [chr(i) for i in range(65, 91)]
+UPPERCASE_LETTERS = [chr(i) for i in range(65, 91)]  # A-Z
 UPPERCASE_DESCENDERS = ["J", "Q"]
-LOWERCASE_LETTERS = [chr(i) for i in range(97, 123)]
+LOWERCASE_LETTERS = [chr(i) for i in range(97, 123)]  # a-z
 LOWERCASE_DESCENDERS = ["f", "g", "j", "p", "q", "y"]
 LOWERCASE_ASCENDERS = ["b", "d", "f", "h", "k", "l", "t"]
 
@@ -21,7 +21,7 @@ UPPERCASE_GLYPHS = UPPERCASE_LETTERS
 ASCENDER_GLYPHS = list(set(LOWERCASE_ASCENDERS) - {"t"})
 
 
-__all__ = ["recalc_zones"]
+__all__ = ["recalc_zones", "GlyphBounds"]
 
 
 class GlyphBounds(t.TypedDict):
@@ -137,6 +137,29 @@ def fix_lists_overlaps(lists: t.List[t.List[float]]) -> t.List[t.List[float]]:
     return lists
 
 
+def fix_min_separation_limits(lists: t.List[t.List[float]], limit: int) -> t.List[t.List[float]]:
+    """
+    Fixes the minimum separation between zones.
+
+    Args:
+        lists (List[List[float]]): A list of lists of floats.
+        limit (int): The minimum separation between zones.
+
+    Returns:
+        List[List[float]]: The input list with the minimum separation between zones fixed.
+    """
+    for i in range(len(lists) - 1):
+        if lists[i + 1][0] - lists[i][1] < limit:
+            # If the difference between the two values is less than 3, then
+            # set the second value to the first value
+            if lists[i + 1][1] - lists[i][1] > limit:
+                lists[i + 1][0] = lists[i + 1][1]
+            else:
+                # Remove the second list
+                lists.pop(i + 1)
+    return lists
+
+
 def calculate_zone(
     font: TTFont, glyph_names: t.List[str], min_or_max: t.Literal["yMin", "yMax"]
 ) -> t.List[float]:
@@ -211,7 +234,13 @@ def recalc_zones(
     if lists_overlaps(zones):
         zones = fix_lists_overlaps(zones)
 
+    min_separation = font["CFF "].cff.topDictIndex[0].Private.BlueFuzz * 2 + 1
+    zones = fix_min_separation_limits(zones, limit=min_separation)
+
     other_blues = [int(v) for v in zones[0]]
-    blue_values = [int(v) for v in zones[1] + zones[2] + zones[3] + zones[4]]
+
+    blue_values = []
+    for zone in zones[1:]:
+        blue_values.extend([int(v) for v in zone])
 
     return other_blues, blue_values
