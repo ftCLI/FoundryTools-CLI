@@ -4,9 +4,9 @@ from collections import Counter
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.ttLib.ttFont import TTFont
 
-UPPERCASE_LETTERS = [chr(i) for i in range(65, 91)]
+UPPERCASE_LETTERS = [chr(i) for i in range(65, 91)]  # A-Z
 UPPERCASE_DESCENDERS = ["J", "Q"]
-LOWERCASE_LETTERS = [chr(i) for i in range(97, 123)]
+LOWERCASE_LETTERS = [chr(i) for i in range(97, 123)]  # a-z
 LOWERCASE_DESCENDERS = ["f", "g", "j", "p", "q", "y"]
 LOWERCASE_ASCENDERS = ["b", "d", "f", "h", "k", "l", "t"]
 
@@ -21,7 +21,7 @@ UPPERCASE_GLYPHS = UPPERCASE_LETTERS
 ASCENDER_GLYPHS = list(set(LOWERCASE_ASCENDERS) - {"t"})
 
 
-__all__ = ["recalc_zones"]
+__all__ = ["recalc_zones", "GlyphBounds"]
 
 
 class GlyphBounds(t.TypedDict):
@@ -137,21 +137,22 @@ def fix_lists_overlaps(lists: t.List[t.List[float]]) -> t.List[t.List[float]]:
     return lists
 
 
-def fix_min_separation_limits(lists: t.List[t.List[float]]) -> t.List[t.List[float]]:
+def fix_min_separation_limits(lists: t.List[t.List[float]], limit: int) -> t.List[t.List[float]]:
     """
     Fixes the minimum separation between zones.
 
     Args:
         lists (List[List[float]]): A list of lists of floats.
+        limit (int): The minimum separation between zones.
 
     Returns:
         List[List[float]]: The input list with the minimum separation between zones fixed.
     """
     for i in range(len(lists) - 1):
-        if lists[i + 1][0] - lists[i][1] < 3:
+        if lists[i + 1][0] - lists[i][1] < limit:
             # If the difference between the two values is less than 3, then
             # set the second value to the first value
-            if lists[i + 1][1] - lists[i][1] > 3:
+            if lists[i + 1][1] - lists[i][1] > limit:
                 lists[i + 1][0] = lists[i + 1][1]
             else:
                 # Remove the second list
@@ -232,7 +233,9 @@ def recalc_zones(
     zones = sorted([descender_zone, baseline_zone, x_height_zone, uppercase_zone, ascender_zone])
     if lists_overlaps(zones):
         zones = fix_lists_overlaps(zones)
-    zones = fix_min_separation_limits(zones)
+
+    min_separation = font["CFF "].cff.topDictIndex[0].Private.BlueFuzz * 2 + 1
+    zones = fix_min_separation_limits(zones, limit=min_separation)
 
     other_blues = [int(v) for v in zones[0]]
 
