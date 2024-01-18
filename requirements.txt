@@ -3,7 +3,7 @@ afdko==4.0.1
 fonttools==4.47.2
 brotli==1.1.0
 click==8.1.7
-cffsubr==0.2.9.post1
+cffsubr==0.3.0
 dehinter==4.0.0
 loguru==0.7.2
 pathvalidate==3.2.0
