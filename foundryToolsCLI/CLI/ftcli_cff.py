@@ -33,6 +33,7 @@ tbl_cff = click.Group("subcommands")
     "--copyright", "Copyright", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Copyright"
 )
 @click.option("--notice", "Notice", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] Copyright")
+@click.option("--unique-id", "UniqueID", is_flag=True, help="Deletes CFF.cff.topDictIndex[0] UniqueID")
 @add_recursive_option()
 @add_common_options()
 @Timer(logger=logger.info)
