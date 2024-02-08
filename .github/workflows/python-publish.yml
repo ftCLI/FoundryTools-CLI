@@ -33,7 +33,7 @@ jobs:
     - name: Build package
       run: python -m build
     - name: Publish package
-      uses: pypa/gh-action-pypi-publish@3f824c73d94f6ad4925913f56d31c29caba41990
+      uses: pypa/gh-action-pypi-publish@0580fcbb84c80ef2e629d60092942af2de59e8a7
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
