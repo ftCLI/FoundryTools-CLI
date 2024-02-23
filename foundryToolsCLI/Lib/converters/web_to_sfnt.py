@@ -38,7 +38,7 @@ class WF2FTRunner(object):
                     )
                 )
 
-                font.save(output_file)
+                font.save(output_file, reorderTables=False)
                 logger.success(Logs.file_saved, file=output_file)
 
             except Exception as e:
