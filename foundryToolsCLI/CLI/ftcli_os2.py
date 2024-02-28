@@ -124,6 +124,51 @@ def recalc_cap_height(
 @add_recursive_option()
 @add_common_options()
 @Timer(logger=logger.info)
+def recalc_avg_width(
+    input_path: Path,
+    recursive: bool = False,
+    recalc_timestamp: bool = False,
+    output_dir: Optional[Path] = None,
+    overwrite: bool = True,
+):
+    """
+    Recalculates xAvgCharWidth value.
+    """
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
+    if not initial_check_pass(fonts=fonts, output_dir=output_dir):
+        return
+
+    for font in fonts:
+        try:
+            file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            logger.opt(colors=True).info(Logs.current_file, file=file)
+
+            os_2: TableOS2 = font["OS/2"]
+
+            current = os_2.xAvgCharWidth
+            avg_char_width = font.recalc_avg_char_width()
+            if current == avg_char_width:
+                logger.skip(Logs.file_not_changed, file=file)
+                continue
+
+            os_2.xAvgCharWidth = avg_char_width
+            font.save(output_file)
+            logger.success(Logs.file_saved, file=output_file)
+
+        except Exception as e:
+            logger.exception(e)
+        finally:
+            font.close()
+
+
+@tbl_os2.command()
+@add_file_or_path_argument()
+@add_recursive_option()
+@add_common_options()
+@Timer(logger=logger.info)
 def recalc_max_context(
     input_path: Path,
     recursive: bool = False,
