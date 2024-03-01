@@ -35,6 +35,7 @@ from foundryToolsCLI.Lib.utils.timer import Timer
 )
 @click.option(
     "--fixed-pitch/--no-fixed-pitch",
+    is_flag=True,
     default=None,
     help="""Sets or clears the `isFixedPitch` value.""",
 )
@@ -54,7 +55,7 @@ def cli(
 ):
     """A command line tool to manipulate the 'post' table."""
 
-    if not any([italic_angle, ul_position, ul_thickness, fixed_pitch]):
+    if not any([italic_angle, ul_position, ul_thickness, fixed_pitch]) is not None:
         logger.error(Logs.no_parameter)
         return
 
