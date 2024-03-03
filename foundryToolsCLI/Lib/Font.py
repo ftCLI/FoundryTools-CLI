@@ -359,7 +359,6 @@ class Font(TTFont):
         return self.get_glyph_bounds("H")["yMax"]
 
     def recalc_avg_char_width(self) -> int:
-        avg_char_width = 0
         avg_char_width = self["OS/2"].recalcAvgCharWidth(self)
         return avg_char_width
 
