@@ -86,6 +86,8 @@ class TTF2OTFRunner(object):
                 cff_font.save(output_file)
                 cff_font = Font(output_file, recalcTimestamp=False)
                 cff_font.otf_fix_contours(min_area=25, verbose=False)
+                cff_font.recalc_avg_char_width()
+                cff_font.recalc_max_context()
 
                 if self.options.subroutinize:
                     cff_font.otf_subroutinize()
