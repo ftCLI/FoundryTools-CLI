@@ -1016,8 +1016,8 @@ class Font(TTFont):
                 else:
                     return 0
             except KeyError:
-                pass
-            return 0
+                continue
+        raise ValueError("The font does not contain the glyph 'H' or 'uni0048'.")
 
     def check_italic_angle(self, min_slant: float = 2.0) -> bool:
         # Allow .1 degrees tolerance
