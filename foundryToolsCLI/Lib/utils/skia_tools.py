@@ -7,6 +7,7 @@ from fontTools.pens.t2CharStringPen import T2CharStringPen, T2CharString
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib import ttFont
 from fontTools.ttLib.tables import _g_l_y_f
+from fontTools.ttLib.ttGlyphSet import _TTGlyphSet
 
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
 
@@ -166,3 +167,19 @@ def skia_path_from_glyph_component(component: _g_l_y_f.GlyphComponent, glyph_set
     base_glyph_name, transformation = component.getComponentInfo()
     path = skia_path_from_glyph(base_glyph_name, glyph_set)
     return path.transform(*transformation)
+
+
+def is_empty_glyph(glyph_set: _TTGlyphSet, glyph_name: str) -> bool:
+    """
+    Returns True if the glyph is empty.
+
+    Parameters:
+        glyph_set (_TTGlyphSet): The glyph set.
+        glyph_name (str): The name of the glyph.
+
+    Returns:
+        bool: True if the glyph is empty.
+    """
+
+    path = skia_path_from_glyph(glyph_name=glyph_name, glyph_set=glyph_set)
+    return path.area == 0

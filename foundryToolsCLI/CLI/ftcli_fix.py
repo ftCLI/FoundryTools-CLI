@@ -1,10 +1,15 @@
-from typing import Optional
+from typing import Any, Dict, Optional, Union
 
 from copy import deepcopy
 from pathlib import Path
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
+from fontTools.misc.psCharStrings import T2CharString
+from fontTools.pens.t2CharStringPen import T2CharStringPen
+from fontTools.pens.ttGlyphPen import TTGlyphPen
+from fontTools.ttLib.tables._g_l_y_f import Glyph
+from fontTools.ttLib.ttGlyphSet import _TTGlyphSetCFF, _TTGlyphSetGlyf
 
 from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.tables.hhea import TableHhea
@@ -17,9 +22,170 @@ from foundryToolsCLI.Lib.utils.click_tools import (
     add_common_options,
 )
 from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.skia_tools import is_empty_glyph
 from foundryToolsCLI.Lib.utils.timer import Timer
 
 fix_fonts = click.Group("subcommands")
+
+
+@fix_fonts.command()
+@add_file_or_path_argument()
+@add_recursive_option()
+@add_common_options()
+@Timer(logger=logger.info)
+def empty_notdef(
+    input_path: Path,
+    recursive: bool = False,
+    output_dir: Optional[Path] = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
+    """
+    Fix empty .notdef glyph.
+
+    Draw a simple rectangle to fill the empty .notdef glyph.
+
+    Rationale:
+
+    Glyph 0 must be assigned to a .notdef glyph. The .notdef glyph is very important for providing
+    the user feedback that a glyph is not found in the font. This glyph should not be left without
+    an outline as the user will only see what looks like a space if a glyph is missing and not be
+    aware of the active font’s limitation.
+
+    Fixing procedure:
+
+    * Draw a simple rectangle to fill the empty .notdef glyph
+    """
+
+    def _draw_empty_notdef_cff(
+            glyph_set: _TTGlyphSetCFF, width: int, height: int, thickness: int
+    ) -> T2CharString:
+        """
+        Draws an empty .notdef glyph in a CFF font.
+
+        Parameters:
+            glyph_set (_TTGlyphSetCFF): The glyph set to which the .notdef glyph belongs.
+            width (int): The width of the .notdef glyph.
+            height (int): The height of the .notdef glyph.
+            thickness (int): The thickness of the .notdef glyph.
+
+        Returns:
+            None
+        """
+
+        pen = T2CharStringPen(width=width, glyphSet=glyph_set)
+        notdef_glyph = glyph_set[".notdef"]
+
+        # Draw the outer contour (clockwise)
+        pen.moveTo((0, 0))
+        pen.lineTo((width, 0))
+        pen.lineTo((width, height))
+        pen.lineTo((0, height))
+        pen.closePath()
+
+        # Draw the inner contour (counterclockwise)
+        pen.moveTo((thickness, thickness))
+        pen.lineTo((thickness, height - thickness))
+        pen.lineTo((width - thickness, height - thickness))
+        pen.lineTo((width - thickness, thickness))
+        pen.closePath()
+
+        notdef_glyph.draw(pen)
+        charstring = pen.getCharString()
+        charstring.compile()
+        return charstring
+
+    def _draw_empty_notdef_glyf(
+            glyph_set: Union[Dict[str, Any], _TTGlyphSetGlyf], width: int, height: int,
+            thickness: int
+    ) -> Glyph:
+        """
+        Draws an empty .notdef glyph in a glyf font.
+
+        Parameters:
+            glyph_set (_TTGlyphSetGlyf): The glyph set to which the .notdef glyph belongs.
+            width (int): The width of the .notdef glyph.
+            height (int): The height of the .notdef glyph.
+            thickness (int): The thickness of the .notdef glyph.
+
+        Returns:
+            None
+        """
+        pen = TTGlyphPen(glyphSet=glyph_set)
+        notdef_glyph = glyph_set['.notdef']
+
+        # Draw the outer contour (clockwise)
+        pen.moveTo((0, 0))
+        pen.lineTo((0, height))
+        pen.lineTo((width, height))
+        pen.lineTo((width, 0))
+        pen.closePath()
+
+        # Draw the inner contour (clockwise)
+        pen.moveTo((thickness, thickness))
+        pen.lineTo((width - thickness, thickness))
+        pen.lineTo((width - thickness, height - thickness))
+        pen.lineTo((thickness, height - thickness))
+        pen.closePath()
+
+        notdef_glyph.draw(pen)
+        return pen.glyph()
+
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
+    if not initial_check_pass(fonts=fonts, output_dir=output_dir):
+        return
+
+    for font in fonts:
+        try:
+            file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+
+            logger.opt(colors=True).info(Logs.checking_file, file=file)
+
+            glyph_set = font.getGlyphSet()
+
+            if ".notdef" not in glyph_set:
+                logger.warning("Font does not contain a .notdef glyph")
+                logger.skip(Logs.file_not_changed, file=file)
+                continue
+
+            if not is_empty_glyph(glyph_set=glyph_set, glyph_name='.notdef'):
+                logger.warning("The .notdef glyph is not empty")
+                logger.skip(Logs.file_not_changed, file=file)
+                continue
+
+            width = round(font['head'].unitsPerEm / 1000 * 600)
+            # The sCapHeight attribute is defined in the OS/2 version 2 and later. If the attribute
+            # is not present, the height is calculated as a percentage of the width.
+            try:
+                height = font["OS/2"].sCapHeight
+            except AttributeError:
+                height = round(width * 1.25)
+            thickness = round(width / 10)
+
+            if font.is_otf:
+                cff_table = font["CFF "]
+                charstring = _draw_empty_notdef_cff(
+                    glyph_set=glyph_set, width=width, height=height, thickness=thickness
+                )
+                cff_table.cff.topDictIndex[0].CharStrings[".notdef"].bytecode = charstring.bytecode
+
+            else:
+                glyph = _draw_empty_notdef_glyf(
+                    glyph_set=glyph_set, width=width, height=height, thickness=thickness
+                )
+                font["glyf"][".notdef"] = glyph
+
+            font["hmtx"][".notdef"] = (width, 0)
+            font.save(output_file)
+            logger.success(Logs.file_saved, file=output_file)
+
+        except Exception as e:
+            logger.exception(e)
+        finally:
+            font.close()
 
 
 @fix_fonts.command()
