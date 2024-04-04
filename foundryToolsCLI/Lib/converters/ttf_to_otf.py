@@ -91,14 +91,19 @@ class TTF2OTFRunner(object):
                 if self.options.subroutinize:
                     cff_font.otf_subroutinize()
 
-                other_blues, blue_values = cff_font.otf_recalc_zones()
-                cff_font.set_zones(other_blues=other_blues, blue_values=blue_values)
-                std_h_w, std_v_w = cff_font.otf_recalc_stems()
-                cff_font.set_stems(std_h_w=std_h_w, std_v_w=std_v_w)
+                try:
+                    other_blues, blue_values = cff_font.otf_recalc_zones()
+                    cff_font.set_zones(other_blues=other_blues, blue_values=blue_values)
+                except Exception as e:
+                    logger.warning(f"Failed to recalculate zones: {e}")
+                try:
+                    std_h_w, std_v_w = cff_font.otf_recalc_stems()
+                    cff_font.set_stems(std_h_w=std_h_w, std_v_w=std_v_w)
+                except Exception as e:
+                    logger.warning(f"Failed to recalculate stems: {e}")
 
                 cff_font.save(output_file)
                 cff_font.close()
-
                 logger.success(Logs.file_saved, file=output_file)
 
             except Exception as e:
