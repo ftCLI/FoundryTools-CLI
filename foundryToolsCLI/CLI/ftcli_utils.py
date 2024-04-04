@@ -331,6 +331,18 @@ def rebuild(
 @click.option(
     "-vs", "--version-string", is_flag=True, help="Recalculates nameID 5 (version string)"
 )
+@click.option(
+    "-p",
+    "--platform-id",
+    type=click.Choice(choices=["1", "3"]),
+    callback=choice_to_int_callback,
+    help="""
+    platformID of the NameRecord to add (1: Macintosh, 3: Windows).
+
+    When recalculating Unique identifier and/or Version string, update only the NameRecords matching
+    the specified platformID.
+    """,
+)
 @add_recursive_option()
 @add_common_options()
 @Timer(logger=logger.info)
@@ -340,6 +352,7 @@ def set_revision(
     minor: t.Optional[int] = None,
     unique_identifier: bool = False,
     version_string: bool = False,
+    platform_id: int = None,
     recursive: bool = False,
     output_dir: t.Optional[Path] = None,
     recalc_timestamp: bool = False,
@@ -403,11 +416,19 @@ def set_revision(
                     vend_id = os2.get_vend_id()
                     ps_name = name_table.getDebugName(6)
                     name_table.add_name(
-                        font, string=f"{new_font_revision};{vend_id};{ps_name}", name_id=3
+                        font,
+                        string=f"{new_font_revision};{vend_id};{ps_name}",
+                        name_id=3,
+                        platform_id=platform_id,
                     )
 
                 if version_string:
-                    name_table.add_name(font, string=f"Version {new_font_revision}", name_id=5)
+                    name_table.add_name(
+                        font,
+                        string=f"Version {new_font_revision}",
+                        name_id=5,
+                        platform_id=platform_id,
+                    )
 
                 if name_table_copy.compile(font) != name_table.compile(font):
                     has_changed = True
