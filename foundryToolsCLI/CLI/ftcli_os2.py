@@ -591,116 +591,6 @@ def set_version(
 @tbl_os2.command()
 @add_file_or_path_argument()
 @click.option(
-    "-w",
-    "--weight",
-    type=click.IntRange(1, 1000),
-    prompt="New usWeightClass value",
-    required=True,
-    help="usWeightClass value.",
-)
-@add_recursive_option()
-@add_common_options()
-@Timer(logger=logger.info)
-def set_weight(
-    input_path: Path,
-    weight: int,
-    recursive: bool = False,
-    output_dir: Optional[Path] = None,
-    recalc_timestamp: bool = False,
-    overwrite: bool = True,
-):
-    """
-    Sets the Weight class value.
-
-    usWeightClass indicates the visual weight (degree of blackness or thickness of strokes) of the characters in the
-    font. Values from 1 to 1000 are valid.
-    """
-    fonts = get_fonts_in_path(
-        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
-    )
-    if not initial_check_pass(fonts=fonts, output_dir=output_dir):
-        return
-
-    for font in fonts:
-        try:
-            file = Path(font.reader.file.name)
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-            logger.opt(colors=True).info(Logs.current_file, file=file)
-
-            os_2: TableOS2 = font["OS/2"]
-
-            if weight == os_2.get_weight_class():
-                logger.skip(Logs.file_not_changed, file=file)
-                continue
-
-            os_2.set_weight_class(weight)
-            font.save(output_file)
-            logger.success(Logs.file_saved, file=output_file)
-
-        except Exception as e:
-            logger.exception(e)
-        finally:
-            font.close()
-
-
-@tbl_os2.command()
-@add_file_or_path_argument()
-@click.option(
-    "-w",
-    "--width",
-    prompt="New usWidthClass value",
-    type=click.IntRange(1, 9),
-    required=True,
-    help="usWidthClass value.",
-)
-@add_recursive_option()
-@add_common_options()
-@Timer(logger=logger.info)
-def set_width(
-    input_path: Path,
-    width: int,
-    recursive: bool = False,
-    output_dir: Optional[Path] = None,
-    recalc_timestamp: bool = False,
-    overwrite: bool = True,
-):
-    """
-    Sets the Width class value.
-
-    usWidthClass indicates a relative change from the normal aspect ratio (width to height ratio) as specified by a font
-    designer for the glyphs in a font. Values from 1 to 9 are valid.
-    """
-    fonts = get_fonts_in_path(
-        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
-    )
-    if not initial_check_pass(fonts=fonts, output_dir=output_dir):
-        return
-
-    for font in fonts:
-        try:
-            file = Path(font.reader.file.name)
-            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
-            logger.opt(colors=True).info(Logs.current_file, file=file)
-
-            os_2: TableOS2 = font["OS/2"]
-
-            if width == os_2.get_width_class():
-                logger.skip(Logs.file_not_changed, file=file)
-                continue
-
-            os_2.set_width_class(width)
-            font.save(output_file)
-            logger.success(Logs.file_saved, file=output_file)
-
-        except Exception as e:
-            logger.exception(e)
-        finally:
-            font.close()
-
-
-@tbl_os2.command()
-@add_file_or_path_argument()
-@click.option(
     "--family-type", "bFamilyType", type=click.IntRange(0, 5), help="Sets 'bFamilyType' value"
 )
 @click.option(
@@ -760,6 +650,114 @@ def panose(
                 setattr(panose_src, k, v)
 
             if panose_copy.__dict__ != panose_src.__dict__:
+                font.save(output_file)
+                logger.success(Logs.file_saved, file=output_file)
+            else:
+                logger.skip(Logs.file_not_changed, file=file)
+
+        except Exception as e:
+            logger.exception(e)
+        finally:
+            font.close()
+
+
+@tbl_os2.command(no_args_is_help=True)
+@add_file_or_path_argument()
+@click.option(
+    "-wght",
+    "--weight",
+    "usWeightClass",
+    type=click.IntRange(1, 1000),
+    help="Sets the ``usWeightClass`` value",
+)
+@click.option(
+    "-wdth",
+    "--width",
+    "usWidthClass",
+    type=click.IntRange(1, 9),
+    help="Sets the ``usWidthClass`` value",
+)
+@click.option(
+    "-tasc",
+    "--typo-ascender",
+    "sTypoAscender",
+    type=int,
+    help="Sets the ``sTypoAscender`` value",
+)
+@click.option(
+    "-tdsc",
+    "--typo-descender",
+    "sTypoDescender",
+    type=int,
+    help="Sets the ``sTypoDescender`` value",
+)
+@click.option(
+    "-tlg",
+    "--typo-line-gap",
+    "sTypoLineGap",
+    type=int,
+    help="Sets the ``sTypoLineGap`` value",
+)
+@click.option(
+    "-wasc",
+    "--win-ascent",
+    "usWinAscent",
+    type=int,
+    help="Sets the ``usWinAscent`` value",
+)
+@click.option(
+    "-wdsc",
+    "--win-descent",
+    "usWinDescent",
+    type=int,
+    help="Sets the ``usWinDescent`` value",
+)
+@click.option(
+    "-xhgt",
+    "--x-height",
+    "sxHeight",
+    type=int,
+    help="Sets the ``sxHeight`` value",
+)
+@click.option(
+    "-chgt",
+    "--cap-height",
+    "sCapHeight",
+    type=int,
+    help="Sets the ``sCapHeight`` value",
+)
+@add_recursive_option()
+@add_common_options()
+@Timer(logger=logger.info)
+def set_attrs(
+    input_path: Path,
+    recalc_timestamp: bool = False,
+    recursive: bool = False,
+    output_dir: Optional[Path] = None,
+    overwrite: bool = True,
+    **kwargs,
+):
+    """
+    Command line OS/2 table editor.
+    """
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
+    if not initial_check_pass(fonts=fonts, output_dir=output_dir):
+        return
+
+    for font in fonts:
+        try:
+            file = Path(font.reader.file.name)
+            output_file = Path(makeOutputFileName(file, outputDir=output_dir, overWrite=overwrite))
+            os2_table: TableOS2 = font["OS/2"]
+            os2_copy = copy(os2_table)
+
+            for k, v in kwargs.items():
+                if v is not None:
+                    setattr(os2_table, k, v)
+
+            if os2_copy.compile(font) != os2_table.compile(font):
                 font.save(output_file)
                 logger.success(Logs.file_saved, file=output_file)
             else:
