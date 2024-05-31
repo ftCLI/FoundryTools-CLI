@@ -479,10 +479,8 @@ class Font(TTFont):
         """
         if not self.is_otf:
             return
-        # noinspection PyUnresolvedReferences
-        from fontTools.subset.cff import remove_hints
 
-        self["CFF "].remove_hints()
+        self["CFF "].cff.remove_hints()
 
     def otf_desubroutinize(self) -> None:
         """
