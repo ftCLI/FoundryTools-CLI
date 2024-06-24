@@ -145,6 +145,17 @@ def del_table(
     """,
 )
 @click.option(
+    "-s",
+    "--strip",
+    "strip_foundry",
+    is_flag=True,
+    help="""
+    Strip foundry name.
+
+    This option will strip whitespace at the beginning and end of the foundry name before creating the directory.
+    """,
+)
+@click.option(
     "-e",
     "--extension",
     "sort_by_extension",
@@ -163,6 +174,7 @@ def del_table(
 def font_organizer(
     input_path: Path,
     sort_by_foundry: bool = False,
+    strip_foundry: bool = False,
     sort_by_extension: bool = False,
     sort_by_version: bool = False,
 ):
@@ -181,6 +193,7 @@ def font_organizer(
 
             foundry = font.guess_foundry_name() if sort_by_foundry else None
             if foundry:
+                foundry = foundry.strip() if strip_foundry else foundry
                 output_dir = output_dir.joinpath(foundry)
 
             version = f" v{round(font['head'].fontRevision, 3)}" if sort_by_version else None
