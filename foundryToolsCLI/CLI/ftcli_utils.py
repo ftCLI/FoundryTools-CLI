@@ -169,7 +169,19 @@ def del_table(
     is_flag=True,
     help="Appends the version string to the family folder.",
 )
+@click.option(
+    "-d",
+    "--delete-empty",
+    "delete_empty",
+    is_flag=True,
+    help="""
+    Delete empty folder.
+
+    This deletes empty folders that are the result of moving files to different folder, especially when using the recursive option.
+    """,
+)
 @add_file_or_path_argument()
+@add_recursive_option()
 @Timer(logger=logger.info)
 def font_organizer(
     input_path: Path,
@@ -177,18 +189,21 @@ def font_organizer(
     strip_foundry: bool = False,
     sort_by_extension: bool = False,
     sort_by_version: bool = False,
+    recursive: bool = False,
+    delete_empty: bool = False,
 ):
     """
     Sorts fonts in folders by family name and optionally by foundry, font revision and extension.
     """
-    fonts = get_fonts_in_path(input_path=input_path)
+    fonts = get_fonts_in_path(input_path=input_path, recursive=recursive)
     if not initial_check_pass(fonts=fonts):
         return
 
     for font in fonts:
         try:
             file = Path(font.reader.file.name)
-            output_dir = file.parent
+            output_dir = input_path
+            old_dir = file.parent
             family_name = font.guess_family_name()
 
             foundry = font.guess_foundry_name() if sort_by_foundry else None
@@ -213,6 +228,12 @@ def font_organizer(
             file.rename(target=target)
 
             logger.opt(colors=True).success(f"{file} <magenta>--></> <cyan>{target}</>")
+
+            if delete_empty:
+                while not any(old_dir.iterdir()):
+                    old_dir.rmdir()
+                    logger.opt(colors=True).success(f"{old_dir} <magenta>--></> <red>DELETED</>")
+                    old_dir = old_dir.parent
 
         except Exception as e:
             logger.exception(e)
