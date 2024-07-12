@@ -212,6 +212,10 @@ def font_organizer(
             output_dir = sanitize_filepath(output_dir, platform="auto")
             output_dir.mkdir(parents=True, exist_ok=True)
 
+            if Path(makeOutputFileName(output_dir.joinpath(file.name), overWrite=True)) == file:
+                logger.skip(Logs.file_not_changed, file=file.name)
+                continue
+
             target = Path(makeOutputFileName(output_dir.joinpath(file.name), overWrite=False))
             file.rename(target=target)
 
