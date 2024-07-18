@@ -10,17 +10,17 @@ from fontTools.ttLib import TTFont
 from pathvalidate import sanitize_filename, sanitize_filepath
 
 from foundryToolsCLI.Lib.tables.CFF_ import TableCFF
-from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.tables.head import TableHead
 from foundryToolsCLI.Lib.tables.name import TableName
+from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
 from foundryToolsCLI.Lib.utils.cli_tools import get_fonts_in_path, initial_check_pass
 from foundryToolsCLI.Lib.utils.click_tools import (
+    add_common_options,
     add_file_or_path_argument,
     add_recursive_option,
-    add_common_options,
     choice_to_int_callback,
 )
-from foundryToolsCLI.Lib.utils.logger import logger, Logs
+from foundryToolsCLI.Lib.utils.logger import Logs, logger
 from foundryToolsCLI.Lib.utils.timer import Timer
 
 utils = click.Group("subcommands")
@@ -254,8 +254,15 @@ def font_organizer(
               """,
 )
 @add_recursive_option()
+@click.option(
+    "-o",
+    "--overwrite",
+    "overwrite",
+    is_flag=True,
+    help="Allow overwriting output files.",
+)
 @Timer(logger=logger.info)
-def font_renamer(input_path: Path, source: str, recursive: bool = False):
+def font_renamer(input_path: Path, source: str, recursive: bool = False, overwrite: bool = False):
     """
     Rename font files according to the provided source string.
     """
@@ -283,7 +290,7 @@ def font_renamer(input_path: Path, source: str, recursive: bool = False):
                         new_file_name,
                         extension=new_file_extension,
                         outputDir=file.parent,
-                        overWrite=False,
+                        overWrite=overwrite,
                     )
                 )
                 file.rename(output_file)
