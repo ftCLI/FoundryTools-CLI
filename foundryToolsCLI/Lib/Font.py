@@ -629,7 +629,10 @@ class Font(TTFont):
                 source = 1
 
         if source == 1:
-            return f"{self.guess_family_name()}-{self.guess_subfamily_name()}".replace(" ", "")
+            return (
+                f"{self.guess_family_name()}-{self.guess_subfamily_name()}"
+                .replace(" ", "").replace(".", "")
+            )
         elif source == 2:
             return self["name"].getDebugName(6)
         elif source == 3:

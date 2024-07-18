@@ -48,7 +48,7 @@ def cli(
 ):
     """A command line tool to manipulate the ``hhea`` table."""
 
-    if not any([rise, run, offset, ascent, descent, linegap, recalc_offset]):
+    if not any([rise, run, offset, ascent, descent, linegap, recalc_offset]) is not None:
         logger.error(Logs.no_parameter)
         return
 
@@ -67,22 +67,22 @@ def cli(
             hhea_table: TableHhea = font["hhea"]
             hhea_table_copy = copy(hhea_table)
 
-            if rise:
+            if rise is not None:
                 hhea_table.set_caret_slope_rise(rise)
 
-            if run:
+            if run is not None:
                 hhea_table.set_caret_slope_run(run)
 
-            if offset:
+            if offset is not None:
                 hhea_table.set_caret_offset(offset)
 
-            if ascent:
+            if ascent is not None:
                 hhea_table.set_ascent(ascent)
 
-            if descent:
+            if descent is not None:
                 hhea_table.set_descent(descent)
 
-            if linegap:
+            if linegap is not None:
                 hhea_table.set_linegap(linegap)
 
             if recalc_offset:
