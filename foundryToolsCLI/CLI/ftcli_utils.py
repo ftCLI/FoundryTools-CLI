@@ -254,8 +254,18 @@ def font_organizer(
               """,
 )
 @add_recursive_option()
+@click.option(
+    "-o",
+    "--overwrite",
+    "overwrite",
+    is_flag=True,
+    help="""
+        Allow overwriting output files. THIS MIGHT POTENTIALLY RESULT IN LOSS OF FILES.
+        USE WITH CARE. This might result in a loss of files.
+    """,
+)
 @Timer(logger=logger.info)
-def font_renamer(input_path: Path, source: str, recursive: bool = False):
+def font_renamer(input_path: Path, source: str, recursive: bool = False, overwrite: bool = False):
     """
     Rename font files according to the provided source string.
     """
@@ -283,7 +293,7 @@ def font_renamer(input_path: Path, source: str, recursive: bool = False):
                         new_file_name,
                         extension=new_file_extension,
                         outputDir=file.parent,
-                        overWrite=False,
+                        overWrite=overwrite,
                     )
                 )
                 file.rename(output_file)
