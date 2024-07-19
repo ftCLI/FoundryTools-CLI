@@ -259,7 +259,10 @@ def font_organizer(
     "--overwrite",
     "overwrite",
     is_flag=True,
-    help="Allow overwriting output files.",
+    help="""
+        Allow overwriting output files. THIS MIGHT POTENTIALLY RESULT IN LOSS OF FILES.
+        USE WITH CARE. This might result in a loss of files.
+    """,
 )
 @Timer(logger=logger.info)
 def font_renamer(input_path: Path, source: str, recursive: bool = False, overwrite: bool = False):
