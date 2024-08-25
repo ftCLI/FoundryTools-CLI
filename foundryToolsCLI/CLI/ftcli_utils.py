@@ -5,6 +5,7 @@ from copy import deepcopy
 from pathlib import Path
 
 import click
+from afdko.fdkutils import run_shell_command
 from fontTools.misc.cliTools import makeOutputFileName
 from fontTools.ttLib import TTFont
 from pathvalidate import sanitize_filename, sanitize_filepath
@@ -350,6 +351,73 @@ def rebuild(
 
             if os.path.exists(xml_file):
                 os.remove(xml_file)
+
+        except Exception as e:
+            logger.exception(e)
+        finally:
+            font.close()
+
+
+@utils.command()
+@add_file_or_path_argument()
+@add_recursive_option()
+@add_common_options()
+@Timer(logger=logger.info)
+def remove_unreachable_glyphs(
+    input_path: Path,
+    recursive: bool = False,
+    output_dir: t.Optional[Path] = None,
+    recalc_timestamp: bool = False,
+    overwrite: bool = True,
+):
+    """
+    Subsets a font file by removing unreachable glyphs.
+    """
+
+    fonts = get_fonts_in_path(
+        input_path=input_path, recursive=recursive, recalc_timestamp=recalc_timestamp
+    )
+    if not initial_check_pass(fonts=fonts, output_dir=output_dir):
+        return
+
+    for font in fonts:
+        try:
+            in_file = Path(font.reader.file.name)
+            out_file = Path(makeOutputFileName(in_file, outputDir=output_dir, overWrite=overwrite))
+            logger.opt(colors=True).info(Logs.current_file, file=in_file)
+
+            command = [
+                "fonttools",
+                "subset",
+                in_file,
+                f"--output-file={out_file}",
+                "--unicodes=*",
+                "--notdef-glyph",
+                "--notdef-outline",
+                "--layout-features=*",
+                "--layout-scripts=*",
+                "--drop-tables=",
+                "--passthrough-tables",
+                "--legacy-kern",
+                "--name-IDs=*",
+                "--name-legacy",
+                "--name-languages=*",
+                "--glyph-names",
+                "--legacy-cmap",
+                "--symbol-cmap",
+                "--recalc-bounds",
+                "--recalc-average-width",
+                "--recalc-max-context",
+            ]
+
+            if recalc_timestamp:
+                command.append("--recalc-timestamp")
+            else:
+                command.append("--no-recalc-timestamp")
+
+            run_shell_command(command)
+
+            logger.success(Logs.file_saved, file=out_file)
 
         except Exception as e:
             logger.exception(e)
