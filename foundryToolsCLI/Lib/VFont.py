@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from fontTools.ttLib.tables._f_v_a_r import NamedInstance, Axis
+from fontTools.ttLib.tables._f_v_a_r import NamedInstance
 
 from foundryToolsCLI.Lib.Font import Font
 
@@ -9,9 +9,6 @@ class VariableFont(Font):
     def __init__(self, file=None, recalcTimestamp=False):
         super().__init__(file=file, recalcTimestamp=recalcTimestamp)
         assert "fvar" in self
-
-    def get_axes(self) -> list[Axis]:
-        return [axis for axis in self["fvar"].axes if axis.flags == 0]
 
     def get_instances(self) -> list[NamedInstance]:
         return [instance for instance in self["fvar"].instances]

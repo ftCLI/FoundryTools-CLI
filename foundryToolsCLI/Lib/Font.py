@@ -9,6 +9,7 @@ from cffsubr import subroutinize, desubroutinize
 from fontTools.misc.psCharStrings import T2CharString
 from fontTools.misc.timeTools import timestampToString
 from fontTools.pens.statisticsPen import StatisticsPen
+from fontTools.ttLib.tables._f_v_a_r import Axis
 from fontTools.ttLib.ttFont import TTFont
 
 from foundryToolsCLI.Lib.tables.OS_2 import TableOS2
@@ -623,6 +624,13 @@ class Font(TTFont):
             name.
         :return: A string representing the file name of the font.
         """
+        if self.is_variable:
+            family_name = self.guess_family_name().replace(" ", "").strip()
+            if self.is_italic:
+                family_name += "-Italic"
+            axes = self.get_axes()
+            file_name = f"{family_name}[{','.join([axis.axisTag for axis in axes])}]"
+            return file_name
 
         if self.is_ttf:
             if source in (4, 5):
@@ -643,6 +651,14 @@ class Font(TTFont):
             return self["CFF "].cff.topDictIndex[0].FullName
         else:
             return Path(self.reader.file.name).stem
+
+    def get_axes(self) -> list[Axis]:
+        """
+        This function returns a list of axes in a variable font.
+        """
+        if not self.is_variable:
+            return []
+        return [axis for axis in self["fvar"].axes if axis.flags == 0]
 
     def fix_cff_top_dict_version(self) -> None:
         if not self.is_otf:
