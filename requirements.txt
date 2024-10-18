@@ -8,6 +8,6 @@ dehinter==4.0.0
 loguru==0.7.2
 pathvalidate==3.2.1
 rich==13.9.2
-skia-pathops==0.8.0.post1
+skia-pathops==0.8.0.post2
 ttfautohint-py==0.5.1
 zopfli==0.2.3
