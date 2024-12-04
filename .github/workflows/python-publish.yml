@@ -24,7 +24,6 @@ jobs:
     steps:
     # retrieve your distributions here
 
-    - name: Publish package distributions to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
-    - with:
-       attestations: false
+    - name: pypi-publish
+      uses: pypa/gh-action-pypi-publish@v1.12.2
+            
