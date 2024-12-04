@@ -142,6 +142,15 @@ def otf2ttf(
     """,
 )
 @click.option(
+    "-h",
+    "--hidden-axes",
+    is_flag=True,
+    default=False,
+    help="""
+    Use this option to include hidden axes in the list of available axes.
+    """
+)
+@click.option(
     "--no-cleanup",
     "cleanup",
     is_flag=True,
@@ -166,6 +175,7 @@ def otf2ttf(
 @Timer(logger=logger.info)
 def vf2i(
     input_path: Path,
+    hidden_axes: bool = False,
     select_instance: bool = False,
     cleanup: bool = True,
     update_name_table: bool = True,
@@ -199,7 +209,7 @@ def vf2i(
 
             instances = variable_font.get_instances()
             if select_instance:
-                axes = variable_font.get_axes()
+                axes = variable_font.get_axes(hidden_axes=hidden_axes)
                 selected_coordinates = select_instance_coordinates(axes)
                 is_named_instance = selected_coordinates in [i.coordinates for i in instances]
                 if not is_named_instance:

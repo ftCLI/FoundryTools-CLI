@@ -652,13 +652,16 @@ class Font(TTFont):
         else:
             return Path(self.reader.file.name).stem
 
-    def get_axes(self) -> list[Axis]:
+    def get_axes(self, hidden_axes: bool = False) -> list[Axis]:
         """
         This function returns a list of axes in a variable font.
         """
         if not self.is_variable:
             return []
-        return [axis for axis in self["fvar"].axes]
+        if hidden_axes:
+            return [axis for axis in self["fvar"].axes]
+        else:
+            return [axis for axis in self["fvar"].axes if axis.flags == 0]
 
     def fix_cff_top_dict_version(self) -> None:
         if not self.is_otf:
