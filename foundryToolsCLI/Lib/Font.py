@@ -658,7 +658,7 @@ class Font(TTFont):
         """
         if not self.is_variable:
             return []
-        return [axis for axis in self["fvar"].axes if axis.flags == 0]
+        return [axis for axis in self["fvar"].axes]
 
     def fix_cff_top_dict_version(self) -> None:
         if not self.is_otf:
@@ -736,7 +736,8 @@ class Font(TTFont):
             ui_name_ids = []
             for record in self["GSUB"].table.FeatureList.FeatureRecord:
                 if record.Feature.FeatureParams:
-                    ui_name_ids.append(record.Feature.FeatureParams.UINameID)
+                    if hasattr(record.Feature.FeatureParams, "UINameID"):
+                        ui_name_ids.append(record.Feature.FeatureParams.UINameID)
         return sorted(set(ui_name_ids))
 
     def reorder_ui_name_ids(self) -> None:
@@ -749,14 +750,16 @@ class Font(TTFont):
         if "GSUB" not in self:
             return
         ui_name_ids = self.get_ui_name_ids()
+        if not ui_name_ids:
+            return
         for count, value in enumerate(ui_name_ids, start=256):
             for n in name_table.names:
                 if n.nameID == value:
                     n.nameID = count
             for record in self["GSUB"].table.FeatureList.FeatureRecord:
                 if record.Feature.FeatureParams:
-                    if record.Feature.FeatureParams.UINameID == value:
-                        record.Feature.FeatureParams.UINameID = count
+                    if hasattr(record.Feature.FeatureParams, "UINameID"):
+                        setattr(record.Feature.FeatureParams, "UINameID", count)
 
     def modify_linegap_percent(self, percent):
         """
