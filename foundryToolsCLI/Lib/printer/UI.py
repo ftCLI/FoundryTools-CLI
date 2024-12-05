@@ -88,7 +88,7 @@ def print_instances(variable_font: VariableFont):
     instances = variable_font.get_instances()
     table.add_section()
     table.add_column("#")
-    axes = variable_font.get_axes()
+    axes = variable_font.get_axes(hidden_axes=True)
     for axis in axes:
         table.add_column(axis.axisTag)
     table.add_column("subfamilyNameID")
