@@ -2,7 +2,7 @@
 afdko==4.0.2
 fonttools==4.55.3
 brotli==1.1.0
-click==8.1.7
+click==8.1.8
 cffsubr==0.3.0
 dehinter==4.0.0
 loguru==0.7.3
