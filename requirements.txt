@@ -6,7 +6,7 @@ click==8.1.8
 cffsubr==0.3.0
 dehinter==4.0.0
 loguru==0.7.3
-pathvalidate==3.2.2
+pathvalidate==3.2.3
 rich==13.9.4
 skia-pathops==0.8.0.post2
 ttfautohint-py==0.5.1
