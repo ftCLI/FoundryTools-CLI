@@ -1,3 +1,3 @@
-.. click:: foundryToolsCLI.CLI.ftcli_converter:cli
+.. click:: foundrytools_cli.commands.converter:cli
    :prog: ftcli converter
    :nested: full

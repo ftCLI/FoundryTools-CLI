@@ -1,0 +1,8 @@
+[MASTER]
+disable =
+    C0114, # Missing module docstring
+    R0801, # Similar lines in %s files
+    R0913, # Too many arguments
+    R0914, # Too many local variables
+    R0917, # Too many positional arguments
+    W0212, # Access to a protected member of a client class

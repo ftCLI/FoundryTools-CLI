@@ -1,3 +1,3 @@
-.. click:: foundryToolsCLI.CLI.ftcli_otf:cli
+.. click:: foundrytools_cli.commands.otf:cli
    :prog: ftcli otf
    :nested: full
