@@ -1,3 +1,3 @@
-.. click:: foundryToolsCLI.CLI.ftcli_hhea:cli
+.. click:: foundrytools_cli.commands.hhea:cli
    :prog: ftcli hhea
    :nested: full

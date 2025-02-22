@@ -1,2 +1,1 @@
-recursive-exclude *tests *
 include requirements.txt

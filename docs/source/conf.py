@@ -7,9 +7,10 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "FoundryTools-CLI"
-copyright = "2023, ftCLI"
+copyright = "2025, ftCLI"
 author = "ftCLI"
-# release = "1.0.0"
+release = "2.0.0"
+version = "2.0.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -17,7 +18,7 @@ author = "ftCLI"
 extensions = ["sphinx_click"]
 
 templates_path = ["_templates"]
-exclude_patterns = []
+exclude_patterns = []  # type: ignore
 
 
 # -- Options for HTML output -------------------------------------------------

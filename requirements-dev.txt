@@ -1,4 +1,4 @@
-black>=23.7.00
-sphinx-click>=4.4.0
-furo>=2023.5.20
--e .
+bump-my-version==0.29.0
+mypy==1.14.1
+pre-commit==4.0.1
+pylint==3.3.3
