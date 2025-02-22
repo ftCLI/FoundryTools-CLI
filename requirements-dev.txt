@@ -1,4 +1,4 @@
-bump-my-version==0.29.0
+bump-my-version==0.32.1
 mypy==1.14.1
 pre-commit==4.0.1
 pylint==3.3.3
