@@ -2,11 +2,11 @@ import pathlib
 from unittest import TestCase
 
 from foundryToolsCLI.Lib.utils.cli_tools import (
-    get_fonts_in_path,
-    get_variable_fonts_in_path,
-    get_style_mapping_path,
     get_fonts_data_path,
+    get_fonts_in_path,
     get_project_files_path,
+    get_style_mapping_path,
+    get_variable_fonts_in_path,
 )
 
 CWD = pathlib.Path.cwd()
