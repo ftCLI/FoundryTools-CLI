@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "FoundryTools-CLI-NG"
+project = "FoundryTools-CLI"
 copyright = "2025, Cesare Gilento"
 author = "Cesare Gilento"
 release = "2.0.0"
