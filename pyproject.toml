@@ -73,7 +73,7 @@ exclude = [
 [tool.bumpversion]
 current_version = "2.0.0"
 commit = false
-tag = false
+tag = true
 
 [[tool.bumpversion.files]]
 filename = "src/foundrytools_cli/__init__.py"
