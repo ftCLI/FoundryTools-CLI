@@ -66,7 +66,7 @@ python -m pip install -e .
 
 FoundryTools-CLI is a Terminal app where commands are logically organized into subcommands.
 
-Please refer to the [user documentation](https://ftcli.github.io/FoundryTools-CLI/).
+Please refer to the [user documentation](https://foundrytools-cli.readthedocs.io/).
 
 ## License
 
