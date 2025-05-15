@@ -1,72 +1,77 @@
 # FoundryTools-CLI
-FoundryTools-CLI, former known as ftCLI, is a collection of command line tools written in Python to inspect, manipulate
-and convert fonts. It takes advantage of the capabilities made available by other tools such as:
 
-* [FontTools](https://github.com/fonttools/fonttools)
-* [AFDKO](https://github.com/adobe-type-tools/afdko)
-* [skia-pathops](https://github.com/fonttools/skia-pathops)
-* [cffsubr](https://github.com/adobe-type-tools/cffsubr)
-* [ttfautohint-py](https://github.com/fonttools/ttfautohint-py)
-* [dehinter](https://github.com/source-foundry/dehinter)
+FoundryTools-CLI is a command line interface for the FoundryTools library, which
+provides a set of tools for working with font files. It is designed to be used
+from the command line, allowing users to perform various operations on font
+files without the need for a graphical user interface.
 
-![image](https://github.com/ftCLI/FoundryTools-CLI/assets/83063506/f648829c-3e3c-45ee-be3e-b5f9b35b30f7)
+The CLI provides a range of commands for manipulating font files, including
+converting between different font formats, extracting and modifying font
+metadata, and performing various font-related operations. It is built on top of
+the FoundryTools library, which provides a comprehensive set of tools for
+working with font files in Python.
 
-The command line interface is built with [click](https://github.com/pallets/click/) and tables are rendered by
-[rich](https://github.com/Textualize/rich).
+The CLI is designed to be easy to use and provides a consistent interface for
+working with different font formats. It is suitable for both developers and
+font designers who need to perform various operations on font files from the
+command line. The CLI is also extensible, allowing users to add their own
+commands and functionality as needed.
 
-Even if not directly imported to keep the footprint as small as possible, portions of code have been copied from
-[fontbakery](https://github.com/googlefonts/fontbakery) and [font-line](https://github.com/source-foundry/font-line).
+![image](https://github.com/user-attachments/assets/f1389440-8b94-463f-b9c8-29c0c37dfced)
+
+The command line interface is built with [click](https://github.com/pallets/click/) and tables are
+rendered by [rich](https://github.com/Textualize/rich).
 
 ## Installation
+
 FoundryTools-CLI requires Python 3.9 or later.
 
-**Note for Windows users**: installation on Python 3.11 and later may fail due to an error while building the wheel for
-the `AFDKO` dependency. This is a known issue and a workaround is to install Visual Studio 2022 (Community Edition is
-fine) and the `Python development` workload, selecting the `Python native development tools` optional component.
-
-![image](https://github.com/ftCLI/FoundryTools-CLI/assets/83063506/3dcb4f74-bb94-4634-b28a-b6aeba7d8575)
-
-
-**IMPORTANT**: If you have Python 2.x installed in your system, you may have to use `python3` (instead of `python`) in
-the commands below.
+**IMPORTANT**: If you have Python 2.x installed in your system, you may have to use `python3`
+(instead of `python`) in the commands below.
 
 ### pip
-FoundryTools-CLI releases are available on the Python Package Index (PyPI), so it can be installed with
-[pip](https://pip.pypa.io/):
 
-    python -m pip install foundrytools-cli
+FoundryTools-CLI releases are available on the Python Package Index (PyPI), so it can be installed
+with [pip](https://pip.pypa.io/):
+
+```
+python -m pip install foundrytools-cli
+```
 
 ### Editable mode
-If you would like to contribute to the development, you can clone the repository from GitHub, install the package in
-'editable' mode and modify the source code in place. We strongly recommend using a virtual environment.
 
-    # clone the repository:
-    git clone https://github.com/ftCLI/foundrytools-cli.git
-    cd foundrytools-cli
+If you would like to contribute to the development, you can clone the repository from GitHub,
+install the package in 'editable' mode and modify the source code in place. We strongly recommend
+using a virtual environment.
 
-    # create new virtual environment named e.g. ftcli-venv, or whatever you prefer:
-    python -m venv ftcli-venv
-    
-    # to activate the virtual environmtnet in macOS and Linux, do:
-    . ftcli-venv/bin/activate
-    
-    # to activate the virtual environment in Windows, do:
-    ftcli-venv\Scripts\activate.bat
-    
-    # install in 'editable' mode
-    python -m pip install -e .
+```
+# clone the repository:
+git clone https://github.com/ftCLI/foundrytools-cli.git
+cd foundrytools-cli
 
+# create new virtual environment named e.g. ftcli-venv, or whatever you prefer:
+python -m venv ftcli-venv
+
+# to activate the virtual environmtnet in macOS and Linux, do:
+. ftcli-venv/bin/activate
+
+# to activate the virtual environment in Windows, do:
+ftcli-venv\Scripts\activate.bat
+
+# install in 'editable' mode
+python -m pip install -e .
+```
 
 ## Documentation
+
 FoundryTools-CLI is a Terminal app where commands are logically organized into subcommands.
 
 Please refer to the [user documentation](https://ftcli.github.io/FoundryTools-CLI/).
 
 ## License
+
 FoundryTools-CLI is available under the [MIT license](LICENSE)
 
 ## Credits
+
 To Sergiev. May You rest in peace.
-
-
-

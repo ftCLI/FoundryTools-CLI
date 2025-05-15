@@ -1,0 +1,86 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "foundrytools-cli"
+dynamic = ["version"]
+description = "A set of command line tools to inspect, manipulate and convert font files"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [
+    { name = "Cesare Gilento", email = "ftcli@proton.me" },
+]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Text Processing :: Fonts",
+]
+
+dependencies = [
+    "afdko>=4.0.2",
+    "click>=8.1.8",
+    "foundrytools>=0.1.4",
+    "loguru>=0.7.3",
+    "pathvalidate>=3.2.3",
+    "rich>=14.0.0",
+    "win32-setctime>=1.2.0; sys_platform >= 'win32'",
+]
+
+[project.scripts]
+ftcli = "foundrytools_cli.__main__:cli"
+
+[project.urls]
+Homepage = "https://github.com/ftCLI/FoundryTools-CLI"
+
+[project.optional-dependencies]
+dev = [
+    "bump-my-version>=1.1.2",
+    "hatch>=1.14.1",
+    "mypy>=1.15.0",
+    "pre-commit>=4.2.0",
+    "pylint>=3.3.6",
+]
+docs = [
+    "sphinx-click>=6.0.0",
+    "sphinx-rtd-theme>=3.0.2",
+]
+
+[tool.hatch.version]
+path = "src/foundrytools_cli/__init__.py"
+pattern = 'VERSION = __version__ = "(?P<version>[^"]+)"'
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+]
+exclude = [
+    "/.gitignore",
+]
+
+[tool.bumpversion]
+current_version = "2.0.0"
+commit = false
+tag = true
+
+[[tool.bumpversion.files]]
+filename = "src/foundrytools_cli/__init__.py"
+search = '__version__ = "{current_version}"'
+replace = '__version__ = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "docs/source/conf.py"
+search = 'release = "{current_version}"'
+replace = 'release = "{new_version}"'

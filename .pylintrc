@@ -1,0 +1,10 @@
+[MASTER]
+disable =
+    C0114, # Missing module docstring
+    C0302, # Too many lines in module
+    R0801, # Similar lines in %s files
+    R0913, # Too many arguments
+    R0914, # Too many local variables
+    R0917, # Too many positional arguments
+    W0212, # Access to a protected member of a client class
+    W1203, # Use % formatting in logging functions and pass the % parameters as arguments
