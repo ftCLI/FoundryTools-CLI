@@ -54,26 +54,28 @@ class BaseCommand(click.Command):
                 """,
             ),
             click.Option(
-                ["-no-rbb", "--no-recalc-bboxes", "recalc_bboxes"],
+                ["-rbb", "--recalc-bboxes", "recalc_bboxes"],
                 is_flag=True,
-                default=True,
+                default=False,
                 help="""
-                Do not recalculate the font's bounding boxes on save.
+                Recalculate the font's bounding boxes on save.
 
                 By default, ``glyf``, ``CFF ``, ``head`` bounding box values and ``hhea``/``vhea``
-                min/max values are recalculated on save. Also, the glyphs are compiled on importing,
-                which saves memory consumption and time.
+                min/max values are not recalculated on save.
+
+                When this option is active, the glyphs are compiled on importing, which saves memory
+                consumption and time.
                 """,
             ),
             click.Option(
-                ["-no-rtb", "--no-reorder-tables", "reorder_tables"],
+                ["-rtb", "--reorder-tables", "reorder_tables"],
                 is_flag=True,
-                default=True,
+                default=False,
                 help="""
-                Do not reorder the font's tables on save.
+                Reorder the font's tables on save.
 
-                By default, tables are sorted by tag on save (recommended by the OpenType
-                specification).
+                When this option is active, tables are sorted by tag on save (recommended by the
+                OpenType specification).
                 """,
             ),
             click.Option(
