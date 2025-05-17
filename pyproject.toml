@@ -72,7 +72,7 @@ exclude = [
 
 [tool.bumpversion]
 current_version = "2.0.0"
-commit = false
+commit = true
 tag = true
 
 [[tool.bumpversion.files]]
