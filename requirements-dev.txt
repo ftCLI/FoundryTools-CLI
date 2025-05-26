@@ -1,0 +1,5 @@
+bump-my-version>=1.1.2
+hatch>=1.14.1
+mypy>=1.15.0
+pre-commit>=4.2.0
+pylint>=3.3.6

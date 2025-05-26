@@ -54,17 +54,15 @@ class BaseCommand(click.Command):
                 """,
             ),
             click.Option(
-                ["-rbb", "--recalc-bboxes", "recalc_bboxes"],
+                ["-no-rbb", "--no-recalc-bboxes", "recalc_bboxes"],
                 is_flag=True,
-                default=False,
+                default=True,
                 help="""
-                Recalculate the font's bounding boxes on save.
+                Do not recalculate the font's bounding boxes on save.
 
                 By default, ``glyf``, ``CFF ``, ``head`` bounding box values and ``hhea``/``vhea``
-                min/max values are not recalculated on save.
-
-                When this option is active, the glyphs are compiled on importing, which saves memory
-                consumption and time.
+                min/max values are recalculated on save. Also, the glyphs are compiled on importing,
+                which saves memory consumption and time.
                 """,
             ),
             click.Option(

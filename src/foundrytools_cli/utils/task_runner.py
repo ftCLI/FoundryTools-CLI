@@ -194,6 +194,6 @@ class TaskRunner:  # pylint: disable=too-few-public-methods
     @staticmethod
     def _log_error(e: Exception) -> None:
         if hasattr(e, "__module__"):
-            logger.opt(colors=True).error(f"<lr>{e.__module__}.{type(e).__name__}</lr>: {e}")
+            logger.opt(colors=True).exception(f"<lr>{e.__module__}.{type(e).__name__}</lr>: {e}")
         else:
-            logger.opt(colors=True).error(f"<lr>{type(e).__name__}</lr>: {e}")
+            logger.opt(colors=True).exception(f"<lr>{type(e).__name__}</lr>: {e}")
