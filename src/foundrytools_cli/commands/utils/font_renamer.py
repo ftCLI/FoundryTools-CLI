@@ -54,7 +54,7 @@ def _get_file_stem(font: Font, source: int = 1) -> str:
     return sanitize_filename(file_name, platform="auto")
 
 
-def main(font: Font, source: int = 1) -> None:
+def main(font: Font, source: int = 1, overwrite: bool = False) -> None:
     """
     Renames the given font files.
     """
@@ -71,7 +71,7 @@ def main(font: Font, source: int = 1) -> None:
         file=Path(new_file_name),
         extension=font.get_file_ext(),
         output_dir=old_file.parent,
-        overwrite=True,
+        overwrite=overwrite,
     )
     if new_file == old_file:
         logger.skip(f"{old_file.name} is already named correctly")  # type: ignore
