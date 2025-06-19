@@ -54,6 +54,16 @@ cli = click.Group(help="Miscellaneous utilities.")
         5: CFF TopDict FullName (CFF fonts only)
         """,
 )
+@click.option(
+    "-o",
+    "--overwrite",
+    "overwrite",
+    is_flag=True,
+    help="""
+        Allow overwriting output files. THIS MIGHT POTENTIALLY RESULT IN LOSS OF FILES.
+        USE WITH CARE.
+    """,
+)
 @recursive_flag()
 def font_renamer(input_path: Path, **options: dict[str, Any]) -> None:
     """
