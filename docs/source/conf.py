@@ -9,7 +9,7 @@
 project = "FoundryTools-CLI"
 copyright = "2025, Cesare Gilento"
 author = "Cesare Gilento"
-release = "2.0.2"
+release = "2.0.3"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
