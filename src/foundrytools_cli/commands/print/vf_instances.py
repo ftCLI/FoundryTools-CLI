@@ -5,8 +5,6 @@ from rich.table import Table
 
 __all__ = ["main"]
 
-TERMINAL_WIDTH = 120
-
 
 def main(font: Font) -> None:
     """
