@@ -358,6 +358,7 @@ def ttc_to_sfnt(input_path: Path, **options: dict[str, Any]) -> None:
     recursive = bool(options.get("recursive", False))
     overwrite = bool(options.get("overwrite", True))
     recalc_bboxes = bool(options.get("recalc_bboxes", True))
+    recalc_timestamp = bool(options.get("recalc_timestamp", False))
     reorder_tables = bool(options.get("reorder_tables", False))
 
     finder = FontFinder(input_path)
@@ -383,8 +384,9 @@ def ttc_to_sfnt(input_path: Path, **options: dict[str, Any]) -> None:
         logger.info(f"Converting {collection_file} ({num_fonts} fonts in collection)")
 
         for font in collection.fonts:
+            font.recalcBBoxes = recalc_bboxes
+            font.recalcTimestamp = recalc_timestamp
             font_wrapper = Font(font)
-            font_wrapper.ttfont.recalcBBoxes = recalc_bboxes
             file_stem = font_wrapper.t_name.get_debug_name(6)
             file_ext = font_wrapper.get_file_ext()
 
