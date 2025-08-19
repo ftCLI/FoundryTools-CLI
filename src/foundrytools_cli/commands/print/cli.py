@@ -6,8 +6,22 @@ from foundrytools import FontFinder
 
 from foundrytools_cli.commands.print.font_info import main as print_font_info
 from foundrytools_cli.commands.print.font_names import main as print_names
+from foundrytools_cli.commands.print.vf_instances import main as print_vf_instances
 
 cli = click.Group(help="Prints various font's information.")
+
+
+@cli.command("instances")
+@click.argument("input_path", type=click.Path(exists=True, resolve_path=True, path_type=Path))
+def instances(input_path: Path) -> None:
+    """
+    Prints a table with the variable font instances.
+    """
+
+    finder = FontFinder(input_path)
+    finder.filter.filter_out_static = True
+    for font in finder.generate_fonts():
+        print_vf_instances(font)
 
 
 @cli.command("font-info")
