@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.8.13"]
+build-backend = "uv_build"
 
 [project]
 name = "foundrytools-cli"
-dynamic = ["version"]
+version = "2.0.3"
 description = "A set of command line tools to inspect, manipulate and convert font files"
 readme = "README.md"
 license = "MIT"
@@ -36,7 +36,20 @@ dependencies = [
     "loguru>=0.7.3",
     "pathvalidate>=3.3.1",
     "rich>=14.1.0",
+    "ufolib2>=0.18.1",
     "win32-setctime>=1.2.0; sys_platform >= 'win32'",
+]
+
+[dependencies-groups]
+dev = [
+    "bump-my-version>=1.2.1",
+    "mypy>=1.17.1",
+    "pre-commit>=4.2.0",
+    "pylint>=3.3.8",
+]
+docs = [
+    "sphinx-click>=6.0.0",
+    "sphinx-rtd-theme>=3.0.2",
 ]
 
 [project.scripts]
