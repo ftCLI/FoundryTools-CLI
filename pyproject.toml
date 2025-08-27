@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "foundrytools-cli"
-version = "2.0.3"
+version = "2.0.4"
 description = "A set of command line tools to inspect, manipulate and convert font files"
 readme = "README.md"
 license = "MIT"
@@ -71,7 +71,7 @@ exclude = [
 ]
 
 [tool.bumpversion]
-current_version = "2.0.3"
+current_version = "2.0.4"
 commit = true
 tag = true
 
