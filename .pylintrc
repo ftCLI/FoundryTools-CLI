@@ -1,5 +1,6 @@
 [MASTER]
 disable =
+    C0103, # Variable name doesn't conform to snake_case naming style
     C0114, # Missing module docstring
     C0302, # Too many lines in module
     R0801, # Similar lines in %s files
