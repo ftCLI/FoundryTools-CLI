@@ -31,11 +31,11 @@ classifiers = [
 
 dependencies = [
     "afdko>=4.0.2",
-    "click>=8.1.8",
+    "click>=8.3.1",
     "foundrytools>=0.1.4",
     "loguru>=0.7.3",
     "pathvalidate>=3.3.1",
-    "rich>=14.1.0",
+    "rich>=14.2.0",
     "ufolib2>=0.18.1",
     "win32-setctime>=1.2.0; sys_platform >= 'win32'",
 ]
@@ -43,12 +43,12 @@ dependencies = [
 [dependencies-groups]
 dev = [
     "bump-my-version>=1.2.1",
-    "mypy>=1.17.1",
-    "pre-commit>=4.2.0",
-    "pylint>=3.3.8",
+    "mypy>=1.18.2",
+    "pre-commit>=4.5.0",
+    "pylint>=4.0.3",
 ]
 docs = [
-    "sphinx-click>=6.0.0",
+    "sphinx-click>=6.1.0",
     "sphinx-rtd-theme>=3.0.2",
 ]
 
