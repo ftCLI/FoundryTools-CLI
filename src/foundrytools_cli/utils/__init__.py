@@ -2,7 +2,7 @@ import os
 from collections.abc import Callable
 from pathlib import Path
 from textwrap import TextWrapper
-from typing import Any, Optional, Union
+from typing import Any
 
 import click
 
@@ -130,7 +130,7 @@ def choice_to_int_callback(
     :param value: The value to convert
     :type value: Union[str, tuple[str, ...]]
     :return: The converted value
-    :rtype: Optional[Union[int, tuple[int, ...]]]
+    :rtype: int | tuple[int, ...] | None
     """
 
     # we do not check if the values can be converted to integers here because the click.Choice
