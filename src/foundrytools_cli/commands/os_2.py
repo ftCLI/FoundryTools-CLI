@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 import click
 from fontTools.misc.roundTools import otRound
@@ -257,7 +257,7 @@ def set_attrs(input_path: Path, **options: dict[str, Any]) -> None:
     """
     ensure_at_least_one_param(click.get_current_context())
 
-    def task(font: Font, **kwargs: dict[str, Optional[Union[int, float, str, bool]]]) -> bool:
+    def task(font: Font, **kwargs: dict[str, int | float | str | bool | None]) -> bool:
         for attr, value in kwargs.items():
             if value is not None:
                 try:
@@ -417,7 +417,7 @@ def set_fs_selection(input_path: Path, **options: dict[str, Any]) -> None:
     """
     ensure_at_least_one_param(click.get_current_context())
 
-    def task(font: Font, **kwargs: dict[str, Optional[bool]]) -> bool:
+    def task(font: Font, **kwargs: dict[str, bool | None]) -> bool:
         for attr, value in kwargs.items():
             if value is not None:
                 if hasattr(font.flags, attr):
@@ -497,7 +497,7 @@ def set_fs_type(input_path: Path, **options: dict[str, Any]) -> None:
     """
     ensure_at_least_one_param(click.get_current_context())
 
-    def task(font: Font, **kwargs: dict[str, Optional[bool]]) -> bool:
+    def task(font: Font, **kwargs: dict[str, bool | None]) -> bool:
         for attr, value in kwargs.items():
             if hasattr(font.t_os_2, attr) and value is not None:
                 setattr(font.t_os_2, attr, value)

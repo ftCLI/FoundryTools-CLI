@@ -1,6 +1,7 @@
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Optional, Union, get_type_hints
+from typing import Any, get_type_hints
 
 from foundrytools import Font
 from foundrytools.lib.font_finder import (
@@ -28,9 +29,9 @@ class SaveOptions:
     A class that specifies how to save the font.
     """
 
-    reorder_tables: Optional[bool] = True
+    reorder_tables: bool | None = True
     suffix: str = ""
-    output_dir: Optional[Path] = None
+    output_dir: Path | None = None
     overwrite: bool = False
 
 
@@ -74,7 +75,7 @@ class TaskRunnerConfig:  # pylint: disable=too-few-public-methods
 
     @staticmethod
     def _set_options(
-        options_group: Union[dict, FinderOptions, SaveOptions], options: dict[str, Any]
+        options_group: dict | FinderOptions | SaveOptions, options: dict[str, Any]
     ) -> None:
         """
         Update attributes of an options_group with provided options if the attribute exists.

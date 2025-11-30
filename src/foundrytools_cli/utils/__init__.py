@@ -1,7 +1,8 @@
 import os
+from collections.abc import Callable
 from pathlib import Path
 from textwrap import TextWrapper
-from typing import Any, Callable, Optional, Union
+from typing import Any
 
 import click
 
@@ -112,8 +113,8 @@ def make_options(options: list[Callable]) -> Callable:
 
 
 def choice_to_int_callback(
-    ctx: click.Context, _: click.Parameter, value: Union[str, tuple[str, ...]]
-) -> Optional[Union[int, tuple[int, ...]]]:
+    ctx: click.Context, _: click.Parameter, value: str | tuple[str, ...]
+) -> int | tuple[int, ...] | None:
     """
     Callback for click options that accept a choice. Converts the choice to an integer or a tuple
     of integers.
@@ -129,7 +130,7 @@ def choice_to_int_callback(
     :param value: The value to convert
     :type value: Union[str, tuple[str, ...]]
     :return: The converted value
-    :rtype: Optional[Union[int, tuple[int, ...]]]
+    :rtype: int | tuple[int, ...] | None
     """
 
     # we do not check if the values can be converted to integers here because the click.Choice
@@ -169,9 +170,7 @@ def tuple_to_set_callback(
     return set(value)
 
 
-def output_dir_callback(
-    ctx: click.Context, _: click.Parameter, value: Optional[Path]
-) -> Optional[Path]:
+def output_dir_callback(ctx: click.Context, _: click.Parameter, value: Path | None) -> Path | None:
     """
     Callback for ``--output-dir option``.
 
@@ -227,7 +226,7 @@ def ensure_at_least_one_param(ctx: click.Context) -> None:
 
 
 def wrap_string(
-    string: str, width: int, initial_indent: int, indent: int, max_lines: Optional[int] = None
+    string: str, width: int, initial_indent: int, indent: int, max_lines: int | None = None
 ) -> str:
     """
     Wraps a string to a specified width.

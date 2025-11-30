@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 import click
 from foundrytools.core.font import Font
@@ -150,8 +150,8 @@ def remove_glyphs(input_path: Path, **options: dict[str, Any]) -> None:
 
     def task(
         font: Font,
-        glyph_names_to_remove: Optional[set[str]],
-        glyph_ids_to_remove: Optional[set[int]],
+        glyph_names_to_remove: set[str] | None,
+        glyph_ids_to_remove: set[int] | None,
     ) -> bool:
         removed_glyphs = font.remove_glyphs(
             glyph_names_to_remove=glyph_names_to_remove,

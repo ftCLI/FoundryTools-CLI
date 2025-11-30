@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import click
 from foundrytools import Font
@@ -55,8 +55,8 @@ def del_names(input_path: Path, **options: dict[str, Any]) -> None:
     def task(
         font: Font,
         name_ids_to_process: tuple[int],
-        platform_id: Optional[int] = None,
-        language_string: Optional[str] = None,
+        platform_id: int | None = None,
+        language_string: str | None = None,
     ) -> bool:
         font.t_name.remove_names(
             name_ids=name_ids_to_process, platform_id=platform_id, language_string=language_string
@@ -171,8 +171,8 @@ def find_replace(input_path: Path, **options: dict[str, Any]) -> None:
         font: Font,
         old_string: str,
         new_string: str,
-        name_ids_to_process: Optional[tuple[int]] = None,
-        name_ids_to_skip: Optional[tuple[int]] = None,
+        name_ids_to_process: tuple[int] | None = None,
+        name_ids_to_skip: tuple[int] | None = None,
     ) -> bool:
         font.t_name.find_replace(
             old_string=old_string,
@@ -227,7 +227,7 @@ def set_name(input_path: Path, **options: dict[str, Any]) -> None:
         font: Font,
         name_id: int,
         name_string: str,
-        platform_id: Optional[int] = None,
+        platform_id: int | None = None,
         language_string: str = "en",
     ) -> bool:
         font.t_name.set_name(
@@ -289,7 +289,7 @@ def build_unique_id(input_path: Path, **options: dict[str, Any]) -> None:
     ``Font Revision;Vendor ID;PostScript Name``
     """
 
-    def task(font: Font, platform_id: Optional[int] = None, alternate: bool = False) -> bool:
+    def task(font: Font, platform_id: int | None = None, alternate: bool = False) -> bool:
         font.t_name.build_unique_identifier(platform_id=platform_id, alternate=alternate)
         return font.t_name.is_modified
 
@@ -313,7 +313,7 @@ def build_full_name(input_path: Path, **options: dict[str, Any]) -> None:
     Builds the NameID 4 (Full Font Name).
     """
 
-    def task(font: Font, platform_id: Optional[int] = None) -> bool:
+    def task(font: Font, platform_id: int | None = None) -> bool:
         font.t_name.build_full_font_name(platform_id=platform_id)
         return font.t_name.is_modified
 
@@ -337,7 +337,7 @@ def build_version_string(input_path: Path, **options: dict[str, Any]) -> None:
     Builds the NameID 5 (Version String).
     """
 
-    def task(font: Font, platform_id: Optional[int] = None) -> bool:
+    def task(font: Font, platform_id: int | None = None) -> bool:
         font.t_name.build_version_string(platform_id=platform_id)
         return font.t_name.is_modified
 
@@ -361,7 +361,7 @@ def build_postscript_name(input_path: Path, **options: dict[str, Any]) -> None:
     Builds the NameID 6 (PostScript Name).
     """
 
-    def task(font: Font, platform_id: Optional[int] = None) -> bool:
+    def task(font: Font, platform_id: int | None = None) -> bool:
         font.t_name.build_postscript_name(platform_id=platform_id)
         return font.t_name.is_modified
 

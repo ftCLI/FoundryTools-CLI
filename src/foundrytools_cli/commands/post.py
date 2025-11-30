@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import click
 from foundrytools import Font
@@ -43,10 +43,10 @@ def cli(input_path: Path, **options: dict[str, Any]) -> None:
 
     def task(
         font: Font,
-        italic_angle: Optional[float] = None,
-        underline_position: Optional[int] = None,
-        underline_thickness: Optional[int] = None,
-        fixed_pitch: Optional[bool] = None,
+        italic_angle: float | None = None,
+        underline_position: int | None = None,
+        underline_thickness: int | None = None,
+        fixed_pitch: bool | None = None,
     ) -> bool:
         attrs = {
             "italic_angle": italic_angle,
