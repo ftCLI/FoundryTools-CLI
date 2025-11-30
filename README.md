@@ -22,7 +22,7 @@ rendered by [rich](https://github.com/Textualize/rich).
 
 ## Installation
 
-FoundryTools-CLI requires Python 3.9 or later.
+FoundryTools-CLI requires Python 3.10 or later.
 
 **IMPORTANT**: If you have Python 2.x installed in your system, you may have to use `python3`
 (instead of `python`) in the commands below.
