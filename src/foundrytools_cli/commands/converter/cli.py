@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 import click
 from fontTools.misc.cliTools import makeOutputFileName
@@ -74,8 +74,8 @@ def otf_to_ttf(input_path: Path, **options: dict[str, Any]) -> None:
     def task(
         font: Font,
         tolerance: float = 1.0,
-        target_upm: Optional[int] = None,
-        output_dir: Optional[Path] = None,
+        target_upm: int | None = None,
+        output_dir: Path | None = None,
         overwrite: bool = True,
     ) -> None:
         flavor = font.ttfont.flavor
@@ -201,7 +201,7 @@ def ttf_to_otf(input_path: Path, **options: dict[str, Any]) -> None:
 )
 def web_to_sfnt(
     input_path: Path,
-    in_format: Optional[Literal["woff", "woff2"]],
+    in_format: Literal["woff", "woff2"] | None,
     **options: dict[str, Any],
 ) -> None:
     """
@@ -236,8 +236,8 @@ def sfnt_to_web(input_path: Path, **options: dict[str, Any]) -> None:
 
     def task(
         font: Font,
-        output_dir: Optional[Path] = None,
-        out_format: Optional[Literal["woff", "woff2"]] = None,
+        output_dir: Path | None = None,
+        out_format: Literal["woff", "woff2"] | None = None,
         overwrite: bool = True,
         reorder_tables: bool = False,
     ) -> None:
@@ -302,7 +302,7 @@ def variable_to_static(input_path: Path, **options: dict[str, Any]) -> None:
         var_font: Font,
         select_instance: bool = False,
         overlap: int = 1,
-        output_dir: Optional[Path] = None,
+        output_dir: Path | None = None,
         overwrite: bool = True,
     ) -> None:
         if select_instance:

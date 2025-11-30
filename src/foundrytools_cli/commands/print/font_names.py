@@ -1,5 +1,4 @@
 from shutil import get_terminal_size
-from typing import Optional
 
 from fontTools.ttLib.tables._n_a_m_e import _MAC_LANGUAGES, _WINDOWS_LANGUAGES, NameRecord
 from foundrytools import Font
@@ -42,7 +41,7 @@ JUSTIFY = 22
 
 
 def _process_name_table(
-    font: Font, table: Table, terminal_width: int, max_lines: Optional[int], minimal: bool
+    font: Font, table: Table, terminal_width: int, max_lines: int | None, minimal: bool
 ) -> None:
     name_table = NameTable(font.ttfont)
     names = name_table.table.names
@@ -63,7 +62,7 @@ def _process_name_table(
 
 
 def _add_name_row_to_table(
-    table: Table, name: NameRecord, terminal_width: int, max_lines: Optional[int]
+    table: Table, name: NameRecord, terminal_width: int, max_lines: int | None
 ) -> None:
     row_string = _get_name_row(name)
     row_string = wrap_string(
@@ -77,7 +76,7 @@ def _add_name_row_to_table(
 
 
 def _process_cff_table(
-    font: Font, table: Table, terminal_width: int, max_lines: Optional[int], minimal: bool
+    font: Font, table: Table, terminal_width: int, max_lines: int | None, minimal: bool
 ) -> None:
     if not font.is_ps:
         return
@@ -133,7 +132,7 @@ def _get_name_row(name: NameRecord) -> str:
     )
 
 
-def main(font: Font, max_lines: Optional[int] = None, minimal: bool = False) -> None:
+def main(font: Font, max_lines: int | None = None, minimal: bool = False) -> None:
     """
     Prints the names of the font.
     """

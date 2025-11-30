@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Optional
 
 from afdko.fdkutils import run_shell_command
 from foundrytools import Font
@@ -10,7 +9,7 @@ from foundrytools.lib.qu2cu import quadratics_to_cubics_2
 from foundrytools_cli.utils.logger import logger
 
 
-def _build_out_file_name(font: Font, output_dir: Optional[Path], overwrite: bool = True) -> Path:
+def _build_out_file_name(font: Font, output_dir: Path | None, overwrite: bool = True) -> Path:
     """
     When converting a TrueType flavored web font to PS flavored web font, we need to add a suffix to
     the output file name to avoid overwriting the input file. This function builds the output file
@@ -39,11 +38,11 @@ def _build_out_file_name(font: Font, output_dir: Optional[Path], overwrite: bool
 def ttf2otf(
     font: Font,
     tolerance: float = 1.0,
-    target_upm: Optional[int] = None,
+    target_upm: int | None = None,
     correct_contours: bool = True,
     check_outlines: bool = False,
     subroutinize: bool = True,
-    output_dir: Optional[Path] = None,
+    output_dir: Path | None = None,
     overwrite: bool = True,
 ) -> None:
     """
@@ -104,11 +103,11 @@ def ttf2otf(
 
 def ttf2otf_with_tx(
     font: Font,
-    target_upm: Optional[int] = None,
+    target_upm: int | None = None,
     correct_contours: bool = True,
     check_outlines: bool = False,
     subroutinize: bool = True,
-    output_dir: Optional[Path] = None,
+    output_dir: Path | None = None,
     recalc_timestamp: bool = False,
     overwrite: bool = True,
 ) -> None:
