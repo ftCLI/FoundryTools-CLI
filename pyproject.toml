@@ -1,10 +1,10 @@
 [build-system]
-requires = ["uv_build>=0.8.13"]
+requires = ["uv_build>=0.9.17"]
 build-backend = "uv_build"
 
 [project]
 name = "foundrytools-cli"
-version = "2.0.3"
+version = "2.0.4"
 description = "A set of command line tools to inspect, manipulate and convert font files"
 readme = "README.md"
 license = "MIT"
@@ -29,7 +29,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "afdko>=4.0.2",
+    "afdko>=4.0.3",
     "click>=8.3.1",
     "foundrytools>=0.1.5",
     "loguru>=0.7.3",
@@ -44,10 +44,10 @@ dev = [
     "bump-my-version>=1.2.4",
     "mypy>=1.19.0",
     "pre-commit>=4.5.0",
-    "pylint>=4.0.3",
+    "pylint>=4.0.4",
 ]
 docs = [
-    "sphinx-click>=6.1.0",
+    "sphinx-click>=6.2.0",
     "sphinx-rtd-theme>=3.0.2",
 ]
 

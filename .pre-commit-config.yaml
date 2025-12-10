@@ -27,7 +27,7 @@ repos:
 -   repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.14.8
     hooks:
-    -   id: ruff
+    -   id: ruff-check
         args: [--fix]
     -   id: ruff-format
         args: [--line-length=100]
@@ -36,4 +36,4 @@ repos:
     rev: 1.0.0
     hooks:
     -   id: mdformat
-        args: [--wrap=100]
+        args: [--wrap=100, --end-of-line=keep]
