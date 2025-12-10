@@ -36,4 +36,4 @@ repos:
     rev: 1.0.0
     hooks:
     -   id: mdformat
-        args: [--wrap=100]
+        args: [--wrap=100, --end-of-line=keep]
