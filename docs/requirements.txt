@@ -1,2 +1,2 @@
-sphinx-click>=6.0.0
+sphinx-click>=6.2.0
 sphinx-rtd-theme>=3.0.2
