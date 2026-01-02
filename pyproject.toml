@@ -59,7 +59,7 @@ Homepage = "https://github.com/ftCLI/FoundryTools-CLI"
 
 [tool.bumpversion]
 current_version = "2.0.4"
-commit = true
+commit = false
 tag = true
 
 [[tool.bumpversion.files]]
