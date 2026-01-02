@@ -39,11 +39,11 @@ dependencies = [
     "win32-setctime>=1.2.0; sys_platform >= 'win32'",
 ]
 
-[dependencies-groups]
+[dependency-groups]
 dev = [
-    "bump-my-version>=1.2.4",
-    "mypy>=1.19.0",
-    "pre-commit>=4.5.0",
+    "bump-my-version>=1.2.6",
+    "mypy>=1.19.1",
+    "pre-commit>=4.5.1",
     "pylint>=4.0.4",
 ]
 docs = [
