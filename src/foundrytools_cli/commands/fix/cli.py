@@ -344,6 +344,39 @@ def fix_monospace(input_path: Path, **options: dict[str, Any]) -> None:
     runner.run()
 
 
+@cli.command("integer-ppem-if-hinted", cls=BaseCommand)
+def fix_integer_ppm_if_hinted(input_path: Path, **options: dict[str, Any]) -> None:
+    """
+    Sets the ``head.flags`` bit 3 to force integer ppem for hinted fonts.
+
+    fontbakery check id: com.google.fonts/check/integer_ppem_if_hinted
+
+    Rationale:
+
+    Hinted fonts must have head table flag bit 3 set.
+
+    Per https://docs.microsoft.com/en-us/typography/opentype/spec/head, bit 3 of Head::flags decides
+    whether PPEM should be rounded. This bit should always be set for hinted fonts.
+
+    Note:
+    Bit 3 = Force ppem to integer values for all internal scaler math;
+
+    Fixing procedure:
+
+    * Check if the font is hinted by looking for the presence of the ``fpgm`` table.
+    * Set the ``head.flags`` bit 3 to force integer ppem for hinted fonts.
+    """
+
+    def task(font: Font) -> bool:
+        if font.ttfont.get("fpgm"):
+            font.t_head.set_bit("flags", 3, True)
+        return font.t_head.is_modified
+
+    runner = TaskRunner(input_path=input_path, task=task, **options)
+    runner.filter.filter_out_ps = True
+    runner.run()
+
+
 @cli.command("transformed-components", cls=BaseCommand)
 def fix_transformed_components(input_path: Path, **options: dict[str, Any]) -> None:
     """
