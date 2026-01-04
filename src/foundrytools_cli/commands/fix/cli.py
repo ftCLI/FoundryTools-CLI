@@ -373,7 +373,7 @@ def fix_integer_ppm_if_hinted(input_path: Path, **options: dict[str, Any]) -> No
         return font.t_head.is_modified
 
     runner = TaskRunner(input_path=input_path, task=task, **options)
-    runner.filter_out_ps = True
+    runner.filter.filter_out_ps = True
     runner.run()
 
 
