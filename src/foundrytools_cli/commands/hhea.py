@@ -50,7 +50,9 @@ def recalc_caret_offset(input_path: Path, **options: dict[str, Any]) -> None:
             source_file = font.file
         else:
             font.ttfont.flavor = None
-            source_file = font.temp_file
+            temp_file = get_temp_file_path()
+            font.save(temp_file)
+            source_file = temp_file
             font.save(source_file)
 
         command_1 = ["tx", "-t1", source_file, temp_t1_file]

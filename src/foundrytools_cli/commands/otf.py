@@ -270,8 +270,9 @@ def recalc_stems(input_path: Path, **options: dict[str, Any]) -> None:
         temp_file = get_temp_file_path()
         if flavor is not None:
             font.ttfont.flavor = None
-            font.save(font.temp_file)
-            input_file = font.temp_file
+            temp_file = get_temp_file_path()
+            font.save(temp_file)
+            input_file = temp_file
         else:
             input_file = font.file
 
