@@ -100,7 +100,7 @@ def autohint(input_path: Path, **options: dict[str, Any]) -> None:
             otf_autohint(font, **kwargs)
         except OTFAutohintError as e:
             logger.error(f"Autohinting failed: {e}")
-            return
+            return False
 
         if subroutinize:
             font.reload()  # DO NOT REMOVE
