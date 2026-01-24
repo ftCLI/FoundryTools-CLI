@@ -1,3 +1,4 @@
+# ruff: noqa: C901
 import re
 from pathlib import Path
 

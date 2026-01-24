@@ -665,7 +665,7 @@ woff = [
 
 [[package]]
 name = "foundrytools"
-version = "0.1.5"
+version = "0.1.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "afdko" },
@@ -677,11 +677,10 @@ dependencies = [
     { name = "ttfautohint-py" },
     { name = "ufo-extractor" },
     { name = "ufo2ft" },
-    { name = "ufolib2" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c8/60/10e4e9658a6fc0835bedeeac2a1262068aa716c5c4e251669ff0e6b8d379/foundrytools-0.1.5.tar.gz", hash = "sha256:4d1857d461d16d28226e54616eae96144040341bb37573e239c56f00932e1473", size = 1443031, upload-time = "2025-11-30T09:55:04.445Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/05/98/ef737415a70272b3650b714035b385aa840f9f44f2f772d3ccfe62d61b27/foundrytools-0.1.6.tar.gz", hash = "sha256:c6e39181970b1e5a415414669fdaa1114df926ebf1790d6072cbd1af163b79a1", size = 1442971, upload-time = "2026-01-22T13:32:46.684Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e1/d2/e60d6a618fbfeda41058bff532a0bdb5ebbea4a7221c175c640e29d7206e/foundrytools-0.1.5-py3-none-any.whl", hash = "sha256:8652cb7883cd95773eb1e7351e3431c5d73be239d0a5c6692bbfdbe0ba468af8", size = 1476416, upload-time = "2025-11-30T09:55:02.148Z" },
+    { url = "https://files.pythonhosted.org/packages/9a/46/39723b34a2e6625b03aa0544e85caa9c6fccb340daa3e9d51e61efe41227/foundrytools-0.1.6-py3-none-any.whl", hash = "sha256:e27af93b2ca7b63dda867d2824cf3097b4899fe89e045f8e1db700c5c1bf0088", size = 1476339, upload-time = "2026-01-22T13:32:44.592Z" },
 ]
 
 [[package]]
@@ -715,7 +714,7 @@ docs = [
 requires-dist = [
     { name = "afdko", specifier = ">=4.0.3" },
     { name = "click", specifier = ">=8.3.1" },
-    { name = "foundrytools", specifier = ">=0.1.5" },
+    { name = "foundrytools", specifier = ">=0.1.6" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "pathvalidate", specifier = ">=3.3.1" },
     { name = "rich", specifier = ">=14.2.0" },
@@ -1653,11 +1652,11 @@ wheels = [
 
 [[package]]
 name = "setuptools"
-version = "80.9.0"
+version = "80.10.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/18/5d/3bf57dcd21979b887f014ea83c24ae194cfcd12b9e0fda66b957c69d1fca/setuptools-80.9.0.tar.gz", hash = "sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c", size = 1319958, upload-time = "2025-05-27T00:56:51.443Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/86/ff/f75651350db3cf2ef767371307eb163f3cc1ac03e16fdf3ac347607f7edb/setuptools-80.10.1.tar.gz", hash = "sha256:bf2e513eb8144c3298a3bd28ab1a5edb739131ec5c22e045ff93cd7f5319703a", size = 1229650, upload-time = "2026-01-21T09:42:03.061Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a3/dc/17031897dae0efacfea57dfd3a82fdd2a2aeb58e0ff71b77b87e44edc772/setuptools-80.9.0-py3-none-any.whl", hash = "sha256:062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922", size = 1201486, upload-time = "2025-05-27T00:56:49.664Z" },
+    { url = "https://files.pythonhosted.org/packages/e0/76/f963c61683a39084aa575f98089253e1e852a4417cb8a3a8a422923a5246/setuptools-80.10.1-py3-none-any.whl", hash = "sha256:fc30c51cbcb8199a219c12cc9c281b5925a4978d212f84229c909636d9f6984e", size = 1099859, upload-time = "2026-01-21T09:42:00.688Z" },
 ]
 
 [[package]]
