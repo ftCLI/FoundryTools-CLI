@@ -39,7 +39,7 @@ cli = click.Group(help="Miscellaneous utilities.")
 @click.option(
     "-s",
     "--source",
-    type=click.Choice(choices=["1", "2", "3", "4", "5"]),
+    type=click.Choice(choices=["1", "2", "3", "4", "5", "6"]),
     default="1",
     callback=choice_to_int_callback,
     help="""
@@ -53,6 +53,7 @@ cli = click.Group(help="Miscellaneous utilities.")
         3: Full Font Name
         4: CFF fontNames (CFF fonts only)
         5: CFF TopDict FullName (CFF fonts only)
+        6: Macintosh LWFN (LaserWriter Font Naming) using 5:3:3 rule
         """,
 )
 @click.option(
