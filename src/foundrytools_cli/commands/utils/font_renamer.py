@@ -41,8 +41,12 @@ def _apply_533_rule(postscript_name: str) -> str:
     words = re.findall(r"[A-Z][a-z]*", name_without_hyphens)
 
     if not words:
-        # Fallback: if no pattern matches, return the name as-is (truncated if needed)
-        return name_without_hyphens[:11]
+        # Fallback for invalid/unusual PostScript names without uppercase letters.
+        # PostScript font names should start with uppercase per Adobe spec, but we handle
+        # the edge case gracefully. The 11-char limit approximates typical LWFN length
+        # (5+3+3 for a three-word name like FamilyStyleVariant).
+        MAX_FALLBACK_LENGTH = 11
+        return name_without_hyphens[:MAX_FALLBACK_LENGTH]
 
     result = []
     for i, word in enumerate(words):
