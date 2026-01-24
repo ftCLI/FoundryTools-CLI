@@ -61,7 +61,7 @@ Homepage = "https://github.com/ftCLI/FoundryTools-CLI"
 [tool.bumpversion]
 current_version = "2.0.6"
 commit = false
-tag = true
+tag = false
 
 [[tool.bumpversion.files]]
 filename = "src/foundrytools_cli/__init__.py"
