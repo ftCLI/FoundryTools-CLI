@@ -42,8 +42,7 @@ class BaseCommand(click.Command):
                 """,
             ),
             click.Option(
-                ["-no-ow", "--no-overwrite", "overwrite"],
-                is_flag=True,
+                ["--overwrite/-no-ow", "--overwrite/--no-overwrite", "overwrite"],
                 default=True,
                 help="""
                 Do not overwrite existing files on save.

@@ -207,9 +207,39 @@ def web_to_sfnt(
     """
     Convert WOFF and WOFF2 fonts to SFNT fonts.
     """
-    runner = TaskRunner(input_path=input_path, task=Font.to_sfnt, **options)
+
+    def task(
+        font: Font,
+        output_dir: Path | None = None,
+        overwrite: bool = True,
+        reorder_tables: bool = False,
+    ) -> None:
+        logger.info("Converting to SFNT...")
+        font.to_sfnt()
+
+        # Get the output file path with proper overwrite handling
+        if font.file is None:
+            raise ValueError("Font file path is not available")
+
+        file_stem = font.file.stem
+        extension = font.get_file_ext()
+
+        if output_dir is None:
+            output_dir = font.file.parent
+
+        out_file = makeOutputFileName(
+            sanitize_filename(file_stem),
+            outputDir=output_dir,
+            overWrite=overwrite,
+            extension=extension,
+        )
+
+        font.save(out_file, reorder_tables=reorder_tables)
+        logger.success(f"File saved to {out_file}")
+
+    runner = TaskRunner(input_path=input_path, task=task, **options)
     runner.filter.filter_out_sfnt = True
-    runner.force_modified = True
+    runner.save_if_modified = False
     if in_format == "woff":
         runner.filter.filter_out_woff2 = True
     elif in_format == "woff2":
