@@ -105,9 +105,11 @@ def _get_file_stem(font: Font, source: int = 1) -> str:
     elif source == 5 and font.is_ps:
         file_name = font.t_cff_.top_dict.FullName
     elif source == 6:
-        # Get PostScript name for LWFN 5:3:3 rule
-        postscript_name = str(font.t_name.table.getDebugName(6))
-        file_name = _apply_533_rule(postscript_name)
+        # Build name from family and subfamily for LWFN 5:3:3 rule
+        family_name = str(font.t_name.table.getBestFamilyName())
+        subfamily_name = str(font.t_name.table.getBestSubFamilyName())
+        font_name = f"{family_name}-{subfamily_name}".replace(" ", "").replace(".", "")
+        file_name = _apply_533_rule(font_name)
     else:
         raise ValueError("Invalid source value.")
     return sanitize_filename(file_name, platform="auto")
