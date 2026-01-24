@@ -4,6 +4,7 @@ from typing import Any, cast
 
 import click
 from foundrytools import Font
+from foundrytools.app.otf_autohint import OTFAutohintError
 from foundrytools.app.otf_autohint import run as otf_autohint
 from foundrytools.app.otf_check_outlines import run as otf_check_outlines
 from foundrytools.app.otf_dehint import run as otf_dehint
@@ -58,8 +59,8 @@ def subroutinize_flag() -> Callable:
     """,
 )
 @click.option(
-    "-d",
-    "--decimal",
+    "-d/-no-d",
+    "--decimal/--no-decimal",
     "roundCoords",
     is_flag=True,
     default=True,
@@ -95,7 +96,12 @@ def autohint(input_path: Path, **options: dict[str, Any]) -> None:
 
     def task(font: Font, subroutinize: bool = True, **kwargs: dict[str, Any]) -> bool:
         logger.info("Autohinting...")
-        otf_autohint(font, **kwargs)
+
+        try:
+            otf_autohint(font, **kwargs)
+        except OTFAutohintError as e:
+            logger.error(f"Autohinting failed: {e}")
+            return False
 
         if subroutinize:
             font.reload()  # DO NOT REMOVE

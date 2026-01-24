@@ -42,7 +42,7 @@ class BaseCommand(click.Command):
                 """,
             ),
             click.Option(
-                ["-no-ow", "--no-overwrite", "overwrite"],
+                ["-ow/-no-ow", "--overwrite/--no-overwrite"],
                 is_flag=True,
                 default=True,
                 help="""
@@ -55,7 +55,7 @@ class BaseCommand(click.Command):
                 """,
             ),
             click.Option(
-                ["-no-rbb", "--no-recalc-bboxes", "recalc_bboxes"],
+                ["-rbb/-no-rbb", "--recalc-bboxes/--no-recalc-bboxes"],
                 is_flag=True,
                 default=True,
                 help="""
@@ -67,7 +67,7 @@ class BaseCommand(click.Command):
                 """,
             ),
             click.Option(
-                ["-rtb", "--reorder-tables", "reorder_tables"],
+                ["-rtb", "--reorder-tables"],
                 is_flag=True,
                 default=False,
                 help="""
