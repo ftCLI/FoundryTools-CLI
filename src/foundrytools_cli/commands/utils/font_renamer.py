@@ -10,19 +10,19 @@ from foundrytools_cli.utils.logger import logger
 def _apply_533_rule(postscript_name: str) -> str:
     """
     Apply the Macintosh LaserWriter Font Naming (LWFN) 5:3:3 rule.
-    
+
     The rule divides the font name into "words" where each uppercase letter begins
     a new word. The file name is derived by:
     - Taking the initial uppercase letter and up to 4 lowercase letters in the first word
     - Taking the initial uppercase letter and up to 2 lowercase letters for subsequent words
     - Dropping hyphens between family and style portions
-    
+
     Args:
         postscript_name: The PostScript name (e.g., "Helvetica-BoldOblique")
-        
+
     Returns:
         The abbreviated filename following the 5:3:3 rule (e.g., "HelveBolObl")
-        
+
     Examples:
         >>> _apply_533_rule("Helvetica-BoldOblique")
         'HelveBolObl'
@@ -35,15 +35,15 @@ def _apply_533_rule(postscript_name: str) -> str:
     """
     # Remove hyphens to get a continuous string
     name_without_hyphens = postscript_name.replace("-", "")
-    
+
     # Split into words where each uppercase letter begins a new word
     # This regex finds: uppercase letter followed by any number of lowercase letters
-    words = re.findall(r'[A-Z][a-z]*', name_without_hyphens)
-    
+    words = re.findall(r"[A-Z][a-z]*", name_without_hyphens)
+
     if not words:
         # Fallback: if no pattern matches, return the name as-is (truncated if needed)
         return name_without_hyphens[:11]
-    
+
     result = []
     for i, word in enumerate(words):
         if i == 0:
@@ -52,8 +52,8 @@ def _apply_533_rule(postscript_name: str) -> str:
         else:
             # Subsequent words: take up to 3 characters (1 uppercase + 2 lowercase)
             result.append(word[:3])
-    
-    return ''.join(result)
+
+    return "".join(result)
 
 
 def _get_file_stem(font: Font, source: int = 1) -> str:
