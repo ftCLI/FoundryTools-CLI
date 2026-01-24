@@ -4,7 +4,8 @@ from typing import Any, cast
 
 import click
 from foundrytools import Font
-from foundrytools.app.otf_autohint import run as otf_autohint, OTFAutohintError
+from foundrytools.app.otf_autohint import OTFAutohintError
+from foundrytools.app.otf_autohint import run as otf_autohint
 from foundrytools.app.otf_check_outlines import run as otf_check_outlines
 from foundrytools.app.otf_dehint import run as otf_dehint
 from foundrytools.app.otf_recalc_stems import run as get_stems
