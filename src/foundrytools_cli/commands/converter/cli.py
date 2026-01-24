@@ -142,7 +142,7 @@ def otf_to_ttf(input_path: Path, **options: dict[str, Any]) -> None:
     """,
 )
 @click.option(
-    "-cc/--no-cc",
+    "-cc/-no-cc",
     "--correct-contours/--no-correct-contours",
     is_flag=True,
     default=True,
