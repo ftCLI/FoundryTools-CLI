@@ -133,7 +133,7 @@ def main(font: Font, source: int = 1, overwrite: bool = False) -> None:
         file=Path(new_file_name),
         extension=font.get_file_ext(),
         output_dir=old_file.parent,
-        overwrite=overwrite,
+        overwrite=True,
     )
     if new_file == old_file:
         logger.skip(f"{old_file.name} is already named correctly")  # type: ignore
