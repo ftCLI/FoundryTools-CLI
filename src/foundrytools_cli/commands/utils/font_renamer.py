@@ -116,7 +116,7 @@ def _get_file_stem(font: Font, source: int = 1) -> str:
     return sanitize_filename(file_name, platform="auto")
 
 
-def main(font: Font, source: int = 1, overwrite: bool = False) -> None:
+def main(font: Font, source: int = 1) -> None:
     """
     Renames the given font files.
     """
@@ -128,20 +128,23 @@ def main(font: Font, source: int = 1, overwrite: bool = False) -> None:
             f"source=4 and source=5 can be used for OTF files only. Using source=1 for "
             f"{old_file.name}"
         )
+
     new_file_name = sanitize_filename(_get_file_stem(font=font, source=source))
     new_file = font.get_file_path(
         file=Path(new_file_name),
         extension=font.get_file_ext(),
         output_dir=old_file.parent,
-        overwrite=overwrite,
+        overwrite=True,
     )
     if new_file == old_file:
         logger.skip(f"{old_file.name} is already named correctly")  # type: ignore
         return
+
     if new_file.exists():
         logger.warning(f"Another file named {new_file.name} already exists")
         logger.skip(f"{old_file.name} was not renamed")  # type: ignore
         return
+
     try:
         old_file.rename(new_file)
         logger.opt(colors=True).info(
