@@ -56,16 +56,6 @@ cli = click.Group(help="Miscellaneous utilities.")
         6: Macintosh LWFN (LaserWriter Font Naming) using 5:3:3 rule
         """,
 )
-@click.option(
-    "-o",
-    "--overwrite",
-    "overwrite",
-    is_flag=True,
-    help="""
-        Allow overwriting output files. THIS MIGHT POTENTIALLY RESULT IN LOSS OF FILES.
-        USE WITH CARE.
-    """,
-)
 @recursive_flag()
 def font_renamer(input_path: Path, **options: dict[str, Any]) -> None:
     """
