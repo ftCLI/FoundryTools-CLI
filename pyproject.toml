@@ -35,17 +35,17 @@ dependencies = [
     "foundrytools>=0.1.6",
     "loguru>=0.7.3",
     "pathvalidate>=3.3.1",
-    "rich>=14.3.1",
+    "rich>=14.3.3",
     "ufolib2>=0.18.1",
     "win32-setctime>=1.2.0; sys_platform >= 'win32'",
 ]
 
 [dependency-groups]
 dev = [
-    "bump-my-version>=1.2.6",
+    "bump-my-version>=1.2.7",
     "mypy>=1.19.1",
     "pre-commit>=4.5.1",
-    "pylint>=4.0.4",
+    "pylint>=4.0.5",
 ]
 docs = [
     "sphinx-click>=6.2.0",
