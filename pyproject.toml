@@ -1,62 +1,6 @@
 [build-system]
-requires = ["uv_build>=0.9.17"]
-build-backend = "uv_build"
-
-[project]
-name = "foundrytools-cli"
-version = "2.1.1"
-description = "A set of command line tools to inspect, manipulate and convert font files"
-readme = "README.md"
-license = "MIT"
-requires-python = ">=3.10"
-authors = [
-    { name = "Cesare Gilento", email = "ftcli@proton.me" },
-]
-
-classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Intended Audience :: Developers",
-    "Intended Audience :: End Users/Desktop",
-    "Natural Language :: English",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-    "License :: OSI Approved :: MIT License",
-    "Topic :: Text Processing :: Fonts",
-]
-
-dependencies = [
-    "afdko>=4.0.3",
-    "click>=8.3.1",
-    "foundrytools>=0.1.6",
-    "loguru>=0.7.3",
-    "pathvalidate>=3.3.1",
-    "rich>=14.3.3",
-    "ufolib2>=0.18.1",
-    "win32-setctime>=1.2.0; sys_platform >= 'win32'",
-]
-
-[dependency-groups]
-dev = [
-    "bump-my-version>=1.2.7",
-    "mypy>=1.19.1",
-    "pre-commit>=4.5.1",
-    "pylint>=4.0.5",
-]
-docs = [
-    "sphinx-click>=6.2.0",
-    "sphinx-rtd-theme>=3.1.0",
-]
-
-[project.scripts]
-ftcli = "foundrytools_cli.__main__:cli"
-
-[project.urls]
-Homepage = "https://github.com/ftCLI/FoundryTools-CLI"
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [tool.bumpversion]
 current_version = "2.1.1"

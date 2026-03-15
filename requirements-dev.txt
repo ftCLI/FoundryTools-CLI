@@ -1,5 +1,5 @@
-bump-my-version>=1.2.1
-hatch>=1.14.1
-mypy>=1.17.0
-pre-commit>=4.2.0
-pylint>=3.3.7
+-r requirements.txt
+bump-my-version>=1.2.7
+mypy>=1.19.1
+pre-commit>=4.5.1
+pylint>=4.0.5
