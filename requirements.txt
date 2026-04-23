@@ -1,4 +1,4 @@
-afdko>=4.0.3
+afdko>=5.0.0
 click>=8.3.3
 foundrytools>=0.1.6
 loguru>=0.7.3
