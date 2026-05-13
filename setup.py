@@ -25,7 +25,7 @@ setup(
     packages=find_packages(where="src"),
     include_package_data=True,
     install_requires=[
-        "afdko==4.0.3",
+        "afdko==5.0.0",
         "click>=8.3.1",
         "foundrytools>=0.1.6",
         "loguru>=0.7.3",
