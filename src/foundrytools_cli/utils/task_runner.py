@@ -35,7 +35,7 @@ class SaveOptions:
     overwrite: bool = False
 
 
-class TaskRunnerConfig:  # pylint: disable=too-few-public-methods
+class TaskRunnerConfig:
     """
     Handle options for TaskRunner.
     """
@@ -85,7 +85,7 @@ class TaskRunnerConfig:  # pylint: disable=too-few-public-methods
                 setattr(options_group, key, value)
 
 
-class TaskRunner:  # pylint: disable=too-few-public-methods
+class TaskRunner:
     """
     A class for running tasks on multiple fonts.
 
@@ -162,7 +162,7 @@ class TaskRunner:  # pylint: disable=too-few-public-methods
     def _execute_task(self, font: Font) -> bool:
         try:
             return bool(self.task(font, **self.config.task_options))
-        except Exception as e:  # pylint: disable=broad-except
+        except Exception as e:
             self._log_error(e)
             return False
 
@@ -181,7 +181,7 @@ class TaskRunner:  # pylint: disable=too-few-public-methods
             out_file = self._get_out_file_name(font)
             font.save(out_file, reorder_tables=self.config.save_options.reorder_tables)
             logger.success(f"File saved to {out_file}")
-        except Exception as e:  # pylint: disable=broad-except
+        except Exception as e:
             self._log_error(e)
 
     def _get_out_file_name(self, font: Font) -> Path:
