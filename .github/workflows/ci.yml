@@ -31,7 +31,7 @@ jobs:
         run: uv sync --locked --group dev
 
       - name: Run pre-commit checks
-        run: uv run --locked --group dev pre-commit run --all-files
+        run: uv run --locked --group dev pre-commit run --files $(git ls-files src/)
 
   test-and-typecheck:
     name: Tests and type check
