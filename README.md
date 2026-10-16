@@ -22,10 +22,7 @@ rendered by [rich](https://github.com/Textualize/rich).
 
 ## Installation
 
-FoundryTools-CLI requires Python 3.10 or later.
-
-**IMPORTANT**: If you have Python 2.x installed in your system, you may have to use `python3`
-(instead of `python`) in the commands below.
+FoundryTools-CLI requires Python 3.11 or later.
 
 ### pip
 
@@ -39,25 +36,20 @@ python -m pip install foundrytools-cli
 ### Editable mode
 
 If you would like to contribute to the development, you can clone the repository from GitHub,
-install the package in 'editable' mode and modify the source code in place. We strongly recommend
-using a virtual environment.
+install the package in 'editable' mode and modify the source code in place. Install
+[uv](https://docs.astral.sh/uv/getting-started/installation/) first to create the project
+environment.
 
 ```
 # clone the repository:
 git clone https://github.com/ftCLI/foundrytools-cli.git
 cd foundrytools-cli
 
-# create new virtual environment named e.g. ftcli-venv, or whatever you prefer:
-python -m venv ftcli-venv
+# install the project and development tools in a managed environment:
+uv sync --locked --group dev
 
-# to activate the virtual environmtnet in macOS and Linux, do:
-. ftcli-venv/bin/activate
-
-# to activate the virtual environment in Windows, do:
-ftcli-venv\Scripts\activate.bat
-
-# install in 'editable' mode
-python -m pip install -e .
+# run the CLI:
+uv run ftcli --help
 ```
 
 ## Documentation

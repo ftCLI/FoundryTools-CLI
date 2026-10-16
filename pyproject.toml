@@ -1,6 +1,96 @@
 [build-system]
-requires = ["setuptools>=84.0.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.13.1,<0.14"]
+build-backend = "uv_build"
+
+[project]
+name = "foundrytools-cli"
+version = "2.1.1"
+description = "A set of command line tools to inspect, manipulate and convert font files"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Cesare Gilento", email = "ftcli@proton.me" }]
+dependencies = [
+    "afdko==4.0.3",
+    "click>=8.5.0",
+    "foundrytools>=0.1.6",
+    "loguru>=0.7.3",
+    "pathvalidate>=3.3.1",
+    "rich>=15.0.0",
+    "ufolib2>=0.19.0",
+    "win32-setctime>=1.2.0; sys_platform == 'win32'",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Topic :: Text Processing :: Fonts",
+]
+
+[dependency-groups]
+dev = [
+    "bump-my-version>=1.6.0",
+    "mypy>=2.4.0",
+    "pre-commit>=4.6.2",
+    "pytest>=8.4.0",
+    "ruff>=0.11.0",
+]
+security = [
+    "bandit>=1.8.6",
+    "pip-audit>=2.9.0",
+]
+
+[project.optional-dependencies]
+docs = [
+    "sphinx-click>=6.2.0",
+    "sphinx-rtd-theme>=3.0.2",
+]
+
+[project.scripts]
+ftcli = "foundrytools_cli.__main__:cli"
+
+[project.urls]
+Homepage = "https://github.com/ftCLI/FoundryTools-CLI"
+
+[tool.uv.build-backend]
+module-name = "foundrytools_cli"
+module-root = "src"
+
+[tool.mypy]
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = ["afdko.*", "fontTools.*", "win32_setctime.*"]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 100
+indent-width = 4
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["C", "E", "F", "UP", "B", "SIM", "I"]
+ignore = []
+fixable = ["ALL"]
+unfixable = []
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
 
 [tool.bumpversion]
 current_version = "2.1.1"
@@ -16,3 +106,8 @@ replace = '__version__ = "{new_version}"'
 filename = "docs/source/conf.py"
 search = 'release = "{current_version}"'
 replace = 'release = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = "name = \"foundrytools-cli\"\nversion = \"{current_version}\""
+replace = "name = \"foundrytools-cli\"\nversion = \"{new_version}\""

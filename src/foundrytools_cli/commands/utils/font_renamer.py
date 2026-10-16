@@ -150,6 +150,6 @@ def main(font: Font, source: int = 1) -> None:
         logger.opt(colors=True).info(
             f"<light-black>{old_file.name}</> --> <bold><magenta>{new_file.name}</></>"
         )
-    except Exception as e:  # pylint: disable=broad-except
+    except Exception as e:
         logger.error(f"Error renaming {old_file.name}: {e}")
         return

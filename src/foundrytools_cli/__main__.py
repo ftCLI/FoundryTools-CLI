@@ -36,5 +36,5 @@ from foundrytools_cli.commands.utils import cli as utils
     },
 )
 @click.version_option()
-def cli() -> None:  # pylint: disable=missing-function-docstring
+def cli() -> None:
     pass

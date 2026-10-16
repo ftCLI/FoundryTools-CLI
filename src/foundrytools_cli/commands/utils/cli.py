@@ -1,4 +1,3 @@
-# pylint: disable=import-outside-toplevel
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any, cast

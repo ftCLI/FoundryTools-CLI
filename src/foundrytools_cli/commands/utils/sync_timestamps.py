@@ -1,4 +1,3 @@
-# pylint: disable=import-outside-toplevel
 import os
 import platform
 from pathlib import Path
@@ -19,7 +18,7 @@ if platform.system() == "Windows":
         from win32_setctime import setctime
 
         SETCTIME = setctime
-    except (ImportError, Exception) as exc:  # pylint: disable=broad-except
+    except (ImportError, Exception) as exc:
         SETCTIME = None
         IMPORT_ERROR = exc
 
@@ -98,7 +97,7 @@ def _set_windows_ctime(path: Path, timestamp: int) -> None:
     try:
         SETCTIME(path, timestamp + epoch_diff)
         logger.info(f"created timestamp  : {timestampToString(timestamp)}")
-    except Exception as e:  # pylint: disable=broad-except
+    except Exception as e:
         logger.error(f"Error setting file creation time: {e}")
 
 
@@ -107,7 +106,7 @@ def _set_mtime_and_atime(path: Path, timestamp: int) -> None:
         os.utime(path, (timestamp + epoch_diff, timestamp + epoch_diff))
         logger.info(f"modified timestamp : {timestampToString(timestamp)}")
         logger.info(f"access timestamp   : {timestampToString(timestamp)}")
-    except Exception as e:  # pylint: disable=broad-except
+    except Exception as e:
         logger.error(f"Error setting file timestamps: {e}")
 
 
