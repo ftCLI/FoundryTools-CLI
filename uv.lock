@@ -873,7 +873,7 @@ security = [
 requires-dist = [
     { name = "afdko", specifier = "==4.0.3" },
     { name = "click", specifier = ">=8.5.0" },
-    { name = "foundrytools", specifier = ">=0.1.6" },
+    { name = "foundrytools", specifier = ">=0.1.7" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "pathvalidate", specifier = ">=3.3.1" },
     { name = "rich", specifier = ">=15.0.0" },
