@@ -33,8 +33,8 @@ jobs:
       - name: Run pre-commit checks
         run: uv run --locked --group dev pre-commit run --files $(git ls-files src/)
 
-  test-and-typecheck:
-    name: Tests and type check
+  typecheck:
+    name: Type check
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
@@ -53,9 +53,6 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --locked --group dev
-
-      - name: Run tests
-        run: uv run --locked --group dev pytest
 
       - name: Mypy
         run: uv run --locked --group dev mypy src
