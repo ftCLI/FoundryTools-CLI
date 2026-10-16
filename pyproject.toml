@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "foundrytools-cli"
-version = "2.1.1"
+version = "2.2.0"
 description = "A set of command line tools to inspect, manipulate and convert font files"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -92,7 +92,7 @@ docstring-code-format = true
 docstring-code-line-length = "dynamic"
 
 [tool.bumpversion]
-current_version = "2.1.1"
+current_version = "2.2.0"
 commit = false
 tag = false
 
