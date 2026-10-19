@@ -13,7 +13,7 @@ authors = [{ name = "Cesare Gilento", email = "ftcli@proton.me" }]
 dependencies = [
     "afdko==4.0.3",
     "click>=8.5.0",
-    "foundrytools>=0.1.7",
+    "foundrytools>=0.1.8",
     "loguru>=0.7.3",
     "pathvalidate>=3.3.1",
     "rich>=15.0.0",
@@ -93,8 +93,8 @@ docstring-code-line-length = "dynamic"
 
 [tool.bumpversion]
 current_version = "2.2.0"
-commit = false
-tag = false
+commit = true
+tag = true
 
 [[tool.bumpversion.files]]
 filename = "src/foundrytools_cli/__init__.py"
