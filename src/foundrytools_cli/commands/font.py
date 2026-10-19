@@ -11,6 +11,46 @@ from foundrytools_cli.utils.task_runner import TaskRunner
 cli = click.Group(help="Font level utilities.")
 
 
+@cli.command("add-extremes", cls=BaseCommand)
+@click.option(
+    "--keep-hinting",
+    is_flag=True,
+    help="Preserve hinting when adding extrema points.",
+)
+@click.option(
+    "--tolerance",
+    type=click.FloatRange(min=0),
+    default=1.0,
+    show_default=True,
+    help="Do not add extrema points within this distance (font units) of existing points.",
+)
+def add_extremes(input_path: Path, **options: dict[str, Any]) -> None:
+    """
+    Add points at the horizontal and vertical extrema of glyph curves.
+
+    Composite glyphs in TrueType fonts and variable fonts are not modified.
+    """
+
+    def task(font: Font, keep_hinting: bool = False, tolerance: float = 1.0) -> bool:
+        modified_glyphs = font.add_extremes(
+            remove_hinting=not keep_hinting,
+            tolerance=tolerance,
+        )
+        if not modified_glyphs:
+            logger.info("No glyphs were modified")
+            return False
+
+        logger.opt(colors=True).info(
+            f"{len(modified_glyphs)} glyphs were modified: "
+            f"<lc>{', '.join(sorted(modified_glyphs))}</lc>"
+        )
+        return True
+
+    runner = TaskRunner(input_path=input_path, task=task, **options)
+    runner.filter.filter_out_variable = True
+    runner.run()
+
+
 @cli.command("correct-contours", cls=BaseCommand)
 @click.option(
     "-ma",

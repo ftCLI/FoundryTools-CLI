@@ -258,12 +258,53 @@ def round_coordinates(input_path: Path, **options: dict[str, Any]) -> None:
     The number of vertical stem values to extract.
     """,
 )
+@click.option(
+    "--use-samples/--all-glyphs",
+    default=True,
+    show_default=True,
+    help="Calculate each value from its default or custom glyph sample, or from the whole font.",
+)
+@click.option(
+    "--std-h-sample",
+    multiple=True,
+    help="Characters to sample for StdHW; may be repeated. Defaults to the built-in sample.",
+)
+@click.option(
+    "--std-v-sample",
+    multiple=True,
+    help="Characters to sample for StdVW; may be repeated. Defaults to the built-in sample.",
+)
+@click.option(
+    "--snap-h-sample",
+    multiple=True,
+    help="Characters to sample for StemSnapH; may be repeated. Defaults to the built-in sample.",
+)
+@click.option(
+    "--snap-v-sample",
+    multiple=True,
+    help="Characters to sample for StemSnapV; may be repeated. Defaults to the built-in sample.",
+)
 def recalc_stems(input_path: Path, **options: dict[str, Any]) -> None:
     """
     Recalculate the hinting stems of OpenType-PS fonts.
     """
 
-    def task(font: Font) -> bool:
+    sample_options = ("std_h_sample", "std_v_sample", "snap_h_sample", "snap_v_sample")
+    if not options["use_samples"] and any(options[name] for name in sample_options):
+        raise click.UsageError("Custom glyph samples cannot be used with --all-glyphs.")
+
+    def task(
+        font: Font,
+        report_all_stems: bool = False,
+        max_distance: int = 1,
+        max_h_stems: int = 2,
+        max_v_stems: int = 2,
+        use_samples: bool = True,
+        std_h_sample: tuple[str, ...] = (),
+        std_v_sample: tuple[str, ...] = (),
+        snap_h_sample: tuple[str, ...] = (),
+        snap_v_sample: tuple[str, ...] = (),
+    ) -> bool:
         if not font.is_ps:
             logger.error("Font is not a PostScript font")
             return False
@@ -273,11 +314,17 @@ def recalc_stems(input_path: Path, **options: dict[str, Any]) -> None:
             return False
 
         flavor = font.ttfont.flavor
-        temp_file = get_temp_file_path()
+        temp_file: Path | None = None
         if flavor is not None:
             font.ttfont.flavor = None
             temp_file = get_temp_file_path()
-            font.save(temp_file)
+            try:
+                font.save(temp_file)
+            except Exception:
+                temp_file.unlink(missing_ok=True)
+                raise
+            finally:
+                font.ttfont.flavor = flavor
             input_file = temp_file
         else:
             input_file = font.file
@@ -289,22 +336,31 @@ def recalc_stems(input_path: Path, **options: dict[str, Any]) -> None:
         current_stem_snap_h = font.t_cff_.get_hinting_data().get("StemSnapH", None)
         current_stem_snap_v = font.t_cff_.get_hinting_data().get("StemSnapV", None)
 
-        report_all_stems = cast(bool, options["report_all_stems"])
-        max_distance = cast(int, options["max_distance"])
-        max_h_stems = cast(int, options["max_h_stems"])
-        max_v_stems = cast(int, options["max_v_stems"])
-        std_h_w, std_v_w, stem_snap_h, stem_snap_v = get_stems(
-            input_file,
-            report_all_stems=report_all_stems,
-            max_distance=max_distance,
-            max_h_stems=max_h_stems,
-            max_v_stems=max_v_stems,
-        )
+        def to_codepoints(sample: tuple[str, ...]) -> set[int] | None:
+            codepoints = {ord(char) for text in sample for char in text}
+            return codepoints or None
+
+        try:
+            std_h_w, std_v_w, stem_snap_h, stem_snap_v = get_stems(
+                input_file,
+                report_all_stems=report_all_stems,
+                max_distance=max_distance,
+                max_h_stems=max_h_stems,
+                max_v_stems=max_v_stems,
+                use_samples=use_samples,
+                std_h_codepoints=to_codepoints(std_h_sample),
+                std_v_codepoints=to_codepoints(std_v_sample),
+                snap_h_codepoints=to_codepoints(snap_h_sample),
+                snap_v_codepoints=to_codepoints(snap_v_sample),
+            )
+        finally:
+            if temp_file is not None:
+                temp_file.unlink(missing_ok=True)
+
         logger.info(f"StdHW: {current_std_h_w} -> {std_h_w}")
         logger.info(f"StdVW: {current_std_v_w} -> {std_v_w}")
         logger.info(f"StemSnapH: {current_stem_snap_h} -> {stem_snap_h}")
         logger.info(f"StemSnapV: {current_stem_snap_v} -> {stem_snap_v}")
-        temp_file.unlink(missing_ok=True)
 
         if (current_std_h_w, current_std_v_w, current_stem_snap_h, current_stem_snap_v) == (
             std_h_w,
@@ -321,7 +377,6 @@ def recalc_stems(input_path: Path, **options: dict[str, Any]) -> None:
             "StemSnapV": stem_snap_v,
         }
         font.t_cff_.set_hinting_data(**hinting_data)
-        font.ttfont.flavor = flavor
         return True
 
     runner = TaskRunner(input_path=input_path, task=task, **options)

@@ -819,7 +819,7 @@ woff = [
 
 [[package]]
 name = "foundrytools"
-version = "0.1.7"
+version = "0.1.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "afdko" },
@@ -831,14 +831,14 @@ dependencies = [
     { name = "ufo-extractor" },
     { name = "ufo2ft" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/06/7b/47f9c2c629bebd124fbe97379dd61bc871e9c183f15fa79d3bae2efeb713/foundrytools-0.1.7.tar.gz", hash = "sha256:7b8623bf1618931dabdbd4d75aba4b200582555c86f9f7d5d7c1819d5d04fef8", size = 1420126, upload-time = "2026-10-15T11:27:27.835Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/9c/64/5d98c60da4e5029b87ce6d3e84647597bb5807d9cd2b92950f4deed2e54d/foundrytools-0.1.8.tar.gz", hash = "sha256:2043dfdd516f9b26b0c7b502859e86a7c32d93c2e612d422fe13cbb12a50c640", size = 1425401, upload-time = "2026-10-19T18:41:02.587Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7d/6e/876011cf26a539ea1a67154c47ef2b242da5d6af24d7eaaafbb2bdd98c2c/foundrytools-0.1.7-py3-none-any.whl", hash = "sha256:49a77f471143dcc885270313b1966c6a3834d81bc9d1f71c7f8b3c40a6afe9be", size = 1427455, upload-time = "2026-10-15T11:27:26.178Z" },
+    { url = "https://files.pythonhosted.org/packages/65/8b/8fb209def9496448da9b343613153af7eaf071be37da8547d2292f23a2a0/foundrytools-0.1.8-py3-none-any.whl", hash = "sha256:d8fabf40ea564a5a7ab6691e7f431e15304eab7ebe623ea111774eb72a0738c9", size = 1432826, upload-time = "2026-10-19T18:41:00.982Z" },
 ]
 
 [[package]]
 name = "foundrytools-cli"
-version = "2.2.0"
+version = "2.2.1"
 source = { editable = "." }
 dependencies = [
     { name = "afdko" },
@@ -873,7 +873,7 @@ security = [
 requires-dist = [
     { name = "afdko", specifier = "==4.0.3" },
     { name = "click", specifier = ">=8.5.0" },
-    { name = "foundrytools", specifier = ">=0.1.7" },
+    { name = "foundrytools", specifier = ">=0.1.8" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "pathvalidate", specifier = ">=3.3.1" },
     { name = "rich", specifier = ">=15.0.0" },
