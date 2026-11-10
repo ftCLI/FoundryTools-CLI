@@ -50,14 +50,20 @@ def _determine_output_directory(
     return sanitize_filepath(out_dir, platform="auto")
 
 
-def _remove_empty_directories(directory: Path) -> None:
+def _remove_empty_directories(directory: Path, stop_at: Path | None = None) -> None:
     """
     Removes empty directories recursively.
 
     Args:
         directory (Path): The directory to start removing from.
+        stop_at (Path): The directory to stop at (never removed). Defaults to None, which
+            means no boundary. Callers should pass the input directory so cleanup never
+            climbs above it.
     """
-    while not any(directory.iterdir()):
+    stop = stop_at.resolve() if stop_at is not None else None
+    while directory.is_dir() and (stop is None or directory.resolve() != stop):
+        if any(directory.iterdir()):
+            break
         directory.rmdir()
         logger.opt(colors=True).success(f"{directory} <magenta>--></> <red>Deleted</>")
         directory = directory.parent
@@ -115,4 +121,5 @@ def main(
             )
 
         if delete_empty_directories:
-            _remove_empty_directories(font.file.parent)
+            stop_at = in_path if in_path.is_dir() else in_path.parent
+            _remove_empty_directories(font.file.parent, stop_at=stop_at)
